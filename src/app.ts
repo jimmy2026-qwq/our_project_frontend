@@ -1,23 +1,28 @@
-import { createApiReferenceSection } from './modules/api-reference';
-import { createArchitectureSection } from './modules/architecture';
-import { createLandingHero } from './modules/hero';
-import { initMemberHub } from './modules/member-hub';
 import { initPublicHall } from './modules/public-hall';
-import { createRoleMatrixSection } from './modules/role-matrix';
-import { createWorkbenchSection } from './modules/workbench';
 
 export function createApp() {
   return `
-    <div class="shell">
-      ${createLandingHero()}
-      <main class="shell__content">
+    <div class="public-shell">
+      <header class="site-header">
+        <div class="site-header__brand">
+          <span class="site-header__mark">R</span>
+          <div>
+            <strong>RiichiNexus</strong>
+            <span>Guest Portal / Read-only hall</span>
+          </div>
+        </div>
+        <div class="site-header__status">
+          <span class="site-pill">Guest</span>
+          <span class="site-pill">Read Only</span>
+        </div>
+      </header>
+      <main class="public-shell__content">
         <section id="public-hall-root"></section>
-        <section id="member-hub-root"></section>
-        ${createArchitectureSection()}
-        ${createRoleMatrixSection()}
-        ${createWorkbenchSection()}
-        ${createApiReferenceSection()}
       </main>
+      <footer class="site-footer">
+        <p>游客模式下可查看赛事、俱乐部和排行榜概览，但不会展示任何编辑入口。</p>
+        <a href="#/" class="site-footer__link">返回首页</a>
+      </footer>
     </div>
   `;
 }
@@ -31,12 +36,5 @@ export async function mountApp(container: HTMLElement) {
     throw new Error('Public hall root was not found.');
   }
 
-  const memberHubRoot = container.querySelector<HTMLElement>('#member-hub-root');
-
-  if (!memberHubRoot) {
-    throw new Error('Member hub root was not found.');
-  }
-
   await initPublicHall(publicHallRoot);
-  await initMemberHub(memberHubRoot);
 }

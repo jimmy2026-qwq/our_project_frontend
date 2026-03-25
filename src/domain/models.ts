@@ -51,6 +51,34 @@ export interface ClubSummary {
   relations: Array<'Alliance' | 'Hostile'>;
 }
 
+export interface TournamentPublicProfile {
+  id: string;
+  name: string;
+  status: TournamentStatus;
+  tagline: string;
+  description: string;
+  venue: string;
+  stageCount: number;
+  whitelistType: 'Club' | 'Player' | 'Mixed';
+  nextStageId: string;
+  nextStageName: string;
+  nextStageStatus: StageStatus;
+  nextScheduledAt: string;
+}
+
+export interface ClubPublicProfile {
+  id: string;
+  name: string;
+  slogan: string;
+  description: string;
+  memberCount: number;
+  powerRating: number;
+  treasury: number;
+  relations: Array<'Alliance' | 'Hostile'>;
+  featuredPlayers: string[];
+  activeTournaments: string[];
+}
+
 export interface DashboardSummary {
   ownerId: string;
   ownerType: 'player' | 'club';
@@ -79,3 +107,31 @@ export interface RoleCapability {
   canWrite: string[];
 }
 
+export interface TournamentTableSummary {
+  id: string;
+  stageId: string;
+  tableCode: string;
+  status: TableStatus;
+  playerIds: string[];
+  seatCount: number;
+}
+
+export interface MatchRecordSummary {
+  id: string;
+  tournamentId: string;
+  stageId: string;
+  tableId: string;
+  recordedAt: string;
+  winnerId: string;
+  summary: string;
+}
+
+export interface AppealSummary {
+  id: string;
+  tournamentId: string;
+  tableId: string;
+  status: 'Open' | 'Resolved' | 'Rejected' | 'Escalated';
+  createdBy: string;
+  createdAt: string;
+  verdict: string;
+}

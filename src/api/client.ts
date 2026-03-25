@@ -1,11 +1,16 @@
 import { toQueryString } from '../lib/query';
 import type {
+  AppealSummary,
+  ClubPublicProfile,
   ClubSummary,
   DashboardSummary,
   ListEnvelope,
+  MatchRecordSummary,
   PlayerLeaderboardEntry,
   PublicSchedule,
   StageStatus,
+  TournamentPublicProfile,
+  TournamentTableSummary,
   TableStatus,
   TournamentStatus,
 } from '../domain/models';
@@ -80,6 +85,12 @@ export const apiClient = {
   getClubs(filters: ClubFilters) {
     return request<ListEnvelope<ClubSummary>>(`/clubs${toQueryString(filters)}`);
   },
+  getPublicTournamentProfile(tournamentId: string) {
+    return request<TournamentPublicProfile>(`/public/tournaments/${tournamentId}`);
+  },
+  getPublicClubProfile(clubId: string) {
+    return request<ClubPublicProfile>(`/public/clubs/${clubId}`);
+  },
   getPlayerDashboard(playerId: string, operatorId: string) {
     return request<DashboardSummary>(
       `/dashboards/players/${playerId}${toQueryString({ operatorId })}`,
@@ -89,6 +100,17 @@ export const apiClient = {
     return request<DashboardSummary>(
       `/dashboards/clubs/${clubId}${toQueryString({ operatorId })}`,
     );
+  },
+  getTournamentTables(tournamentId: string, stageId: string, filters: TableFilters) {
+    return request<ListEnvelope<TournamentTableSummary>>(
+      `/tournaments/${tournamentId}/stages/${stageId}/tables${toQueryString(filters)}`,
+    );
+  },
+  getRecords(filters: RecordFilters) {
+    return request<ListEnvelope<MatchRecordSummary>>(`/records${toQueryString(filters)}`);
+  },
+  getAppeals(filters: AppealFilters) {
+    return request<ListEnvelope<AppealSummary>>(`/appeals${toQueryString(filters)}`);
   },
   buildTournamentTablesPath(tournamentId: string, stageId: string, filters: TableFilters) {
     return `/tournaments/${tournamentId}/stages/${stageId}/tables${toQueryString(filters)}`;
@@ -109,4 +131,3 @@ export const apiClient = {
     return `/audits/dictionary/${key}${toQueryString({ operatorId, eventType, limit })}`;
   },
 };
-
