@@ -39,6 +39,8 @@ export interface PlayerLeaderboardEntry {
   clubName: string;
   elo: number;
   rank: number;
+  currentRank?: string | null;
+  normalizedRankScore?: number | null;
   status: 'Active' | 'Inactive' | 'Banned';
 }
 

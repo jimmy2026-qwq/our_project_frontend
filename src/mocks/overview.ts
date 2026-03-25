@@ -33,9 +33,36 @@ export const mockSchedules: PublicSchedule[] = [
 ];
 
 export const mockLeaderboard: PlayerLeaderboardEntry[] = [
-  { playerId: 'player-a', nickname: 'Aoi', clubName: 'Tokyo Drift', elo: 2142, rank: 1, status: 'Active' },
-  { playerId: 'player-b', nickname: 'Mika', clubName: 'Red Dora', elo: 2087, rank: 2, status: 'Active' },
-  { playerId: 'player-c', nickname: 'Ren', clubName: 'Quiet Riichi', elo: 2033, rank: 3, status: 'Active' },
+  {
+    playerId: 'player-a',
+    nickname: 'Aoi',
+    clubName: 'Tokyo Drift',
+    elo: 2142,
+    rank: 1,
+    currentRank: 'Tenhou 7-dan',
+    normalizedRankScore: 710,
+    status: 'Active',
+  },
+  {
+    playerId: 'player-b',
+    nickname: 'Mika',
+    clubName: 'Red Dora',
+    elo: 2087,
+    rank: 2,
+    currentRank: 'Mahjong Soul Master 2',
+    normalizedRankScore: 690,
+    status: 'Active',
+  },
+  {
+    playerId: 'player-c',
+    nickname: 'Ren',
+    clubName: 'Quiet Riichi',
+    elo: 2033,
+    rank: 3,
+    currentRank: '雀魂 雀圣 3',
+    normalizedRankScore: 672,
+    status: 'Active',
+  },
 ];
 
 export const mockClubs: ClubSummary[] = [
