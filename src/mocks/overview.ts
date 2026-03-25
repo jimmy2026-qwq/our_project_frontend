@@ -1,4 +1,10 @@
-import type { ClubSummary, DashboardSummary, PlayerLeaderboardEntry, PublicSchedule } from '../domain/models';
+import type {
+  ClubSummary,
+  DashboardSummary,
+  ListEnvelope,
+  PlayerLeaderboardEntry,
+  PublicSchedule,
+} from '../domain/models';
 
 export const mockSchedules: PublicSchedule[] = [
   {
@@ -22,14 +28,49 @@ export const mockSchedules: PublicSchedule[] = [
 ];
 
 export const mockLeaderboard: PlayerLeaderboardEntry[] = [
-  { playerId: 'player-a', nickname: 'Aoi', clubName: 'Tokyo Drift', elo: 2142, rank: 1, status: 'Active' },
-  { playerId: 'player-b', nickname: 'Mika', clubName: 'Red Dora', elo: 2087, rank: 2, status: 'Active' },
-  { playerId: 'player-c', nickname: 'Ren', clubName: 'Quiet Riichi', elo: 2033, rank: 3, status: 'Active' },
+  {
+    playerId: 'player-a',
+    nickname: 'Aoi',
+    clubName: 'Tokyo Drift',
+    elo: 2142,
+    rank: 1,
+    status: 'Active',
+  },
+  {
+    playerId: 'player-b',
+    nickname: 'Mika',
+    clubName: 'Red Dora',
+    elo: 2087,
+    rank: 2,
+    status: 'Active',
+  },
+  {
+    playerId: 'player-c',
+    nickname: 'Ren',
+    clubName: 'Quiet Riichi',
+    elo: 2033,
+    rank: 3,
+    status: 'Active',
+  },
 ];
 
 export const mockClubs: ClubSummary[] = [
-  { id: 'club-1', name: 'Tokyo Drift', memberCount: 18, powerRating: 92, treasury: 560000, relations: ['Alliance'] },
-  { id: 'club-2', name: 'Red Dora', memberCount: 14, powerRating: 88, treasury: 438000, relations: ['Hostile'] },
+  {
+    id: 'club-1',
+    name: 'Tokyo Drift',
+    memberCount: 18,
+    powerRating: 92,
+    treasury: 560000,
+    relations: ['Alliance'],
+  },
+  {
+    id: 'club-2',
+    name: 'Red Dora',
+    memberCount: 14,
+    powerRating: 88,
+    treasury: 438000,
+    relations: ['Hostile'],
+  },
 ];
 
 export const mockDashboards: DashboardSummary[] = [
@@ -44,6 +85,16 @@ export const mockDashboards: DashboardSummary[] = [
     ],
   },
   {
+    ownerId: 'player-b',
+    ownerType: 'player',
+    headline: '这里可以继续扩展到最近对局、积分轨迹和申诉入口。',
+    metrics: [
+      { label: '综合 ELO', value: '2087', accent: 'gold' },
+      { label: '最近 30 战', value: '+63', accent: 'teal' },
+      { label: '平均顺位', value: '2.18' },
+    ],
+  },
+  {
     ownerId: 'club-1',
     ownerType: 'club',
     headline: '俱乐部面板会组合成员状态、战力评分、资金池和对外关系。',
@@ -53,5 +104,28 @@ export const mockDashboards: DashboardSummary[] = [
       { label: '活跃成员', value: '18' },
     ],
   },
+  {
+    ownerId: 'club-2',
+    ownerType: 'club',
+    headline: '后续可以在这里接入席位提报名单和联盟关系概览。',
+    metrics: [
+      { label: '俱乐部战力', value: '88', accent: 'gold' },
+      { label: '资金库', value: '438,000', accent: 'teal' },
+      { label: '活跃成员', value: '14' },
+    ],
+  },
 ];
 
+export function toMockEnvelope<T>(
+  items: T[],
+  appliedFilters: Record<string, string | number | boolean | undefined>,
+): ListEnvelope<T> {
+  return {
+    items,
+    total: items.length,
+    limit: items.length,
+    offset: 0,
+    hasMore: false,
+    appliedFilters,
+  };
+}

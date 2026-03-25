@@ -156,6 +156,12 @@ body::before {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.member-hub__grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
 .card {
   border-radius: 22px;
   padding: 20px;
@@ -258,6 +264,104 @@ body::before {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+.public-hall__filters,
+.public-hall__panel-head,
+.public-hall__filters-head,
+.public-hall__toolbar,
+.public-hall__meta {
+  display: flex;
+  gap: 14px;
+}
+
+.public-hall__filters,
+.public-hall__panel-head,
+.public-hall__filters-head {
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.public-hall__toolbar {
+  flex-wrap: wrap;
+  margin: 18px 0;
+}
+
+.public-hall__toolbar label {
+  display: grid;
+  gap: 8px;
+  min-width: 180px;
+  color: var(--muted);
+}
+
+.public-hall__toolbar select,
+.public-hall__filters-head button {
+  border: 1px solid var(--line);
+  background: #0d1826;
+  color: var(--text);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font: inherit;
+}
+
+.public-hall__filters-head button {
+  cursor: pointer;
+}
+
+.public-hall__checkbox {
+  display: inline-flex !important;
+  align-items: center;
+  grid-auto-flow: column;
+  justify-content: start;
+}
+
+.public-hall__checkbox input {
+  accent-color: var(--teal);
+}
+
+.public-hall__meta {
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.source-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 62px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.source-badge--api {
+  background: rgba(105, 214, 193, 0.14);
+  color: var(--teal);
+}
+
+.source-badge--mock {
+  background: rgba(247, 198, 109, 0.14);
+  color: var(--gold);
+}
+
+.public-hall__warning {
+  margin: 0;
+  max-width: 28ch;
+  color: var(--muted);
+  font-size: 0.82rem;
+  text-align: right;
+}
+
+.public-hall__loading,
+.public-hall__empty {
+  color: var(--muted);
+}
+
+.member-hub__controls {
+  display: grid;
+  gap: 14px;
+}
+
 .api-card code {
   display: block;
   margin-top: 12px;
@@ -273,6 +377,7 @@ body::before {
   .module-grid,
   .role-grid,
   .workbench-grid,
+  .member-hub__grid,
   .api-list,
   .metric-grid {
     grid-template-columns: 1fr;
@@ -287,5 +392,19 @@ body::before {
   .hero__panel,
   .card {
     border-radius: 20px;
+  }
+
+  .public-hall__filters,
+  .public-hall__panel-head,
+  .public-hall__filters-head {
+    flex-direction: column;
+  }
+
+  .public-hall__meta {
+    align-items: flex-start;
+  }
+
+  .public-hall__warning {
+    text-align: left;
   }
 }
