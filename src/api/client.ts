@@ -1,9 +1,11 @@
 import { toQueryString } from '../lib/query';
 import type {
   AppealSummary,
+  ClubApplication,
   ClubPublicProfile,
   ClubSummary,
   DashboardSummary,
+  GuestSession,
   ListEnvelope,
   MatchRecordSummary,
   PlayerLeaderboardEntry,
@@ -19,6 +21,22 @@ const API_BASE_URL = 'http://localhost:8080';
 
 async function request<T>(path: string) {
   const response = await fetch(`${API_BASE_URL}${path}`);
+
+  if (!response.ok) {
+    throw new Error(`Request failed with status ${response.status}`);
+  }
+
+  return (await response.json()) as T;
+}
+
+async function sendJson<T>(path: string, method: 'POST', body: unknown) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    method,
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(body),
+  });
 
   if (!response.ok) {
     throw new Error(`Request failed with status ${response.status}`);
@@ -71,6 +89,23 @@ export interface TableFilters {
   offset?: number;
 }
 
+export interface CreateGuestSessionPayload {
+  displayName: string;
+}
+
+export interface ClubApplicationPayload {
+  guestSessionId?: string;
+  operatorId?: string;
+  displayName?: string;
+  message: string;
+}
+
+export interface WithdrawClubApplicationPayload {
+  guestSessionId?: string;
+  operatorId?: string;
+  note?: string;
+}
+
 export const apiClient = {
   getPublicSchedules(filters: ScheduleFilters) {
     return request<ListEnvelope<PublicSchedule>>(
@@ -90,6 +125,26 @@ export const apiClient = {
   },
   getPublicClubProfile(clubId: string) {
     return request<ClubPublicProfile>(`/public/clubs/${clubId}`);
+  },
+  createGuestSession(payload: CreateGuestSessionPayload) {
+    return sendJson<GuestSession>('/guest-sessions', 'POST', payload);
+  },
+  getGuestSession(guestSessionId: string) {
+    return request<GuestSession>(`/guest-sessions/${guestSessionId}`);
+  },
+  submitClubApplication(clubId: string, payload: ClubApplicationPayload) {
+    return sendJson<ClubApplication>(`/clubs/${clubId}/applications`, 'POST', payload);
+  },
+  withdrawClubApplication(
+    clubId: string,
+    membershipId: string,
+    payload: WithdrawClubApplicationPayload,
+  ) {
+    return sendJson<ClubApplication>(
+      `/clubs/${clubId}/applications/${membershipId}/withdraw`,
+      'POST',
+      payload,
+    );
   },
   getPlayerDashboard(playerId: string, operatorId: string) {
     return request<DashboardSummary>(

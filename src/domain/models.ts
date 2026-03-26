@@ -81,6 +81,22 @@ export interface ClubPublicProfile {
   activeTournaments: string[];
 }
 
+export interface GuestSession {
+  id: string;
+  displayName: string;
+  createdAt: string;
+}
+
+export interface ClubApplication {
+  id: string;
+  clubId: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Withdrawn';
+  applicantName: string;
+  message: string;
+  createdAt: string;
+  guestSessionId?: string;
+}
+
 export interface DashboardSummary {
   ownerId: string;
   ownerType: 'player' | 'club';

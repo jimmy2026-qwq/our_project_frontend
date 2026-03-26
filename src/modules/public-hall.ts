@@ -55,6 +55,8 @@ const DEFAULT_STATE: PublicHallState = {
   clubActiveOnly: true,
 };
 
+let activeHashListenerController: AbortController | null = null;
+
 function getRoute(): PublicRoute {
   const hash = window.location.hash.replace(/^#/, '');
 
@@ -64,12 +66,14 @@ function getRoute(): PublicRoute {
 
   const segments = hash.split('/').filter(Boolean);
 
-  if (segments[0] === 'tournaments' && segments[1]) {
-    return { page: 'tournament', tournamentId: segments[1] };
+  const scopedSegments = segments[0] === 'public' ? segments.slice(1) : segments;
+
+  if (scopedSegments[0] === 'tournaments' && scopedSegments[1]) {
+    return { page: 'tournament', tournamentId: scopedSegments[1] };
   }
 
-  if (segments[0] === 'clubs' && segments[1]) {
-    return { page: 'club', clubId: segments[1] };
+  if (scopedSegments[0] === 'clubs' && scopedSegments[1]) {
+    return { page: 'club', clubId: scopedSegments[1] };
   }
 
   return { page: 'home' };
@@ -96,11 +100,11 @@ function formatNumber(value: number) {
 }
 
 function tournamentHref(tournamentId: string) {
-  return `#/tournaments/${tournamentId}`;
+  return `#/public/tournaments/${tournamentId}`;
 }
 
 function clubHref(clubId: string) {
-  return `#/clubs/${clubId}`;
+  return `#/public/clubs/${clubId}`;
 }
 
 function getTournamentStatusLabel(status: TournamentStatus | '') {
@@ -761,7 +765,7 @@ export async function initPublicHall(container: HTMLElement) {
         const view = element.dataset.view as PublicView | undefined;
         if (!view) return;
         state.activeView = view;
-        window.location.hash = '/';
+        window.location.hash = '/public';
         void render();
       });
     });
@@ -815,9 +819,16 @@ export async function initPublicHall(container: HTMLElement) {
       });
   }
 
-  window.addEventListener('hashchange', () => {
-    void render();
-  });
+  activeHashListenerController?.abort();
+  activeHashListenerController = new AbortController();
+
+  window.addEventListener(
+    'hashchange',
+    () => {
+      void render();
+    },
+    { signal: activeHashListenerController.signal },
+  );
 
   await render();
 }
