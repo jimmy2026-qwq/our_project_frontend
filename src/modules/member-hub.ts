@@ -1,6 +1,9 @@
 import { apiClient } from '../api/client';
 import type { DashboardSummary, Role } from '../domain/models';
-import { readClubApplicationInbox } from '../lib/club-applications';
+import {
+  readClubApplicationInbox,
+  updateClubApplicationInboxStatus,
+} from '../lib/club-applications';
 import { mockClubs, mockDashboards } from '../mocks/overview';
 
 type DataSource = 'api' | 'mock';
@@ -125,6 +128,7 @@ function renderClubApplicationInbox(clubId: string, role: Role) {
   }
 
   const items = readClubApplicationInbox().filter((item) => item.clubId === clubId);
+  const pendingCount = items.filter((item) => item.status === 'Pending').length;
 
   return `
     <article class="card panel-card">
@@ -133,6 +137,7 @@ function renderClubApplicationInbox(clubId: string, role: Role) {
           <h3>入部申请收件箱</h3>
           <p>当前先用前端暂存流水承接主页申请，等后端补查询/审批接口后可直接替换为真实收件箱。</p>
         </div>
+        <span class="source-badge source-badge--mock">Pending ${pendingCount}</span>
       </div>
       <ul class="list">
         ${
@@ -148,6 +153,20 @@ function renderClubApplicationInbox(clubId: string, role: Role) {
                       <div>
                         <span>${item.status}</span>
                         <span>${item.source.toUpperCase()} / ${item.operatorId}</span>
+                        ${
+                          item.status === 'Pending'
+                            ? `
+                              <div class="inline-actions">
+                                <button type="button" class="portal-refresh" data-action="approve-application" data-application-id="${item.id}">
+                                  批准
+                                </button>
+                                <button type="button" class="portal-refresh" data-action="reject-application" data-application-id="${item.id}">
+                                  拒绝
+                                </button>
+                              </div>
+                            `
+                            : ''
+                        }
                       </div>
                     </li>
                   `,
@@ -323,6 +342,32 @@ export async function initMemberHub(container: HTMLElement) {
       .querySelector<HTMLButtonElement>('[data-action="reload-member-hub"]')
       ?.addEventListener('click', () => {
         void render();
+      });
+
+    container
+      .querySelectorAll<HTMLButtonElement>('[data-action="approve-application"]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const applicationId = button.dataset.applicationId;
+          if (!applicationId) {
+            return;
+          }
+          updateClubApplicationInboxStatus(applicationId, 'Approved');
+          void render();
+        });
+      });
+
+    container
+      .querySelectorAll<HTMLButtonElement>('[data-action="reject-application"]')
+      .forEach((button) => {
+        button.addEventListener('click', () => {
+          const applicationId = button.dataset.applicationId;
+          if (!applicationId) {
+            return;
+          }
+          updateClubApplicationInboxStatus(applicationId, 'Rejected');
+          void render();
+        });
       });
   }
 

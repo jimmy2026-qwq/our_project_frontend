@@ -1039,6 +1039,12 @@ input {
   flex-wrap: wrap;
 }
 
+.inline-actions {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .guest-flow-card {
   display: grid;
   gap: 18px;
@@ -1081,6 +1087,10 @@ input {
   }
 
   .public-join-card__actions {
+    flex-direction: column;
+  }
+
+  .inline-actions {
     flex-direction: column;
   }
 }
