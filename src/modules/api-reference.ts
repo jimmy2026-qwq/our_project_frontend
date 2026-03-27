@@ -33,6 +33,39 @@ export function createApiReferenceSection() {
     },
   ];
 
+  const neededEndpoints = [
+    {
+      title: '俱乐部申请收件箱',
+      path: 'GET /clubs/:clubId/applications?operatorId=:clubAdminId&status=Pending&limit=20',
+      detail: '成员工作台已经有 Club Admin 收件箱原型，下一步最需要后端提供真实申请列表查询。',
+    },
+    {
+      title: '俱乐部申请审批',
+      path: 'POST /clubs/:clubId/applications/:membershipId/review',
+      detail: '建议支持 approve/reject 决策、note、operatorId，前端才能把“发起申请”真正闭环到“管理员处理”。',
+    },
+    {
+      title: '当前注册玩家身份',
+      path: 'GET /players/me 或 GET /session',
+      detail: '主页申请工作台现在用预置注册玩家模拟，注册/登录完成后需要真实当前用户接口替换。',
+    },
+    {
+      title: '可申请俱乐部列表',
+      path: 'GET /clubs?activeOnly=true&joinableOnly=true',
+      detail: '当前主页申请工作台直接复用了公开俱乐部列表，后续建议给出更明确的可申请范围。',
+    },
+    {
+      title: '公开赛事索引',
+      path: 'GET /public/tournaments',
+      detail: '公开区目前只有赛程和详情页，缺少真正的公开赛事目录页。',
+    },
+    {
+      title: '赛事阶段元数据',
+      path: 'GET /tournaments/:id/stages',
+      detail: '赛事运营台现在仍有部分 stage 上下文是前端写死的，这个接口能把运营台改成真实驱动。',
+    },
+  ];
+
   return `
     <section class="section">
       <div class="section__header">
@@ -56,7 +89,19 @@ export function createApiReferenceSection() {
           )
           .join('')}
       </div>
+      <div class="api-list">
+        ${neededEndpoints
+          .map(
+            (endpoint) => `
+              <article class="card api-card">
+                <h3>${endpoint.title}</h3>
+                <code>${endpoint.path}</code>
+                <p>${endpoint.detail}</p>
+              </article>
+            `,
+          )
+          .join('')}
+      </div>
     </section>
   `;
 }
-

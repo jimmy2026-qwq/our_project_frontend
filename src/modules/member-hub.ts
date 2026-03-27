@@ -1,5 +1,6 @@
 import { apiClient } from '../api/client';
 import type { DashboardSummary, Role } from '../domain/models';
+import { readClubApplicationInbox } from '../lib/club-applications';
 import { mockClubs, mockDashboards } from '../mocks/overview';
 
 type DataSource = 'api' | 'mock';
@@ -108,6 +109,57 @@ function renderMetrics(dashboard: DashboardSummary | null) {
   `;
 }
 
+function renderClubApplicationInbox(clubId: string, role: Role) {
+  if (role !== 'ClubAdmin') {
+    return `
+      <article class="card panel-card">
+        <div class="public-hall__panel-head">
+          <div>
+            <h3>入部申请收件箱</h3>
+            <p>这块只对俱乐部管理员开放，注册玩家不会看到审批视图。</p>
+          </div>
+        </div>
+        <p class="public-hall__empty">当前操作人不是 Club Admin。</p>
+      </article>
+    `;
+  }
+
+  const items = readClubApplicationInbox().filter((item) => item.clubId === clubId);
+
+  return `
+    <article class="card panel-card">
+      <div class="public-hall__panel-head">
+        <div>
+          <h3>入部申请收件箱</h3>
+          <p>当前先用前端暂存流水承接主页申请，等后端补查询/审批接口后可直接替换为真实收件箱。</p>
+        </div>
+      </div>
+      <ul class="list">
+        ${
+          items.length > 0
+            ? items
+                .map(
+                  (item) => `
+                    <li class="list-row">
+                      <div>
+                        <strong>${item.applicantName}</strong>
+                        <span>${item.message}</span>
+                      </div>
+                      <div>
+                        <span>${item.status}</span>
+                        <span>${item.source.toUpperCase()} / ${item.operatorId}</span>
+                      </div>
+                    </li>
+                  `,
+                )
+                .join('')
+            : '<li class="list-row public-hall__empty">当前还没有这个俱乐部的申请记录。</li>'
+        }
+      </ul>
+    </article>
+  `;
+}
+
 function renderMemberHubLayout(
   state: MemberHubState,
   playerPayload: DashboardLoadState,
@@ -201,6 +253,7 @@ function renderMemberHubLayout(
               : '<p class="public-hall__empty">当前操作人不是俱乐部管理员，俱乐部面板入口会在真实登录态下受角色控制。</p>'
           }
         </article>
+        ${renderClubApplicationInbox(state.clubId, activeOperator.role)}
       </div>
     </section>
   `;

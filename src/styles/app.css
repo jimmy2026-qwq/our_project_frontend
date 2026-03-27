@@ -1014,6 +1014,31 @@ input {
   flex: 1;
 }
 
+.public-join-card {
+  display: grid;
+  gap: 18px;
+}
+
+.public-join-card__callout {
+  display: grid;
+  gap: 6px;
+  padding: 16px 18px;
+  border-radius: 18px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.public-join-card__callout span {
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.public-join-card__actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .guest-flow-card {
   display: grid;
   gap: 18px;
@@ -1052,6 +1077,10 @@ input {
   .public-hall__filters-head,
   .guest-flow__summary,
   .list-row {
+    flex-direction: column;
+  }
+
+  .public-join-card__actions {
     flex-direction: column;
   }
 }

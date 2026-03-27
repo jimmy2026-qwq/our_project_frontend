@@ -583,7 +583,7 @@ function renderTournamentDetail(state: DetailState<TournamentPublicProfile>, tou
 
   return `
     <section class="detail-page">
-      <a class="detail-back" href="#/">返回公共大厅</a>
+      <a class="detail-back" href="#/public">返回公共大厅</a>
       <section class="detail-hero">
         <div>
           <p class="eyebrow">Tournament</p>
@@ -634,7 +634,7 @@ function renderClubDetail(state: DetailState<ClubPublicProfile>) {
 
   return `
     <section class="detail-page">
-      <a class="detail-back" href="#/">返回公共大厅</a>
+      <a class="detail-back" href="#/public">返回公共大厅</a>
       <section class="detail-hero">
         <div>
           <p class="eyebrow">Club</p>
@@ -678,7 +678,7 @@ function renderClubDetail(state: DetailState<ClubPublicProfile>) {
 function renderNotFound(title: string) {
   return `
     <section class="detail-page">
-      <a class="detail-back" href="#/">返回公共大厅</a>
+      <a class="detail-back" href="#/public">返回公共大厅</a>
       <section class="detail-hero">
         <div>
           <p class="eyebrow">Not Found</p>

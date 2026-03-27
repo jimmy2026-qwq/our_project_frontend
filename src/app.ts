@@ -1,14 +1,14 @@
 import { createApiReferenceSection } from './modules/api-reference';
 import { createArchitectureSection } from './modules/architecture';
-import { initGuestApplicationHub } from './modules/guest-application';
 import { createLandingHero } from './modules/hero';
+import { initHomeClubApplication } from './modules/guest-application';
 import { initMemberHub } from './modules/member-hub';
 import { initPublicHall } from './modules/public-hall';
 import { createRoleMatrixSection } from './modules/role-matrix';
 import { initTournamentOps } from './modules/tournament-ops';
 import { createWorkbenchSection } from './modules/workbench';
 
-type AppRoute = 'blueprint' | 'public' | 'applications' | 'member-hub' | 'tournament-ops';
+type AppRoute = 'blueprint' | 'public' | 'member-hub' | 'tournament-ops';
 
 function getAppRoute(): AppRoute {
   const hash = window.location.hash.replace(/^#/, '');
@@ -21,10 +21,6 @@ function getAppRoute(): AppRoute {
 
   if (root === 'public') {
     return 'public';
-  }
-
-  if (root === 'applications') {
-    return 'applications';
   }
 
   if (root === 'member-hub') {
@@ -68,14 +64,13 @@ function createShell(route: AppRoute) {
             <p class="eyebrow">Project Delivery</p>
             <h1>把现有页面骨架接成可演示、可继续推进的前端工作台</h1>
             <p>
-              当前版本把公开大厅、匿名申请入口、成员工作台、赛事运营台和架构蓝图放进同一应用壳里，
-              方便继续沿着后端接口逐步替换 mock 和扩展写操作。
+              当前版本把公开大厅、成员工作台、赛事运营台和架构蓝图放进同一应用壳里，
+              并把公开区的匿名入会意向收回到俱乐部详情中，方便继续沿着后端接口逐步替换 mock。
             </p>
           </div>
           <nav class="app-nav" aria-label="Primary">
             <a class="app-nav__link ${isRouteActive('blueprint', route)}" href="#/">项目蓝图</a>
             <a class="app-nav__link ${isRouteActive('public', route)}" href="#/public">公开大厅</a>
-            <a class="app-nav__link ${isRouteActive('applications', route)}" href="#/applications">匿名申请</a>
             <a class="app-nav__link ${isRouteActive('member-hub', route)}" href="#/member-hub">成员工作台</a>
             <a class="app-nav__link ${isRouteActive('tournament-ops', route)}" href="#/tournament-ops">赛事运营台</a>
           </nav>
@@ -83,7 +78,7 @@ function createShell(route: AppRoute) {
         <section id="app-route-root"></section>
       </main>
       <footer class="site-footer">
-        <p>当前阶段优先落实只读公开区、匿名申请入口和后端已稳定的工作台读接口。</p>
+        <p>当前阶段优先落实只读公开区、俱乐部公开入会意向入口和后端已稳定的工作台读接口。</p>
         <a href="#/" class="site-footer__link">返回项目蓝图</a>
       </footer>
     </div>
@@ -93,6 +88,7 @@ function createShell(route: AppRoute) {
 function renderBlueprintHome() {
   return `
     ${createLandingHero()}
+    <section id="home-club-application-root"></section>
     ${createArchitectureSection()}
     ${createRoleMatrixSection()}
     ${createWorkbenchSection()}
@@ -113,16 +109,15 @@ export async function mountApp(container: HTMLElement) {
 
     if (route === 'blueprint') {
       routeRoot.innerHTML = renderBlueprintHome();
+      const applicationRoot = routeRoot.querySelector<HTMLElement>('#home-club-application-root');
+      if (applicationRoot) {
+        await initHomeClubApplication(applicationRoot);
+      }
       return;
     }
 
     if (route === 'public') {
       await initPublicHall(routeRoot);
-      return;
-    }
-
-    if (route === 'applications') {
-      await initGuestApplicationHub(routeRoot);
       return;
     }
 
