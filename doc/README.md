@@ -1,5 +1,55 @@
 # RiichiNexus Frontend
 
+## Backend Interfaces Needed Next
+
+These are the interfaces the frontend most wants next, in priority order.
+
+Must-have to replace current frontend placeholders:
+
+- `GET /clubs/:clubId/applications?operatorId=:clubAdminId&status=Pending&limit=20`
+  - Needed to replace the current local inbox bridge in Member Hub with a real club-application queue.
+- `POST /clubs/:clubId/applications/:membershipId/review`
+  - Suggested body: `{ operatorId, decision, note }`
+  - Needed so Club Admin can approve or reject applications instead of only seeing a passive inbox.
+- `GET /players/me` or `GET /session`
+  - Needed to replace the current preconfigured Registered Player identity in the home-page application workbench.
+
+Very valuable next:
+
+- `GET /clubs?activeOnly=true&joinableOnly=true`
+  - Needed to give the application workbench a backend-defined set of clubs that are currently accepting applications.
+- `GET /clubs/:clubId/applications/:membershipId`
+  - Helpful for showing a player-facing application status view after submission.
+- `GET /tournaments/:id/stages`
+  - Needed to remove hard-coded stage context from Tournament Operations.
+
+Experience and completeness upgrades:
+
+- `GET /public/tournaments`
+  - Needed to build a real public tournaments index page instead of relying only on schedules plus detail pages.
+- A stable documented response shape for `GET /public/tournaments/:id`
+- A stable documented response shape for `GET /public/clubs/:id`
+- Public club detail related lists, if not embedded:
+  - recent matches
+  - current lineup
+  - honors
+- Public club application policy / recruitment metadata:
+  - whether applications are open
+  - any requirements text
+  - expected review SLA
+- Public tournament detail related lists, if not embedded:
+  - stage list
+  - standings snapshot
+  - bracket snapshot for knockout stages
+
+Still highly useful from the existing backend capabilities:
+
+- Stage standings
+- Finals bracket
+- Seat readiness / disconnect state updates
+- Appeal triage filters
+- Advanced stats boards
+
 ## Current State
 
 This frontend now has a broader delivery shell:
@@ -75,54 +125,6 @@ Notes:
 
 - The public leaderboard model now supports `currentRank` and `normalizedRankScore`
 - If `GET /public/tournaments/:id` or `GET /public/clubs/:id` is not implemented yet, the corresponding detail page will render default mock data
-
-## Backend Interfaces Needed Next
-
-These are the most valuable next interfaces for moving the current frontend from prototype to a real workflow:
-
-- `GET /clubs/:clubId/applications?operatorId=:clubAdminId&status=Pending&limit=20`
-  - Needed to replace the current local inbox bridge in Member Hub with a real club-application queue.
-- `POST /clubs/:clubId/applications/:membershipId/review`
-  - Suggested body: `{ operatorId, decision, note }`
-  - Needed so Club Admin can approve or reject applications instead of only seeing a passive inbox.
-- `GET /players/me` or `GET /session`
-  - Needed to replace the current preconfigured Registered Player identity in the home-page application workbench.
-- `GET /clubs?activeOnly=true&joinableOnly=true`
-  - Needed to give the application workbench a backend-defined set of clubs that are currently accepting applications.
-- `GET /public/tournaments`
-  - Needed to build a real public tournaments index page instead of relying only on schedules plus detail pages.
-- `GET /tournaments/:id/stages`
-  - Needed to remove hard-coded stage context from Tournament Operations.
-- `GET /clubs/:clubId/applications/:membershipId`
-  - Helpful for showing a player-facing application status view after submission.
-
-Still highly useful from the existing backend capabilities:
-
-- Stage standings
-- Finals bracket
-- Seat readiness / disconnect state updates
-- Appeal triage filters
-- Advanced stats boards
-
-## Pending Backend Interfaces I Recommend Asking For
-
-These are the most useful missing interfaces for improving the current public frontend:
-
-- A stable documented response shape for `GET /public/tournaments/:id`
-- A stable documented response shape for `GET /public/clubs/:id`
-- Public tournament index endpoint such as `GET /public/tournaments`
-- Public club detail related lists, if not embedded:
-  - recent matches
-  - current lineup
-  - honors
-- Public club application policy / recruitment metadata:
-  - whether applications are open
-  - any requirements text
-  - expected review SLA
-- Public tournament detail related lists, if not embedded:
-  - stage list
-  - standings snapshot
-  - bracket snapshot for knockout stages
 
 ## Recommended Next Steps
 
