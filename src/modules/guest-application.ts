@@ -1,6 +1,7 @@
 import { apiClient } from '../api/client';
-import type { ClubApplication } from '../domain/models';
+import type { ClubApplication, ClubSummary, PlayerProfile } from '../domain/models';
 import {
+  readClubApplicationsByOperator,
   updateClubApplicationInboxStatus,
   upsertClubApplicationInboxItem,
 } from '../lib/club-applications';
@@ -14,6 +15,18 @@ interface RegisteredPlayerOption {
   note: string;
 }
 
+interface ClubDirectoryState {
+  items: ClubSummary[];
+  source: DataSource;
+  warning?: string;
+}
+
+interface PlayerContextState {
+  player: PlayerProfile | null;
+  source?: DataSource;
+  warning?: string;
+}
+
 interface ApplicationState {
   application: ClubApplication | null;
   source?: DataSource;
@@ -25,6 +38,8 @@ interface HomeClubApplicationState {
   clubId: string;
   message: string;
   withdrawNote: string;
+  clubs: ClubDirectoryState;
+  playerContext: PlayerContextState;
   application: ApplicationState;
 }
 
@@ -97,12 +112,52 @@ function withdrawMockClubApplication(clubId: string, operatorId: string) {
   return updated;
 }
 
-function getSelectedPlayer(operatorId: string) {
+function getFallbackPlayer(operatorId: string) {
   return playerOptions.find((item) => item.operatorId === operatorId) ?? playerOptions[0];
 }
 
-function getSelectedClubName(clubId: string) {
-  return mockClubs.find((club) => club.id === clubId)?.name ?? clubId;
+function getSelectedClubName(clubId: string, clubs: ClubSummary[]) {
+  return clubs.find((club) => club.id === clubId)?.name ?? clubId;
+}
+
+async function loadJoinableClubs(): Promise<ClubDirectoryState> {
+  try {
+    const envelope = await apiClient.getClubs({
+      activeOnly: true,
+      joinableOnly: true,
+      limit: 20,
+      offset: 0,
+    });
+    return {
+      items: envelope.items,
+      source: 'api',
+    };
+  } catch (error) {
+    return {
+      items: mockClubs,
+      source: 'mock',
+      warning: error instanceof Error ? error.message : 'Club directory fallback to mock.',
+    };
+  }
+}
+
+async function loadPlayerContext(operatorId: string): Promise<PlayerContextState> {
+  try {
+    const player = await apiClient.getCurrentPlayer(operatorId);
+    return {
+      player,
+      source: 'api',
+    };
+  } catch (error) {
+    return {
+      player: {
+        playerId: operatorId,
+        displayName: getFallbackPlayer(operatorId).nickname,
+      },
+      source: 'mock',
+      warning: error instanceof Error ? error.message : 'Current player fallback to mock.',
+    };
+  }
 }
 
 function renderHomeClubApplication(state: HomeClubApplicationState) {
@@ -113,14 +168,16 @@ function renderHomeClubApplication(state: HomeClubApplicationState) {
     )
     .join('');
 
-  const clubOptionsMarkup = mockClubs
+  const clubOptionsMarkup = state.clubs.items
     .map(
       (club) => `<option value="${club.id}" ${club.id === state.clubId ? 'selected' : ''}>${club.name}</option>`,
     )
     .join('');
 
-  const selectedPlayer = getSelectedPlayer(state.operatorId);
+  const fallbackPlayer = getFallbackPlayer(state.operatorId);
+  const selectedPlayerName = state.playerContext.player?.displayName ?? fallbackPlayer.nickname;
   const application = state.application.application;
+  const myApplications = readClubApplicationsByOperator(state.operatorId).slice(0, 3);
 
   return `
     <section class="section">
@@ -128,8 +185,8 @@ function renderHomeClubApplication(state: HomeClubApplicationState) {
         <p class="eyebrow">Club Application</p>
         <h2>主页申请工作台</h2>
         <p>
-          根据当前规则，只有注册玩家才能申请加入俱乐部。由于注册功能还没做，
-          这里先把申请能力放在主页上，用预置注册玩家身份模拟真实用户，便于继续往后端流程推进。
+          主链路现在按新 contract 优先走后端：注册玩家选择身份、选择可申请俱乐部、提交申请，
+          然后由 Club Admin 在成员工作台里查看并审批。
         </p>
       </div>
       <article class="card public-join-card">
@@ -138,16 +195,19 @@ function renderHomeClubApplication(state: HomeClubApplicationState) {
             <h3>注册玩家申请俱乐部</h3>
             <p>
               当前调用链路是 <code>POST /clubs/:clubId/applications</code>，通过 <code>operatorId</code>
-              代表已注册玩家发起申请，不再使用匿名会话。
+              代表已注册玩家发起申请。
             </p>
           </div>
-          ${createSourceBadge(state.application.source, state.application.warning)}
+          ${createSourceBadge(
+            state.application.source ?? state.playerContext.source ?? state.clubs.source,
+            state.application.warning ?? state.playerContext.warning ?? state.clubs.warning,
+          )}
         </div>
         <div class="public-join-card__callout">
-          <strong>当前过渡方案</strong>
+          <strong>当前状态</strong>
           <span>
-            真实产品里这里应该来自注册与登录后的当前用户；现在先用预置注册玩家继续打通申请链路，
-            等注册功能上线后再把这个主页工作台替换成真实入口。
+            俱乐部列表优先读取 <code>joinableOnly</code>，玩家展示名优先读取 <code>/players/me</code>。
+            如果接口暂时不可用，页面仍然会退回到 mock 兜底。
           </span>
         </div>
         <div class="guest-flow__form">
@@ -181,7 +241,7 @@ function renderHomeClubApplication(state: HomeClubApplicationState) {
           application
             ? `
               <div class="guest-flow__result">
-                <strong>${selectedPlayer.nickname} -> ${getSelectedClubName(application.clubId)}</strong>
+                <strong>${selectedPlayerName} -> ${getSelectedClubName(application.clubId, state.clubs.items)}</strong>
                 <span>状态：${application.status}</span>
                 <span>申请编号：${application.id}</span>
                 <span>提交时间：${formatDateTime(application.createdAt)}</span>
@@ -190,31 +250,73 @@ function renderHomeClubApplication(state: HomeClubApplicationState) {
             `
             : `
               <div class="guest-flow__result guest-flow__result--muted">
-                <span>当前模拟玩家：${selectedPlayer.nickname}</span>
-                <span>${selectedPlayer.note}</span>
-                <span>提交后即可继续联调俱乐部管理员审批流。</span>
+                <span>当前玩家：${selectedPlayerName}</span>
+                <span>${fallbackPlayer.note}</span>
+                <span>提交后即可在 Member Hub 中用 Club Admin 身份查看收件箱与审批动作。</span>
               </div>
             `
         }
+      </article>
+      <article class="card panel-card">
+        <div class="public-hall__panel-head">
+          <div>
+            <h3>我的申请状态</h3>
+            <p>这里优先展示当前注册玩家最近提交的申请，方便从玩家视角确认主链路是否已经走通。</p>
+          </div>
+        </div>
+        <ul class="list">
+          ${
+            myApplications.length > 0
+              ? myApplications
+                  .map(
+                    (item) => `
+                      <li class="list-row">
+                        <div>
+                          <strong>${item.clubName}</strong>
+                          <span>${item.message}</span>
+                        </div>
+                        <div>
+                          <span>${item.status}</span>
+                          <span>${formatDateTime(item.submittedAt)}</span>
+                        </div>
+                      </li>
+                    `,
+                  )
+                  .join('')
+              : '<li class="list-row public-hall__empty">当前注册玩家还没有申请记录。</li>'
+          }
+        </ul>
       </article>
     </section>
   `;
 }
 
 export async function initHomeClubApplication(container: HTMLElement) {
+  const initialClubs = await loadJoinableClubs();
+  const initialOperatorId = playerOptions[0].operatorId;
+
   const state: HomeClubApplicationState = {
-    operatorId: playerOptions[0].operatorId,
-    clubId: mockClubs[0]?.id ?? 'club-1',
+    operatorId: initialOperatorId,
+    clubId: initialClubs.items[0]?.id ?? mockClubs[0]?.id ?? 'club-1',
     message: 'I would like to join next split.',
     withdrawNote: 'schedule changed',
+    clubs: initialClubs,
+    playerContext: await loadPlayerContext(initialOperatorId),
     application: { application: null },
   };
+
+  async function rerender() {
+    container.innerHTML = renderHomeClubApplication(state);
+    bindEvents();
+  }
 
   function bindEvents() {
     container
       .querySelector<HTMLSelectElement>('[data-home-application="operatorId"]')
-      ?.addEventListener('change', (event) => {
+      ?.addEventListener('change', async (event) => {
         state.operatorId = (event.currentTarget as HTMLSelectElement).value;
+        state.playerContext = await loadPlayerContext(state.operatorId);
+        await rerender();
       });
 
     container
@@ -232,7 +334,8 @@ export async function initHomeClubApplication(container: HTMLElement) {
     container
       .querySelector<HTMLButtonElement>('[data-action="submit-home-club-application"]')
       ?.addEventListener('click', async () => {
-        const selectedPlayer = getSelectedPlayer(state.operatorId);
+        const selectedPlayerName =
+          state.playerContext.player?.displayName ?? getFallbackPlayer(state.operatorId).nickname;
         const message = state.message.trim() || 'I would like to join next split.';
 
         try {
@@ -244,9 +347,9 @@ export async function initHomeClubApplication(container: HTMLElement) {
           upsertClubApplicationInboxItem({
             id: application.id,
             clubId: state.clubId,
-            clubName: getSelectedClubName(state.clubId),
+            clubName: getSelectedClubName(state.clubId, state.clubs.items),
             operatorId: state.operatorId,
-            applicantName: selectedPlayer.nickname,
+            applicantName: selectedPlayerName,
             message: application.message,
             status: application.status,
             submittedAt: application.createdAt,
@@ -256,7 +359,7 @@ export async function initHomeClubApplication(container: HTMLElement) {
           const application = createMockClubApplication(
             state.clubId,
             state.operatorId,
-            selectedPlayer.nickname,
+            selectedPlayerName,
             message,
           );
           state.application = {
@@ -267,9 +370,9 @@ export async function initHomeClubApplication(container: HTMLElement) {
           upsertClubApplicationInboxItem({
             id: application.id,
             clubId: state.clubId,
-            clubName: getSelectedClubName(state.clubId),
+            clubName: getSelectedClubName(state.clubId, state.clubs.items),
             operatorId: state.operatorId,
-            applicantName: selectedPlayer.nickname,
+            applicantName: selectedPlayerName,
             message: application.message,
             status: application.status,
             submittedAt: application.createdAt,
@@ -277,8 +380,7 @@ export async function initHomeClubApplication(container: HTMLElement) {
           });
         }
 
-        container.innerHTML = renderHomeClubApplication(state);
-        bindEvents();
+        await rerender();
       });
 
     container
@@ -307,11 +409,9 @@ export async function initHomeClubApplication(container: HTMLElement) {
           updateClubApplicationInboxStatus(application.id, application.status);
         }
 
-        container.innerHTML = renderHomeClubApplication(state);
-        bindEvents();
+        await rerender();
       });
   }
 
-  container.innerHTML = renderHomeClubApplication(state);
-  bindEvents();
+  await rerender();
 }

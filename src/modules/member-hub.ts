@@ -1,7 +1,8 @@
 import { apiClient } from '../api/client';
-import type { DashboardSummary, Role } from '../domain/models';
+import type { ClubApplicationView, DashboardSummary, Role } from '../domain/models';
 import {
   readClubApplicationInbox,
+  type ClubApplicationInboxItem,
   updateClubApplicationInboxStatus,
 } from '../lib/club-applications';
 import { mockClubs, mockDashboards } from '../mocks/overview';
@@ -10,6 +11,12 @@ type DataSource = 'api' | 'mock';
 
 interface DashboardLoadState {
   dashboard: DashboardSummary | null;
+  source: DataSource;
+  warning?: string;
+}
+
+interface ApplicationInboxState {
+  items: ClubApplicationView[];
   source: DataSource;
   warning?: string;
 }
@@ -30,24 +37,24 @@ interface MemberHubState {
 
 const mockOperators: MockOperator[] = [
   {
-    id: 'player-a',
+    id: 'player-registered-1',
     label: 'Aoi / Registered Player',
     role: 'RegisteredPlayer',
-    playerId: 'player-a',
+    playerId: 'player-registered-1',
     managedClubIds: [],
   },
   {
-    id: 'player-club-admin',
+    id: 'player-admin',
     label: 'Saki / Club Admin',
     role: 'ClubAdmin',
-    playerId: 'player-b',
+    playerId: 'player-registered-2',
     managedClubIds: ['club-1', 'club-2'],
   },
 ];
 
 const DEFAULT_STATE: MemberHubState = {
   operatorId: mockOperators[0].id,
-  playerId: 'player-a',
+  playerId: mockOperators[0].playerId,
   clubId: 'club-1',
 };
 
@@ -58,6 +65,13 @@ function createSourceBadge(source: DataSource, warning?: string) {
       ${warning ? `<p class="public-hall__warning">${warning}</p>` : ''}
     </div>
   `;
+}
+
+function formatDateTime(value: string) {
+  return new Intl.DateTimeFormat('zh-CN', {
+    dateStyle: 'medium',
+    timeStyle: 'short',
+  }).format(new Date(value));
 }
 
 function findMockDashboard(ownerId: string) {
@@ -90,6 +104,62 @@ async function loadClubDashboard(clubId: string, operatorId: string): Promise<Da
   }
 }
 
+function toApplicationView(item: ClubApplicationInboxItem): ClubApplicationView {
+  return {
+    applicationId: item.id,
+    clubId: item.clubId,
+    clubName: item.clubName,
+    applicant: {
+      playerId: item.operatorId,
+      displayName: item.applicantName,
+    },
+    submittedAt: item.submittedAt,
+    message: item.message,
+    status: item.status,
+    reviewedBy: null,
+    reviewedByDisplayName: null,
+    reviewedAt: null,
+    reviewNote: null,
+    withdrawnByPrincipalId: null,
+    canReview: item.status === 'Pending',
+    canWithdraw: false,
+  };
+}
+
+async function loadClubApplicationInbox(
+  clubId: string,
+  operatorId: string,
+  role: Role,
+): Promise<ApplicationInboxState> {
+  if (role !== 'ClubAdmin') {
+    return {
+      items: [],
+      source: 'mock',
+    };
+  }
+
+  try {
+    const envelope = await apiClient.getClubApplications(clubId, {
+      operatorId,
+      status: 'Pending',
+      limit: 20,
+      offset: 0,
+    });
+    return {
+      items: envelope.items,
+      source: 'api',
+    };
+  } catch (error) {
+    return {
+      items: readClubApplicationInbox()
+        .filter((item) => item.clubId === clubId)
+        .map(toApplicationView),
+      source: 'mock',
+      warning: error instanceof Error ? error.message : 'Application inbox fallback to mock.',
+    };
+  }
+}
+
 function renderMetrics(dashboard: DashboardSummary | null) {
   if (!dashboard) {
     return '<p class="public-hall__empty">当前没有可展示的面板数据。</p>';
@@ -112,7 +182,31 @@ function renderMetrics(dashboard: DashboardSummary | null) {
   `;
 }
 
-function renderClubApplicationInbox(clubId: string, role: Role) {
+function renderDashboardPlaceholder(
+  title: string,
+  path: string,
+  payload: DashboardLoadState,
+  roleNote: string,
+) {
+  return `
+    <article class="card dashboard-card dashboard-card--pending">
+      <div class="public-hall__panel-head">
+        <div>
+          <h3>${title}</h3>
+          <p>接口：${path}</p>
+        </div>
+        ${createSourceBadge(payload.source, payload.warning)}
+      </div>
+      <p>
+        这块数据面板还在等后端 dashboard 数据补齐，当前先保留位置和请求路径，
+        避免阻塞“申请 -> 收件箱 -> 审批”的主链路推进。
+      </p>
+      <p class="public-hall__empty">${roleNote}</p>
+    </article>
+  `;
+}
+
+function renderClubApplicationInbox(payload: ApplicationInboxState, role: Role) {
   if (role !== 'ClubAdmin') {
     return `
       <article class="card panel-card">
@@ -127,40 +221,43 @@ function renderClubApplicationInbox(clubId: string, role: Role) {
     `;
   }
 
-  const items = readClubApplicationInbox().filter((item) => item.clubId === clubId);
-  const pendingCount = items.filter((item) => item.status === 'Pending').length;
+  const pendingCount = payload.items.filter((item) => item.status === 'Pending').length;
 
   return `
     <article class="card panel-card">
       <div class="public-hall__panel-head">
         <div>
           <h3>入部申请收件箱</h3>
-          <p>当前先用前端暂存流水承接主页申请，等后端补查询/审批接口后可直接替换为真实收件箱。</p>
+          <p>现在优先读取真实申请队列，接口不可用时才退回到前端暂存收件箱。</p>
         </div>
-        <span class="source-badge source-badge--mock">Pending ${pendingCount}</span>
+        <div>
+          <span class="source-badge source-badge--${payload.source}">Pending ${pendingCount}</span>
+          ${payload.warning ? `<p class="public-hall__warning">${payload.warning}</p>` : ''}
+        </div>
       </div>
       <ul class="list">
         ${
-          items.length > 0
-            ? items
+          payload.items.length > 0
+            ? payload.items
                 .map(
                   (item) => `
                     <li class="list-row">
                       <div>
-                        <strong>${item.applicantName}</strong>
+                        <strong>${item.applicant.displayName}</strong>
                         <span>${item.message}</span>
+                        <span>${formatDateTime(item.submittedAt)}</span>
                       </div>
                       <div>
                         <span>${item.status}</span>
-                        <span>${item.source.toUpperCase()} / ${item.operatorId}</span>
+                        <span>${item.applicant.playerId}</span>
                         ${
-                          item.status === 'Pending'
+                          item.canReview && item.status === 'Pending'
                             ? `
                               <div class="inline-actions">
-                                <button type="button" class="portal-refresh" data-action="approve-application" data-application-id="${item.id}">
+                                <button type="button" class="portal-refresh" data-action="approve-application" data-application-id="${item.applicationId}">
                                   批准
                                 </button>
-                                <button type="button" class="portal-refresh" data-action="reject-application" data-application-id="${item.id}">
+                                <button type="button" class="portal-refresh" data-action="reject-application" data-application-id="${item.applicationId}">
                                   拒绝
                                 </button>
                               </div>
@@ -183,6 +280,7 @@ function renderMemberHubLayout(
   state: MemberHubState,
   playerPayload: DashboardLoadState,
   clubPayload: DashboardLoadState,
+  inboxPayload: ApplicationInboxState,
 ) {
   const activeOperator =
     mockOperators.find((operator) => operator.id === state.operatorId) ?? mockOperators[0];
@@ -206,10 +304,10 @@ function renderMemberHubLayout(
     <section class="section">
       <div class="section__header">
         <p class="eyebrow">1. Member Hub</p>
-        <h2>第二步：注册玩家和俱乐部管理员工作台入口</h2>
+        <h2>成员工作台</h2>
         <p>
-          这一层主要验证 dashboard 读取必须显式传入 operatorId，
-          同时把玩家面板和俱乐部面板的访问入口提前定型。
+          当前成员工作台优先服务主链路：俱乐部管理员查看申请收件箱并执行审批。
+          dashboard 相关区块先降级为待接入面板，不阻塞申请流程联调。
         </p>
       </div>
       <div class="card member-hub__controls">
@@ -235,8 +333,8 @@ function renderMemberHubLayout(
           <label>
             <span>查看玩家</span>
             <select data-filter="member-player">
-              <option value="player-a" ${state.playerId === 'player-a' ? 'selected' : ''}>Aoi</option>
-              <option value="player-b" ${state.playerId === 'player-b' ? 'selected' : ''}>Mika</option>
+              <option value="player-registered-1" ${state.playerId === 'player-registered-1' ? 'selected' : ''}>Aoi</option>
+              <option value="player-registered-2" ${state.playerId === 'player-registered-2' ? 'selected' : ''}>Mika</option>
             </select>
           </label>
           <label>
@@ -248,31 +346,53 @@ function renderMemberHubLayout(
         </div>
       </div>
       <div class="member-hub__grid">
-        <article class="card dashboard-card">
-          <div class="public-hall__panel-head">
-            <div>
-              <h3>玩家数据面板</h3>
-              <p>接口：/dashboards/players/${state.playerId}?operatorId=${state.operatorId}</p>
-            </div>
-            ${createSourceBadge(playerPayload.source, playerPayload.warning)}
-          </div>
-          ${renderMetrics(playerPayload.dashboard)}
-        </article>
-        <article class="card dashboard-card">
-          <div class="public-hall__panel-head">
-            <div>
-              <h3>俱乐部数据面板</h3>
-              <p>接口：/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}</p>
-            </div>
-            ${createSourceBadge(clubPayload.source, clubPayload.warning)}
-          </div>
-          ${
-            activeOperator.role === 'ClubAdmin'
-              ? renderMetrics(clubPayload.dashboard)
-              : '<p class="public-hall__empty">当前操作人不是俱乐部管理员，俱乐部面板入口会在真实登录态下受角色控制。</p>'
-          }
-        </article>
-        ${renderClubApplicationInbox(state.clubId, activeOperator.role)}
+        ${renderClubApplicationInbox(inboxPayload, activeOperator.role)}
+      </div>
+      <div class="member-hub__grid">
+        ${
+          playerPayload.source === 'api' && playerPayload.dashboard
+            ? `
+              <article class="card dashboard-card">
+                <div class="public-hall__panel-head">
+                  <div>
+                    <h3>玩家数据面板</h3>
+                    <p>接口：/dashboards/players/${state.playerId}?operatorId=${state.operatorId}</p>
+                  </div>
+                  ${createSourceBadge(playerPayload.source, playerPayload.warning)}
+                </div>
+                ${renderMetrics(playerPayload.dashboard)}
+              </article>
+            `
+            : renderDashboardPlaceholder(
+                '玩家数据面板',
+                `/dashboards/players/${state.playerId}?operatorId=${state.operatorId}`,
+                playerPayload,
+                '等后端补齐 player dashboard 后，这里会切回真实数据视图。',
+              )
+        }
+        ${
+          activeOperator.role === 'ClubAdmin' && clubPayload.source === 'api' && clubPayload.dashboard
+            ? `
+              <article class="card dashboard-card">
+                <div class="public-hall__panel-head">
+                  <div>
+                    <h3>俱乐部数据面板</h3>
+                    <p>接口：/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}</p>
+                  </div>
+                  ${createSourceBadge(clubPayload.source, clubPayload.warning)}
+                </div>
+                ${renderMetrics(clubPayload.dashboard)}
+              </article>
+            `
+            : renderDashboardPlaceholder(
+                '俱乐部数据面板',
+                `/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`,
+                clubPayload,
+                activeOperator.role === 'ClubAdmin'
+                  ? '等后端补齐 club dashboard 后，这里会切回真实数据视图。'
+                  : '当前操作人不是俱乐部管理员，俱乐部管理面板仍然会受角色控制。',
+              )
+        }
       </div>
     </section>
   `;
@@ -283,10 +403,10 @@ function renderLoading() {
     <section class="section">
       <div class="section__header">
         <p class="eyebrow">1. Member Hub</p>
-        <h2>第二步：注册玩家和俱乐部管理员工作台入口</h2>
-        <p>正在加载成员工作台数据。</p>
+        <h2>成员工作台</h2>
+        <p>正在加载玩家、俱乐部和申请收件箱数据。</p>
       </div>
-      <div class="card public-hall__loading">Loading member dashboards...</div>
+      <div class="card public-hall__loading">Loading member hub...</div>
     </section>
   `;
 }
@@ -304,12 +424,13 @@ export async function initMemberHub(container: HTMLElement) {
       state.clubId = activeOperator.managedClubIds[0] ?? mockClubs[0].id;
     }
 
-    const [playerPayload, clubPayload] = await Promise.all([
+    const [playerPayload, clubPayload, inboxPayload] = await Promise.all([
       loadPlayerDashboard(state.playerId, state.operatorId),
       loadClubDashboard(state.clubId, state.operatorId),
+      loadClubApplicationInbox(state.clubId, state.operatorId, activeOperator.role),
     ]);
 
-    container.innerHTML = renderMemberHubLayout(state, playerPayload, clubPayload);
+    container.innerHTML = renderMemberHubLayout(state, playerPayload, clubPayload, inboxPayload);
     bindEvents();
   }
 
@@ -319,6 +440,9 @@ export async function initMemberHub(container: HTMLElement) {
       ?.addEventListener('change', (event) => {
         const target = event.currentTarget as HTMLSelectElement;
         state.operatorId = target.value;
+        const activeOperator =
+          mockOperators.find((operator) => operator.id === state.operatorId) ?? mockOperators[0];
+        state.playerId = activeOperator.playerId;
         void render();
       });
 
@@ -347,12 +471,20 @@ export async function initMemberHub(container: HTMLElement) {
     container
       .querySelectorAll<HTMLButtonElement>('[data-action="approve-application"]')
       .forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
           const applicationId = button.dataset.applicationId;
           if (!applicationId) {
             return;
           }
-          updateClubApplicationInboxStatus(applicationId, 'Approved');
+          try {
+            await apiClient.reviewClubApplication(state.clubId, applicationId, {
+              operatorId: state.operatorId,
+              decision: 'approve',
+              note: 'approved from member hub',
+            });
+          } catch {
+            updateClubApplicationInboxStatus(applicationId, 'Approved');
+          }
           void render();
         });
       });
@@ -360,12 +492,20 @@ export async function initMemberHub(container: HTMLElement) {
     container
       .querySelectorAll<HTMLButtonElement>('[data-action="reject-application"]')
       .forEach((button) => {
-        button.addEventListener('click', () => {
+        button.addEventListener('click', async () => {
           const applicationId = button.dataset.applicationId;
           if (!applicationId) {
             return;
           }
-          updateClubApplicationInboxStatus(applicationId, 'Rejected');
+          try {
+            await apiClient.reviewClubApplication(state.clubId, applicationId, {
+              operatorId: state.operatorId,
+              decision: 'reject',
+              note: 'rejected from member hub',
+            });
+          } catch {
+            updateClubApplicationInboxStatus(applicationId, 'Rejected');
+          }
           void render();
         });
       });

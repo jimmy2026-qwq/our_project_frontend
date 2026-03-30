@@ -1,166 +1,403 @@
 # RiichiNexus Frontend
 
+This document describes the frontend as it exists today under `front/src`.
+
 ## Backend Interfaces Needed Next
 
-These are the interfaces the frontend most wants next, in priority order.
+These are the backend contracts the current frontend still needs in order to fully close the
+registered-player -> club-application -> club-admin review loop without relying on local bridge state.
 
-Must-have to replace current frontend placeholders:
+### 1. Create club application
 
-- `GET /clubs/:clubId/applications?operatorId=:clubAdminId&status=Pending&limit=20`
-  - Needed to replace the current local inbox bridge in Member Hub with a real club-application queue.
-- `POST /clubs/:clubId/applications/:membershipId/review`
-  - Suggested body: `{ operatorId, decision, note }`
-  - Needed so Club Admin can approve or reject applications instead of only seeing a passive inbox.
-- `GET /players/me` or `GET /session`
-  - Needed to replace the current preconfigured Registered Player identity in the home-page application workbench.
+Endpoint:
 
-Very valuable next:
+- `POST /clubs/:clubId/applications`
 
-- `GET /clubs?activeOnly=true&joinableOnly=true`
-  - Needed to give the application workbench a backend-defined set of clubs that are currently accepting applications.
-- `GET /clubs/:clubId/applications/:membershipId`
-  - Helpful for showing a player-facing application status view after submission.
-- `GET /tournaments/:id/stages`
-  - Needed to remove hard-coded stage context from Tournament Operations.
+Why the frontend needs it:
 
-Experience and completeness upgrades:
+- the blueprint home application flow already submits this request
+- after submit, the frontend needs a stable application identifier so it can:
+  - render the newly created application status immediately
+  - withdraw the same application later
+  - let the club-admin inbox resolve the exact same record
 
-- `GET /public/tournaments`
-  - Needed to build a real public tournaments index page instead of relying only on schedules plus detail pages.
-- A stable documented response shape for `GET /public/tournaments/:id`
-- A stable documented response shape for `GET /public/clubs/:id`
-- Public club detail related lists, if not embedded:
-  - recent matches
-  - current lineup
-  - honors
-- Public club application policy / recruitment metadata:
-  - whether applications are open
-  - any requirements text
-  - expected review SLA
-- Public tournament detail related lists, if not embedded:
-  - stage list
-  - standings snapshot
-  - bracket snapshot for knockout stages
+Recommended stable request body:
 
-Still highly useful from the existing backend capabilities:
+```json
+{
+  "operatorId": "player-123",
+  "message": "I'd like to join."
+}
+```
 
-- Stage standings
-- Finals bracket
-- Seat readiness / disconnect state updates
-- Appeal triage filters
-- Advanced stats boards
+Guest-origin submissions may still support:
 
-## Current State
+```json
+{
+  "guestSessionId": "guest-123",
+  "displayName": "Guest Alice",
+  "message": "I'd like to join."
+}
+```
 
-This frontend now has a broader delivery shell:
+Recommended stable response shape:
 
-- Project blueprint home
-- Public hall
-- Home-page club application workbench
-- Member hub
-- Tournament operations
+```json
+{
+  "applicationId": "membership-123",
+  "clubId": "club-123",
+  "clubName": "EastWind Club",
+  "applicant": {
+    "playerId": "player-123",
+    "applicantUserId": "demo-alice",
+    "displayName": "Alice",
+    "playerStatus": "Active",
+    "currentRank": {},
+    "elo": 1540,
+    "clubIds": []
+  },
+  "submittedAt": "2026-03-29T10:00:00Z",
+  "message": "I'd like to join.",
+  "status": "Pending",
+  "reviewedBy": null,
+  "reviewedByDisplayName": null,
+  "reviewedAt": null,
+  "reviewNote": null,
+  "withdrawnByPrincipalId": null,
+  "canReview": false,
+  "canWithdraw": true
+}
+```
 
-Implemented pages:
+Frontend note:
 
-- Public home
-- Tournament detail page
-- Club detail page
-- Project blueprint home
-- Home-page club application workbench
-- Member hub
-- Tournament operations
+- ideally this should return the same stable shape as `GET /clubs/:clubId/applications/:membershipId`
+- that keeps create/list/detail/review/withdraw on one shared frontend model
 
-Current behavior:
+### 2. Withdraw club application
 
-- Public list pages are `API first`
-- If the backend is unavailable, the UI falls back to local mock/default data
-- Tournament detail and club detail pages also use `API first / mock fallback`
-- Routing is currently implemented with hash routes
-- Frontend now calls backend through `VITE_API_BASE_URL`, defaulting to `/api`
-- Vite dev proxy rewrites `/api/*` to the backend service
+Endpoint:
 
-## Important Functions Already Implemented
+- `POST /clubs/:clubId/applications/:membershipId/withdraw`
 
-Public browsing:
+Why the frontend needs it:
 
-- Public schedules with filters
-- Public player leaderboard with club / status filters
-- Public club directory
-- Tournament detail page
-- Club detail page
-- Graceful fallback when backend is offline
+- the blueprint home application flow already exposes withdraw for pending applications
+- the frontend needs the backend-confirmed final status after withdraw so the player view and admin
+  inbox stay consistent
 
-Workbench flows:
+Recommended stable request body:
 
-- Registered-player club application workbench on the home blueprint page
-- Local application inbox bridge so Club Admin can preview incoming applications in Member Hub
-- Club dashboard / player dashboard read views
-- Tournament tables / records / appeals read views
+```json
+{
+  "operatorId": "player-123",
+  "note": "Schedule changed."
+}
+```
 
-Frontend infrastructure:
+Guest-origin withdrawals may still support:
 
-- Shared list envelope support
-- Typed API client
-- Guest-facing read-only UI shell
-- Mock data layer for local development and backend downtime
+```json
+{
+  "guestSessionId": "guest-123",
+  "note": "No longer joining."
+}
+```
 
-## Backend Endpoints Currently Used
+Recommended stable response shape:
 
-Already wired in the frontend:
+```json
+{
+  "applicationId": "membership-123",
+  "clubId": "club-123",
+  "clubName": "EastWind Club",
+  "applicant": {
+    "playerId": "player-123",
+    "applicantUserId": "demo-alice",
+    "displayName": "Alice",
+    "playerStatus": "Active",
+    "currentRank": {},
+    "elo": 1540,
+    "clubIds": []
+  },
+  "submittedAt": "2026-03-29T10:00:00Z",
+  "message": "I'd like to join.",
+  "status": "Withdrawn",
+  "reviewedBy": null,
+  "reviewedByDisplayName": null,
+  "reviewedAt": null,
+  "reviewNote": null,
+  "withdrawnByPrincipalId": "player-123",
+  "canReview": false,
+  "canWithdraw": false
+}
+```
+
+### 3. Managed club scope for the current operator
+
+Current gap:
+
+- `#/member-hub` currently uses a hard-coded club-admin operator and managed club list in the frontend
+- `GET /session` exposes role flags, but not which clubs a club-admin can actually manage
+
+What the frontend needs:
+
+- either extend `GET /session` with managed club scope
+- or add a dedicated endpoint such as `GET /operators/me/clubs?operatorId=...`
+
+Recommended minimal stable shape:
+
+```json
+{
+  "operatorId": "player-admin",
+  "managedClubs": [
+    {
+      "clubId": "club-123",
+      "name": "EastWind Club"
+    },
+    {
+      "clubId": "club-456",
+      "name": "SouthGate Club"
+    }
+  ]
+}
+```
+
+Why it matters:
+
+- this is the missing piece for turning the current member hub from a demo-style operator picker into
+  a real authenticated admin workbench
+
+## Source Of Truth
+
+Use these documents first when validating backend contracts:
+
+- `front/doc/DEMO_FRONTEND_API.md`
+- `front/doc/FRONTEND_INTERFACE_CONTRACTS.md`
+
+Do not treat `front/doc/backend_api.md` as the primary contract source. It reflects an older integration pass and is mainly historical reference now.
+
+## Current App Shell
+
+The app is mounted from `front/src/app.ts` and currently exposes four top-level areas through hash routing:
+
+- `#/` -> project blueprint home
+- `#/public` -> public hall
+- `#/member-hub` -> member hub
+- `#/tournament-ops` -> tournament operations
+
+Detail pages currently routed through the public hall:
+
+- `#/public/tournaments/:tournamentId`
+- `#/public/clubs/:clubId`
+
+There is no guest-facing player detail route in the current code.
+
+## Module Map
+
+Main modules under `front/src/modules`:
+
+- `public-hall.ts`
+  - guest/public entry
+  - public schedules
+  - public club directory
+  - public player leaderboard
+  - tournament detail page
+  - club detail page
+- `guest-application.ts`
+  - blueprint-home club application workbench
+  - create and withdraw club applications
+- `member-hub.ts`
+  - member and club-admin read views
+  - player dashboard
+  - club dashboard
+  - club application inbox
+- `tournament-ops.ts`
+  - tournament tables
+  - records
+  - appeals
+- `hero.ts`, `architecture.ts`, `role-matrix.ts`, `workbench.ts`, `api-reference.ts`
+  - static blueprint/home sections
+
+## Data Loading Strategy
+
+The frontend is `API first` with mock fallback.
+
+General rule:
+
+- try the backend first
+- if the request fails or the data is unavailable, fall back to local mock/default data
+- keep the page usable instead of blocking the screen
+
+This pattern is implemented directly inside page modules today rather than through a shared request-state abstraction.
+
+## Public Hall
+
+`front/src/modules/public-hall.ts` is the main guest-facing surface.
+
+### Home data
+
+The public hall home no longer depends on `GET /demo/summary`.
+
+It now reads lightweight public endpoints directly:
 
 - `GET /public/schedules`
+- `GET /public/clubs`
 - `GET /public/leaderboards/players`
-- `GET /clubs`
-- `GET /public/tournaments/:id` if available
-- `GET /public/clubs/:id` if available
+
+### Detail data
+
+Public hall detail pages read:
+
+- `GET /public/tournaments/:id`
+- `GET /public/clubs/:id`
+
+### Important implementation detail
+
+The backend public payloads do not match the frontend view models one-to-one, so `front/src/api/client.ts` contains a normalization layer that page modules rely on.
+
+Current client-side normalization includes:
+
+- `/public/schedules.startsAt` -> frontend `scheduledAt`
+- `/public/clubs.clubId` -> frontend `id`
+- `/public/clubs.treasuryBalance` -> frontend `treasury`
+- `/public/leaderboards/players.clubIds` -> display `clubName`
+- `/public/leaderboards/players.status === Suspended` -> frontend `Inactive`
+- `/public/tournaments/:id` -> mapped into the current `TournamentPublicProfile` shape
+- `/public/clubs/:id` -> mapped into the current `ClubPublicProfile` shape
+
+The club detail mapping is intentionally defensive because the live backend currently returns some policy fields as arrays instead of scalar values.
+
+### Current public hall limitations
+
+- no public player detail page
+- no true public tournament index page yet
+- no true public club search/sort page beyond the current hall filters
+
+## Home-Page Club Application Workbench
+
+`front/src/modules/guest-application.ts` currently provides a registered-player style application flow on the blueprint home page.
+
+Backend calls used there:
+
+- `GET /clubs?activeOnly=true&joinableOnly=true`
+- `GET /players/me`
 - `POST /clubs/:clubId/applications`
 - `POST /clubs/:clubId/applications/:membershipId/withdraw`
+
+When the backend is unavailable, the module falls back to local club data plus a local bridge for application state.
+
+## Member Hub
+
+`front/src/modules/member-hub.ts` is a read-oriented workbench for a preconfigured operator context.
+
+Backend calls used there:
+
 - `GET /dashboards/players/:playerId?operatorId=...`
 - `GET /dashboards/clubs/:clubId?operatorId=...`
+- `GET /clubs/:clubId/applications?operatorId=...`
+
+The inbox is backend-first. The local bridge in `front/src/lib/club-applications.ts` is now only a fallback path when the backend queue is unavailable.
+
+## Tournament Operations
+
+`front/src/modules/tournament-ops.ts` provides read views for tournament operations using a currently hard-coded tournament/stage context list.
+
+Backend calls used there:
+
 - `GET /tournaments/:id/stages/:stageId/tables`
 - `GET /records`
 - `GET /appeals`
 
-Notes:
+This page is still partially scaffold-like because the tournament/stage selector data is not yet loaded dynamically from the backend.
 
-- The public leaderboard model now supports `currentRank` and `normalizedRankScore`
-- If `GET /public/tournaments/:id` or `GET /public/clubs/:id` is not implemented yet, the corresponding detail page will render default mock data
+## API Client
 
-## Recommended Next Steps
+`front/src/api/client.ts` is the shared typed client.
 
-Short term:
+It currently does three kinds of work:
 
-- Replace detail-page mock fields with real backend fields once the detail endpoints are finalized
-- Add a true public tournaments list page
-- Add a true public clubs list page with richer search / sorting
-- Replace the local club-application inbox bridge with backend query data
-- Add Club Admin approve / reject actions once review endpoints exist
+- builds request URLs from typed filters
+- performs fetch/json request handling
+- adapts several public backend payloads into the frontend domain models used by page modules
 
-Mid term:
+The adaptation logic in this file is important and should be preserved when refactoring. Several pages assume the normalized frontend shapes rather than raw backend payloads.
 
-- Replace preconfigured Registered Player application identities with real registration / session data
-- Add tournament standings page
-- Add finals bracket page
-- Add advanced stats read pages for players and clubs
+## Mock Data
 
-Later:
+Mock/default data lives mainly in:
 
-- Move from hash routing to a proper router
-- Split current modules into reusable page / section components
-- Add request-state abstractions for loading / empty / error handling
+- `front/src/mocks/overview.ts`
 
-## Current Development Rule
+Use mocks for:
 
-When backend data is unavailable:
+- local development when the backend is down
+- detail-page fallback when a public detail endpoint is missing or unstable
+- keeping layout and navigation testable while contracts are still moving
 
-- do not block the page
-- render default mock data
-- keep the page structure usable
-- make it easy to switch to real API data later
+## Current Backend Endpoints In Use
 
-## Current Connection Setup
+Public hall:
 
-- Frontend API base URL: `VITE_API_BASE_URL`
-- Default frontend API prefix: `/api`
-- Dev proxy file: `vite.config.ts`
-- Proxy target currently points to `http://127.0.0.1:8080`
+- `GET /public/schedules`
+- `GET /public/clubs`
+- `GET /public/leaderboards/players`
+- `GET /public/tournaments/:id`
+- `GET /public/clubs/:id`
+
+Blueprint home application flow:
+
+- `GET /clubs`
+- `GET /players/me`
+- `POST /clubs/:clubId/applications`
+- `POST /clubs/:clubId/applications/:membershipId/withdraw`
+
+Member hub:
+
+- `GET /dashboards/players/:playerId?operatorId=...`
+- `GET /dashboards/clubs/:clubId?operatorId=...`
+- `GET /clubs/:clubId/applications?operatorId=...`
+
+Tournament operations:
+
+- `GET /tournaments/:id/stages/:stageId/tables`
+- `GET /records`
+- `GET /appeals`
+
+Demo-oriented endpoint still present in the client:
+
+- `GET /demo/summary`
+
+That endpoint remains in the codebase but is not the driver for the current public hall home flow.
+
+## Known Gaps
+
+- no public player detail route
+- no dynamic tournament/stage directory for tournament operations
+- no shared request-state abstraction yet
+- no proper router yet; the app still uses manual hash routing
+
+## Recommended Next Work
+
+High-value near-term improvements:
+
+- add a real public tournaments index page
+- add a richer public clubs list/search page
+- load tournament/stage selector data dynamically instead of using hard-coded contexts
+
+Longer-term improvements:
+
+- move from manual hash routing to a proper router
+- split the large page modules into reusable view and data-loading layers
+- centralize loading, empty, error, and fallback handling
+
+## Connection Setup
+
+- API base env var: `VITE_API_BASE_URL`
+- default API prefix in frontend: `/api`
+- Vite dev proxy file: `front/vite.config.ts`
+- current proxy target: `http://127.0.0.1:8080`
+
+## Maintenance Note
+
+If a public page starts "loading forever" or falls through to a misleading mock/not-found state, check `front/src/api/client.ts` first. The most recent integration issues were caused by backend payload shape drift rather than route logic.

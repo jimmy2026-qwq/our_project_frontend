@@ -55,3 +55,11 @@ export function updateClubApplicationInboxStatus(
   const next = items.map((item) => (item.id === id ? { ...item, status } : item));
   writeClubApplicationInbox(next);
 }
+
+export function readClubApplicationsByOperator(operatorId: string) {
+  return readClubApplicationInbox().filter((item) => item.operatorId === operatorId);
+}
+
+export function readClubApplicationsByClub(clubId: string) {
+  return readClubApplicationInbox().filter((item) => item.clubId === clubId);
+}

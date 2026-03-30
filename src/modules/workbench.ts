@@ -1,4 +1,4 @@
-import { mockClubs, mockDashboards, mockLeaderboard, mockSchedules } from '../mocks/overview';
+﻿import { mockClubs, mockDashboards, mockLeaderboard, mockSchedules } from '../mocks/overview';
 
 function formatLocalTime(value: string) {
   return new Intl.DateTimeFormat('zh-CN', {
@@ -6,6 +6,25 @@ function formatLocalTime(value: string) {
     timeStyle: 'short',
   }).format(new Date(value));
 }
+
+const workbenchSteps = [
+  {
+    title: 'Blueprint Home',
+    detail: '展示架构说明，同时挂入首页入会申请工作台。',
+  },
+  {
+    title: 'Public Hall',
+    detail: '读取公开赛程、社团目录与选手榜，支持进入公开详情页。',
+  },
+  {
+    title: 'Member Hub',
+    detail: '加载 player/club dashboard 与 club applications inbox。',
+  },
+  {
+    title: 'Tournament Ops',
+    detail: '聚焦 tables / records / appeals 等赛事执行视图。',
+  },
+];
 
 export function createWorkbenchSection() {
   const scheduleItems = mockSchedules
@@ -52,7 +71,7 @@ export function createWorkbenchSection() {
           </div>
           <div>
             <span>Power ${club.powerRating}</span>
-            <span>${club.relations.join(', ')}</span>
+            <span>${club.relations.join(', ') || 'Neutral'}</span>
           </div>
         </li>
       `,
@@ -85,31 +104,43 @@ export function createWorkbenchSection() {
   return `
     <section class="section">
       <div class="section__header">
-        <p class="eyebrow">3. Workbench</p>
-        <h2>应该先做哪些页面</h2>
+        <p class="eyebrow">3. Workbench Flow</p>
+        <h2>首页蓝图如何串起现有前端工作流</h2>
         <p>
-          第一阶段建议只做四种“可闭环”的读页面，用它们稳定领域模型、分页约定和权限入口。
+          这里不是做真实运营控制台，而是把当前仓库里已经落地的体验路径拼成一条“从浏览到运营”的可视化路线，帮助快速理解项目现状。
         </p>
+      </div>
+      <div class="workbench-steps">
+        ${workbenchSteps
+          .map(
+            (item, index) => `
+              <article class="card workbench-step-card">
+                <span>0${index + 1}</span>
+                <h3>${item.title}</h3>
+                <p>${item.detail}</p>
+              </article>
+            `,
+          )
+          .join('')}
       </div>
       <div class="workbench-grid">
         <article class="card panel-card">
-          <h3>公开赛程页</h3>
+          <h3>公开赛程快照</h3>
           <ul class="list">${scheduleItems}</ul>
         </article>
         <article class="card panel-card">
-          <h3>公共玩家排行榜</h3>
+          <h3>玩家榜单快照</h3>
           <ul class="list">${leaderboardItems}</ul>
         </article>
         <article class="card panel-card">
-          <h3>俱乐部总览</h3>
+          <h3>社团目录快照</h3>
           <ul class="list">${clubItems}</ul>
         </article>
         <article class="card panel-card">
-          <h3>数据面板原型</h3>
+          <h3>Dashboard 预览</h3>
           ${dashboardBlocks}
         </article>
       </div>
     </section>
   `;
 }
-

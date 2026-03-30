@@ -1,4 +1,4 @@
-import { createApiReferenceSection } from './modules/api-reference';
+﻿import { createApiReferenceSection } from './modules/api-reference';
 import { createArchitectureSection } from './modules/architecture';
 import { createLandingHero } from './modules/hero';
 import { initHomeClubApplication } from './modules/guest-application';
@@ -50,7 +50,7 @@ function createShell(route: AppRoute) {
           <span class="site-header__mark">R</span>
           <div>
             <strong>RiichiNexus</strong>
-            <span>Frontend delivery workspace</span>
+            <span>前端交付工作台</span>
           </div>
         </div>
         <div class="site-header__status">
@@ -61,16 +61,16 @@ function createShell(route: AppRoute) {
       <main class="public-shell__content">
         <section class="app-banner">
           <div>
-            <p class="eyebrow">Project Delivery</p>
-            <h1>把现有页面骨架接成可演示、可继续推进的前端工作台</h1>
+            <p class="eyebrow">Project Blueprint</p>
+            <h1>从文档、接口契约到前端落地的项目蓝图首页</h1>
             <p>
-              当前版本把公开大厅、成员工作台、赛事运营台和架构蓝图放进同一应用壳里，
-              并把公开区的匿名入会意向收回到俱乐部详情中，方便继续沿着后端接口逐步替换 mock。
+              当前首页不再只是展示概念说明，而是把 README 中定义的模块边界、doc 目录中的接口契约、以及前端现有的
+              public/member/tournament 三条主链路统一到一个入口里，方便联调、评审和继续迭代。
             </p>
           </div>
           <nav class="app-nav" aria-label="Primary">
             <a class="app-nav__link ${isRouteActive('blueprint', route)}" href="#/">项目蓝图</a>
-            <a class="app-nav__link ${isRouteActive('public', route)}" href="#/public">公开大厅</a>
+            <a class="app-nav__link ${isRouteActive('public', route)}" href="#/public">公共大厅</a>
             <a class="app-nav__link ${isRouteActive('member-hub', route)}" href="#/member-hub">成员工作台</a>
             <a class="app-nav__link ${isRouteActive('tournament-ops', route)}" href="#/tournament-ops">赛事运营台</a>
           </nav>
@@ -78,8 +78,10 @@ function createShell(route: AppRoute) {
         <section id="app-route-root"></section>
       </main>
       <footer class="site-footer">
-        <p>当前阶段优先落实只读公开区、俱乐部公开入会意向入口和后端已稳定的工作台读接口。</p>
-        <a href="#/" class="site-footer__link">返回项目蓝图</a>
+        <p>
+          蓝图页聚焦“现状可交付说明”：首页应用流、公共大厅、成员工作台与赛事运营台都按照当前代码和 doc 契约对齐。
+        </p>
+        <a href="#/" class="site-footer__link">回到项目蓝图</a>
       </footer>
     </div>
   `;

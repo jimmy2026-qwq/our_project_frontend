@@ -66,6 +66,14 @@ export interface TournamentPublicProfile {
   nextStageName: string;
   nextStageStatus: StageStatus;
   nextScheduledAt: string;
+  stages?: Array<{
+    stageId: string;
+    name: string;
+    status: StageStatus;
+    roundCount: number;
+    tableCount: number;
+    pendingTablePlanCount: number;
+  }>;
 }
 
 export interface ClubPublicProfile {
@@ -95,6 +103,53 @@ export interface ClubApplication {
   message: string;
   createdAt: string;
   guestSessionId?: string;
+}
+
+export interface SessionInfo {
+  principalKind: 'Guest' | 'RegisteredPlayer';
+  principalId: string;
+  displayName: string;
+  authenticated: boolean;
+  roles: {
+    isGuest: boolean;
+    isRegisteredPlayer: boolean;
+    isClubAdmin: boolean;
+    isTournamentAdmin: boolean;
+    isSuperAdmin: boolean;
+  };
+}
+
+export interface PlayerProfile {
+  playerId: string;
+  applicantUserId?: string;
+  displayName: string;
+  playerStatus?: 'Active' | 'Inactive' | 'Banned';
+  elo?: number;
+  clubIds?: string[];
+}
+
+export interface ClubApplicationView {
+  applicationId: string;
+  clubId: string;
+  clubName: string;
+  applicant: PlayerProfile;
+  submittedAt: string;
+  message: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Withdrawn';
+  reviewedBy?: string | null;
+  reviewedByDisplayName?: string | null;
+  reviewedAt?: string | null;
+  reviewNote?: string | null;
+  withdrawnByPrincipalId?: string | null;
+  canReview: boolean;
+  canWithdraw: boolean;
+}
+
+export interface DemoSummary {
+  publicSchedules?: PublicSchedule[];
+  publicClubDirectory?: ClubSummary[];
+  playerLeaderboard?: PlayerLeaderboardEntry[];
+  recommendedOperatorId?: string;
 }
 
 export interface DashboardSummary {

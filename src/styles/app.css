@@ -850,9 +850,67 @@ input {
   gap: 24px;
 }
 
+.blueprint-hero {
+  grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.78fr);
+}
+
 .hero__summary,
 .section__header p {
   max-width: 72ch;
+}
+
+.hero__panel-title {
+  margin: 0 0 14px;
+  color: var(--gold);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.blueprint-hero__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.blueprint-highlights,
+.workbench-steps {
+  display: grid;
+  gap: 18px;
+  grid-column: 1 / -1;
+}
+
+.blueprint-highlights {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.workbench-steps {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.blueprint-highlight-card,
+.workbench-step-card {
+  min-height: 100%;
+}
+
+.blueprint-highlight-card span,
+.workbench-step-card span {
+  display: inline-flex;
+  width: fit-content;
+  margin-bottom: 12px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  color: var(--gold);
+  background: rgba(236, 197, 122, 0.08);
+  font-size: 0.8rem;
+}
+
+.blueprint-highlight-card strong,
+.workbench-step-card h3 {
+  display: block;
+  margin-bottom: 10px;
 }
 
 .hero__panel,
@@ -1050,6 +1108,16 @@ input {
   gap: 18px;
 }
 
+.dashboard-card--pending {
+  border-style: dashed;
+}
+
+.api-card--note {
+  background:
+    radial-gradient(circle at top right, rgba(236, 197, 122, 0.08), transparent 40%),
+    var(--panel);
+}
+
 .guest-flow__result {
   padding: 16px;
   border-radius: 18px;
@@ -1065,8 +1133,10 @@ input {
   .app-banner,
   .hero,
   .architecture-grid,
+  .blueprint-highlights,
   .module-grid,
   .role-grid,
+  .workbench-steps,
   .workbench-grid,
   .api-list,
   .member-hub__grid,
