@@ -1,4 +1,6 @@
 import { apiClient } from '@/api/client';
+import { DataPanel, ListRow, MetricCard, MetricGrid } from '@/components/shared/data-display';
+import { SectionIntro } from '@/components/shared/layout';
 import { featureModules } from '@/config/modules';
 import { roleCapabilities } from '@/config/roles';
 import { mockClubs, mockDashboards, mockLeaderboard, mockSchedules } from '@/mocks/overview';
@@ -171,14 +173,11 @@ export function BlueprintHeroSection() {
 export function BlueprintArchitectureSection() {
   return (
     <section className="section">
-      <div className="section__header">
-        <p className="eyebrow">1. Architecture</p>
-        <h2>How the current frontend is layered after the React migration</h2>
-        <p>
-          The frontend is no longer a manual DOM shell. It is now a routed React app that keeps the original workbench-style
-          information architecture while gradually moving business logic into feature slices, hooks, and reusable components.
-        </p>
-      </div>
+      <SectionIntro
+        eyebrow="1. Architecture"
+        title="How the current frontend is layered after the React migration"
+        description="The frontend is no longer a manual DOM shell. It is now a routed React app that keeps the original workbench-style information architecture while gradually moving business logic into feature slices, hooks, and reusable components."
+      />
       <div className="architecture-grid">
         {foundationLayers.map((item) => (
           <article key={item.title} className="card stack-card">
@@ -207,14 +206,11 @@ export function BlueprintArchitectureSection() {
 export function BlueprintRoleMatrixSection() {
   return (
     <section className="section">
-      <div className="section__header">
-        <p className="eyebrow">2. Roles & Permissions</p>
-        <h2>How roles map to routes and workbench abilities</h2>
-        <p>
-          The app still does not have full route guards, but the role boundaries are already clear. This section keeps the
-          current RBAC picture readable while session state and operator scope continue to evolve.
-        </p>
-      </div>
+      <SectionIntro
+        eyebrow="2. Roles & Permissions"
+        title="How roles map to routes and workbench abilities"
+        description="The app still does not have full route guards, but the role boundaries are already clear. This section keeps the current RBAC picture readable while session state and operator scope continue to evolve."
+      />
       <div className="role-grid">
         {roleCapabilities.map((capability) => (
           <article key={capability.role} className="card role-card">
@@ -235,14 +231,11 @@ export function BlueprintRoleMatrixSection() {
 export function BlueprintWorkbenchSection() {
   return (
     <section className="section">
-      <div className="section__header">
-        <p className="eyebrow">3. Workbench Flow</p>
-        <h2>How the blueprint homepage connects the current workbench flow</h2>
-        <p>
-          This is not meant to be a literal operations console. It is a stitched view of the experience paths already present in the repo,
-          helping the team see how browsing, membership operations, and tournament execution fit together after the migration.
-        </p>
-      </div>
+      <SectionIntro
+        eyebrow="3. Workbench Flow"
+        title="How the blueprint homepage connects the current workbench flow"
+        description="This is not meant to be a literal operations console. It is a stitched view of the experience paths already present in the repo, helping the team see how browsing, membership operations, and tournament execution fit together after the migration."
+      />
       <div className="workbench-steps">
         {workbenchSteps.map((item, index) => (
           <article key={item.title} className="card workbench-step-card">
@@ -253,74 +246,82 @@ export function BlueprintWorkbenchSection() {
         ))}
       </div>
       <div className="workbench-grid">
-        <article className="card panel-card">
-          <h3>Public schedule snapshot</h3>
+        <DataPanel title="Public schedule snapshot">
           <ul className="list">
             {mockSchedules.map((item) => (
-              <li key={`${item.tournamentId}-${item.stageId}`} className="list-row">
-                <div>
+              <ListRow
+                key={`${item.tournamentId}-${item.stageId}`}
+                main={
+                  <>
                   <strong>{item.tournamentName}</strong>
                   <span>{item.stageName}</span>
-                </div>
-                <div>
+                  </>
+                }
+                aside={
+                  <>
                   <span>{item.tournamentStatus} / {item.stageStatus}</span>
                   <span>{formatLocalTime(item.scheduledAt)}</span>
-                </div>
-              </li>
+                  </>
+                }
+              />
             ))}
           </ul>
-        </article>
-        <article className="card panel-card">
-          <h3>Leaderboard snapshot</h3>
+        </DataPanel>
+        <DataPanel title="Leaderboard snapshot">
           <ul className="list">
             {mockLeaderboard.map((item) => (
-              <li key={item.playerId} className="list-row">
-                <div>
+              <ListRow
+                key={item.playerId}
+                main={
+                  <>
                   <strong>{`#${item.rank} ${item.nickname}`}</strong>
                   <span>{item.clubName}</span>
-                </div>
-                <div>
+                  </>
+                }
+                aside={
+                  <>
                   <span>{`ELO ${item.elo}`}</span>
                   <span>{item.status}</span>
-                </div>
-              </li>
+                  </>
+                }
+              />
             ))}
           </ul>
-        </article>
-        <article className="card panel-card">
-          <h3>Club directory snapshot</h3>
+        </DataPanel>
+        <DataPanel title="Club directory snapshot">
           <ul className="list">
             {mockClubs.map((club) => (
-              <li key={club.id} className="list-row">
-                <div>
+              <ListRow
+                key={club.id}
+                main={
+                  <>
                   <strong>{club.name}</strong>
                   <span>{`${club.memberCount} members`}</span>
-                </div>
-                <div>
+                  </>
+                }
+                aside={
+                  <>
                   <span>{`Power ${club.powerRating}`}</span>
                   <span>{club.relations.join(', ') || 'Neutral'}</span>
-                </div>
-              </li>
+                  </>
+                }
+              />
             ))}
           </ul>
-        </article>
-        <article className="card panel-card">
-          <h3>Dashboard preview</h3>
+        </DataPanel>
+        <DataPanel title="Dashboard preview">
           {mockDashboards.map((board) => (
             <article key={board.ownerId} className="card dashboard-card">
               <h3>{board.ownerType === 'player' ? 'Player Dashboard' : 'Club Dashboard'}</h3>
               <p>{board.headline}</p>
-              <div className="metric-grid">
+              <MetricGrid>
                 {board.metrics.map((metric) => (
-                  <div key={metric.label} className={`metric metric--${metric.accent ?? 'default'}`}>
-                    <span>{metric.label}</span>
-                    <strong>{metric.value}</strong>
-                  </div>
+                  <MetricCard key={metric.label} label={metric.label} value={metric.value} accent={metric.accent ?? 'default'} />
                 ))}
-              </div>
+              </MetricGrid>
             </article>
           ))}
-        </article>
+        </DataPanel>
       </div>
     </section>
   );
@@ -329,14 +330,11 @@ export function BlueprintWorkbenchSection() {
 export function BlueprintApiReferenceSection() {
   return (
     <section className="section">
-      <div className="section__header">
-        <p className="eyebrow">4. API Mapping</p>
-        <h2>Which frontend abilities the blueprint still maps back to backend contracts</h2>
-        <p>
-          This section does not try to exhaustively list every endpoint. It highlights the contracts that the current homepage,
-          public hall, member hub, and tournament operations routes actually depend on today.
-        </p>
-      </div>
+      <SectionIntro
+        eyebrow="4. API Mapping"
+        title="Which frontend abilities the blueprint still maps back to backend contracts"
+        description="This section does not try to exhaustively list every endpoint. It highlights the contracts that the current homepage, public hall, member hub, and tournament operations routes actually depend on today."
+      />
       <div className="api-list">
         {sampleRequests.map((sample) => (
           <article key={sample.title} className="card api-card">

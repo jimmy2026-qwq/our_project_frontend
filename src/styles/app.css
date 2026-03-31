@@ -224,6 +224,120 @@ input {
   color: #b2f4ef;
 }
 
+.app-notice-stack {
+  position: fixed;
+  right: 18px;
+  bottom: 18px;
+  z-index: 20;
+  display: grid;
+  gap: 12px;
+  width: min(360px, calc(100vw - 24px));
+}
+
+.app-notice {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  background: rgba(7, 18, 28, 0.94);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(18px);
+}
+
+.app-notice--success {
+  border-color: rgba(114, 216, 209, 0.32);
+}
+
+.app-notice--warning {
+  border-color: rgba(236, 197, 122, 0.32);
+}
+
+.app-notice__body {
+  display: grid;
+  gap: 6px;
+}
+
+.app-notice__body p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.app-notice__dismiss {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 8px 12px;
+  cursor: pointer;
+  align-self: start;
+}
+
+.app-dialog-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 30;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  background: rgba(3, 8, 14, 0.62);
+  backdrop-filter: blur(8px);
+}
+
+.app-dialog {
+  width: min(460px, 100%);
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  background: rgba(8, 18, 29, 0.96);
+  box-shadow: var(--shadow-lg);
+}
+
+.app-dialog__body,
+.app-dialog__actions {
+  padding: 22px 24px;
+}
+
+.app-dialog__body {
+  display: grid;
+  gap: 10px;
+}
+
+.app-dialog__body h2 {
+  margin: 0;
+}
+
+.app-dialog__body p:last-child {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.app-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.app-dialog__button {
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  padding: 10px 16px;
+  cursor: pointer;
+}
+
+.app-dialog__button--default {
+  border-color: rgba(114, 216, 209, 0.28);
+}
+
+.app-dialog__button--danger {
+  border-color: rgba(236, 197, 122, 0.32);
+  color: var(--gold);
+}
+
 .portal-hero {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(320px, 0.8fr);

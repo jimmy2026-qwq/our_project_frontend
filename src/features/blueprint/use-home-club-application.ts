@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { useDialog, useNotice } from '@/hooks';
 import type { HomeClubApplicationState } from './application-data';
 import {
   getOperatorApplications,
@@ -12,6 +13,8 @@ import {
 } from './application-data';
 
 export function useHomeClubApplication() {
+  const { confirm } = useDialog();
+  const { notifySuccess, notifyWarning } = useNotice();
   const [state, setState] = useState<HomeClubApplicationState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -82,10 +85,26 @@ export function useHomeClubApplication() {
           }
         : current,
     );
+    if (result.source === 'api') {
+      notifySuccess('Club application submitted', 'The request was sent to the backend successfully.');
+    } else {
+      notifyWarning('Club application submitted with fallback', result.warning ?? 'The request used the local fallback flow.');
+    }
   }
 
   async function handleWithdraw() {
     if (!state?.application.application) {
+      return;
+    }
+
+    const confirmed = await confirm({
+      title: 'Withdraw current application?',
+      message: 'This will mark the current club application as withdrawn and sync the result back into the local flow.',
+      confirmText: 'Withdraw',
+      tone: 'danger',
+    });
+
+    if (!confirmed) {
       return;
     }
 
@@ -102,6 +121,11 @@ export function useHomeClubApplication() {
           }
         : current,
     );
+    if (result.source === 'api') {
+      notifySuccess('Application withdrawn', 'The withdraw request completed successfully.');
+    } else {
+      notifyWarning('Application withdrawn with fallback', result.warning ?? 'The withdraw flow used the local fallback path.');
+    }
   }
 
   return {

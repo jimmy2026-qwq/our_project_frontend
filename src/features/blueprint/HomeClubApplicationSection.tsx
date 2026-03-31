@@ -1,6 +1,9 @@
-import { PanelHead } from '@/components/shared/panel';
-import { EmptyState, SourceBadge } from '@/components/shared/status';
-import { playerOptions, formatDateTime, getFallbackPlayer } from './application-data';
+import { DataPanel, ListRow } from '@/components/shared/data-display';
+import { EmptyState, SourceBadge } from '@/components/shared/feedback';
+import { FieldGroup, SelectField, TextareaField } from '@/components/shared/forms';
+import { ActionButton, PanelHead, SectionIntro } from '@/components/shared/layout';
+
+import { formatDateTime, getFallbackPlayer, playerOptions } from './application-data';
 import { useHomeClubApplication } from './use-home-club-application';
 
 export function HomeClubApplicationSection() {
@@ -10,11 +13,11 @@ export function HomeClubApplicationSection() {
   if (isLoading || !state) {
     return (
       <section className="section">
-        <div className="section__header">
-          <p className="eyebrow">Club Application</p>
-          <h2>首页入会申请工作台</h2>
-          <p>正在加载可申请俱乐部、玩家上下文和历史申请快照。</p>
-        </div>
+        <SectionIntro
+          eyebrow="Club Application"
+          title="Home Club Application Workbench"
+          description="Loading joinable clubs, player context, and recent application snapshots."
+        />
       </section>
     );
   }
@@ -27,123 +30,113 @@ export function HomeClubApplicationSection() {
 
   return (
     <section className="section">
-      <div className="section__header">
-        <p className="eyebrow">Club Application</p>
-        <h2>首页入会申请工作台</h2>
-        <p>
-          这块是 blueprint 首页里最接近真实业务的交互区。它串起 joinable clubs、当前玩家身份、申请提交与撤回，
-          也保留了 API-first + mock fallback 的行为。
-        </p>
-      </div>
+      <SectionIntro
+        eyebrow="Club Application"
+        title="Home Club Application Workbench"
+        description="This is the most business-like interaction block on the blueprint homepage. It ties together joinable clubs, current player identity, application submission, and withdrawal while keeping the API-first plus mock-fallback behavior visible."
+      />
+
       <article className="card public-join-card">
         <PanelHead
-          title="注册玩家申请俱乐部"
+          title="Registered Player Club Application"
           description={
             <>
-              表单会优先调用 <code>POST /clubs/:clubId/applications</code>，如果后端不可用则落到 mock，
-              同时把结果写入本地 inbox bridge，方便后续在 member hub 里串起来看。
+              The form calls <code>POST /clubs/:clubId/applications</code> first. If the backend is unavailable, it falls
+              back to mock handling and mirrors the result into the local inbox bridge so the member hub flow stays connected.
             </>
           }
           aside={<SourceBadge source={source} warning={warning} />}
         />
         <div className="public-join-card__callout">
-          <strong>当前迁移状态</strong>
+          <strong>Current migration state</strong>
           <span>
-            这一块已经改成 React 组件，后续可以很自然地继续抽成 feature-level hooks、shared cards 和表单组件。
+            This block is already running as a React feature component, which makes it a good place to continue extracting
+            feature hooks, shared cards, and form-oriented building blocks.
           </span>
         </div>
-        <div className="guest-flow__form">
-          <label>
-            <span>申请人</span>
-            <select value={state.operatorId} onChange={(event) => void changeOperator(event.currentTarget.value)}>
+        <FieldGroup className="guest-flow__form">
+          <SelectField label="Applicant" value={state.operatorId} onChange={(event) => void changeOperator(event.currentTarget.value)}>
               {playerOptions.map((player) => (
                 <option key={player.operatorId} value={player.operatorId}>
                   {player.nickname}
                 </option>
               ))}
-            </select>
-          </label>
-          <label>
-            <span>目标俱乐部</span>
-            <select
-              value={state.clubId}
-              onChange={(event) =>
-                setState((current) => (current ? { ...current, clubId: event.currentTarget.value } : current))
-              }
-            >
+          </SelectField>
+          <SelectField
+            label="Target club"
+            value={state.clubId}
+            onChange={(event) =>
+              setState((current) => (current ? { ...current, clubId: event.currentTarget.value } : current))
+            }
+          >
               {state.clubs.items.map((club) => (
                 <option key={club.id} value={club.id}>
                   {club.name}
                 </option>
               ))}
-            </select>
-          </label>
-          <label>
-            <span>申请留言</span>
-            <textarea
-              rows={4}
-              value={state.message}
-              onChange={(event) =>
-                setState((current) => (current ? { ...current, message: event.currentTarget.value } : current))
-              }
-            />
-          </label>
-        </div>
+          </SelectField>
+          <TextareaField
+            label="Application note"
+            rows={4}
+            value={state.message}
+            onChange={(event) =>
+              setState((current) => (current ? { ...current, message: event.currentTarget.value } : current))
+            }
+          />
+        </FieldGroup>
         <div className="public-join-card__actions">
-          <button type="button" className="portal-refresh" onClick={() => void handleSubmit()}>
-            提交入会申请
-          </button>
-          <button
-            type="button"
-            className="portal-refresh"
-            disabled={!application || application.status !== 'Pending'}
-            onClick={() => void handleWithdraw()}
-          >
-            撤回当前申请
-          </button>
+          <ActionButton onClick={() => void handleSubmit()}>Submit club application</ActionButton>
+          <ActionButton disabled={!application || application.status !== 'Pending'} onClick={() => void handleWithdraw()}>
+            Withdraw current application
+          </ActionButton>
         </div>
         {application ? (
           <div className="guest-flow__result">
             <strong>
               {selectedPlayerName} {'->'} {getSelectedClubName(application.clubId, state.clubs.items)}
             </strong>
-            <span>状态：{application.status}</span>
-            <span>申请编号：{application.id}</span>
-            <span>提交时间：{formatDateTime(application.createdAt)}</span>
-            <span>留言：{application.message}</span>
+            <span>Status: {application.status}</span>
+            <span>Application id: {application.id}</span>
+            <span>Submitted at: {formatDateTime(application.createdAt)}</span>
+            <span>Note: {application.message}</span>
           </div>
         ) : (
           <div className="guest-flow__result guest-flow__result--muted">
-            <span>当前申请人：{selectedPlayerName}</span>
+            <span>Current applicant: {selectedPlayerName}</span>
             <span>{fallbackPlayer.note}</span>
-            <span>提交后会把结果同步到本地 inbox bridge，方便之后在成员工作台继续联调。</span>
+            <span>The result will also be mirrored into the local inbox bridge so the member hub flow can continue.</span>
           </div>
         )}
       </article>
-      <article className="card panel-card">
-        <PanelHead
-          title="最近申请快照"
-          description="这里展示当前操作人的最近几条申请记录，来源于本地 inbox bridge，用来承接 mock 和 API 两种模式。"
-        />
+
+      <DataPanel
+        title="Recent application snapshot"
+        description="This list shows the current operator's recent application history from the local inbox bridge, which keeps both mock and API-driven flows visible during migration."
+      >
         <ul className="list">
           {myApplications.length > 0 ? (
             myApplications.map((item) => (
-              <li key={item.id} className="list-row">
-                <div>
+              <ListRow
+                key={item.id}
+                main={
+                  <>
                   <strong>{item.clubName}</strong>
                   <span>{item.message}</span>
-                </div>
-                <div>
+                  </>
+                }
+                aside={
+                  <>
                   <span>{item.status}</span>
                   <span>{formatDateTime(item.submittedAt)}</span>
-                </div>
-              </li>
+                  </>
+                }
+              />
             ))
           ) : (
-            <EmptyState asListItem>当前操作人还没有申请记录，可以先在上面提交一条测试数据。</EmptyState>
+            <EmptyState asListItem>No application records are available yet for the current operator.</EmptyState>
           )}
         </ul>
-      </article>
+      </DataPanel>
     </section>
   );
 }

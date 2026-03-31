@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
 
-import { EmptyState, SourceBadge } from '@/components/shared/status';
+import { DetailCard, DetailHero, DetailList, DetailListItem, DetailRow, DetailRows, PortalSection } from '@/components/shared/data-display';
+import { EmptyState } from '@/components/shared/feedback';
+import { CheckboxField, SelectField } from '@/components/shared/forms';
+import { ActionButton, PortalFilters } from '@/components/shared/layout';
 import type {
   ClubPublicProfile,
   ClubSummary,
@@ -212,53 +215,47 @@ export function PublicSchedulesSection({
   onRefresh: () => void;
 }) {
   return (
-    <section className="portal-section">
-      <div className="portal-section__head">
-        <div>
-          <p className="eyebrow">Schedules</p>
-          <h2>Public Schedules</h2>
-          <p>Loaded from GET /public/schedules and filtered locally in the page state.</p>
-        </div>
-        <SourceBadge source={payload.source} warning={payload.warning} />
-      </div>
-      <div className="portal-filters">
-        <label>
-          <span>Tournament status</span>
-          <select
-            value={state.scheduleTournamentStatus}
-            onChange={(event) =>
-              onStateChange({
-                scheduleTournamentStatus: event.currentTarget.value as PublicHallState['scheduleTournamentStatus'],
-              })
-            }
-          >
+    <PortalSection
+      eyebrow="Schedules"
+      title="Public Schedules"
+      description="Loaded from GET /public/schedules and filtered locally in the page state."
+      source={payload.source}
+      warning={payload.warning}
+    >
+      <PortalFilters>
+        <SelectField
+          label="Tournament status"
+          value={state.scheduleTournamentStatus}
+          onChange={(event) =>
+            onStateChange({
+              scheduleTournamentStatus: event.currentTarget.value as PublicHallState['scheduleTournamentStatus'],
+            })
+          }
+        >
             <option value="">All</option>
             <option value="Draft">Draft</option>
             <option value="Registration">Registration</option>
             <option value="InProgress">In progress</option>
             <option value="Finished">Finished</option>
-          </select>
-        </label>
-        <label>
-          <span>Stage status</span>
-          <select
-            value={state.scheduleStageStatus}
-            onChange={(event) =>
-              onStateChange({
-                scheduleStageStatus: event.currentTarget.value as PublicHallState['scheduleStageStatus'],
-              })
-            }
-          >
+        </SelectField>
+        <SelectField
+          label="Stage status"
+          value={state.scheduleStageStatus}
+          onChange={(event) =>
+            onStateChange({
+              scheduleStageStatus: event.currentTarget.value as PublicHallState['scheduleStageStatus'],
+            })
+          }
+        >
             <option value="">All</option>
             <option value="Pending">Pending</option>
             <option value="Active">Active</option>
             <option value="Completed">Completed</option>
-          </select>
-        </label>
-        <button type="button" className="portal-refresh" onClick={onRefresh}>
+        </SelectField>
+        <ActionButton onClick={onRefresh}>
           Refresh
-        </button>
-      </div>
+        </ActionButton>
+      </PortalFilters>
       <div className="schedule-grid">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((item) => (
@@ -288,7 +285,7 @@ export function PublicSchedulesSection({
           <EmptyState>No public schedules match the current filters.</EmptyState>
         )}
       </div>
-    </section>
+    </PortalSection>
   );
 }
 
@@ -304,28 +301,23 @@ export function PublicClubsSection({
   onRefresh: () => void;
 }) {
   return (
-    <section className="portal-section">
-      <div className="portal-section__head">
-        <div>
-          <p className="eyebrow">Clubs</p>
-          <h2>Club Directory</h2>
-          <p>Loaded from GET /public/clubs and adapted into the frontend club-card model.</p>
-        </div>
-        <SourceBadge source={payload.source} warning={payload.warning} />
-      </div>
-      <div className="portal-filters">
-        <label className="portal-checkbox">
-          <input
-            type="checkbox"
-            checked={state.clubActiveOnly}
-            onChange={(event) => onStateChange({ clubActiveOnly: event.currentTarget.checked })}
-          />
-          <span>Prefer active clubs only</span>
-        </label>
-        <button type="button" className="portal-refresh" onClick={onRefresh}>
+    <PortalSection
+      eyebrow="Clubs"
+      title="Club Directory"
+      description="Loaded from GET /public/clubs and adapted into the frontend club-card model."
+      source={payload.source}
+      warning={payload.warning}
+    >
+      <PortalFilters>
+        <CheckboxField
+          label="Prefer active clubs only"
+          checked={state.clubActiveOnly}
+          onChange={(event) => onStateChange({ clubActiveOnly: event.currentTarget.checked })}
+        />
+        <ActionButton onClick={onRefresh}>
           Refresh
-        </button>
-      </div>
+        </ActionButton>
+      </PortalFilters>
       <div className="club-grid">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((club) => (
@@ -357,7 +349,7 @@ export function PublicClubsSection({
           <EmptyState>No public clubs are available right now.</EmptyState>
         )}
       </div>
-    </section>
+    </PortalSection>
   );
 }
 
@@ -375,48 +367,42 @@ export function PublicLeaderboardSection({
   onRefresh: () => void;
 }) {
   return (
-    <section className="portal-section">
-      <div className="portal-section__head">
-        <div>
-          <p className="eyebrow">Leaderboard</p>
-          <h2>Player Leaderboard</h2>
-          <p>Loaded from GET /public/leaderboards/players and joined with club names in the API client.</p>
-        </div>
-        <SourceBadge source={payload.source} warning={payload.warning} />
-      </div>
-      <div className="portal-filters">
-        <label>
-          <span>Club</span>
-          <select
-            value={state.leaderboardClubId}
-            onChange={(event) => onStateChange({ leaderboardClubId: event.currentTarget.value })}
-          >
+    <PortalSection
+      eyebrow="Leaderboard"
+      title="Player Leaderboard"
+      description="Loaded from GET /public/leaderboards/players and joined with club names in the API client."
+      source={payload.source}
+      warning={payload.warning}
+    >
+      <PortalFilters>
+        <SelectField
+          label="Club"
+          value={state.leaderboardClubId}
+          onChange={(event) => onStateChange({ leaderboardClubId: event.currentTarget.value })}
+        >
             <option value="">All clubs</option>
             {clubs.map((club) => (
               <option key={club.id} value={club.id}>
                 {club.name}
               </option>
             ))}
-          </select>
-        </label>
-        <label>
-          <span>Status</span>
-          <select
-            value={state.leaderboardStatus}
-            onChange={(event) =>
-              onStateChange({ leaderboardStatus: event.currentTarget.value as PublicHallState['leaderboardStatus'] })
-            }
-          >
+        </SelectField>
+        <SelectField
+          label="Status"
+          value={state.leaderboardStatus}
+          onChange={(event) =>
+            onStateChange({ leaderboardStatus: event.currentTarget.value as PublicHallState['leaderboardStatus'] })
+          }
+        >
             <option value="">All</option>
             <option value="Active">Active</option>
             <option value="Inactive">Inactive</option>
             <option value="Banned">Banned</option>
-          </select>
-        </label>
-        <button type="button" className="portal-refresh" onClick={onRefresh}>
+        </SelectField>
+        <ActionButton onClick={onRefresh}>
           Refresh
-        </button>
-      </div>
+        </ActionButton>
+      </PortalFilters>
       <ol className="leaderboard-list">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((item, index) => {
@@ -445,7 +431,7 @@ export function PublicLeaderboardSection({
           <EmptyState>No leaderboard rows match the current filters.</EmptyState>
         )}
       </ol>
-    </section>
+    </PortalSection>
   );
 }
 
@@ -467,40 +453,40 @@ export function PublicTournamentDetailSection({
       <Link className="detail-back" to="/public">
         Back to public hall
       </Link>
-      <section className="detail-hero">
-        <div>
-          <p className="eyebrow">Tournament</p>
-          <h1>{profile.name}</h1>
-          <p className="detail-hero__tagline">{profile.tagline}</p>
-          <p className="detail-hero__summary">{profile.description}</p>
-        </div>
-        <SourceBadge source={state.source} warning={state.warning} />
-      </section>
+      <DetailHero
+        eyebrow="Tournament"
+        title={profile.name}
+        tagline={profile.tagline}
+        summary={profile.description}
+        source={state.source}
+        warning={state.warning}
+      />
       <section className="detail-grid">
-        <article className="detail-card">
-          <h2>Public tournament info</h2>
-          <dl className="detail-list">
-            <div><dt>Status</dt><dd>{getTournamentStatusLabel(profile.status)}</dd></div>
-            <div><dt>Organizer</dt><dd>{profile.venue}</dd></div>
-            <div><dt>Stage count</dt><dd>{profile.stageCount}</dd></div>
-            <div><dt>Whitelist type</dt><dd>{profile.whitelistType}</dd></div>
-            <div><dt>Next stage</dt><dd>{profile.nextStageName}</dd></div>
-            <div><dt>Start time</dt><dd>{formatDateTime(profile.nextScheduledAt)}</dd></div>
-          </dl>
-        </article>
-        <article className="detail-card">
-          <h2>Stage overview</h2>
-          <ul className="detail-rows">
+        <DetailCard title="Public tournament info">
+          <DetailList>
+            <DetailListItem label="Status" value={getTournamentStatusLabel(profile.status)} />
+            <DetailListItem label="Organizer" value={profile.venue} />
+            <DetailListItem label="Stage count" value={profile.stageCount} />
+            <DetailListItem label="Whitelist type" value={profile.whitelistType} />
+            <DetailListItem label="Next stage" value={profile.nextStageName} />
+            <DetailListItem label="Start time" value={formatDateTime(profile.nextScheduledAt)} />
+          </DetailList>
+        </DetailCard>
+        <DetailCard title="Stage overview">
+          <DetailRows>
             {stages.map((stage) => (
-              <li key={stage.stageId}>
-                <strong>{stage.name}</strong>
-                <span>
+              <DetailRow
+                key={stage.stageId}
+                title={stage.name}
+                detail={
+                  <>
                   {getStageStatusLabel(stage.status)} / {stage.tableCount} tables / {stage.roundCount} rounds
-                </span>
-              </li>
+                  </>
+                }
+              />
             ))}
-          </ul>
-        </article>
+          </DetailRows>
+        </DetailCard>
       </section>
     </section>
   );
@@ -518,41 +504,35 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
       <Link className="detail-back" to="/public">
         Back to public hall
       </Link>
-      <section className="detail-hero">
-        <div>
-          <p className="eyebrow">Club</p>
-          <h1>{profile.name}</h1>
-          <p className="detail-hero__tagline">{profile.slogan}</p>
-          <p className="detail-hero__summary">{profile.description}</p>
-        </div>
-        <SourceBadge source={state.source} warning={state.warning} />
-      </section>
+      <DetailHero
+        eyebrow="Club"
+        title={profile.name}
+        tagline={profile.slogan}
+        summary={profile.description}
+        source={state.source}
+        warning={state.warning}
+      />
       <section className="detail-grid">
-        <article className="detail-card">
-          <h2>Public club info</h2>
-          <dl className="detail-list">
-            <div><dt>Members</dt><dd>{profile.memberCount}</dd></div>
-            <div><dt>Power</dt><dd>{profile.powerRating}</dd></div>
-            <div><dt>Treasury</dt><dd>{formatNumber(profile.treasury)}</dd></div>
-            <div><dt>Relations</dt><dd>{profile.relations.map(getRelationLabel).join(' / ') || '--'}</dd></div>
-            <div><dt>Featured players</dt><dd>{profile.featuredPlayers.join(' / ') || '--'}</dd></div>
-          </dl>
-        </article>
-        <article className="detail-card">
-          <h2>Recent tournaments</h2>
-          <ul className="detail-rows">
+        <DetailCard title="Public club info">
+          <DetailList>
+            <DetailListItem label="Members" value={profile.memberCount} />
+            <DetailListItem label="Power" value={profile.powerRating} />
+            <DetailListItem label="Treasury" value={formatNumber(profile.treasury)} />
+            <DetailListItem label="Relations" value={profile.relations.map(getRelationLabel).join(' / ') || '--'} />
+            <DetailListItem label="Featured players" value={profile.featuredPlayers.join(' / ') || '--'} />
+          </DetailList>
+        </DetailCard>
+        <DetailCard title="Recent tournaments">
+          <DetailRows>
             {profile.activeTournaments.length > 0 ? (
               profile.activeTournaments.map((item) => (
-                <li key={item}>
-                  <strong>{item}</strong>
-                  <span>Visible from the public club profile endpoint.</span>
-                </li>
+                <DetailRow key={item} title={item} detail="Visible from the public club profile endpoint." />
               ))
             ) : (
               <EmptyState asListItem>No recent tournament entries were returned.</EmptyState>
             )}
-          </ul>
-        </article>
+          </DetailRows>
+        </DetailCard>
       </section>
     </section>
   );
@@ -564,13 +544,11 @@ export function PublicDetailNotFound({ title }: { title: string }) {
       <Link className="detail-back" to="/public">
         Back to public hall
       </Link>
-      <section className="detail-hero">
-        <div>
-          <p className="eyebrow">Not Found</p>
-          <h1>{title}</h1>
-          <p className="detail-hero__summary">The requested public detail view is not available right now.</p>
-        </div>
-      </section>
+      <DetailHero
+        eyebrow="Not Found"
+        title={title}
+        summary="The requested public detail view is not available right now."
+      />
     </section>
   );
 }

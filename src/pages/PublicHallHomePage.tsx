@@ -1,4 +1,4 @@
-import { useReducer } from 'react';
+import { useEffect, useReducer, useState } from 'react';
 
 import {
   PublicClubsSection,
@@ -12,14 +12,49 @@ import {
 } from '@/features/public-hall/components';
 import { usePublicHallHomeData, usePublicHallState } from '@/features/public-hall/hooks';
 import type { PublicHallState } from '@/features/public-hall/types';
+import { useNotice } from '@/hooks';
 
 export function PublicHallHomePage() {
   const { state, setState } = usePublicHallState();
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
+  const [pendingRefresh, setPendingRefresh] = useState(false);
   const { data, isLoading, error } = usePublicHallHomeData(state, reloadKey);
+  const { notifySuccess, notifyWarning } = useNotice();
 
   const handleStateChange = (patch: Partial<PublicHallState>) => {
     setState((current) => ({ ...current, ...patch }));
+  };
+
+  useEffect(() => {
+    if (!pendingRefresh || isLoading) {
+      return;
+    }
+
+    if (error) {
+      notifyWarning('Public hall refresh failed', error);
+      setPendingRefresh(false);
+      return;
+    }
+
+    if (!data) {
+      return;
+    }
+
+    const warnings = [data.schedules.warning, data.clubs.warning, data.leaderboard.warning].filter(Boolean);
+    const hasFallback = [data.schedules, data.clubs, data.leaderboard].some((payload) => payload.source === 'mock');
+
+    if (hasFallback) {
+      notifyWarning('Public hall refreshed with fallback', warnings[0] ?? 'Some public hall panels are currently using mock data.');
+    } else {
+      notifySuccess('Public hall refreshed', 'Live public hall data was reloaded successfully.');
+    }
+
+    setPendingRefresh(false);
+  }, [data, error, isLoading, notifySuccess, notifyWarning, pendingRefresh]);
+
+  const handleRefresh = () => {
+    setPendingRefresh(true);
+    forceReload();
   };
 
   if (isLoading && !data) {
@@ -42,7 +77,7 @@ export function PublicHallHomePage() {
         payload={data.clubs}
         state={state}
         onStateChange={handleStateChange}
-        onRefresh={forceReload}
+        onRefresh={handleRefresh}
       />
     );
   } else if (state.activeView === 'leaderboard') {
@@ -52,7 +87,7 @@ export function PublicHallHomePage() {
         state={state}
         clubs={data.clubs.envelope.items}
         onStateChange={handleStateChange}
-        onRefresh={forceReload}
+        onRefresh={handleRefresh}
       />
     );
   } else {
@@ -61,7 +96,7 @@ export function PublicHallHomePage() {
         payload={data.schedules}
         state={state}
         onStateChange={handleStateChange}
-        onRefresh={forceReload}
+        onRefresh={handleRefresh}
       />
     );
   }

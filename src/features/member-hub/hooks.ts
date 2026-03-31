@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useDialog, useNotice } from '@/hooks';
 import { mockClubs } from '@/mocks/overview';
 
 import {
@@ -61,6 +62,9 @@ export function useMemberHubActions(
   setState: React.Dispatch<React.SetStateAction<MemberHubState>>,
   reload: () => void,
 ) {
+  const { confirm } = useDialog();
+  const { notifySuccess, notifyWarning } = useNotice();
+
   async function changeOperator(operatorId: string) {
     const activeOperator = getActiveOperator(operatorId);
     setState((current) => ({
@@ -80,7 +84,26 @@ export function useMemberHubActions(
   }
 
   async function handleReview(applicationId: string, decision: 'approve' | 'reject') {
+    const confirmed = await confirm({
+      title: decision === 'approve' ? 'Approve this application?' : 'Reject this application?',
+      message:
+        decision === 'approve'
+          ? 'This will update the membership review result and refresh the inbox.'
+          : 'This will reject the request and refresh the inbox.',
+      confirmText: decision === 'approve' ? 'Approve' : 'Reject',
+      tone: 'danger',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
     await reviewApplication(state.clubId, applicationId, state.operatorId, decision);
+    if (decision === 'approve') {
+      notifySuccess('Application approved', 'The member hub queue was updated and reloaded.');
+    } else {
+      notifyWarning('Application rejected', 'The member hub queue was updated and reloaded.');
+    }
     reload();
   }
 

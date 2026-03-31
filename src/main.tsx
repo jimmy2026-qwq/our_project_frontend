@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 
+import { AppFeedbackProvider, DialogProvider } from '@/providers';
 import { router } from '@/router';
 
 import './styles/app.css';
@@ -28,6 +29,10 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <DialogProvider>
+      <AppFeedbackProvider>
+        <RouterProvider router={router} />
+      </AppFeedbackProvider>
+    </DialogProvider>
   </StrictMode>,
 );
