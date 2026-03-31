@@ -1,0 +1,25 @@
+html,
+body,
+#root {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  background:
+    radial-gradient(circle at top, rgba(212, 231, 255, 0.92), rgba(212, 231, 255, 0) 28%),
+    linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+  color: #16324f;
+}
+
+.template-app-shell {
+  min-height: 100vh;
+}
+
+.template-route-root {
+  min-height: 60vh;
+}
+
+.legacy-route-mount {
+  min-height: 40vh;
+}
