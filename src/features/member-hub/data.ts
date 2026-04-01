@@ -177,7 +177,12 @@ export async function reviewApplication(
       decision,
       note: `${decision}d from member hub`,
     });
+    return { source: 'api' as const };
   } catch {
     updateClubApplicationInboxStatus(applicationId, decision === 'approve' ? 'Approved' : 'Rejected');
+    return {
+      source: 'mock' as const,
+      warning: 'The member hub review used the local inbox fallback.',
+    };
   }
 }

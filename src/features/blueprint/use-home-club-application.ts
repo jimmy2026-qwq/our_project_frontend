@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useDialog, useNotice } from '@/hooks';
+import { useDialog, useMutationNotice } from '@/hooks';
 import type { HomeClubApplicationState } from './application-data';
 import {
   getOperatorApplications,
@@ -13,8 +13,8 @@ import {
 } from './application-data';
 
 export function useHomeClubApplication() {
-  const { confirm } = useDialog();
-  const { notifySuccess, notifyWarning } = useNotice();
+  const { confirmDanger } = useDialog();
+  const { notifyMutationResult } = useMutationNotice();
   const [state, setState] = useState<HomeClubApplicationState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -85,11 +85,12 @@ export function useHomeClubApplication() {
           }
         : current,
     );
-    if (result.source === 'api') {
-      notifySuccess('Club application submitted', 'The request was sent to the backend successfully.');
-    } else {
-      notifyWarning('Club application submitted with fallback', result.warning ?? 'The request used the local fallback flow.');
-    }
+    notifyMutationResult(result, {
+      successTitle: 'Club application submitted',
+      successMessage: 'The request was sent to the backend successfully.',
+      fallbackTitle: 'Club application submitted with fallback',
+      fallbackMessage: 'The request used the local fallback flow.',
+    });
   }
 
   async function handleWithdraw() {
@@ -97,11 +98,10 @@ export function useHomeClubApplication() {
       return;
     }
 
-    const confirmed = await confirm({
+    const confirmed = await confirmDanger({
       title: 'Withdraw current application?',
       message: 'This will mark the current club application as withdrawn and sync the result back into the local flow.',
       confirmText: 'Withdraw',
-      tone: 'danger',
     });
 
     if (!confirmed) {
@@ -121,11 +121,12 @@ export function useHomeClubApplication() {
           }
         : current,
     );
-    if (result.source === 'api') {
-      notifySuccess('Application withdrawn', 'The withdraw request completed successfully.');
-    } else {
-      notifyWarning('Application withdrawn with fallback', result.warning ?? 'The withdraw flow used the local fallback path.');
-    }
+    notifyMutationResult(result, {
+      successTitle: 'Application withdrawn',
+      successMessage: 'The withdraw request completed successfully.',
+      fallbackTitle: 'Application withdrawn with fallback',
+      fallbackMessage: 'The withdraw flow used the local fallback path.',
+    });
   }
 
   return {

@@ -1,127 +1,174 @@
 import { apiClient } from '@/api/client';
-import { DataPanel, ListRow, MetricCard, MetricGrid } from '@/components/shared/data-display';
+import { DataPanel, InfoSummaryCard, InfoSummaryGrid, ListRow, MetadataCard, MetricCard, MetricGrid } from '@/components/shared/data-display';
+import { WorkbenchBacklogPanel } from '@/components/shared/domain';
 import { SectionIntro } from '@/components/shared/layout';
+import { InfoCard, SectionCallout, Separator } from '@/components/ui';
 import { featureModules } from '@/config/modules';
 import { roleCapabilities } from '@/config/roles';
 import { mockClubs, mockDashboards, mockLeaderboard, mockSchedules } from '@/mocks/overview';
 
 const heroCards = [
   {
-    label: 'Current Entry',
-    title: '/',
-    detail: 'Project blueprint home now runs inside the React Router shell and summarizes the current frontend architecture.',
+    label: 'Migration State',
+    title: 'React shell is established',
+    detail:
+      'The frontend has already crossed the largest migration boundary: it now boots from src/main.tsx and runs as a routed React app.',
   },
   {
     label: 'Primary Doc',
-    title: '/doc/README.md',
-    detail: 'Describes the current route structure, feature layering, data strategy, and next migration work.',
+    title: '/doc/frontend-template-migration-plan.md',
+    detail:
+      'Tracks what is already aligned with the template architecture, what still differs, and which cleanup tasks remain.',
   },
   {
     label: 'Contracts',
     title: '/doc/FRONTEND_INTERFACE_CONTRACTS.md',
-    detail: 'Keeps the stable backend contracts visible while the frontend continues migrating into template mode.',
+    detail:
+      'Defines the backend response shapes the routed pages should keep consuming while the frontend continues to consolidate.',
   },
   {
-    label: 'Migration Plan',
-    title: '/doc/frontend-template-migration-plan.md',
-    detail: 'Tracks completed migration phases, current cleanup state, and the next steps toward the template architecture.',
+    label: 'Current Theme',
+    title: 'API first, mock safe',
+    detail:
+      'The active routes prefer live backend data first and fall back to mock-backed views when contracts are unavailable.',
   },
 ];
 
 const foundationLayers = [
   {
-    title: 'App Shell',
-    body: 'The app now boots from src/main.tsx and uses React Router to host blueprint, public hall, member hub, and tournament operations.',
+    title: 'React App Shell',
+    body:
+      'The runtime architecture is no longer prototype-only. The app now mounts from src/main.tsx, uses createBrowserRouter, and renders route pages inside AppShell.',
   },
   {
-    title: 'Feature Slices',
-    body: 'Main business areas now live under feature folders such as features/public-hall, features/blueprint, features/member-hub, and features/tournament-ops.',
+    title: 'Route-Oriented Pages',
+    body:
+      'Blueprint home, public hall, member hub, tournament operations, and public detail views now exist as routed pages instead of being stitched together by manual mount logic.',
   },
   {
-    title: 'API Client',
-    body: 'The shared client still owns URL construction, fetch handling, and payload normalization. That normalization remains one of the most important migration assets.',
+    title: 'Feature-Level Organization',
+    body:
+      'Business logic is split into features/blueprint, features/public-hall, features/member-hub, and features/tournament-ops rather than concentrating everything in a few giant modules.',
   },
   {
-    title: 'Mock Fallback',
-    body: 'Pages still prefer live backend data first and fall back to mock data when needed, keeping the app testable while contracts continue to evolve.',
+    title: 'Shared Business Layer',
+    body:
+      'The typed domain models, API client, query helpers, and club-application logic remain one of the strongest migration assets and still anchor the current frontend.',
+  },
+];
+
+const migrationTracks = [
+  {
+    title: 'Already in place',
+    detail: 'React root, routed pages, feature folders, shared ui primitives, shared domain shells, and root-level notice/dialog providers are all now part of the app.',
+  },
+  {
+    title: 'Still being aligned',
+    detail: 'The largest remaining gaps are styling-system consistency, provider breadth, richer state infrastructure, and broader toolchain/template ecosystem alignment.',
+  },
+  {
+    title: 'What must not regress',
+    detail: 'Normalization inside src/api/client.ts remains migration-critical because backend payloads still do not map cleanly to the current frontend view models.',
+  },
+  {
+    title: 'Why this blueprint exists',
+    detail: 'The page keeps the migrated architecture, active contracts, and route responsibilities visible in one place so cleanup work stays grounded in the current codebase.',
   },
 ];
 
 const workbenchSteps = [
   {
     title: 'Blueprint Home',
-    detail: 'Summarizes architecture and hosts the home club-application workbench.',
+    detail: 'Explains the migrated architecture, keeps contract touchpoints visible, and hosts the current home application workbench.',
   },
   {
     title: 'Public Hall',
-    detail: 'Loads public schedules, clubs, and leaderboard views, then routes into detail pages.',
+    detail: 'Reads public schedules, club data, and leaderboard data from routed pages with public detail views behind them.',
   },
   {
     title: 'Member Hub',
-    detail: 'Loads player and club dashboards plus the club-application inbox.',
+    detail: 'Keeps operator switching, player and club dashboards, and the club-application inbox inside a feature-owned workspace.',
   },
   {
     title: 'Tournament Ops',
-    detail: 'Focuses on tables, records, and appeals inside the operational workbench.',
+    detail: 'Covers tables, records, and appeals while preserving the same backend-first plus mock-fallback operating pattern.',
   },
 ];
 
 const sampleRequests = [
   {
-    title: 'Public schedules',
-    description: 'The public hall homepage reads public schedules directly instead of relying on the old demo summary endpoint.',
-    path: '/public/schedules?tournamentStatus=InProgress&stageStatus=Active',
+    title: 'Session bootstrap',
+    description: 'Session state is expected to come from a stable frontend-facing session contract rather than ad hoc local assumptions.',
+    path: '/session?operatorId=player-123',
   },
   {
-    title: 'Public clubs',
-    description: 'Public club directory and detail pages are driven by the public contracts, with normalization handled in the client.',
-    path: '/public/clubs',
+    title: 'Current player context',
+    description: 'The home application and member-facing flows still depend on loading the canonical player aggregate for the active operator.',
+    path: '/players/me?operatorId=player-123',
   },
   {
-    title: 'Player leaderboard',
-    description: 'The leaderboard supports club and status filters and is now reused inside the routed public hall pages.',
-    path: '/public/leaderboards/players?status=Active&limit=20',
-  },
-  {
-    title: 'Club applications inbox',
-    description: 'The member hub reads pending club applications and falls back to the local inbox bridge when backend data is unavailable.',
+    title: 'Club application inbox',
+    description: 'Member hub and review flows depend on the stable club application inbox shape with operator scope and pending-state filters.',
     path: 'GET /clubs/:clubId/applications?operatorId=:clubAdminId&status=Pending&limit=20',
   },
   {
-    title: 'Tournament tables',
-    description: 'The tournament operations page is still scaffold-like, but the table list remains its highest-value backend entry point.',
+    title: 'Public club detail',
+    description: 'Public club detail is contract-backed and includes lineup, treasury, relation, and application-policy information for public display.',
+    path: '/public/clubs/:clubId',
+  },
+  {
+    title: 'Tournament stage directory',
+    description: 'Tournament operations still needs this shape to replace hard-coded stage selectors with a backend-driven directory.',
+    path: '/tournaments/:id/stages',
+  },
+  {
+    title: 'Tournament table queue',
+    description: 'Tables remain one of the most valuable operational entry points in the current tournament workbench.',
     path: apiClient.buildTournamentTablesPath('tournament-123', 'stage-demo-swiss', {
       status: 'WaitingPreparation',
       limit: 8,
     }),
   },
-  {
-    title: 'Player dashboard',
-    description: 'The member hub loads player dashboards first and keeps a fallback path for unstable backend availability.',
-    path: '/dashboards/players/player-123?operatorId=player-123',
-  },
 ];
 
 const contractChecklist = [
   {
-    title: 'Active public endpoints',
+    title: 'Stable contract posture',
     detail:
-      'The routed public hall currently centers on /public/schedules, /public/clubs, and /public/leaderboards/players.',
+      'The interface contracts document focuses on stable backend response shapes the next frontend iterations should preserve instead of describing an older prototype shell.',
   },
   {
-    title: 'Home application flow contracts',
+    title: 'Active member write flow',
     detail:
-      'GET /clubs + GET /players/me + POST /clubs/:clubId/applications + withdraw still form the most important write flow on the homepage.',
+      'The highest-value current write flow still centers on club application submit, withdraw, and admin review rather than broad CRUD coverage.',
   },
   {
-    title: 'Normalization that must be preserved',
+    title: 'Public detail shape',
     detail:
-      'The public payloads do not match the frontend view models directly, so the mapping logic in src/api/client.ts remains migration-critical.',
+      'Public club and tournament pages are expected to read richer detail responses than the summary lists, so detail normalization remains important.',
   },
   {
-    title: 'Legacy demo endpoints',
+    title: 'Operations backlog',
     detail:
-      'demo/summary and demo/widgets still have value for overview-style content, but they no longer drive the main public hall route.',
+      'Tournament operations still needs more backend-driven context loading, but the page already mirrors the queue shapes for tables, records, and appeals.',
+  },
+];
+
+const routeDependencyBacklog = [
+  {
+    id: 'ops-tournament-directory',
+    title: 'Tournament directory contract',
+    detail: 'Tournament operations still needs GET /tournaments so the workbench can stop relying on hard-coded top-level context.',
+  },
+  {
+    id: 'ops-stage-directory',
+    title: 'Stage directory contract',
+    detail: 'GET /tournaments/:id/stages is still the main missing dependency for replacing static stage selectors with backend-driven context.',
+  },
+  {
+    id: 'operator-permissions',
+    title: 'Operator permission scope',
+    detail: 'A stable operator-permissions contract would let the routed workbenches express capability scope without treating every route as globally writable.',
   },
 ];
 
@@ -137,35 +184,37 @@ export function BlueprintHeroSection() {
     <section className="hero blueprint-hero">
       <div className="hero__copy">
         <p className="eyebrow">RiichiNexus Frontend Blueprint</p>
-        <h1>Align the current codebase, API contracts, and routed product experience</h1>
+        <h1>Describe the app as it exists now, not as the earlier prototype described it</h1>
         <p className="hero__summary">
-          This blueprint page now focuses on the migrated frontend as it exists today. It summarizes the React router shell,
-          the main business features, the current backend touchpoints, and the API-first plus mock-fallback strategy in one place.
+          This blueprint is now grounded in the current docs under <code>/doc</code>. It summarizes the routed React
+          shell, the active feature slices, the migration status relative to the template frontend, and the backend
+          contracts that still shape the user-facing workbenches.
         </p>
         <div className="blueprint-hero__chips">
           <span className="portal-inline-badge">React Router</span>
-          <span className="portal-inline-badge">Typed Client</span>
-          <span className="portal-inline-badge">API First</span>
-          <span className="portal-inline-badge">Mock Safe Mode</span>
+          <span className="portal-inline-badge">Feature Slices</span>
+          <span className="portal-inline-badge">Shared UI</span>
+          <span className="portal-inline-badge">Contract Driven</span>
         </div>
       </div>
-      <div className="hero__panel blueprint-hero__panel">
-        <p className="hero__panel-title">Current Blueprint Focus</p>
+      <InfoCard className="hero__panel blueprint-hero__panel" title="Current Blueprint Focus">
         <ol className="priority-list">
-          <li>Make the root route the real project blueprint page rather than a loose collection of static modules.</li>
-          <li>Keep the homepage copy aligned with the actual React/router architecture now in the codebase.</li>
-          <li>Map the active docs contracts directly to route pages, feature slices, and user flows.</li>
+          <li>Keep the root blueprint aligned with the migration plan instead of the older prototype README.</li>
+          <li>Show which route surfaces are already real product pages and which still need deeper infrastructure.</li>
+          <li>Keep active backend contracts visible so UI cleanup does not drift away from the data model.</li>
         </ol>
-      </div>
-      <div className="blueprint-highlights">
+      </InfoCard>
+      <InfoSummaryGrid className="blueprint-highlights grid-cols-1 md:grid-cols-2 xl:grid-cols-4 xl:[grid-column:1/-1]">
         {heroCards.map((item) => (
-          <article key={item.title} className="card blueprint-highlight-card">
-            <span>{item.label}</span>
-            <strong>{item.title}</strong>
-            <p>{item.detail}</p>
-          </article>
+          <InfoSummaryCard
+            key={item.title}
+            className="blueprint-highlight-card min-h-full"
+            label={item.label}
+            title={item.title}
+            detail={item.detail}
+          />
         ))}
-      </div>
+      </InfoSummaryGrid>
     </section>
   );
 }
@@ -175,8 +224,8 @@ export function BlueprintArchitectureSection() {
     <section className="section">
       <SectionIntro
         eyebrow="1. Architecture"
-        title="How the current frontend is layered after the React migration"
-        description="The frontend is no longer a manual DOM shell. It is now a routed React app that keeps the original workbench-style information architecture while gradually moving business logic into feature slices, hooks, and reusable components."
+        title="What the migration plan says is already true in this frontend"
+        description="The major runtime migration has already happened. The frontend is now a routed React application with feature-level ownership, a reusable UI layer, and preserved typed business logic. The remaining work is mostly alignment and consolidation rather than another architectural reset."
       />
       <div className="architecture-grid">
         {foundationLayers.map((item) => (
@@ -188,17 +237,34 @@ export function BlueprintArchitectureSection() {
       </div>
       <div className="module-grid">
         {featureModules.map((module) => (
-          <article key={module.id} className="card module-card">
-            <div className="module-card__head">
-              <h2>{module.title}</h2>
-              <span>{module.primaryRoles.join(' / ')}</span>
-            </div>
-            <p>{module.summary}</p>
-            <p><strong>Key entities</strong> {module.entities.join(' / ')}</p>
-            <p><strong>Main entry points</strong> {module.routes.join(' | ')}</p>
-          </article>
+          <MetadataCard
+            key={module.id}
+            className="module-card"
+            title={module.title}
+            subtitle={module.primaryRoles.join(' / ')}
+            summary={module.summary}
+            details={
+              <>
+                <Separator />
+                <p><strong>Key entities</strong> {module.entities.join(' / ')}</p>
+                <p><strong>Main entry points</strong> {module.routes.join(' | ')}</p>
+              </>
+            }
+          />
         ))}
       </div>
+      <InfoSummaryGrid className="workbench-steps grid-cols-1 md:grid-cols-2 xl:grid-cols-4 xl:[grid-column:1/-1]">
+        {migrationTracks.map((item, index) => (
+          <InfoSummaryCard
+            key={item.title}
+            className="workbench-step-card min-h-full"
+            label={`0${index + 1}`}
+            title={item.title}
+            detail={item.detail}
+            titleAs="h3"
+          />
+        ))}
+      </InfoSummaryGrid>
     </section>
   );
 }
@@ -207,21 +273,26 @@ export function BlueprintRoleMatrixSection() {
   return (
     <section className="section">
       <SectionIntro
-        eyebrow="2. Roles & Permissions"
-        title="How roles map to routes and workbench abilities"
-        description="The app still does not have full route guards, but the role boundaries are already clear. This section keeps the current RBAC picture readable while session state and operator scope continue to evolve."
+        eyebrow="2. Roles & Surfaces"
+        title="How the current routes still map to user roles"
+        description="The docs and feature modules already imply a clear division of responsibility even though route guards and richer session infrastructure are still evolving."
       />
       <div className="role-grid">
         {roleCapabilities.map((capability) => (
-          <article key={capability.role} className="card role-card">
-            <div className="role-card__header">
-              <h3>{capability.role}</h3>
-              <span>{capability.landingRoute}</span>
-            </div>
-            <p>{capability.description}</p>
-            <p><strong>Can read</strong> {capability.canRead.join(' / ') || 'None'}</p>
-            <p><strong>Can write</strong> {capability.canWrite.join(' / ') || 'None'}</p>
-          </article>
+          <MetadataCard
+            key={capability.role}
+            className="role-card"
+            title={capability.role}
+            subtitle={capability.landingRoute}
+            summary={capability.description}
+            details={
+              <>
+                <Separator />
+                <p><strong>Can read</strong> {capability.canRead.join(' / ') || 'None'}</p>
+                <p><strong>Can write</strong> {capability.canWrite.join(' / ') || 'None'}</p>
+              </>
+            }
+          />
         ))}
       </div>
     </section>
@@ -232,19 +303,22 @@ export function BlueprintWorkbenchSection() {
   return (
     <section className="section">
       <SectionIntro
-        eyebrow="3. Workbench Flow"
-        title="How the blueprint homepage connects the current workbench flow"
-        description="This is not meant to be a literal operations console. It is a stitched view of the experience paths already present in the repo, helping the team see how browsing, membership operations, and tournament execution fit together after the migration."
+        eyebrow="3. Routed Experience"
+        title="How the current frontend workbench is stitched together"
+        description="These route surfaces are already present in the app. The blueprint page keeps them connected as one product story so architecture, docs, and user-facing flows stay aligned during cleanup."
       />
-      <div className="workbench-steps">
+      <InfoSummaryGrid className="workbench-steps grid-cols-1 md:grid-cols-2 xl:grid-cols-4 xl:[grid-column:1/-1]">
         {workbenchSteps.map((item, index) => (
-          <article key={item.title} className="card workbench-step-card">
-            <span>{`0${index + 1}`}</span>
-            <h3>{item.title}</h3>
-            <p>{item.detail}</p>
-          </article>
+          <InfoSummaryCard
+            key={item.title}
+            className="workbench-step-card min-h-full"
+            label={`0${index + 1}`}
+            title={item.title}
+            detail={item.detail}
+            titleAs="h3"
+          />
         ))}
-      </div>
+      </InfoSummaryGrid>
       <div className="workbench-grid">
         <DataPanel title="Public schedule snapshot">
           <ul className="list">
@@ -253,14 +327,14 @@ export function BlueprintWorkbenchSection() {
                 key={`${item.tournamentId}-${item.stageId}`}
                 main={
                   <>
-                  <strong>{item.tournamentName}</strong>
-                  <span>{item.stageName}</span>
+                    <strong>{item.tournamentName}</strong>
+                    <span>{item.stageName}</span>
                   </>
                 }
                 aside={
                   <>
-                  <span>{item.tournamentStatus} / {item.stageStatus}</span>
-                  <span>{formatLocalTime(item.scheduledAt)}</span>
+                    <span>{item.tournamentStatus} / {item.stageStatus}</span>
+                    <span>{formatLocalTime(item.scheduledAt)}</span>
                   </>
                 }
               />
@@ -274,14 +348,14 @@ export function BlueprintWorkbenchSection() {
                 key={item.playerId}
                 main={
                   <>
-                  <strong>{`#${item.rank} ${item.nickname}`}</strong>
-                  <span>{item.clubName}</span>
+                    <strong>{`#${item.rank} ${item.nickname}`}</strong>
+                    <span>{item.clubName}</span>
                   </>
                 }
                 aside={
                   <>
-                  <span>{`ELO ${item.elo}`}</span>
-                  <span>{item.status}</span>
+                    <span>{`ELO ${item.elo}`}</span>
+                    <span>{item.status}</span>
                   </>
                 }
               />
@@ -295,14 +369,14 @@ export function BlueprintWorkbenchSection() {
                 key={club.id}
                 main={
                   <>
-                  <strong>{club.name}</strong>
-                  <span>{`${club.memberCount} members`}</span>
+                    <strong>{club.name}</strong>
+                    <span>{`${club.memberCount} members`}</span>
                   </>
                 }
                 aside={
                   <>
-                  <span>{`Power ${club.powerRating}`}</span>
-                  <span>{club.relations.join(', ') || 'Neutral'}</span>
+                    <span>{`Power ${club.powerRating}`}</span>
+                    <span>{club.relations.join(', ') || 'Neutral'}</span>
                   </>
                 }
               />
@@ -331,9 +405,9 @@ export function BlueprintApiReferenceSection() {
   return (
     <section className="section">
       <SectionIntro
-        eyebrow="4. API Mapping"
-        title="Which frontend abilities the blueprint still maps back to backend contracts"
-        description="This section does not try to exhaustively list every endpoint. It highlights the contracts that the current homepage, public hall, member hub, and tournament operations routes actually depend on today."
+        eyebrow="4. Contract Mapping"
+        title="Which backend contracts still shape the visible frontend"
+        description="This page now highlights the interfaces that matter to the current routed experience: session and player context, club application review, public detail views, and tournament operations queue data."
       />
       <div className="api-list">
         {sampleRequests.map((sample) => (
@@ -346,12 +420,14 @@ export function BlueprintApiReferenceSection() {
       </div>
       <div className="api-list">
         {contractChecklist.map((item) => (
-          <article key={item.title} className="card api-card api-card--note">
-            <h3>{item.title}</h3>
-            <p>{item.detail}</p>
-          </article>
+          <SectionCallout key={item.title} className="api-card api-card--note" title={item.title} description={item.detail} />
         ))}
       </div>
+      <WorkbenchBacklogPanel
+        title="Current route dependency backlog"
+        description="These are the main backend-facing gaps still visible from the top-level blueprint while the routed workbenches continue consolidating."
+        items={routeDependencyBacklog}
+      />
     </section>
   );
 }

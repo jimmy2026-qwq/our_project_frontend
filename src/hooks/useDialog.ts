@@ -6,5 +6,10 @@ export function useDialog() {
 
   return {
     confirm: (options: ConfirmDialogOptions) => confirm(options),
+    confirmDanger: (options: Omit<ConfirmDialogOptions, 'tone'>) =>
+      confirm({
+        ...options,
+        tone: 'danger',
+      }),
   };
 }

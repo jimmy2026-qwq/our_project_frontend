@@ -1,5 +1,6 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import { cx } from '@/components/shared/utils';
+import { cx } from '@/lib/cx';
+import { Input, Select, Textarea } from '@/components/ui';
 
 const DEFAULT_FIELD_CLASS = 'shared-field';
 
@@ -10,7 +11,7 @@ export function FieldGroup({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cx(className)}>{children}</div>;
+  return <div className={cx('grid gap-[14px]', className === DEFAULT_FIELD_CLASS ? undefined : className)}>{children}</div>;
 }
 
 export function SelectField({
@@ -24,9 +25,9 @@ export function SelectField({
   className?: string;
 } & SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <label className={className}>
-      <span>{label}</span>
-      <select {...props}>{children}</select>
+    <label className={cx('grid gap-2', className === DEFAULT_FIELD_CLASS ? undefined : className)}>
+      <span className="leading-7 text-[color:var(--muted)]">{label}</span>
+      <Select {...props}>{children}</Select>
     </label>
   );
 }
@@ -40,9 +41,9 @@ export function TextInputField({
   className?: string;
 } & InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <label className={className}>
-      <span>{label}</span>
-      <input {...props} />
+    <label className={cx('grid gap-2', className === DEFAULT_FIELD_CLASS ? undefined : className)}>
+      <span className="leading-7 text-[color:var(--muted)]">{label}</span>
+      <Input {...props} />
     </label>
   );
 }
@@ -56,25 +57,25 @@ export function TextareaField({
   className?: string;
 } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
-    <label className={className}>
-      <span>{label}</span>
-      <textarea {...props} />
+    <label className={cx('grid gap-2', className === DEFAULT_FIELD_CLASS ? undefined : className)}>
+      <span className="leading-7 text-[color:var(--muted)]">{label}</span>
+      <Textarea {...props} />
     </label>
   );
 }
 
 export function CheckboxField({
   label,
-  className = 'portal-checkbox',
+  className = 'shared-checkbox-field',
   ...props
 }: {
   label: ReactNode;
   className?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>) {
   return (
-    <label className={cx(className)}>
+    <label className={cx('shared-checkbox-field inline-flex items-center justify-start gap-2', className)}>
       <input type="checkbox" {...props} />
-      <span>{label}</span>
+      <span className="text-[color:var(--muted)]">{label}</span>
     </label>
   );
 }

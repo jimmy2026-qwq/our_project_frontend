@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useDialog, useNotice } from '@/hooks';
+import { useDialog, useMutationNotice } from '@/hooks';
 import { mockClubs } from '@/mocks/overview';
 
 import {
@@ -62,8 +62,8 @@ export function useMemberHubActions(
   setState: React.Dispatch<React.SetStateAction<MemberHubState>>,
   reload: () => void,
 ) {
-  const { confirm } = useDialog();
-  const { notifySuccess, notifyWarning } = useNotice();
+  const { confirmDanger } = useDialog();
+  const { notifyMutationResult } = useMutationNotice();
 
   async function changeOperator(operatorId: string) {
     const activeOperator = getActiveOperator(operatorId);
@@ -84,26 +84,27 @@ export function useMemberHubActions(
   }
 
   async function handleReview(applicationId: string, decision: 'approve' | 'reject') {
-    const confirmed = await confirm({
+    const confirmed = await confirmDanger({
       title: decision === 'approve' ? 'Approve this application?' : 'Reject this application?',
       message:
         decision === 'approve'
           ? 'This will update the membership review result and refresh the inbox.'
           : 'This will reject the request and refresh the inbox.',
       confirmText: decision === 'approve' ? 'Approve' : 'Reject',
-      tone: 'danger',
     });
 
     if (!confirmed) {
       return;
     }
 
-    await reviewApplication(state.clubId, applicationId, state.operatorId, decision);
-    if (decision === 'approve') {
-      notifySuccess('Application approved', 'The member hub queue was updated and reloaded.');
-    } else {
-      notifyWarning('Application rejected', 'The member hub queue was updated and reloaded.');
-    }
+    const result = await reviewApplication(state.clubId, applicationId, state.operatorId, decision);
+    notifyMutationResult(result, {
+      successTitle: decision === 'approve' ? 'Application approved' : 'Application rejected',
+      successMessage: 'The member hub queue was updated and reloaded.',
+      fallbackTitle:
+        decision === 'approve' ? 'Application approved with fallback' : 'Application rejected with fallback',
+      fallbackMessage: 'The member hub review used the local inbox fallback.',
+    });
     reload();
   }
 

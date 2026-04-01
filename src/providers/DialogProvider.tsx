@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useId, useMemo, useRef, useState, type ReactNode } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
+import { Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle } from '@/components/ui';
 import { DialogContext, type ConfirmDialogOptions, type DialogContextValue } from '@/providers/dialog-context';
 
 interface PendingDialogRequest {
@@ -13,7 +14,6 @@ export function DialogProvider({ children }: { children: ReactNode }) {
   const queuedRequestsRef = useRef<PendingDialogRequest[]>([]);
   const previousFocusedElementRef = useRef<HTMLElement | null>(null);
   const cancelButtonRef = useRef<HTMLButtonElement | null>(null);
-  const titleId = useId();
 
   const flushNextDialog = useCallback(() => {
     if (activeRequestRef.current || queuedRequestsRef.current.length === 0) {
@@ -78,64 +78,60 @@ export function DialogProvider({ children }: { children: ReactNode }) {
     previousFocusedElementRef.current =
       document.activeElement instanceof HTMLElement ? document.activeElement : null;
 
-    const frame = window.requestAnimationFrame(() => {
-      cancelButtonRef.current?.focus();
-    });
-
-    const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        event.preventDefault();
-        closeDialog(false);
-      }
-    };
-
-    window.addEventListener('keydown', handleKeyDown);
-
     return () => {
-      window.cancelAnimationFrame(frame);
-      window.removeEventListener('keydown', handleKeyDown);
+      cancelButtonRef.current = null;
     };
-  }, [activeDialog, closeDialog]);
+  }, [activeDialog]);
 
   const value = useMemo<DialogContextValue>(() => ({ confirm }), [confirm]);
 
   return (
     <DialogContext.Provider value={value}>
       {children}
-      {activeDialog ? (
-        <div className="app-dialog-backdrop" role="presentation" onClick={() => closeDialog(false)}>
-          <div
-            className="app-dialog"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby={titleId}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="app-dialog__body">
-              <p className="eyebrow">Confirm action</p>
-              <h2 id={titleId}>{activeDialog.title}</h2>
-              {activeDialog.message ? <p>{activeDialog.message}</p> : null}
-            </div>
-            <div className="app-dialog__actions">
-              <button
-                ref={cancelButtonRef}
-                type="button"
-                className="app-dialog__button"
-                onClick={() => closeDialog(false)}
-              >
-                {activeDialog.cancelText ?? 'Cancel'}
-              </button>
-              <button
-                type="button"
-                className={`app-dialog__button app-dialog__button--${activeDialog.tone ?? 'default'}`}
-                onClick={() => closeDialog(true)}
-              >
-                {activeDialog.confirmText ?? 'Confirm'}
-              </button>
-            </div>
-          </div>
-        </div>
-      ) : null}
+      <Dialog
+        open={Boolean(activeDialog)}
+        onOpenChange={(open) => {
+          if (!open && activeDialog) {
+            closeDialog(false);
+          }
+        }}
+      >
+        {activeDialog ? (
+          <DialogPortal>
+            <DialogOverlay className="app-dialog-backdrop" />
+            <DialogSurface
+              className="app-dialog"
+              onOpenAutoFocus={(event) => {
+                event.preventDefault();
+                cancelButtonRef.current?.focus();
+              }}
+            >
+              <DialogBody className="app-dialog__body p-[22px] pb-0 md:p-6 md:pb-0">
+                <p className="eyebrow">Confirm action</p>
+                <DialogHeader>
+                  <DialogTitle>{activeDialog.title}</DialogTitle>
+                  {activeDialog.message ? <DialogDescription>{activeDialog.message}</DialogDescription> : null}
+                </DialogHeader>
+              </DialogBody>
+              <DialogFooter className="app-dialog__actions flex justify-end gap-3 border-t border-[color:var(--line)] p-[22px] pt-4 md:p-6 md:pt-4">
+                <Button
+                  ref={cancelButtonRef}
+                  variant="outline"
+                  onClick={() => closeDialog(false)}
+                >
+                  {activeDialog.cancelText ?? 'Cancel'}
+                </Button>
+                <Button
+                  variant={activeDialog.tone === 'danger' ? 'danger' : 'default'}
+                  onClick={() => closeDialog(true)}
+                >
+                  {activeDialog.confirmText ?? 'Confirm'}
+                </Button>
+              </DialogFooter>
+            </DialogSurface>
+          </DialogPortal>
+        ) : null}
+      </Dialog>
     </DialogContext.Provider>
   );
 }

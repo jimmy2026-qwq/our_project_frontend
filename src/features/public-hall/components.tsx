@@ -1,9 +1,10 @@
 import { Link } from 'react-router-dom';
 
-import { DetailCard, DetailHero, DetailList, DetailListItem, DetailRow, DetailRows, PortalSection } from '@/components/shared/data-display';
+import { DetailCard, DetailHero, DetailList, DetailListItem, DetailPageShell, DetailRow, DetailRows, DirectoryCard, InfoSummaryCard, InfoSummaryGrid, PortalSection } from '@/components/shared/data-display';
 import { EmptyState } from '@/components/shared/feedback';
 import { CheckboxField, SelectField } from '@/components/shared/forms';
-import { ActionButton, PortalFilters } from '@/components/shared/layout';
+import { FilterActionRow } from '@/components/shared/layout';
+import { Badge, Button, DescriptionItem, DescriptionList, KeyValueItem, KeyValueList, StatusPill, Tabs, TabsList, TabsTrigger } from '@/components/ui';
 import type {
   ClubPublicProfile,
   ClubSummary,
@@ -26,8 +27,8 @@ import {
 export function PublicHallLoading() {
   return (
     <section className="public-portal">
-      <section className="portal-hero portal-hero--loading">
-        <div className="portal-hero__main">
+      <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
+        <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))]">
           <p className="portal-hero__eyebrow">Guest Lobby</p>
           <h1>Loading public hall...</h1>
           <p className="portal-hero__summary">Fetching public schedules, club cards, and leaderboard data.</p>
@@ -40,8 +41,8 @@ export function PublicHallLoading() {
 export function PublicHallError({ message }: { message: string }) {
   return (
     <section className="public-portal">
-      <section className="portal-hero portal-hero--loading">
-        <div className="portal-hero__main">
+      <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
+        <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))]">
           <p className="portal-hero__eyebrow">Guest Lobby</p>
           <h1>Public hall failed to render</h1>
           <p className="portal-hero__summary">{message}</p>
@@ -67,61 +68,73 @@ export function PublicHallHero({
   const featuredClub = clubs.envelope.items[0];
 
   return (
-    <section className="portal-hero">
-      <div className="portal-hero__main">
-        <div className="portal-hero__badge-row">
+    <section className="portal-hero grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
+      <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))] before:pointer-events-none before:absolute before:inset-[auto_-5%_-18%_auto] before:h-[260px] before:w-[260px] before:rounded-full before:bg-[radial-gradient(circle,rgba(114,216,209,0.16),transparent_70%)] before:content-['']">
+        <div className="portal-hero__badge-row flex items-center gap-[14px]">
           <p className="portal-hero__eyebrow">Guest Lobby</p>
-          <span className="portal-inline-badge">{schedules.source === 'api' ? 'Public API' : 'Mock'}</span>
+          <Badge className="portal-inline-badge" variant={schedules.source === 'api' ? 'success' : 'warning'}>
+            {schedules.source === 'api' ? 'Public API' : 'Mock'}
+          </Badge>
         </div>
         <h1>Public Hall</h1>
         <p className="portal-hero__summary">
           Public hall home now loads schedules, clubs, and leaderboard data directly from lightweight public
           endpoints.
         </p>
-        <div className="portal-hero__highlights">
-          <article className="portal-highlight">
-            <span>Next featured stage</span>
-            <strong>{nextSchedule ? nextSchedule.stageName : 'No schedule yet'}</strong>
-            <small>{nextSchedule ? formatDateTime(nextSchedule.scheduledAt) : 'Waiting for schedule data'}</small>
-          </article>
-          <article className="portal-highlight">
-            <span>Current top player</span>
-            <strong>{topPlayer ? topPlayer.nickname : '--'}</strong>
-            <small>{topPlayer ? `${topPlayer.clubName} / ELO ${topPlayer.elo}` : 'Waiting for leaderboard data'}</small>
-          </article>
-        </div>
+        <InfoSummaryGrid className="portal-hero__highlights">
+          <InfoSummaryCard
+            className="portal-highlight"
+            label="Next featured stage"
+            title={nextSchedule ? nextSchedule.stageName : 'No schedule yet'}
+            detail={nextSchedule ? formatDateTime(nextSchedule.scheduledAt) : 'Waiting for schedule data'}
+            detailAs="small"
+          />
+          <InfoSummaryCard
+            className="portal-highlight"
+            label="Current top player"
+            title={topPlayer ? topPlayer.nickname : '--'}
+            detail={topPlayer ? `${topPlayer.clubName} / ELO ${topPlayer.elo}` : 'Waiting for leaderboard data'}
+            detailAs="small"
+          />
+        </InfoSummaryGrid>
         <div className="portal-hero__quicklinks">
-          <button type="button" className="portal-chip" onClick={() => onSelectView('schedules')}>
+          <Button className="portal-chip" variant="chip" onClick={() => onSelectView('schedules')}>
             Schedules
-          </button>
-          <button type="button" className="portal-chip" onClick={() => onSelectView('clubs')}>
+          </Button>
+          <Button className="portal-chip" variant="chip" onClick={() => onSelectView('clubs')}>
             Clubs
-          </button>
-          <button type="button" className="portal-chip" onClick={() => onSelectView('leaderboard')}>
+          </Button>
+          <Button className="portal-chip" variant="chip" onClick={() => onSelectView('leaderboard')}>
             Leaderboard
-          </button>
+          </Button>
         </div>
       </div>
-      <aside className="portal-hero__aside">
-        <article className="portal-stat portal-stat--accent">
-          <span>Next public tournament</span>
-          <strong>{nextSchedule ? nextSchedule.tournamentName : '--'}</strong>
-          <small>
-            {nextSchedule
+      <aside className="portal-hero__aside grid gap-[22px]">
+        <InfoSummaryCard
+          className="portal-stat portal-stat--accent"
+          label="Next public tournament"
+          title={nextSchedule ? nextSchedule.tournamentName : '--'}
+          detail={
+            nextSchedule
               ? `${nextSchedule.stageName} / ${formatDateTime(nextSchedule.scheduledAt)}`
-              : 'No upcoming schedule'}
-          </small>
-        </article>
-        <article className="portal-stat">
-          <span>Visible clubs</span>
-          <strong>{clubs.envelope.total}</strong>
-          <small>{featuredClub ? `${featuredClub.name} / Power ${featuredClub.powerRating}` : 'Waiting for club data'}</small>
-        </article>
-        <article className="portal-stat">
-          <span>Default leaderboard filter</span>
-          <strong>{getLeaderboardStatusLabel('Active')}</strong>
-          <small>Showing active players first</small>
-        </article>
+              : 'No upcoming schedule'
+          }
+          detailAs="small"
+        />
+        <InfoSummaryCard
+          className="portal-stat"
+          label="Visible clubs"
+          title={clubs.envelope.total}
+          detail={featuredClub ? `${featuredClub.name} / Power ${featuredClub.powerRating}` : 'Waiting for club data'}
+          detailAs="small"
+        />
+        <InfoSummaryCard
+          className="portal-stat"
+          label="Default leaderboard filter"
+          title={getLeaderboardStatusLabel('Active')}
+          detail="Showing active players first"
+          detailAs="small"
+        />
       </aside>
     </section>
   );
@@ -161,16 +174,41 @@ export function PublicHallOverviewStrip({
   ];
 
   return (
-    <section className="portal-overview">
+    <InfoSummaryGrid className="portal-overview grid gap-[22px] md:grid-cols-3">
       {cards.map((card) => (
-        <article key={card.title} className="overview-card">
-          <span>{card.title}</span>
-          <strong>{card.value}</strong>
-          <small>{card.detail}</small>
-        </article>
+        <InfoSummaryCard
+          key={card.title}
+          className="overview-card rounded-[22px] bg-[color:var(--bg-soft)] px-[22px] py-5 [&_strong]:my-2 [&_strong]:block [&_strong]:text-[2rem] [&_strong]:text-[color:var(--text)] [&_strong]:drop-shadow-[0_4px_18px_rgba(3,8,14,0.22)]"
+          label={card.title}
+          title={card.value}
+          detail={card.detail}
+          detailAs="small"
+        />
       ))}
-    </section>
+    </InfoSummaryGrid>
   );
+}
+
+function getStatusTone(value: string): 'neutral' | 'info' | 'success' | 'warning' | 'danger' {
+  const normalized = value.toLowerCase();
+
+  if (normalized.includes('active') || normalized.includes('approved') || normalized.includes('finished')) {
+    return 'success';
+  }
+
+  if (normalized.includes('progress') || normalized.includes('registration') || normalized.includes('scoring')) {
+    return 'info';
+  }
+
+  if (normalized.includes('pending') || normalized.includes('draft') || normalized.includes('open')) {
+    return 'warning';
+  }
+
+  if (normalized.includes('banned') || normalized.includes('reject') || normalized.includes('appeal')) {
+    return 'danger';
+  }
+
+  return 'neutral';
 }
 
 export function PublicHallTabs({
@@ -187,19 +225,16 @@ export function PublicHallTabs({
   ];
 
   return (
-    <nav className="portal-tabs" aria-label="Public hall navigation">
-      {tabs.map((tab) => (
-        <button
-          key={tab.id}
-          type="button"
-          className={`portal-tab ${tab.id === activeView ? 'portal-tab--active' : ''}`}
-          onClick={() => onSelectView(tab.id)}
-        >
-          <strong>{tab.label}</strong>
-          <span>{tab.summary}</span>
-        </button>
-      ))}
-    </nav>
+    <Tabs value={activeView} onValueChange={(value) => onSelectView(value as PublicView)} className="portal-tabs-shell">
+      <TabsList className="portal-tabs grid gap-[14px] md:grid-cols-3" aria-label="Public hall navigation">
+        {tabs.map((tab) => (
+          <TabsTrigger key={tab.id} value={tab.id} className="portal-tab cursor-pointer">
+            <strong>{tab.label}</strong>
+            <span>{tab.summary}</span>
+          </TabsTrigger>
+        ))}
+      </TabsList>
+    </Tabs>
   );
 }
 
@@ -222,7 +257,7 @@ export function PublicSchedulesSection({
       source={payload.source}
       warning={payload.warning}
     >
-      <PortalFilters>
+      <FilterActionRow onRefresh={onRefresh}>
         <SelectField
           label="Tournament status"
           value={state.scheduleTournamentStatus}
@@ -252,34 +287,49 @@ export function PublicSchedulesSection({
             <option value="Active">Active</option>
             <option value="Completed">Completed</option>
         </SelectField>
-        <ActionButton onClick={onRefresh}>
-          Refresh
-        </ActionButton>
-      </PortalFilters>
-      <div className="schedule-grid">
+      </FilterActionRow>
+      <div className="schedule-grid grid gap-[22px] md:grid-cols-2">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((item) => (
-            <article key={`${item.tournamentId}-${item.stageId}`} className="schedule-card">
-              <div className="schedule-card__top">
-                <span className="schedule-card__status">{getTournamentStatusLabel(item.tournamentStatus)}</span>
-                <span className="schedule-card__minor">{getStageStatusLabel(item.stageStatus)}</span>
-              </div>
-              <h3>{item.tournamentName}</h3>
-              <p>{item.stageName}</p>
-              <dl className="schedule-card__meta">
-                <div>
-                  <dt>Starts</dt>
-                  <dd>{formatDateTime(item.scheduledAt)}</dd>
+            <DirectoryCard
+              key={`${item.tournamentId}-${item.stageId}`}
+              className="schedule-card"
+              top={
+                <div className="schedule-card__top flex items-start justify-between gap-[14px]">
+                  <StatusPill
+                    className="schedule-card__status bg-[rgba(114,216,209,0.14)] text-[color:var(--teal-strong)]"
+                    tone={getStatusTone(item.tournamentStatus)}
+                  >
+                    {getTournamentStatusLabel(item.tournamentStatus)}
+                  </StatusPill>
+                  <StatusPill className="schedule-card__minor text-[color:var(--muted)]" tone={getStatusTone(item.stageStatus)}>
+                    {getStageStatusLabel(item.stageStatus)}
+                  </StatusPill>
                 </div>
-                <div>
-                  <dt>Tournament id</dt>
-                  <dd>{item.tournamentId}</dd>
-                </div>
-              </dl>
-              <Link className="detail-link" to={`/public/tournaments/${item.tournamentId}`}>
-                Open tournament detail
-              </Link>
-            </article>
+              }
+              title={item.tournamentName}
+              subtitle={item.stageName}
+              meta={
+                <DescriptionList className="schedule-card__meta mt-0 grid gap-3">
+                  <DescriptionItem
+                    className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
+                    label="Starts"
+                    value={formatDateTime(item.scheduledAt)}
+                  />
+                  <DescriptionItem
+                    className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
+                    label="Tournament id"
+                    value={item.tournamentId}
+                    separator={false}
+                  />
+                </DescriptionList>
+              }
+              action={
+                <Link className="detail-link inline-flex mt-[18px]" to={`/public/tournaments/${item.tournamentId}`}>
+                  Open tournament detail
+                </Link>
+              }
+            />
           ))
         ) : (
           <EmptyState>No public schedules match the current filters.</EmptyState>
@@ -308,42 +358,43 @@ export function PublicClubsSection({
       source={payload.source}
       warning={payload.warning}
     >
-      <PortalFilters>
+      <FilterActionRow onRefresh={onRefresh}>
         <CheckboxField
           label="Prefer active clubs only"
           checked={state.clubActiveOnly}
           onChange={(event) => onStateChange({ clubActiveOnly: event.currentTarget.checked })}
         />
-        <ActionButton onClick={onRefresh}>
-          Refresh
-        </ActionButton>
-      </PortalFilters>
-      <div className="club-grid">
+      </FilterActionRow>
+      <div className="club-grid grid gap-[22px] md:grid-cols-2">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((club) => (
-            <article key={club.id} className="club-card">
-              <div className="club-card__top">
-                <div>
-                  <h3>{club.name}</h3>
-                  <p className="club-card__subtitle">{club.memberCount} members</p>
+            <DirectoryCard
+              key={club.id}
+              className="club-card"
+              top={
+                <div className="club-card__top flex items-start justify-between gap-[14px]">
+                  <div>
+                    <p className="club-card__subtitle">{club.memberCount} members</p>
+                  </div>
+                  <StatusPill className="club-card__power bg-[rgba(236,197,122,0.14)] text-[color:var(--gold)]" tone="warning">
+                    Power {club.powerRating}
+                  </StatusPill>
                 </div>
-                <span className="club-card__power">Power {club.powerRating}</span>
-              </div>
-              <p>Public club cards expose high-level profile, treasury, and relation summary only.</p>
-              <div className="club-card__stats">
-                <div>
-                  <span>Treasury</span>
-                  <strong>{formatNumber(club.treasury)}</strong>
-                </div>
-                <div>
-                  <span>Relations</span>
-                  <strong>{club.relations.map(getRelationLabel).join(' / ') || '--'}</strong>
-                </div>
-              </div>
-              <Link className="detail-link" to={`/public/clubs/${club.id}`}>
-                Open club detail
-              </Link>
-            </article>
+              }
+              title={club.name}
+              summary="Public club cards expose high-level profile, treasury, and relation summary only."
+              meta={
+                <KeyValueList className="club-card__stats mt-0 grid gap-[10px] sm:grid-cols-2">
+                  <KeyValueItem label="Treasury" value={formatNumber(club.treasury)} />
+                  <KeyValueItem label="Relations" value={club.relations.map(getRelationLabel).join(' / ') || '--'} />
+                </KeyValueList>
+              }
+              action={
+                <Link className="detail-link inline-flex mt-[18px]" to={`/public/clubs/${club.id}`}>
+                  Open club detail
+                </Link>
+              }
+            />
           ))
         ) : (
           <EmptyState>No public clubs are available right now.</EmptyState>
@@ -374,7 +425,7 @@ export function PublicLeaderboardSection({
       source={payload.source}
       warning={payload.warning}
     >
-      <PortalFilters>
+      <FilterActionRow onRefresh={onRefresh}>
         <SelectField
           label="Club"
           value={state.leaderboardClubId}
@@ -399,28 +450,25 @@ export function PublicLeaderboardSection({
             <option value="Inactive">Inactive</option>
             <option value="Banned">Banned</option>
         </SelectField>
-        <ActionButton onClick={onRefresh}>
-          Refresh
-        </ActionButton>
-      </PortalFilters>
-      <ol className="leaderboard-list">
+      </FilterActionRow>
+      <ol className="leaderboard-list m-0 grid list-none gap-[22px] p-0">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((item, index) => {
             const club = mockClubProfiles.find((profile) => profile.name === item.clubName);
 
             return (
-              <li key={item.playerId} className="leaderboard-row">
-                <div className="leaderboard-row__rank">{item.rank || index + 1}</div>
+              <li key={item.playerId} className="leaderboard-row grid items-center gap-4 rounded-3xl bg-[color:var(--panel)] px-5 py-[18px] md:grid-cols-[72px_minmax(0,1fr)_auto]">
+                <div className="leaderboard-row__rank inline-flex h-[52px] w-[52px] items-center justify-center rounded-[18px] bg-[linear-gradient(145deg,rgba(236,197,122,0.16),rgba(114,216,209,0.16)),rgba(255,255,255,0.02)] text-[1.1rem] font-bold">{item.rank || index + 1}</div>
                 <div className="leaderboard-row__main">
                   <strong>{item.nickname}</strong>
                   <span>{item.clubName || '--'}</span>
                   {club ? (
-                    <Link className="leaderboard-row__link" to={`/public/clubs/${club.id}`}>
+                    <Link className="leaderboard-row__link inline-flex mt-[18px]" to={`/public/clubs/${club.id}`}>
                       Open club
                     </Link>
                   ) : null}
                 </div>
-                <div className="leaderboard-row__side">
+                <div className="leaderboard-row__side text-right">
                   <strong>ELO {item.elo}</strong>
                   <span>{getLeaderboardStatusLabel(item.status)}</span>
                 </div>
@@ -449,22 +497,30 @@ export function PublicTournamentDetailSection({
   const profile = state.item;
 
   return (
-    <section className="detail-page">
-      <Link className="detail-back" to="/public">
-        Back to public hall
-      </Link>
-      <DetailHero
-        eyebrow="Tournament"
-        title={profile.name}
-        tagline={profile.tagline}
-        summary={profile.description}
-        source={state.source}
-        warning={state.warning}
-      />
-      <section className="detail-grid">
+    <DetailPageShell
+      backLink={
+        <Link className="detail-back" to="/public">
+          Back to public hall
+        </Link>
+      }
+      hero={
+        <DetailHero
+          eyebrow="Tournament"
+          title={profile.name}
+          tagline={profile.tagline}
+          summary={profile.description}
+          source={state.source}
+          warning={state.warning}
+        />
+      }
+    >
+      <section className="detail-grid grid gap-[22px] md:grid-cols-2">
         <DetailCard title="Public tournament info">
           <DetailList>
-            <DetailListItem label="Status" value={getTournamentStatusLabel(profile.status)} />
+            <DetailListItem
+              label="Status"
+              value={<StatusPill tone={getStatusTone(profile.status)}>{getTournamentStatusLabel(profile.status)}</StatusPill>}
+            />
             <DetailListItem label="Organizer" value={profile.venue} />
             <DetailListItem label="Stage count" value={profile.stageCount} />
             <DetailListItem label="Whitelist type" value={profile.whitelistType} />
@@ -480,7 +536,9 @@ export function PublicTournamentDetailSection({
                 title={stage.name}
                 detail={
                   <>
-                  {getStageStatusLabel(stage.status)} / {stage.tableCount} tables / {stage.roundCount} rounds
+                    <StatusPill tone={getStatusTone(stage.status)}>{getStageStatusLabel(stage.status)}</StatusPill>
+                    {' / '}
+                    {stage.tableCount} tables / {stage.roundCount} rounds
                   </>
                 }
               />
@@ -488,7 +546,7 @@ export function PublicTournamentDetailSection({
           </DetailRows>
         </DetailCard>
       </section>
-    </section>
+    </DetailPageShell>
   );
 }
 
@@ -500,23 +558,28 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
   const profile = state.item;
 
   return (
-    <section className="detail-page">
-      <Link className="detail-back" to="/public">
-        Back to public hall
-      </Link>
-      <DetailHero
-        eyebrow="Club"
-        title={profile.name}
-        tagline={profile.slogan}
-        summary={profile.description}
-        source={state.source}
-        warning={state.warning}
-      />
-      <section className="detail-grid">
+    <DetailPageShell
+      backLink={
+        <Link className="detail-back" to="/public">
+          Back to public hall
+        </Link>
+      }
+      hero={
+        <DetailHero
+          eyebrow="Club"
+          title={profile.name}
+          tagline={profile.slogan}
+          summary={profile.description}
+          source={state.source}
+          warning={state.warning}
+        />
+      }
+    >
+      <section className="detail-grid grid gap-[22px] md:grid-cols-2">
         <DetailCard title="Public club info">
           <DetailList>
             <DetailListItem label="Members" value={profile.memberCount} />
-            <DetailListItem label="Power" value={profile.powerRating} />
+            <DetailListItem label="Power" value={<StatusPill tone="warning">{profile.powerRating}</StatusPill>} />
             <DetailListItem label="Treasury" value={formatNumber(profile.treasury)} />
             <DetailListItem label="Relations" value={profile.relations.map(getRelationLabel).join(' / ') || '--'} />
             <DetailListItem label="Featured players" value={profile.featuredPlayers.join(' / ') || '--'} />
@@ -534,21 +597,25 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
           </DetailRows>
         </DetailCard>
       </section>
-    </section>
+    </DetailPageShell>
   );
 }
 
 export function PublicDetailNotFound({ title }: { title: string }) {
   return (
-    <section className="detail-page">
-      <Link className="detail-back" to="/public">
-        Back to public hall
-      </Link>
-      <DetailHero
-        eyebrow="Not Found"
-        title={title}
-        summary="The requested public detail view is not available right now."
-      />
-    </section>
+    <DetailPageShell
+      backLink={
+        <Link className="detail-back" to="/public">
+          Back to public hall
+        </Link>
+      }
+      hero={
+        <DetailHero
+          eyebrow="Not Found"
+          title={title}
+          summary="The requested public detail view is not available right now."
+        />
+      }
+    />
   );
 }

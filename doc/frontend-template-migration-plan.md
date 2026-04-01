@@ -1,5 +1,7 @@
 # Frontend Template Migration Plan
 
+If build or migration work surfaces real pressure for a missing tool from `template/frontend`, the current implementation can be interrupted so the code can be refactored with that new tool after confirmation.
+
 This document records the current migration state of `front/` relative to the template-style frontend under `template/frontend/`.
 
 It is intentionally based on the current codebase, not on the older prototype-only version.
@@ -23,12 +25,13 @@ The remaining gap is now mostly about:
 - app-wide state breadth
 - styling system alignment
 - toolchain and template ecosystem alignment
-- low-level UI primitive coverage
+- continued template-stack breadth and library backing
 
 In short:
 
 - the old gap was architectural
-- the current gap is mostly about infrastructure maturity and ecosystem breadth
+- the current gap is mostly about infrastructure maturity, ecosystem breadth, and disciplined consolidation
+- the current codebase is now in a valid "pause and build features" state; further migration should be pressure-driven
 
 ## 2. What Has Already Been Migrated
 
@@ -89,13 +92,14 @@ This layer is already one of the strongest parts of the frontend and should rema
 
 ### First shared UI layer
 
-Current status: established
+Current status: established and already moving beyond first-pass wrappers
 
 The frontend now has a real first-pass shared presentation layer under:
 
 - `src/components/shared/layout`
 - `src/components/shared/feedback`
 - `src/components/shared/data-display`
+- `src/components/shared/domain`
 - `src/components/shared/forms`
 - `src/components/shared/index.ts`
 
@@ -106,18 +110,49 @@ Examples already extracted:
 - panel heads
 - source badge and warning presentation
 - loading card and empty state blocks
+- section-level loading wrappers
 - reusable data panel and detail display shells
+- reusable data-table panel shells
 - reusable list row and metric shells
 - reusable detail list/detail row shells
 - reusable labeled field/select/input/textarea/checkbox shells
+- reusable domain-aware shared shells such as dashboard fallback panels, ops context panels, workbench context panels, and club application list presentation
 
 This is an important change in migration status.
 
 The frontend is no longer only "feature-split React code". It now has the beginning of a reusable UI layer.
 
+### CSS-first `components/ui` foundation
+
+Current status: established across six migration batches
+
+The frontend now also has a real low-to-mid-level UI layer under:
+
+- `src/components/ui/*`
+
+Current coverage already includes:
+
+- primitives such as button, card, input, textarea, select, badge, dialog
+- richer presentation primitives such as alert, table, tabs, skeleton, separator, empty state, stat blocks
+- structured display primitives such as fieldset, description list, key-value list, status pill
+- middle-layer composition pieces such as info card, section callout, and filter bar
+
+What this changes:
+
+- `front/` no longer depends only on ad hoc feature markup plus high-level shared shells
+- the app now has a CSS-first internal primitive surface that can support larger-scale extraction work
+- the remaining difference from the template is now less about "missing all primitives" and more about implementation style, breadth, and ecosystem choice
+
+Current observation:
+
+- the primitive layer is no longer theoretical or isolated
+- feature code in blueprint, public hall, member hub, and tournament operations is already consuming `components/ui/*`
+- this means the primitive layer has crossed from "scaffold" into "active dependency of feature implementation"
+- several shared families are now also moving behind template-compatible component structure rather than depending mostly on global CSS, especially in feedback, forms, summaries, metadata cards, and detail display shells
+
 ### First app-level interaction infrastructure
 
-Current status: established
+Current status: established and stabilized
 
 The frontend now has root-level interaction providers and reusable hooks for both notices and confirm flows:
 
@@ -135,6 +170,14 @@ Current confirmed usage includes:
 
 This is the first real app-level interaction layer in `front/` and marks another meaningful step toward the template style.
 
+The provider layer is now also cleaner internally:
+
+- notice and dialog contexts are split from provider implementations
+- provider and hook barrels are available for stable imports
+- notice dismissal now clears pending timers so the root feedback layer does not leak timeout state during reuse
+- the root notice stack now renders through the same alert/button primitive path used elsewhere in the app
+- the root confirm dialog now leans on `DialogSurface`, `DialogBody`, `DialogFooter`, and shared button variants instead of a separate modal-only presentation shell
+
 ### Shared export surface
 
 Current status: established
@@ -145,13 +188,37 @@ The shared component layer now also has an index export surface:
 
 This matters because the codebase is no longer only extracting shared pieces, it is also starting to present them as a small internal UI surface rather than a set of unrelated utility files.
 
+### Shared domain layer
+
+Current status: established
+
+The frontend now has a clearer middle layer for business-aware reusable compositions:
+
+- `src/components/shared/domain`
+
+Current examples include:
+
+- dashboard fallback shells
+- operations context panels
+- workbench context panels with reload affordances
+- club application list presentation
+- workbench guide and result-summary shells for blueprint-style business blocks
+- workbench backlog/note panels for route-level dependency and contract gaps
+- dashboard fallback notices for stable "API when available, explanatory placeholder otherwise" panels
+
+What this changes:
+
+- `front/` is no longer forced to choose only between low-level primitives and feature-local markup
+- the codebase now has a middle reusable layer that is closer to domain-aware shared composition
+- this is an important sign that the internal UI architecture is becoming more layered and intentional
+
 ## 3. What Still Differs From `template/frontend`
 
 Even though the runtime architecture is now much closer, `front/` still differs from `template/frontend` in several important ways.
 
 ### UI component system
 
-Difference level: still significant
+Difference level: moderate
 
 `template/frontend` has a much richer reusable UI base:
 
@@ -160,11 +227,13 @@ Difference level: still significant
 - reusable button/card/table/form/dialog primitives
 - shadcn/ui-compatible patterns
 
-`front/` now has a first-pass shared layer:
+`front/` now has a real internal reusable UI base:
 
+- `components/ui/*`
 - `components/shared/layout/*`
 - `components/shared/feedback/*`
 - `components/shared/data-display/*`
+- `components/shared/domain/*`
 - `components/shared/forms/*`
 - `components/shared/index.ts`
 
@@ -173,7 +242,20 @@ What this means in practice:
 - `front/` already has page and feature decomposition
 - it now also has shared view abstractions across features
 - it also has shared form wrappers and a barrel export surface
-- but it still does not yet have the same breadth or maturity as the template's reusable UI foundation
+- but it still does not yet have the same breadth, Radix integration, or ecosystem maturity as the template's reusable UI foundation
+
+Additional current observation:
+
+- `front/` now has a three-layer UI picture:
+  - `components/ui/*` for lower-level primitives
+  - `components/shared/*` for cross-feature shared shells
+  - `components/shared/domain/*` for business-aware shared compositions
+- recent consolidation work has also started clarifying boundaries:
+  - lower-level helpers used by `components/ui/*` now live below the shared view layer
+  - shared default naming is moving away from feature-specific class names such as `public-hall__*`
+  - repeated loading, data-table, and workbench-context shells are becoming explicit shared APIs
+
+This is materially closer to a template-style frontend than the earlier migration stages.
 
 ### Provider and app-level infrastructure
 
@@ -194,50 +276,71 @@ What this means in practice:
 - it now has root-level feedback and confirm paths
 - but richer overlays, mock tooling, and broader app-state services are still less centralized than in the template
 
+Current leverage point already confirmed:
+
+- `@radix-ui/react-dialog` is now in active use as the first intentionally adopted template-style interaction dependency
+- this was added because the root confirm flow had a real accessibility and interaction baseline need around portal/focus/overlay behavior
+- this does not yet imply that `select`, `tabs`, or broader state libraries should be added immediately; those still need separate pressure-based justification
+
 ### Styling model
 
-Difference level: significant
+Difference level: moderate
 
-`front/` still leans on global CSS:
+`front/` is no longer purely global-CSS-driven.
+
+It now has:
+
+- Tailwind CSS v4 wired through `src/index.css`
+- shared theme tokens and base styles in `src/index.css`
+- `clsx`, `tailwind-merge`, and `class-variance-authority` in the internal UI stack
+- a growing set of `components/ui/*` primitives with component-owned styling
+
+It still also carries:
 
 - `src/styles/app.css`
 - `src/styles/template-shell.css`
 
-`template/frontend` uses a more complete design-system path:
+`template/frontend` remains further along in the same direction:
 
-- Tailwind CSS v4
-- design tokens in `src/index.css`
-- shadcn/ui styling conventions
+- Tailwind CSS v4 as the default styling path
+- shadcn/ui-compatible conventions
+- broader library-backed primitive coverage
 
 What this means in practice:
 
-- `front/` visually can approximate the template direction
-- but the styling architecture is not yet aligned with the template's component-first system
+- `front/` has already started the styling-system migration
+- the current gap is no longer "Tailwind absent"
+- the real remaining difference is that styling ownership is still hybrid, while the template is more consistently component-first and library-backed
 
 ### Dependency and toolchain alignment
 
-Difference level: significant
+Difference level: moderate
 
-Current `front/package.json` is still lightweight.
+Current `front/package.json` is no longer only a minimal React shell.
 
-It includes:
+It now includes:
 
 - React
 - React DOM
 - React Router
 - Vite
 - TypeScript
+- Tailwind CSS v4
+- PostCSS
+- `class-variance-authority`
+- `clsx`
+- `tailwind-merge`
 
-But it does not yet include the larger template stack such as:
+The remaining gap with `template/frontend` is now mainly in the broader ecosystem:
 
 - Zustand
-- Tailwind CSS v4
 - Radix UI packages
-- shadcn/ui support pieces
+- shadcn-oriented support pieces
 - react-hook-form
 - eslint stack matching the template
+- some richer table/form/date/input dependencies used by the sample
 
-This means `front/` has adopted the React shell, but not the full template ecosystem.
+This means `front/` has already moved into the template-adjacent tooling path, but it still has a lighter ecosystem surface than the sample template.
 
 ## 4. Difference Assessment
 
@@ -265,18 +368,18 @@ Both sides now split business areas into route-facing units.
 
 ### Shared UI layer
 
-Gap: moderate
+Gap: moderate to small
 
 This is now one of the clearest remaining differences.
 
 `template/frontend` has a broader reusable design-system layer.
 
-`front/` now has a meaningful first shared layer, but it is still lighter and narrower than the template's `components/ui/*` ecosystem.
+`front/` now has both a meaningful `components/ui/*` layer and a meaningful `components/shared/*` layer, but they are still lighter and narrower than the template ecosystem.
 
 The current gap is now mostly about depth:
 
-- the template has many low-level primitives
-- `front/` has a smaller set of higher-level shared shells and wrappers
+- the template has broader primitive coverage plus stronger third-party integration conventions
+- `front/` now has a usable primitive and shared-domain stack, but fewer patterns and less ecosystem support
 
 ### App-wide state and interaction infrastructure
 
@@ -293,11 +396,15 @@ Gap: moderate to small
 
 ### Styling system
 
-Gap: large
+Gap: moderate
 
-`front/` is still primarily global-CSS-driven.
+`front/` is now in a hybrid state:
 
-`template/frontend` is much more design-system-driven.
+- base theme, tokens, and Tailwind are present
+- reusable structure is increasingly component-owned
+- legacy global CSS is still active
+
+`template/frontend` is still more consistently design-system-driven, but the gap is no longer as large as it was before the recent styling/tooling changes.
 
 ## 5. Practical Conclusion
 
@@ -315,26 +422,37 @@ It is already close in:
 - page layout
 - feature organization
 - first-pass shared view abstractions
+- layered internal UI structure
 - first-pass app-level interaction infrastructure
 
-It is still far in:
+It is still behind in:
 
 - app-wide state breadth
-- styling conventions
-- toolchain completeness
-- richer low-level UI primitive coverage
+- styling consistency
+- toolchain and ecosystem breadth
+- richer primitive depth and library-backed coverage
 
-That means the migration has moved from "rewrite the app shell" into "complete the template ecosystem around the app shell."
+That means the migration has moved from "rewrite the app shell" into "complete and stabilize the template-aligned ecosystem around the app shell."
+
+Practical reading:
+
+- there is no mandatory next migration phase that must start immediately
+- the frontend is now in a good enough state to pause migration and return to product work
+- future migration should resume only when real code pressure appears
 
 ## 6. Recommended Next Steps
 
 Recommended order from here:
 
-1. Consolidate and stabilize the newly introduced `src/components/shared/*` layer.
-2. Keep the new notice/confirm provider layer narrow and stable while more features reuse it.
-3. Decide whether styling should remain CSS-first or move toward the template's Tailwind/shadcn direction.
-4. Only after that, consider deeper dependency alignment with the full template stack.
-5. Introduce broader app-state machinery only if a real cross-page state problem appears.
+1. Pause migration work unless a concrete pressure point appears.
+2. Keep using the current `ui -> shared -> feature` layering during normal feature development.
+3. Resume migration only when a real maintenance, accessibility, state, or interaction bottleneck becomes obvious.
+4. Add ecosystem packages one by one only when they clearly remove that pressure.
+
+Current practical rule:
+
+- do not continue migrating only to stay busy
+- do continue migration when a reusable primitive, provider, or workflow is becoming expensive to maintain without template-style tooling
 
 ## 7. Practical Work Plan
 
@@ -373,9 +491,11 @@ Objective:
 
 Recommended target folders:
 
+- `src/components/ui`
 - `src/components/shared/layout`
 - `src/components/shared/feedback`
 - `src/components/shared/data-display`
+- `src/components/shared/domain`
 - `src/components/shared/forms`
 - `src/components/shared/navigation`
 
@@ -385,8 +505,10 @@ Already extracted:
 - section header shell
 - empty state block
 - loading panel/card
+- section-level loading shell
 - source badge and warning block
 - data panel shell
+- data-table panel shell
 - detail hero/detail card shell
 - list row shell
 - metric grid/card shell
@@ -394,12 +516,21 @@ Already extracted:
 - reusable labeled field/select/input shell
 - reusable inline action group
 
+Already added beyond the original shared shells:
+
+- reusable UI primitives and combo pieces in `src/components/ui/*`
+- business-aware shared-domain components for dashboard fallback, ops context, workbench context, and club application list views
+- provider and hook barrels for cleaner app-level imports
+- naming cleanup work that is moving shared defaults away from feature-specific CSS class names
+- lower-level helper cleanup so `components/ui/*` no longer depends upward on `components/shared/*`
+
 Suggested next extractions:
 
 - page action bar
 - reusable stats/detail-summary shell
 - navigation-specific wrappers if cross-route navigation patterns continue to repeat
-- low-level button/input-like primitives only if shared wrappers stop being enough
+- more domain-aware panels such as inbox shells, public profile shells, or operations-specific list shells
+- richer data-table or list variants only when a second concrete use case appears
 
 Likely source files to mine for reusable pieces:
 
@@ -411,8 +542,12 @@ Likely source files to mine for reusable pieces:
 Definition of done for Phase B:
 
 - the current shared components stop churning heavily across features
+- the current `components/ui/*` primitives stop churning heavily across features
 - repeated feature markup continues to move into `src/components/shared`
+- business-aware shared patterns land in `shared/domain` instead of bouncing between feature-local code and low-level primitives
 - feature component files become more composition-oriented and less repetitive
+- shared APIs expose neutral naming instead of inheriting feature-specific defaults
+- low-level primitives do not regain reverse dependencies on higher shared layers
 
 ### Phase C: Introduce app-level interaction infrastructure
 
@@ -452,34 +587,32 @@ Definition of done for Phase C:
 - the dialog layer keeps a stable accessibility and concurrency baseline before broader reuse
 - cross-page interaction flows are mounted once near the app root
 - provider APIs stay narrow instead of growing into a catch-all modal/store layer too early
+- root interaction views reuse the shared primitive layer instead of maintaining a parallel bespoke notice/dialog presentation stack
 
-### Phase D: Decide the styling direction
+### Phase D: Consolidate the styling direction
 
 Objective:
 
-- choose whether `front/` will remain CSS-first for now or begin moving toward the template's Tailwind/shadcn style
+- continue the ongoing move toward the template-style styling path without forcing a one-shot rewrite
 
-Option 1:
+Current status:
 
-- stay CSS-first in the near term
-- continue using `app.css` and `template-shell.css`
-- improve naming, layering, and reuse without changing the stack yet
+- Tailwind CSS v4 is already installed
+- `src/index.css` now owns tokens and base theme setup
+- `components/ui/*` already carries part of the reusable structure
+- `app.css` and `template-shell.css` still own a meaningful amount of layout and legacy structure
 
-Option 2:
+Working rule:
 
-- begin gradual template-stack alignment
-- introduce Tailwind
-- progressively move new shared UI into template-compatible styling patterns
-
-Recommended decision rule:
-
-- if the next 2-3 sprints are mostly feature delivery, stay CSS-first
-- if the next 2-3 sprints are mostly frontend-system building, start template-stack alignment
+- keep new reusable UI on the component-owned path
+- only leave code in large global CSS blocks when it is genuinely page-specific or theme-level
+- migrate by replacement, not by rewriting every existing selector up front
 
 Definition of done for Phase D:
 
-- the team has one explicit styling direction
 - new components stop mixing unrelated styling approaches
+- the most-used `components/ui/*` and `components/shared/*` families increasingly own their own structure instead of depending on large global style blocks
+- global CSS keeps theme and page-specific language while reusable structure progressively moves into component implementations
 
 ### Phase E: Fill template ecosystem gaps
 
@@ -490,7 +623,7 @@ Objective:
 Possible later additions:
 
 - Zustand for true cross-page state
-- Tailwind CSS v4
+- Radix packages where an existing primitive has a real accessibility or interaction baseline gap
 - shadcn/ui-style primitives
 - react-hook-form where forms become complex
 - stronger linting/tooling alignment with the template
@@ -500,6 +633,7 @@ Important rule:
 - do not add ecosystem dependencies just to match the template visually
 - add them only when the current code has an actual maintenance or reuse problem they solve
 - especially avoid adding global state tooling before the app actually has cross-route state pressure
+- treat `@radix-ui/react-dialog` as the current example of the right threshold: it was added for a live root-dialog baseline need, not for stack symmetry
 
 Definition of done for Phase E:
 
@@ -560,12 +694,33 @@ Avoid:
 
 - turning every local state object into a hook without reuse value
 
+### `src/components/ui`
+
+Use for:
+
+- reusable UI primitives and low-level composition pieces
+- generic buttons, cards, inputs, selects, dialogs, alerts, tables, tabs, and similar building blocks
+- CSS-first internal UI elements that can support multiple shared and feature layers
+
+Avoid:
+
+- route-specific composition
+- business-aware copy or feature assumptions
+- data-loading logic
+
 ### `src/components/shared`
 
 Use for:
 
 - reusable presentational pieces shared by multiple features
 - shells, badges, states, panels, toolbars, wrappers
+- business-aware shared compositions that sit above `components/ui`
+
+Current practical layering inside `shared`:
+
+- `shared/feedback` owns reusable source, empty, and loading patterns such as `SourceBadge`, `LoadingCard`, and `LoadingSection`
+- `shared/data-display` owns reusable presentation shells such as `DataPanel`, `DataTablePanel`, detail shells, and list/metric display helpers
+- `shared/domain` owns business-aware reusable workbench and domain presentation shells such as `DashboardPanelShell`, `OpsContextPanel`, `WorkbenchContextPanel`, and `ClubApplicationList`
 
 Promote code here when:
 
@@ -607,17 +762,33 @@ Use for:
 
 This file should remain the single source of truth for backend-to-frontend shape adaptation.
 
-## 9. Immediate Backlog For Starting Work
+## 9. Pressure-Driven Continuation Points
 
-If work starts now, the recommended first batch is:
+If migration resumes later, the next additions should come from real code pressure rather than from the plan itself.
 
-1. Audit the new `src/components/shared/*` APIs and normalize naming, props, and responsibilities before adding many more abstractions.
-2. Continue extracting the next repeated patterns from `public-hall`, `member-hub`, `tournament-ops`, and `blueprint`.
-3. Reuse `useNotice` instead of introducing feature-local success/warning banners.
-4. Keep `DialogProvider/useDialog(confirm only)` narrow until a second clear reusable dialog pattern appears.
-5. Reassess styling direction before introducing Tailwind or shadcn dependencies.
-6. Do not add store-style app state unless a cross-route state problem is concrete.
-7. Do not introduce template-style low-level primitives unless the current shared shells become a proven bottleneck.
+Most likely future ecosystem gaps to fill:
+
+1. More Radix packages when an existing primitive shows a real accessibility or interaction baseline gap.
+2. `react-hook-form` when forms stop being simple field wrappers and start needing schema-driven validation and richer orchestration.
+3. Zustand only when real cross-route state pressure appears.
+4. Broader linting/tooling alignment if the current lightweight stack starts slowing collaboration or consistency.
+
+Immediate status update:
+
+- the `ui -> shared` reverse dependency has already been removed
+- shared default naming has started moving toward neutral `shared-*` class conventions
+- `LoadingSection`, `DataTablePanel`, and `WorkbenchContextPanel` are now real shared APIs in active use
+- blueprint summary cards and home-workbench guide/result shells have started moving behind shared APIs as their semantics stabilized
+- public-hall hero highlights and tournament-ops dependency notes are also starting to converge on shared summary/domain panels
+- public-hall hero-side stat cards now also fit the same summary-card family instead of living as a one-off display pattern
+- blueprint module and role cards are starting to converge on a shared metadata-card display pattern
+- the styling direction is now a gradual template-stack alignment that has already started, not a future decision point
+- the next cleanup gains are likely to come from removing old aliases and simplifying feature files further, not from adding another abstraction tier
+- shared feedback/forms/data-display families have continued moving label, spacing, separator, and summary-card semantics into component implementations
+- root notice and confirm rendering now reuse the same `ui` primitive layer that feature code uses, which narrows the gap between app-level infrastructure and template-style rendering
+- Tailwind, base tokens, and utility-composition helpers are now part of the active stack, so the remaining styling/tooling gap is more about breadth and consistency than initial adoption
+- `@radix-ui/react-dialog` has now been adopted as the first package-by-package Radix addition because confirm dialog behavior had real leverage there
+- the current assessment is still to pause before adding more Radix packages until another similarly concrete pressure point appears
 
 ## 9A. Current Review Findings
 
@@ -647,11 +818,12 @@ Recommended follow-up:
 The migration is moving in the right direction if, after the next round of work:
 
 - the current shared components are reused by multiple features without prop churn
+- the current `components/ui/*` primitives are reused by multiple shared and feature layers without semantic churn
 - at least 2 more repeated UI patterns have been extracted to `src/components/shared`
+- business-aware repeated UI patterns are landing in `shared/domain` instead of being duplicated across features
 - app-level notices are reused by more than one feature without feature-specific duplication
 - confirm dialogs are reused by more than one feature without local one-off implementations
 - no one introduces a broad global state layer without a concrete cross-page need
-- no one introduces a broad primitive layer before the current shared shells prove insufficient
 - no new feature duplicates backend normalization logic
 - no new route page becomes a large view dump
 - at least one feature becomes simpler after shared extraction

@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 
+import { Alert, AlertDescription, AlertTitle, Button } from '@/components/ui';
 import {
   AppFeedbackContext,
   type AppFeedbackContextValue,
@@ -12,6 +13,17 @@ interface AppNotice extends AppNoticeInput {
   tone: NoticeTone;
 }
 
+function getNoticeVariant(tone: NoticeTone) {
+  switch (tone) {
+    case 'success':
+      return 'success';
+    case 'warning':
+      return 'warning';
+    default:
+      return 'default';
+  }
+}
+
 function NoticeStack({
   notices,
   onDismiss,
@@ -20,17 +32,28 @@ function NoticeStack({
   onDismiss: (id: number) => void;
 }) {
   return (
-    <div className="app-notice-stack" aria-live="polite" aria-label="Application notices">
+    <div className="app-notice-stack fixed bottom-[18px] right-[18px] z-20 grid w-[min(360px,calc(100vw-24px))] gap-3" aria-live="polite" aria-label="Application notices">
       {notices.map((notice) => (
-        <article key={notice.id} className={`app-notice app-notice--${notice.tone}`}>
-          <div className="app-notice__body">
-            <strong>{notice.title}</strong>
-            {notice.message ? <p>{notice.message}</p> : null}
+        <Alert
+          key={notice.id}
+          variant={getNoticeVariant(notice.tone)}
+          className="app-notice grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 border-[color:var(--line)] bg-[rgba(7,18,28,0.94)] shadow-[var(--shadow-md)] backdrop-blur-[18px]"
+        >
+          <div className="app-notice__body grid gap-[6px]">
+            <AlertTitle>{notice.title}</AlertTitle>
+            {notice.message ? <AlertDescription>{notice.message}</AlertDescription> : null}
           </div>
-          <button type="button" className="app-notice__dismiss" onClick={() => onDismiss(notice.id)} aria-label="Dismiss notice">
+          <Button
+            type="button"
+            className="app-notice__dismiss self-start"
+            variant="ghost"
+            size="sm"
+            onClick={() => onDismiss(notice.id)}
+            aria-label="Dismiss notice"
+          >
             Dismiss
-          </button>
-        </article>
+          </Button>
+        </Alert>
       ))}
     </div>
   );

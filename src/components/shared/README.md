@@ -10,6 +10,7 @@ Prefer importing from the closest shared subfolder that matches the component re
 
 - `@/components/shared/layout`
 - `@/components/shared/data-display`
+- `@/components/shared/domain`
 - `@/components/shared/feedback`
 - `@/components/shared/forms`
 
@@ -33,7 +34,6 @@ Examples:
 
 - `SectionIntro`
 - `PanelHead`
-- `FiltersHead`
 - `ControlToolbar`
 - `PortalFilters`
 - `ActionButton`
@@ -62,6 +62,10 @@ Examples:
 - `PortalSection`
 - `DetailHero`
 - `DetailCard`
+- `InfoSummaryGrid`
+- `InfoSummaryCard`
+- `MetadataCard`
+- summary-card variants can also cover hero-side stats when the display semantics stay the same
 
 Do not put here:
 
@@ -91,6 +95,35 @@ Do not put here:
 - full data panels
 - section wrappers
 - form controls
+
+### `domain/`
+
+Use for:
+
+- business-aware reusable shells that are still shared across multiple features
+- panels that already encode app concepts such as dashboard loading/fallback, ops context switching, or club-application list presentation
+
+Keep components here when:
+
+- the pattern is more specific than a generic primitive
+- but it is reused across 2 or more business areas and would otherwise be copied inside features
+
+Examples:
+
+- `DashboardPanelShell`
+- `OpsContextPanel`
+- `ClubApplicationList`
+- `WorkbenchGuidePanel`
+- `WorkbenchResultSummary`
+- `WorkbenchBacklogPanel`
+- `DashboardFallbackNotice`
+- route-level dependency or contract-gap panels that repeat across overview and feature workbenches
+
+Do not put here:
+
+- raw API logic
+- route-specific composition
+- one-off feature markup that still only exists in a single page
 
 ### `forms/`
 

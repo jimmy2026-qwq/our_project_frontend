@@ -1,7 +1,8 @@
-import { DataPanel, ListRow, MetricCard, MetricGrid } from '@/components/shared/data-display';
-import { EmptyState, LoadingCard } from '@/components/shared/feedback';
+import { DataPanel, MetricCard, MetricGrid } from '@/components/shared/data-display';
+import { ClubApplicationList, DashboardFallbackNotice, DashboardPanelShell, WorkbenchContextPanel } from '@/components/shared/domain';
+import { EmptyState, LoadingSection } from '@/components/shared/feedback';
 import { SelectField } from '@/components/shared/forms';
-import { ActionButton, ControlToolbar, FiltersHead, InlineActions, SectionIntro } from '@/components/shared/layout';
+import { ActionButton, SectionIntro } from '@/components/shared/layout';
 import { mockClubs } from '@/mocks/overview';
 
 import {
@@ -42,19 +43,25 @@ function DashboardPlaceholder({
   roleNote: string;
 }) {
   return (
-    <DataPanel
+    <DashboardPanelShell
       title={title}
-      description={path}
       source={payload.source}
       warning={payload.warning}
-      className="dashboard-card dashboard-card--pending"
+      path={path}
+      className="dashboard-card border-dashed"
+      fallback={
+        <DashboardFallbackNotice>
+          <>
+            <p>
+              This panel still keeps the current "show API dashboard when available, otherwise fall back to an explanatory
+              placeholder" pattern so the page stays stable during the migration.
+            </p>
+            <p>{roleNote}</p>
+          </>
+        </DashboardFallbackNotice>
+      }
     >
-      <p>
-        This panel still keeps the current "show API dashboard when available, otherwise fall back to an explanatory
-        placeholder" pattern so the page stays stable during the migration.
-      </p>
-      <EmptyState>{roleNote}</EmptyState>
-    </DataPanel>
+    </DashboardPanelShell>
   );
 }
 
@@ -90,36 +97,24 @@ function ApplicationInboxPanel({
       warning={payload.warning}
       badgeLabel={`Pending ${pendingCount}`}
     >
-      <ul className="list">
-        {payload.items.length > 0 ? (
-          payload.items.map((item) => (
-            <ListRow
-              key={item.applicationId}
-              main={
-                <>
-                  <strong>{item.applicant.displayName}</strong>
-                  <span>{item.message}</span>
-                  <span>{formatDateTime(item.submittedAt)}</span>
-                </>
-              }
-              aside={
-                <>
-                  <span>{item.status}</span>
-                  <span>{item.applicant.playerId}</span>
-                  {item.canReview && item.status === 'Pending' ? (
-                    <InlineActions>
-                      <ActionButton onClick={() => onReview(item.applicationId, 'approve')}>Approve</ActionButton>
-                      <ActionButton onClick={() => onReview(item.applicationId, 'reject')}>Reject</ActionButton>
-                    </InlineActions>
-                  ) : null}
-                </>
-              }
-            />
-          ))
-        ) : (
-          <EmptyState asListItem>No pending applications are available right now.</EmptyState>
-        )}
-      </ul>
+      <ClubApplicationList
+        items={payload.items.map((item) => ({
+          id: item.applicationId,
+          title: item.applicant.displayName,
+          message: item.message,
+          submittedAt: formatDateTime(item.submittedAt),
+          status: item.status,
+          meta: item.applicant.playerId,
+          actions:
+            item.canReview && item.status === 'Pending' ? (
+              <>
+                <ActionButton onClick={() => onReview(item.applicationId, 'approve')}>Approve</ActionButton>
+                <ActionButton onClick={() => onReview(item.applicationId, 'reject')}>Reject</ActionButton>
+              </>
+            ) : null,
+        }))}
+        emptyText="No pending applications are available right now."
+      />
     </DataPanel>
   );
 }
@@ -134,22 +129,21 @@ function DashboardPanel({
   payload: DashboardLoadState;
 }) {
   return (
-    <DataPanel title={title} description={path} source={payload.source} warning={payload.warning} className="dashboard-card">
+    <DashboardPanelShell title={title} path={path} source={payload.source} warning={payload.warning} className="dashboard-card">
       <DashboardMetrics payload={payload} />
-    </DataPanel>
+    </DashboardPanelShell>
   );
 }
 
 export function MemberHubLoading() {
   return (
-    <section className="section">
-      <SectionIntro
-        eyebrow="Member Hub"
-        title="Member Workspace"
-        description="Loading operator context, dashboards, and club application inbox data."
-      />
-      <LoadingCard>Loading member hub...</LoadingCard>
-    </section>
+    <LoadingSection
+      eyebrow="Member Hub"
+      title="Member Workspace"
+      description="Loading operator context, dashboards, and club application inbox data."
+    >
+      Loading member hub...
+    </LoadingSection>
   );
 }
 
@@ -184,40 +178,42 @@ export function MemberHubPageSection({
         description="This page keeps the React route shell lean while the feature module owns operator switching, dashboards, and inbox review flow."
       />
 
-      <div className="card member-hub__controls">
-        <FiltersHead title="Workspace Context" action={<button type="button" onClick={onReload}>Reload</button>} />
-        <ControlToolbar>
-          <SelectField label="Operator" value={state.operatorId} onChange={(event) => onChangeOperator(event.currentTarget.value)}>
-              {mockOperators.map((operator) => (
-                <option key={operator.id} value={operator.id}>
-                  {operator.label}
-                </option>
-              ))}
-          </SelectField>
-          <SelectField label="Player dashboard" value={state.playerId} onChange={(event) => onChangePlayer(event.currentTarget.value)}>
-              <option value="player-registered-1">Aoi</option>
-              <option value="player-registered-2">Mika</option>
-          </SelectField>
-          <SelectField label="Managed club" value={state.clubId} onChange={(event) => onChangeClub(event.currentTarget.value)}>
-              {mockClubs.map((club) => {
-                const disabled =
-                  activeOperator.role !== 'ClubAdmin' || !activeOperator.managedClubIds.includes(club.id);
+      <WorkbenchContextPanel
+        className="member-hub__controls text-[color:var(--muted-strong)]"
+        title="Workspace Context"
+        description="Switch operator scope and dashboard targets without pushing that state back into the page shell."
+        onReload={onReload}
+      >
+        <SelectField label="Operator" value={state.operatorId} onChange={(event) => onChangeOperator(event.currentTarget.value)}>
+          {mockOperators.map((operator) => (
+            <option key={operator.id} value={operator.id}>
+              {operator.label}
+            </option>
+          ))}
+        </SelectField>
+        <SelectField label="Player dashboard" value={state.playerId} onChange={(event) => onChangePlayer(event.currentTarget.value)}>
+          <option value="player-registered-1">Aoi</option>
+          <option value="player-registered-2">Mika</option>
+        </SelectField>
+        <SelectField label="Managed club" value={state.clubId} onChange={(event) => onChangeClub(event.currentTarget.value)}>
+          {mockClubs.map((club) => {
+            const disabled =
+              activeOperator.role !== 'ClubAdmin' || !activeOperator.managedClubIds.includes(club.id);
 
-                return (
-                  <option key={club.id} value={club.id} disabled={disabled}>
-                    {club.name}
-                  </option>
-                );
-              })}
-          </SelectField>
-        </ControlToolbar>
-      </div>
+            return (
+              <option key={club.id} value={club.id} disabled={disabled}>
+                {club.name}
+              </option>
+            );
+          })}
+        </SelectField>
+      </WorkbenchContextPanel>
 
-      <div className="member-hub__grid">
+      <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">
         <ApplicationInboxPanel state={state} payload={inboxPayload} onReview={onReview} />
       </div>
 
-      <div className="member-hub__grid">
+      <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">
         {playerPayload.source === 'api' && playerPayload.dashboard ? (
           <DashboardPanel
             title="Player Dashboard"

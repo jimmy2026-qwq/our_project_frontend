@@ -5,6 +5,7 @@ import { RouterProvider } from 'react-router-dom';
 import { AppFeedbackProvider, DialogProvider } from '@/providers';
 import { router } from '@/router';
 
+import './index.css';
 import './styles/app.css';
 import './styles/template-shell.css';
 

@@ -12,14 +12,14 @@ import {
 } from '@/features/public-hall/components';
 import { usePublicHallHomeData, usePublicHallState } from '@/features/public-hall/hooks';
 import type { PublicHallState } from '@/features/public-hall/types';
-import { useNotice } from '@/hooks';
+import { useRefreshNotice } from '@/hooks';
 
 export function PublicHallHomePage() {
   const { state, setState } = usePublicHallState();
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
   const [pendingRefresh, setPendingRefresh] = useState(false);
   const { data, isLoading, error } = usePublicHallHomeData(state, reloadKey);
-  const { notifySuccess, notifyWarning } = useNotice();
+  const { notifyRefreshResult } = useRefreshNotice();
 
   const handleStateChange = (patch: Partial<PublicHallState>) => {
     setState((current) => ({ ...current, ...patch }));
@@ -30,8 +30,18 @@ export function PublicHallHomePage() {
       return;
     }
 
-    if (error) {
-      notifyWarning('Public hall refresh failed', error);
+    if (error && !data) {
+      notifyRefreshResult(
+        [],
+        {
+          failureTitle: 'Public hall refresh failed',
+          successTitle: 'Public hall refreshed',
+          successMessage: 'Live public hall data was reloaded successfully.',
+          fallbackTitle: 'Public hall refreshed with fallback',
+          fallbackMessage: 'Some public hall panels are currently using mock data.',
+        },
+        error,
+      );
       setPendingRefresh(false);
       return;
     }
@@ -40,17 +50,20 @@ export function PublicHallHomePage() {
       return;
     }
 
-    const warnings = [data.schedules.warning, data.clubs.warning, data.leaderboard.warning].filter(Boolean);
-    const hasFallback = [data.schedules, data.clubs, data.leaderboard].some((payload) => payload.source === 'mock');
-
-    if (hasFallback) {
-      notifyWarning('Public hall refreshed with fallback', warnings[0] ?? 'Some public hall panels are currently using mock data.');
-    } else {
-      notifySuccess('Public hall refreshed', 'Live public hall data was reloaded successfully.');
-    }
+    notifyRefreshResult(
+      [data.schedules, data.clubs, data.leaderboard],
+      {
+        failureTitle: 'Public hall refresh failed',
+        successTitle: 'Public hall refreshed',
+        successMessage: 'Live public hall data was reloaded successfully.',
+        fallbackTitle: 'Public hall refreshed with fallback',
+        fallbackMessage: 'Some public hall panels are currently using mock data.',
+      },
+      error,
+    );
 
     setPendingRefresh(false);
-  }, [data, error, isLoading, notifySuccess, notifyWarning, pendingRefresh]);
+  }, [data, error, isLoading, notifyRefreshResult, pendingRefresh]);
 
   const handleRefresh = () => {
     setPendingRefresh(true);

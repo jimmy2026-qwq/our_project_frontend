@@ -44,6 +44,6 @@ export const featureModules: FeatureModule[] = [
       'Shared request layer that assembles URLs, handles fetch/json behavior, and normalizes backend payloads into frontend domain models.',
     entities: ['ListEnvelope', 'PublicSchedule', 'ClubSummary', 'TournamentPublicProfile'],
     primaryRoles: ['Guest', 'RegisteredPlayer', 'ClubAdmin', 'TournamentAdmin', 'SuperAdmin'],
-    routes: ['src/api/client.ts', 'doc/README.md', 'doc/FRONTEND_INTERFACE_CONTRACTS.md'],
+    routes: ['src/api/client.ts', 'doc/frontend-template-migration-plan.md', 'doc/FRONTEND_INTERFACE_CONTRACTS.md'],
   },
 ];
