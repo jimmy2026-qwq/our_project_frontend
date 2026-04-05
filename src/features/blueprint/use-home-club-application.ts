@@ -1,40 +1,53 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useDialog, useMutationNotice } from '@/hooks';
+import { useDialog, useMutationNotice, useNotice } from '@/hooks';
+import { useAuth } from '@/hooks/useAuth';
 import type { HomeClubApplicationState } from './application-data';
 import {
   getOperatorApplications,
   getSelectedClubName,
   loadJoinableClubs,
   loadPlayerContext,
-  playerOptions,
+  loadTrackedApplication,
   submitClubApplication,
   withdrawClubApplication,
 } from './application-data';
 
 export function useHomeClubApplication() {
+  const { session } = useAuth();
   const { confirmDanger } = useDialog();
   const { notifyMutationResult } = useMutationNotice();
+  const { notifyWarning } = useNotice();
   const [state, setState] = useState<HomeClubApplicationState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
 
   useEffect(() => {
+    if (!session?.user.roles.isRegisteredPlayer) {
+      setState(null);
+      setIsLoading(false);
+      return;
+    }
+
     let cancelled = false;
 
     void (async () => {
       const clubs = await loadJoinableClubs();
-      const initialOperatorId = playerOptions[0].operatorId;
-      const playerContext = await loadPlayerContext(initialOperatorId);
+      const initialOperatorId = session.user.operatorId ?? session.user.userId;
+      const initialClubId = clubs.items[0]?.id ?? 'club-1';
+      const playerContext = await loadPlayerContext(initialOperatorId, session.user.displayName);
+      const application = await loadTrackedApplication(initialOperatorId, initialClubId);
 
       if (!cancelled) {
         setState({
           operatorId: initialOperatorId,
-          clubId: clubs.items[0]?.id ?? 'club-1',
+          operatorDisplayName: session.user.displayName,
+          clubId: initialClubId,
           message: 'I would like to join next split.',
           withdrawNote: 'schedule changed',
           clubs,
           playerContext,
-          application: { application: null },
+          application,
         });
         setIsLoading(false);
       }
@@ -43,54 +56,92 @@ export function useHomeClubApplication() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [session]);
 
   const myApplications = useMemo(
     () => (state ? getOperatorApplications(state.operatorId) : []),
     [state],
   );
 
-  async function changeOperator(operatorId: string) {
+  async function refreshCurrentApplication() {
     if (!state) {
       return;
     }
 
-    const playerContext = await loadPlayerContext(operatorId);
+    setIsRefreshing(true);
+
+    const result = await loadTrackedApplication(
+      state.operatorId,
+      state.clubId,
+      state.application.application?.id,
+    );
+
     setState((current) =>
       current
         ? {
             ...current,
-            operatorId,
-            playerContext,
+            application: result,
           }
         : current,
     );
+
+    setIsRefreshing(false);
   }
+
+  useEffect(() => {
+    if (!state) {
+      return;
+    }
+
+    void refreshCurrentApplication();
+  }, [state?.clubId]);
+
+  useEffect(() => {
+    if (!state) {
+      return;
+    }
+
+    function handleStorage(event: StorageEvent) {
+      if (event.key === 'riichi-nexus.club-applications') {
+        void refreshCurrentApplication();
+      }
+    }
+
+    window.addEventListener('storage', handleStorage);
+
+    return () => {
+      window.removeEventListener('storage', handleStorage);
+    };
+  }, [state]);
 
   async function handleSubmit() {
     if (!state) {
       return;
     }
 
-    const result = await submitClubApplication(state);
-    setState((current) =>
-      current
-        ? {
-            ...current,
-            application: {
-              application: result.application,
-              source: result.source,
-              warning: result.warning,
-            },
-          }
-        : current,
-    );
-    notifyMutationResult(result, {
-      successTitle: 'Club application submitted',
-      successMessage: 'The request was sent to the backend successfully.',
-      fallbackTitle: 'Club application submitted with fallback',
-      fallbackMessage: 'The request used the local fallback flow.',
-    });
+    try {
+      const result = await submitClubApplication(state);
+      setState((current) =>
+        current
+          ? {
+              ...current,
+              application: {
+                application: result.application,
+                source: result.source,
+                warning: result.warning,
+              },
+            }
+          : current,
+      );
+      notifyMutationResult(result, {
+        successTitle: 'Club application submitted',
+        successMessage: 'The request was sent to the backend successfully.',
+        fallbackTitle: 'Club application submitted with fallback',
+        fallbackMessage: 'The request used the local fallback flow.',
+      });
+    } catch (error) {
+      notifyWarning('Club application failed', error instanceof Error ? error.message : '提交申请失败，请稍后再试。');
+    }
   }
 
   async function handleWithdraw() {
@@ -108,35 +159,40 @@ export function useHomeClubApplication() {
       return;
     }
 
-    const result = await withdrawClubApplication(state);
-    setState((current) =>
-      current
-        ? {
-            ...current,
-            application: {
-              application: result.application,
-              source: result.source,
-              warning: result.warning,
-            },
-          }
-        : current,
-    );
-    notifyMutationResult(result, {
-      successTitle: 'Application withdrawn',
-      successMessage: 'The withdraw request completed successfully.',
-      fallbackTitle: 'Application withdrawn with fallback',
-      fallbackMessage: 'The withdraw flow used the local fallback path.',
-    });
+    try {
+      const result = await withdrawClubApplication(state);
+      setState((current) =>
+        current
+          ? {
+              ...current,
+              application: {
+                application: result.application,
+                source: result.source,
+                warning: result.warning,
+              },
+            }
+          : current,
+      );
+      notifyMutationResult(result, {
+        successTitle: 'Application withdrawn',
+        successMessage: 'The withdraw request completed successfully.',
+        fallbackTitle: 'Application withdrawn with fallback',
+        fallbackMessage: 'The withdraw flow used the local fallback path.',
+      });
+    } catch (error) {
+      notifyWarning('Withdraw failed', error instanceof Error ? error.message : '撤回申请失败，请稍后再试。');
+    }
   }
 
   return {
     state,
     setState,
     isLoading,
+    isRefreshing,
     myApplications,
-    changeOperator,
     handleSubmit,
     handleWithdraw,
+    refreshCurrentApplication,
     getSelectedClubName,
   };
 }

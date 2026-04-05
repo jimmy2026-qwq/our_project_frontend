@@ -3,14 +3,13 @@ import { ClubApplicationList, DashboardFallbackNotice, DashboardPanelShell, Work
 import { EmptyState, LoadingSection } from '@/components/shared/feedback';
 import { SelectField } from '@/components/shared/forms';
 import { ActionButton, SectionIntro } from '@/components/shared/layout';
-import { mockClubs } from '@/mocks/overview';
 
 import {
   formatDateTime,
   getActiveOperator,
-  mockOperators,
   type ApplicationInboxState,
   type DashboardLoadState,
+  type MemberHubOperatorDirectory,
   type MemberHubState,
 } from './data';
 
@@ -66,15 +65,17 @@ function DashboardPlaceholder({
 }
 
 function ApplicationInboxPanel({
+  directory,
   state,
   payload,
   onReview,
 }: {
+  directory: MemberHubOperatorDirectory;
   state: MemberHubState;
   payload: ApplicationInboxState;
   onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
 }) {
-  const activeOperator = getActiveOperator(state.operatorId);
+  const activeOperator = getActiveOperator(directory, state.operatorId);
 
   if (activeOperator.role !== 'ClubAdmin') {
     return (
@@ -148,6 +149,7 @@ export function MemberHubLoading() {
 }
 
 export function MemberHubPageSection({
+  directory,
   state,
   playerPayload,
   clubPayload,
@@ -158,6 +160,7 @@ export function MemberHubPageSection({
   onChangeClub,
   onReview,
 }: {
+  directory: MemberHubOperatorDirectory;
   state: MemberHubState;
   playerPayload: DashboardLoadState;
   clubPayload: DashboardLoadState;
@@ -168,14 +171,19 @@ export function MemberHubPageSection({
   onChangeClub: (clubId: string) => void;
   onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
 }) {
-  const activeOperator = getActiveOperator(state.operatorId);
+  const activeOperator = getActiveOperator(directory, state.operatorId);
+  const clubOptions = Object.values(directory.clubsById);
+  const playerOptions = directory.items.map((operator) => ({
+    value: operator.playerId,
+    label: operator.label.split(' / ')[0] || operator.playerId,
+  }));
 
   return (
     <section className="section">
       <SectionIntro
         eyebrow="Member Hub"
         title="Member Workspace"
-        description="This page keeps the React route shell lean while the feature module owns operator switching, dashboards, and inbox review flow."
+        description="This page now prefers backend-aligned operator context so the approval flow can follow the seeded club admin identity."
       />
 
       <WorkbenchContextPanel
@@ -185,18 +193,21 @@ export function MemberHubPageSection({
         onReload={onReload}
       >
         <SelectField label="Operator" value={state.operatorId} onChange={(event) => onChangeOperator(event.currentTarget.value)}>
-          {mockOperators.map((operator) => (
+          {directory.items.map((operator) => (
             <option key={operator.id} value={operator.id}>
               {operator.label}
             </option>
           ))}
         </SelectField>
         <SelectField label="Player dashboard" value={state.playerId} onChange={(event) => onChangePlayer(event.currentTarget.value)}>
-          <option value="player-registered-1">Aoi</option>
-          <option value="player-registered-2">Mika</option>
+          {playerOptions.map((player) => (
+            <option key={player.value} value={player.value}>
+              {player.label}
+            </option>
+          ))}
         </SelectField>
         <SelectField label="Managed club" value={state.clubId} onChange={(event) => onChangeClub(event.currentTarget.value)}>
-          {mockClubs.map((club) => {
+          {clubOptions.map((club) => {
             const disabled =
               activeOperator.role !== 'ClubAdmin' || !activeOperator.managedClubIds.includes(club.id);
 
@@ -210,7 +221,7 @@ export function MemberHubPageSection({
       </WorkbenchContextPanel>
 
       <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">
-        <ApplicationInboxPanel state={state} payload={inboxPayload} onReview={onReview} />
+        <ApplicationInboxPanel directory={directory} state={state} payload={inboxPayload} onReview={onReview} />
       </div>
 
       <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">

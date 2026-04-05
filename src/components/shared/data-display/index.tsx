@@ -131,6 +131,7 @@ export function DetailHero({
   title,
   tagline,
   summary,
+  actions,
   source,
   warning,
 }: {
@@ -138,6 +139,7 @@ export function DetailHero({
   title: string;
   tagline?: ReactNode;
   summary: ReactNode;
+  actions?: ReactNode;
   source?: 'api' | 'mock';
   warning?: string;
 }) {
@@ -151,7 +153,10 @@ export function DetailHero({
     >
       <div>
         <p className="eyebrow">{eyebrow}</p>
-        <h1 className="text-[clamp(2.2rem,4vw,4.4rem)]">{title}</h1>
+        <div className="flex flex-wrap items-center gap-3">
+          <h1 className="text-[clamp(2.2rem,4vw,4.4rem)]">{title}</h1>
+          {actions}
+        </div>
         {tagline ? <p className="detail-hero__tagline mb-3 text-[1.04rem] text-[color:var(--gold)]">{tagline}</p> : null}
         <p className="detail-hero__summary max-w-[62ch] leading-8">{summary}</p>
       </div>

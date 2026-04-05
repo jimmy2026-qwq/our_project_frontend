@@ -56,6 +56,10 @@ export function updateClubApplicationInboxStatus(
   writeClubApplicationInbox(next);
 }
 
+export function readClubApplicationInboxItem(id: string) {
+  return readClubApplicationInbox().find((item) => item.id === id) ?? null;
+}
+
 export function readClubApplicationsByOperator(operatorId: string) {
   return readClubApplicationInbox().filter((item) => item.operatorId === operatorId);
 }

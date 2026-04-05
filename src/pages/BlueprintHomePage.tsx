@@ -1,4 +1,3 @@
-import { HomeClubApplicationSection } from '@/features/blueprint/HomeClubApplicationSection';
 import {
   BlueprintApiReferenceSection,
   BlueprintArchitectureSection,
@@ -11,7 +10,6 @@ export function BlueprintHomePage() {
   return (
     <div className="blueprint-home-page">
       <BlueprintHeroSection />
-      <HomeClubApplicationSection />
       <BlueprintArchitectureSection />
       <BlueprintRoleMatrixSection />
       <BlueprintWorkbenchSection />

@@ -1,6 +1,7 @@
-import { apiClient } from '@/api/client';
+import { ApiError, apiClient } from '@/api/client';
 import type { ClubApplication, ClubSummary, PlayerProfile } from '@/domain/models';
 import {
+  readClubApplicationInboxItem,
   readClubApplicationsByOperator,
   updateClubApplicationInboxStatus,
   upsertClubApplicationInboxItem,
@@ -8,12 +9,6 @@ import {
 import { mockClubs } from '@/mocks/overview';
 
 export type DataSource = 'api' | 'mock';
-
-export interface RegisteredPlayerOption {
-  operatorId: string;
-  nickname: string;
-  note: string;
-}
 
 export interface ClubDirectoryState {
   items: ClubSummary[];
@@ -35,6 +30,7 @@ export interface ApplicationState {
 
 export interface HomeClubApplicationState {
   operatorId: string;
+  operatorDisplayName: string;
   clubId: string;
   message: string;
   withdrawNote: string;
@@ -42,19 +38,6 @@ export interface HomeClubApplicationState {
   playerContext: PlayerContextState;
   application: ApplicationState;
 }
-
-export const playerOptions: RegisteredPlayerOption[] = [
-  {
-    operatorId: 'player-registered-1',
-    nickname: 'Aoi',
-    note: '当前以注册玩家视角发起申请，适合验证首页申请流和 member hub 的状态联动。',
-  },
-  {
-    operatorId: 'player-registered-2',
-    nickname: 'Mika',
-    note: '切换到第二位注册玩家后，可以验证不同操作人的申请隔离和 mock fallback 行为。',
-  },
-];
 
 const mockApplications = new Map<string, ClubApplication>();
 
@@ -99,12 +82,12 @@ export function withdrawMockClubApplication(clubId: string, operatorId: string) 
   return updated;
 }
 
-export function getFallbackPlayer(operatorId: string) {
-  return playerOptions.find((item) => item.operatorId === operatorId) ?? playerOptions[0];
-}
-
 export function getSelectedClubName(clubId: string, clubs: ClubSummary[]) {
   return clubs.find((club) => club.id === clubId)?.name ?? clubId;
+}
+
+export function getFallbackPlayerName(state: Pick<HomeClubApplicationState, 'operatorDisplayName' | 'operatorId'>) {
+  return state.operatorDisplayName || state.operatorId;
 }
 
 export async function loadJoinableClubs(): Promise<ClubDirectoryState> {
@@ -128,7 +111,10 @@ export async function loadJoinableClubs(): Promise<ClubDirectoryState> {
   }
 }
 
-export async function loadPlayerContext(operatorId: string): Promise<PlayerContextState> {
+export async function loadPlayerContext(
+  operatorId: string,
+  fallbackDisplayName: string,
+): Promise<PlayerContextState> {
   try {
     const player = await apiClient.getCurrentPlayer(operatorId);
     return {
@@ -139,7 +125,7 @@ export async function loadPlayerContext(operatorId: string): Promise<PlayerConte
     return {
       player: {
         playerId: operatorId,
-        displayName: getFallbackPlayer(operatorId).nickname,
+        displayName: fallbackDisplayName,
       },
       source: 'mock',
       warning: error instanceof Error ? error.message : 'Current player fallback to mock.',
@@ -151,14 +137,98 @@ export function getOperatorApplications(operatorId: string) {
   return readClubApplicationsByOperator(operatorId).slice(0, 3);
 }
 
+function toClubApplicationViewModel(view: {
+  applicationId: string;
+  clubId: string;
+  applicant: PlayerProfile;
+  message: string;
+  status: ClubApplication['status'];
+  submittedAt: string;
+}) {
+  return {
+    id: view.applicationId,
+    clubId: view.clubId,
+    status: view.status,
+    applicantName: view.applicant.displayName,
+    message: view.message,
+    createdAt: view.submittedAt,
+  } satisfies ClubApplication;
+}
+
+function getTrackedApplication(operatorId: string, clubId: string, applicationId?: string) {
+  if (applicationId) {
+    const tracked = readClubApplicationInboxItem(applicationId);
+
+    if (tracked?.clubId === clubId) {
+      return tracked;
+    }
+  }
+
+  return (
+    readClubApplicationsByOperator(operatorId)
+      .filter((item) => item.clubId === clubId)
+      .sort((left, right) => Date.parse(right.submittedAt) - Date.parse(left.submittedAt))[0] ?? null
+  );
+}
+
+export async function loadTrackedApplication(
+  operatorId: string,
+  clubId: string,
+  applicationId?: string,
+): Promise<ApplicationState> {
+  const tracked = getTrackedApplication(operatorId, clubId, applicationId);
+
+  if (!tracked) {
+    return {
+      application: null,
+    };
+  }
+
+  try {
+    const view = await apiClient.getClubApplication(clubId, tracked.id, { operatorId });
+    const application = toClubApplicationViewModel(view);
+
+    upsertClubApplicationInboxItem({
+      id: application.id,
+      clubId: application.clubId,
+      clubName: view.clubName,
+      operatorId,
+      applicantName: application.applicantName,
+      message: application.message,
+      status: application.status,
+      submittedAt: application.createdAt,
+      source: 'api',
+    });
+
+    return {
+      application,
+      source: 'api',
+    };
+  } catch (error) {
+    return {
+      application: {
+        id: tracked.id,
+        clubId: tracked.clubId,
+        status: tracked.status,
+        applicantName: tracked.applicantName,
+        message: tracked.message,
+        createdAt: tracked.submittedAt,
+      },
+      source: tracked.source,
+      warning: error instanceof Error ? error.message : 'Application status fallback to local bridge.',
+    };
+  }
+}
+
 export async function submitClubApplication(state: HomeClubApplicationState) {
   const selectedPlayerName =
-    state.playerContext.player?.displayName ?? getFallbackPlayer(state.operatorId).nickname;
+    state.playerContext.player?.displayName ?? getFallbackPlayerName(state);
   const message = state.message.trim() || 'I would like to join next split.';
 
   try {
     const application = await apiClient.submitClubApplication(state.clubId, {
       operatorId: state.operatorId,
+      displayName: selectedPlayerName,
       message,
     });
     upsertClubApplicationInboxItem({
@@ -174,6 +244,10 @@ export async function submitClubApplication(state: HomeClubApplicationState) {
     });
     return { application, source: 'api' as const };
   } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
     const application = createMockClubApplication(state.clubId, state.operatorId, selectedPlayerName, message);
     upsertClubApplicationInboxItem({
       id: application.id,
@@ -209,6 +283,10 @@ export async function withdrawClubApplication(state: HomeClubApplicationState) {
     updateClubApplicationInboxStatus(application.id, application.status);
     return { application, source: 'api' as const };
   } catch (error) {
+    if (error instanceof ApiError) {
+      throw error;
+    }
+
     const application = withdrawMockClubApplication(state.clubId, state.operatorId);
     updateClubApplicationInboxStatus(application.id, application.status);
     return {

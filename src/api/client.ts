@@ -11,41 +11,87 @@ import type {
   ListEnvelope,
   MatchRecordSummary,
   PublicSchedule,
+  RegisterPayload,
   SessionInfo,
   StageStatus,
   TournamentPublicProfile,
   TournamentTableSummary,
   TableStatus,
   TournamentStatus,
+  AuthSession,
+  LoginPayload,
   PlayerProfile,
 } from '../domain/models';
 
 const API_BASE_URL = (import.meta.env.VITE_API_BASE_URL as string | undefined) ?? '/api';
 
-async function request<T>(path: string) {
-  const response = await fetch(`${API_BASE_URL}${path}`);
+interface RequestOptions {
+  headers?: HeadersInit;
+}
+
+export class ApiError extends Error {
+  status: number;
+
+  constructor(status: number, message: string) {
+    super(message);
+    this.name = 'ApiError';
+    this.status = status;
+  }
+}
+
+async function readErrorMessage(response: Response) {
+  const fallback = '请求失败，请稍后再试。';
+  const contentType = response.headers.get('content-type') ?? '';
+
+  try {
+    if (contentType.includes('application/json')) {
+      const payload = (await response.json()) as {
+        message?: string;
+        error?: string;
+        detail?: string;
+      };
+
+      return payload.message?.trim() || payload.error?.trim() || payload.detail?.trim() || fallback;
+    }
+
+    const text = (await response.text()).trim();
+    return text || fallback;
+  } catch {
+    return fallback;
+  }
+}
+
+async function request<T>(path: string, options: RequestOptions = {}) {
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    headers: options.headers,
+  });
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new ApiError(response.status, await readErrorMessage(response));
   }
 
   return (await response.json()) as T;
 }
 
-async function sendJson<T>(path: string, method: 'POST', body: unknown) {
+async function sendJson<T>(path: string, method: 'POST', body: unknown, options: RequestOptions = {}) {
   const response = await fetch(`${API_BASE_URL}${path}`, {
     method,
     headers: {
       'Content-Type': 'application/json',
+      ...options.headers,
     },
     body: JSON.stringify(body),
   });
 
   if (!response.ok) {
-    throw new Error(`Request failed with status ${response.status}`);
+    throw new ApiError(response.status, await readErrorMessage(response));
   }
 
   return (await response.json()) as T;
+}
+
+function encodeBackendOption<T>(value: T | undefined) {
+  return value === undefined ? [] : [value];
 }
 
 export interface ScheduleFilters {
@@ -66,6 +112,7 @@ export interface ClubFilters {
   activeOnly?: boolean;
   joinableOnly?: boolean;
   memberId?: string;
+  adminId?: string;
   limit?: number;
   offset?: number;
 }
@@ -113,6 +160,22 @@ export interface WithdrawClubApplicationPayload {
 export interface SessionQuery {
   operatorId?: string;
   guestSessionId?: string;
+}
+
+export interface CreatePlayerPayload {
+  userId: string;
+  nickname: string;
+  rankPlatform: string;
+  tier: string;
+  stars?: number;
+  initialElo?: number;
+}
+
+export interface CreatedPlayer {
+  id: string;
+  userId: string;
+  nickname: string;
+  elo: number;
 }
 
 export interface ClubApplicationListFilters {
@@ -346,6 +409,59 @@ function mapPublicClubDetail(item: RawPublicClubDetail): ClubPublicProfile {
 }
 
 export const apiClient = {
+  login(payload: LoginPayload) {
+    return sendJson<AuthSession>('/auth/login', 'POST', payload);
+  },
+  register(payload: RegisterPayload) {
+    return sendJson<AuthSession>('/auth/register', 'POST', payload);
+  },
+  getAuthSession(token: string) {
+    return request<AuthSession>('/auth/session', {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+  },
+  logout(token: string) {
+    return sendJson<{ success: boolean }>(
+      '/auth/logout',
+      'POST',
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      },
+    );
+  },
+  createPlayer(payload: CreatePlayerPayload) {
+    return sendJson<CreatedPlayer>(
+      '/players',
+      'POST',
+      {
+        userId: payload.userId,
+        nickname: payload.nickname,
+        rankPlatform: payload.rankPlatform,
+        tier: payload.tier,
+        stars: encodeBackendOption(payload.stars),
+        initialElo: payload.initialElo ?? 1500,
+      },
+    );
+  },
+  upgradeGuestSession(guestSessionId: string, playerId: string) {
+    return sendJson<{ id: string; displayName: string; upgradedToPlayerId?: string }>(
+      `/guest-sessions/${guestSessionId}/upgrade`,
+      'POST',
+      { playerId },
+    );
+  },
+  revokeGuestSession(guestSessionId: string, reason?: string) {
+    return sendJson<{ id: string; revokedAt?: string }>(
+      `/guest-sessions/${guestSessionId}/revoke`,
+      'POST',
+      { reason: encodeBackendOption(reason) },
+    );
+  },
   getPublicSchedules(filters: ScheduleFilters) {
     return request<ListEnvelope<RawPublicSchedule>>(
       `/public/schedules${toQueryString(filters)}`,
@@ -388,13 +504,23 @@ export const apiClient = {
     return request<RawPublicClubDetail>(`/public/clubs/${clubId}`).then(mapPublicClubDetail);
   },
   createGuestSession(payload: CreateGuestSessionPayload) {
-    return sendJson<GuestSession>('/guest-sessions', 'POST', payload);
+    return sendJson<GuestSession>('/guest-sessions', 'POST', {
+      displayName: encodeBackendOption(payload.displayName),
+      ttlHours: [],
+      deviceFingerprint: [],
+    });
   },
   getGuestSession(guestSessionId: string) {
     return request<GuestSession>(`/guest-sessions/${guestSessionId}`);
   },
   submitClubApplication(clubId: string, payload: ClubApplicationPayload) {
-    return sendJson<ClubApplication>(`/clubs/${clubId}/applications`, 'POST', payload);
+    return sendJson<ClubApplication>(`/clubs/${clubId}/applications`, 'POST', {
+      applicantUserId: encodeBackendOption(undefined),
+      displayName: payload.displayName,
+      message: encodeBackendOption(payload.message),
+      guestSessionId: encodeBackendOption(payload.guestSessionId),
+      operatorId: encodeBackendOption(payload.operatorId),
+    });
   },
   withdrawClubApplication(
     clubId: string,
@@ -404,7 +530,11 @@ export const apiClient = {
     return sendJson<ClubApplication>(
       `/clubs/${clubId}/applications/${membershipId}/withdraw`,
       'POST',
-      payload,
+      {
+        guestSessionId: encodeBackendOption(payload.guestSessionId),
+        operatorId: encodeBackendOption(payload.operatorId),
+        note: encodeBackendOption(payload.note),
+      },
     );
   },
   getClubApplications(clubId: string, filters: ClubApplicationListFilters) {
@@ -425,7 +555,12 @@ export const apiClient = {
     return sendJson<ClubApplicationView>(
       `/clubs/${clubId}/applications/${membershipId}/review`,
       'POST',
-      payload,
+      {
+        operatorId: payload.operatorId,
+        decision: payload.decision,
+        note: encodeBackendOption(payload.note),
+        playerId: encodeBackendOption(payload.playerId),
+      },
     );
   },
   getPlayerDashboard(playerId: string, operatorId: string) {

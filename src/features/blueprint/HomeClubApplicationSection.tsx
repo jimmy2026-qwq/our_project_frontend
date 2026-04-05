@@ -1,15 +1,24 @@
 import { DataPanel } from '@/components/shared/data-display';
 import { ClubApplicationList, WorkbenchGuidePanel, WorkbenchResultSummary } from '@/components/shared/domain';
-import { FieldGroup, SelectField, TextareaField } from '@/components/shared/forms';
+import { FieldGroup, SelectField, TextInputField, TextareaField } from '@/components/shared/forms';
 import { ActionButton, SectionIntro } from '@/components/shared/layout';
 import { Card, CardContent, Skeleton, StatusPill } from '@/components/ui';
 
-import { formatDateTime, getFallbackPlayer, playerOptions } from './application-data';
+import { formatDateTime, getFallbackPlayerName } from './application-data';
 import { useHomeClubApplication } from './use-home-club-application';
 
 export function HomeClubApplicationSection() {
-  const { state, setState, isLoading, myApplications, changeOperator, handleSubmit, handleWithdraw, getSelectedClubName } =
-    useHomeClubApplication();
+  const {
+    state,
+    setState,
+    isLoading,
+    isRefreshing,
+    myApplications,
+    handleSubmit,
+    handleWithdraw,
+    refreshCurrentApplication,
+    getSelectedClubName,
+  } = useHomeClubApplication();
 
   if (isLoading || !state) {
     return (
@@ -31,18 +40,23 @@ export function HomeClubApplicationSection() {
     );
   }
 
-  const fallbackPlayer = getFallbackPlayer(state.operatorId);
-  const selectedPlayerName = state.playerContext.player?.displayName ?? fallbackPlayer.nickname;
+  const selectedPlayerName = state.playerContext.player?.displayName ?? getFallbackPlayerName(state);
   const application = state.application.application;
   const source = state.application.source ?? state.playerContext.source ?? state.clubs.source;
   const warning = state.application.warning ?? state.playerContext.warning ?? state.clubs.warning;
+  const applicationTone =
+    application?.status === 'Approved'
+      ? 'success'
+      : application?.status === 'Rejected' || application?.status === 'Withdrawn'
+        ? 'danger'
+        : 'warning';
 
   return (
     <section className="section">
       <SectionIntro
         eyebrow="Club Application"
         title="Home Club Application Workbench"
-        description="This is the most business-like interaction block on the blueprint homepage. It ties together joinable clubs, current player identity, application submission, and withdrawal while keeping the API-first plus mock-fallback behavior visible."
+        description="This flow is now bound to the current registered user. Guests can browse the public hall, but only registered users can submit or withdraw club applications."
       />
 
       <WorkbenchGuidePanel
@@ -59,19 +73,14 @@ export function HomeClubApplicationSection() {
         noteTitle="Current migration state"
         noteBody={
           <span>
-            This block is already running as a React feature component, which makes it a good place to continue extracting
-            feature hooks, shared cards, and form-oriented building blocks.
+            The operator is derived from the active login session rather than a page-local selector, which keeps the
+            application flow aligned with real user identity.
           </span>
         }
       >
         <FieldGroup className="guest-flow__form">
-          <SelectField label="Applicant" value={state.operatorId} onChange={(event) => void changeOperator(event.currentTarget.value)}>
-              {playerOptions.map((player) => (
-                <option key={player.operatorId} value={player.operatorId}>
-                  {player.nickname}
-                </option>
-              ))}
-          </SelectField>
+          <TextInputField label="Current applicant" value={selectedPlayerName} readOnly />
+          <TextInputField label="Current operatorId" value={state.operatorId} readOnly />
           <SelectField
             label="Target club"
             value={state.clubId}
@@ -79,11 +88,11 @@ export function HomeClubApplicationSection() {
               setState((current) => (current ? { ...current, clubId: event.currentTarget.value } : current))
             }
           >
-              {state.clubs.items.map((club) => (
-                <option key={club.id} value={club.id}>
-                  {club.name}
-                </option>
-              ))}
+            {state.clubs.items.map((club) => (
+              <option key={club.id} value={club.id}>
+                {club.name}
+              </option>
+            ))}
           </SelectField>
           <TextareaField
             label="Application note"
@@ -99,6 +108,9 @@ export function HomeClubApplicationSection() {
           <ActionButton disabled={!application || application.status !== 'Pending'} onClick={() => void handleWithdraw()}>
             Withdraw current application
           </ActionButton>
+          <ActionButton onClick={() => void refreshCurrentApplication()}>
+            {isRefreshing ? 'Refreshing...' : 'Refresh current status'}
+          </ActionButton>
         </div>
         {application ? (
           <WorkbenchResultSummary
@@ -108,7 +120,7 @@ export function HomeClubApplicationSection() {
               </>
             }
             items={[
-              { label: 'Status', value: <StatusPill tone="warning">{application.status}</StatusPill> },
+              { label: 'Status', value: <StatusPill tone={applicationTone}>{application.status}</StatusPill> },
               { label: 'Application id', value: application.id },
               { label: 'Submitted at', value: formatDateTime(application.createdAt) },
               { label: 'Note', value: application.message },
@@ -119,7 +131,7 @@ export function HomeClubApplicationSection() {
             muted
             items={[
               { label: 'Current applicant', value: selectedPlayerName },
-              { label: 'Fallback note', value: fallbackPlayer.note },
+              { label: 'Current operatorId', value: state.operatorId },
               {
                 label: 'Bridge behavior',
                 value: 'The result will also be mirrored into the local inbox bridge so the member hub flow can continue.',

@@ -4,6 +4,130 @@ If build or migration work shows that a new tool from `template/frontend` is nee
 
 This document describes the frontend as it exists today under `front/src`.
 
+## Authentication Interface Needed Next
+
+If the product goal is to let users operate the system like a normal software product with `account + password` login, the current `operatorId + session` model is not enough on its own.
+
+The frontend can already render login/register pages, but a real credential-based flow still needs the backend to expose a minimal authentication contract.
+
+Recommended minimal contract:
+
+### 1. Register account
+
+`POST /auth/register`
+
+Suggested request body:
+
+```json
+{
+  "username": "front-demo-user",
+  "password": "plain-or-hashed-before-transport",
+  "displayName": "Front Demo User"
+}
+```
+
+Suggested response body:
+
+```json
+{
+  "userId": "player-123",
+  "username": "front-demo-user",
+  "displayName": "Front Demo User",
+  "token": "session-or-jwt-token",
+  "roles": {
+    "isGuest": false,
+    "isRegisteredPlayer": true,
+    "isClubAdmin": false,
+    "isTournamentAdmin": false,
+    "isSuperAdmin": false
+  }
+}
+```
+
+Implementation note:
+
+- the backend can still create or bind the existing `Player` aggregate internally
+- this endpoint only needs to add a credentials layer in front of the current player/session model
+
+### 2. Login with account and password
+
+`POST /auth/login`
+
+Suggested request body:
+
+```json
+{
+  "username": "front-demo-user",
+  "password": "plain-or-hashed-before-transport"
+}
+```
+
+Suggested response body:
+
+```json
+{
+  "userId": "player-123",
+  "username": "front-demo-user",
+  "displayName": "Front Demo User",
+  "token": "session-or-jwt-token",
+  "roles": {
+    "isGuest": false,
+    "isRegisteredPlayer": true,
+    "isClubAdmin": false,
+    "isTournamentAdmin": false,
+    "isSuperAdmin": false
+  }
+}
+```
+
+### 3. Restore current authenticated session
+
+`GET /auth/session`
+
+Suggested request header:
+
+```text
+Authorization: Bearer <token>
+```
+
+Suggested response body:
+
+```json
+{
+  "userId": "player-123",
+  "username": "front-demo-user",
+  "displayName": "Front Demo User",
+  "authenticated": true,
+  "roles": {
+    "isGuest": false,
+    "isRegisteredPlayer": true,
+    "isClubAdmin": false,
+    "isTournamentAdmin": false,
+    "isSuperAdmin": false
+  }
+}
+```
+
+### 4. Logout
+
+`POST /auth/logout`
+
+Suggested behavior:
+
+- invalidate the current token or session
+- return `200` with a simple success body
+
+### Practical compatibility rule
+
+The preferred backend implementation is:
+
+- keep the current `Player`, `GuestSession`, and `CurrentSessionView` domain model
+- add an account-credentials table or equivalent credential store
+- map a successful credential login to an existing registered player identity
+- continue deriving role flags from the same player/session data already used by `/session`
+
+This keeps the current domain model mostly intact while making the user-facing experience look like a normal software login flow.
+
 ## Current Architecture
 
 The frontend is now running in a routed React application shell.

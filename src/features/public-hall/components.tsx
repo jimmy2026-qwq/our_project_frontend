@@ -1,3 +1,4 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { DetailCard, DetailHero, DetailList, DetailListItem, DetailPageShell, DetailRow, DetailRows, DirectoryCard, InfoSummaryCard, InfoSummaryGrid, PortalSection } from '@/components/shared/data-display';
@@ -13,8 +14,11 @@ import type {
   TournamentPublicProfile,
 } from '@/domain/models';
 import { mockClubProfiles } from '@/mocks/overview';
+import { useAuth } from '@/hooks/useAuth';
+import { loadPlayerContext } from '@/features/blueprint/application-data';
 
 import type { DetailState, LoadState, PublicHallState, PublicView } from './types';
+import { ClubApplicationDialog } from './ClubApplicationDialog';
 import {
   formatDateTime,
   formatNumber,
@@ -551,53 +555,103 @@ export function PublicTournamentDetailSection({
 }
 
 export function PublicClubDetailSection({ state }: { state: DetailState<ClubPublicProfile> }) {
+  const { session } = useAuth();
+  const [isApplicationDialogOpen, setIsApplicationDialogOpen] = useState(false);
+  const [isCurrentMember, setIsCurrentMember] = useState(false);
+
+  useEffect(() => {
+    if (!session?.user.roles.isRegisteredPlayer || !state.item) {
+      setIsCurrentMember(false);
+      return;
+    }
+
+    let cancelled = false;
+    const operatorId = session.user.operatorId ?? session.user.userId;
+    const clubId = state.item.id;
+
+    void loadPlayerContext(operatorId, session.user.displayName).then((result) => {
+      if (!cancelled) {
+        setIsCurrentMember(result.player?.clubIds?.includes(clubId) ?? false);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session, state.item]);
+
   if (!state.item) {
     return <PublicDetailNotFound title="Club not found" />;
   }
 
   const profile = state.item;
+  const clubSummary = {
+    id: profile.id,
+    name: profile.name,
+    memberCount: profile.memberCount,
+    powerRating: profile.powerRating,
+    treasury: profile.treasury,
+    relations: profile.relations,
+  };
+  const canApply = !!session?.user.roles.isRegisteredPlayer && !isCurrentMember;
 
   return (
-    <DetailPageShell
-      backLink={
-        <Link className="detail-back" to="/public">
-          Back to public hall
-        </Link>
-      }
-      hero={
-        <DetailHero
-          eyebrow="Club"
-          title={profile.name}
-          tagline={profile.slogan}
-          summary={profile.description}
-          source={state.source}
-          warning={state.warning}
+    <>
+      <DetailPageShell
+        backLink={
+          <Link className="detail-back" to="/public">
+            Back to public hall
+          </Link>
+        }
+        hero={
+          <DetailHero
+            eyebrow="Club"
+            title={profile.name}
+            tagline={profile.slogan}
+            summary={profile.description}
+            actions={
+              canApply ? (
+                <Button variant="secondary" onClick={() => setIsApplicationDialogOpen(true)}>
+                  我想申请加入这个俱乐部
+                </Button>
+              ) : null
+            }
+            source={state.source}
+            warning={state.warning}
+          />
+        }
+      >
+        <section className="detail-grid grid gap-[22px] md:grid-cols-2">
+          <DetailCard title="Public club info">
+            <DetailList>
+              <DetailListItem label="Members" value={profile.memberCount} />
+              <DetailListItem label="Power" value={<StatusPill tone="warning">{profile.powerRating}</StatusPill>} />
+              <DetailListItem label="Treasury" value={formatNumber(profile.treasury)} />
+              <DetailListItem label="Relations" value={profile.relations.map(getRelationLabel).join(' / ') || '--'} />
+              <DetailListItem label="Featured players" value={profile.featuredPlayers.join(' / ') || '--'} />
+            </DetailList>
+          </DetailCard>
+          <DetailCard title="Recent tournaments">
+            <DetailRows>
+              {profile.activeTournaments.length > 0 ? (
+                profile.activeTournaments.map((item) => (
+                  <DetailRow key={item} title={item} detail="Visible from the public club profile endpoint." />
+                ))
+              ) : (
+                <EmptyState asListItem>No recent tournament entries were returned.</EmptyState>
+              )}
+            </DetailRows>
+          </DetailCard>
+        </section>
+      </DetailPageShell>
+      {canApply ? (
+        <ClubApplicationDialog
+          club={clubSummary}
+          open={isApplicationDialogOpen}
+          onOpenChange={setIsApplicationDialogOpen}
         />
-      }
-    >
-      <section className="detail-grid grid gap-[22px] md:grid-cols-2">
-        <DetailCard title="Public club info">
-          <DetailList>
-            <DetailListItem label="Members" value={profile.memberCount} />
-            <DetailListItem label="Power" value={<StatusPill tone="warning">{profile.powerRating}</StatusPill>} />
-            <DetailListItem label="Treasury" value={formatNumber(profile.treasury)} />
-            <DetailListItem label="Relations" value={profile.relations.map(getRelationLabel).join(' / ') || '--'} />
-            <DetailListItem label="Featured players" value={profile.featuredPlayers.join(' / ') || '--'} />
-          </DetailList>
-        </DetailCard>
-        <DetailCard title="Recent tournaments">
-          <DetailRows>
-            {profile.activeTournaments.length > 0 ? (
-              profile.activeTournaments.map((item) => (
-                <DetailRow key={item} title={item} detail="Visible from the public club profile endpoint." />
-              ))
-            ) : (
-              <EmptyState asListItem>No recent tournament entries were returned.</EmptyState>
-            )}
-          </DetailRows>
-        </DetailCard>
-      </section>
-    </DetailPageShell>
+      ) : null}
+    </>
   );
 }
 

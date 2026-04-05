@@ -1,39 +1,68 @@
 import { useEffect, useState } from 'react';
 
 import { useDialog, useMutationNotice } from '@/hooks';
-import { mockClubs } from '@/mocks/overview';
+import { useAuth } from '@/hooks/useAuth';
 
 import {
+  createMemberHubState,
   DEFAULT_MEMBER_HUB_STATE,
   getActiveOperator,
   loadClubApplicationInbox,
   loadClubDashboard,
+  loadMemberHubOperatorDirectory,
   loadPlayerDashboard,
   normalizeClubIdForOperator,
   reviewApplication,
   type ApplicationInboxState,
   type DashboardLoadState,
+  type MemberHubOperatorDirectory,
   type MemberHubState,
 } from './data';
 
 export function useMemberHubState() {
+  const { session } = useAuth();
+  const [directory, setDirectory] = useState<MemberHubOperatorDirectory | null>(null);
   const [state, setState] = useState<MemberHubState>(DEFAULT_MEMBER_HUB_STATE);
-  return { state, setState };
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const nextDirectory = await loadMemberHubOperatorDirectory(session);
+
+      if (!cancelled) {
+        setDirectory(nextDirectory);
+        setState((current) =>
+          createMemberHubState(nextDirectory, current.operatorId || session?.user.operatorId || session?.user.userId),
+        );
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
+  return { state, setState, directory };
 }
 
-export function useMemberHubData(state: MemberHubState, reloadKey = 0) {
+export function useMemberHubData(directory: MemberHubOperatorDirectory | null, state: MemberHubState, reloadKey = 0) {
   const [playerPayload, setPlayerPayload] = useState<DashboardLoadState | null>(null);
   const [clubPayload, setClubPayload] = useState<DashboardLoadState | null>(null);
   const [inboxPayload, setInboxPayload] = useState<ApplicationInboxState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!directory) {
+      return;
+    }
+
     let cancelled = false;
 
     void (async () => {
       setIsLoading(true);
-      const activeOperator = getActiveOperator(state.operatorId);
-      const clubId = normalizeClubIdForOperator(state);
+      const activeOperator = getActiveOperator(directory, state.operatorId);
+      const clubId = normalizeClubIdForOperator(directory, state);
 
       const [nextPlayerPayload, nextClubPayload, nextInboxPayload] = await Promise.all([
         loadPlayerDashboard(state.playerId, state.operatorId),
@@ -52,12 +81,13 @@ export function useMemberHubData(state: MemberHubState, reloadKey = 0) {
     return () => {
       cancelled = true;
     };
-  }, [reloadKey, state]);
+  }, [directory, reloadKey, state]);
 
   return { playerPayload, clubPayload, inboxPayload, isLoading };
 }
 
 export function useMemberHubActions(
+  directory: MemberHubOperatorDirectory,
   state: MemberHubState,
   setState: React.Dispatch<React.SetStateAction<MemberHubState>>,
   reload: () => void,
@@ -66,12 +96,12 @@ export function useMemberHubActions(
   const { notifyMutationResult } = useMutationNotice();
 
   async function changeOperator(operatorId: string) {
-    const activeOperator = getActiveOperator(operatorId);
+    const activeOperator = getActiveOperator(directory, operatorId);
     setState((current) => ({
       ...current,
       operatorId,
       playerId: activeOperator.playerId,
-      clubId: activeOperator.managedClubIds[0] ?? mockClubs[0].id,
+      clubId: activeOperator.managedClubIds[0] ?? current.clubId,
     }));
   }
 

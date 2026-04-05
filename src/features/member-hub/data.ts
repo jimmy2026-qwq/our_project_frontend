@@ -1,9 +1,10 @@
 import { apiClient } from '@/api/client';
-import type { ClubApplicationView, DashboardSummary, Role } from '@/domain/models';
+import type { AuthSession, ClubApplicationView, ClubSummary, DashboardSummary, Role } from '@/domain/models';
 import {
   readClubApplicationInbox,
   type ClubApplicationInboxItem,
   updateClubApplicationInboxStatus,
+  upsertClubApplicationInboxItem,
 } from '@/lib/club-applications';
 import { mockClubs, mockDashboards } from '@/mocks/overview';
 
@@ -21,12 +22,19 @@ export interface ApplicationInboxState {
   warning?: string;
 }
 
-export interface MockOperator {
+export interface MemberHubOperator {
   id: string;
   label: string;
   role: Role;
   playerId: string;
   managedClubIds: string[];
+}
+
+export interface MemberHubOperatorDirectory {
+  items: MemberHubOperator[];
+  clubsById: Record<string, ClubSummary>;
+  source: DataSource;
+  warning?: string;
 }
 
 export interface MemberHubState {
@@ -35,7 +43,7 @@ export interface MemberHubState {
   clubId: string;
 }
 
-export const mockOperators: MockOperator[] = [
+export const fallbackOperators: MemberHubOperator[] = [
   {
     id: 'player-registered-1',
     label: 'Aoi / Registered Player',
@@ -53,9 +61,15 @@ export const mockOperators: MockOperator[] = [
 ];
 
 export const DEFAULT_MEMBER_HUB_STATE: MemberHubState = {
-  operatorId: mockOperators[0].id,
-  playerId: mockOperators[0].playerId,
+  operatorId: fallbackOperators[0].id,
+  playerId: fallbackOperators[0].playerId,
   clubId: 'club-1',
+};
+
+export const DEFAULT_MEMBER_HUB_DIRECTORY: MemberHubOperatorDirectory = {
+  items: fallbackOperators,
+  clubsById: createClubsById(mockClubs),
+  source: 'mock',
 };
 
 export function formatDateTime(value: string) {
@@ -67,6 +81,117 @@ export function formatDateTime(value: string) {
 
 function findMockDashboard(ownerId: string) {
   return mockDashboards.find((item) => item.ownerId === ownerId) ?? null;
+}
+
+function uniqueById(items: MemberHubOperator[]) {
+  const seen = new Set<string>();
+  return items.filter((item) => {
+    if (seen.has(item.id)) {
+      return false;
+    }
+
+    seen.add(item.id);
+    return true;
+  });
+}
+
+function createClubsById(items: ClubSummary[]) {
+  return Object.fromEntries(items.map((club) => [club.id, club] as const));
+}
+
+function buildFallbackDirectory(session: AuthSession | null): MemberHubOperatorDirectory {
+  const sessionOperatorId = session?.user.operatorId ?? session?.user.userId;
+  const sessionDisplayName = session?.user.displayName ?? 'Current User';
+  const currentOperator =
+    sessionOperatorId && session?.user.roles.isRegisteredPlayer
+      ? {
+          id: sessionOperatorId,
+          label: `${sessionDisplayName} / Registered Player`,
+          role: 'RegisteredPlayer' as const,
+          playerId: sessionOperatorId,
+          managedClubIds: [],
+        }
+      : null;
+
+  return {
+    items: uniqueById(currentOperator ? [currentOperator, ...fallbackOperators] : fallbackOperators),
+    clubsById: createClubsById(mockClubs),
+    source: 'mock',
+  };
+}
+
+export async function loadMemberHubOperatorDirectory(
+  session: AuthSession | null,
+): Promise<MemberHubOperatorDirectory> {
+  const fallback = buildFallbackDirectory(session);
+  const currentOperatorId = session?.user.operatorId ?? session?.user.userId;
+  const currentDisplayName = session?.user.displayName ?? 'Current User';
+
+  try {
+    const summary = await apiClient.getDemoSummary();
+    const recommendedOperatorId = summary.recommendedOperatorId?.trim();
+    const recommendedClubs = recommendedOperatorId
+      ? await apiClient.getClubs({
+          adminId: recommendedOperatorId,
+          activeOnly: true,
+          limit: 20,
+          offset: 0,
+        })
+      : { items: [] as ClubSummary[] };
+
+    const clubsById = createClubsById(recommendedClubs.items);
+    const operators: MemberHubOperator[] = [];
+
+    if (currentOperatorId && session?.user.roles.isRegisteredPlayer) {
+      const isAdmin = recommendedOperatorId === currentOperatorId && recommendedClubs.items.length > 0;
+      operators.push({
+        id: currentOperatorId,
+        label: `${currentDisplayName} / ${isAdmin ? 'Club Admin' : 'Registered Player'}`,
+        role: isAdmin ? 'ClubAdmin' : 'RegisteredPlayer',
+        playerId: currentOperatorId,
+        managedClubIds: isAdmin ? recommendedClubs.items.map((club) => club.id) : [],
+      });
+    }
+
+    if (recommendedOperatorId && recommendedOperatorId !== currentOperatorId) {
+      operators.push({
+        id: recommendedOperatorId,
+        label: 'Demo Admin / Club Admin',
+        role: 'ClubAdmin',
+        playerId: recommendedOperatorId,
+        managedClubIds: recommendedClubs.items.map((club) => club.id),
+      });
+    }
+
+    if (operators.length === 0) {
+      return fallback;
+    }
+
+    return {
+      items: uniqueById(operators),
+      clubsById,
+      source: 'api',
+    };
+  } catch (error) {
+    return {
+      ...fallback,
+      warning: error instanceof Error ? error.message : 'Operator directory fallback to mock.',
+    };
+  }
+}
+
+export function createMemberHubState(
+  directory: MemberHubOperatorDirectory,
+  preferredOperatorId?: string,
+): MemberHubState {
+  const activeOperator =
+    directory.items.find((operator) => operator.id === preferredOperatorId) ?? directory.items[0] ?? fallbackOperators[0];
+
+  return {
+    operatorId: activeOperator.id,
+    playerId: activeOperator.playerId,
+    clubId: activeOperator.managedClubIds[0] ?? Object.keys(directory.clubsById)[0] ?? mockClubs[0].id,
+  };
 }
 
 export async function loadPlayerDashboard(playerId: string, operatorId: string): Promise<DashboardLoadState> {
@@ -151,18 +276,18 @@ export async function loadClubApplicationInbox(
   }
 }
 
-export function getActiveOperator(operatorId: string) {
-  return mockOperators.find((operator) => operator.id === operatorId) ?? mockOperators[0];
+export function getActiveOperator(directory: MemberHubOperatorDirectory, operatorId: string) {
+  return directory.items.find((operator) => operator.id === operatorId) ?? directory.items[0] ?? fallbackOperators[0];
 }
 
-export function normalizeClubIdForOperator(state: MemberHubState) {
-  const activeOperator = getActiveOperator(state.operatorId);
+export function normalizeClubIdForOperator(directory: MemberHubOperatorDirectory, state: MemberHubState) {
+  const activeOperator = getActiveOperator(directory, state.operatorId);
 
   if (activeOperator.managedClubIds.includes(state.clubId)) {
     return state.clubId;
   }
 
-  return activeOperator.managedClubIds[0] ?? mockClubs[0].id;
+  return activeOperator.managedClubIds[0] ?? Object.keys(directory.clubsById)[0] ?? mockClubs[0].id;
 }
 
 export async function reviewApplication(
@@ -172,10 +297,21 @@ export async function reviewApplication(
   decision: 'approve' | 'reject',
 ) {
   try {
-    await apiClient.reviewClubApplication(clubId, applicationId, {
+    const application = await apiClient.reviewClubApplication(clubId, applicationId, {
       operatorId,
       decision,
       note: `${decision}d from member hub`,
+    });
+    upsertClubApplicationInboxItem({
+      id: application.applicationId,
+      clubId: application.clubId,
+      clubName: application.clubName,
+      operatorId: application.applicant.playerId,
+      applicantName: application.applicant.displayName,
+      message: application.message,
+      status: application.status,
+      submittedAt: application.submittedAt,
+      source: 'api',
     });
     return { source: 'api' as const };
   } catch {
