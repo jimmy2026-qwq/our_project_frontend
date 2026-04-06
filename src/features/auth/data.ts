@@ -1,4 +1,4 @@
-import { apiClient } from '@/api/client';
+import { ApiError, apiClient, type BackendAuthPayload } from '@/api/client';
 import type { AuthRoleFlags, AuthSession, AuthUser, LoginPayload, RegisterPayload, SessionInfo } from '@/domain/models';
 
 const AUTH_USERS_STORAGE_KEY = 'riichi-nexus.auth.users';
@@ -135,6 +135,29 @@ function persistSession(session: AuthSession | null) {
   window.localStorage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(record));
 }
 
+function mapBackendAuthSession(payload: BackendAuthPayload, tokenOverride?: string): AuthSession {
+  const token = tokenOverride ?? payload.token;
+
+  if (!token) {
+    throw new Error('Authenticated session token is missing from the backend response.');
+  }
+
+  return {
+    token,
+    user: {
+      userId: payload.userId,
+      username: payload.username,
+      displayName: payload.displayName,
+      operatorId: payload.userId,
+      roles: payload.roles,
+    },
+  };
+}
+
+function shouldUseLocalFallback(error: unknown) {
+  return !(error instanceof ApiError) || error.status === 404 || error.status === 501;
+}
+
 export function readPersistedSession() {
   const raw = window.localStorage.getItem(AUTH_SESSION_STORAGE_KEY);
 
@@ -237,7 +260,7 @@ export async function restoreSession(token: string) {
   }
 
   try {
-    const session = await apiClient.getAuthSession(token);
+    const session = mapBackendAuthSession(await apiClient.getAuthSession(token), token);
     persistSession(session);
     return session;
   } catch {
@@ -254,10 +277,14 @@ export async function restoreSession(token: string) {
 
 export async function loginUser(payload: LoginPayload) {
   try {
-    const session = await apiClient.login(payload);
+    const session = mapBackendAuthSession(await apiClient.login(payload));
     persistSession(session);
     return session;
-  } catch {
+  } catch (error) {
+    if (!shouldUseLocalFallback(error)) {
+      throw error;
+    }
+
     const users = await readStoredUsers();
     const matchedUser = users.find((user) => user.username === payload.username.trim());
 
@@ -273,10 +300,14 @@ export async function loginUser(payload: LoginPayload) {
 
 export async function registerUser(payload: RegisterPayload) {
   try {
-    const session = await apiClient.register(payload);
+    const session = mapBackendAuthSession(await apiClient.register(payload));
     persistSession(session);
     return session;
-  } catch {
+  } catch (error) {
+    if (!shouldUseLocalFallback(error)) {
+      throw error;
+    }
+
     const users = await readStoredUsers();
     const username = payload.username.trim();
     const displayName = payload.displayName.trim();

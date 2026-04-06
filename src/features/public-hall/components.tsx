@@ -559,6 +559,11 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
   const [isApplicationDialogOpen, setIsApplicationDialogOpen] = useState(false);
   const [isCurrentMember, setIsCurrentMember] = useState(false);
 
+  const isFeaturedMember =
+    !!session?.user.roles.isRegisteredPlayer &&
+    !!state.item &&
+    state.item.featuredPlayers.some((name) => name.trim().toLowerCase() === session.user.displayName.trim().toLowerCase());
+
   useEffect(() => {
     if (!session?.user.roles.isRegisteredPlayer || !state.item) {
       setIsCurrentMember(false);
@@ -568,17 +573,22 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
     let cancelled = false;
     const operatorId = session.user.operatorId ?? session.user.userId;
     const clubId = state.item.id;
+    const refreshMembershipStatus = () => {
+      void loadPlayerContext(operatorId, session.user.displayName).then((result) => {
+        if (!cancelled) {
+          setIsCurrentMember(result.player?.clubIds?.includes(clubId) ?? false);
+        }
+      });
+    };
 
-    void loadPlayerContext(operatorId, session.user.displayName).then((result) => {
-      if (!cancelled) {
-        setIsCurrentMember(result.player?.clubIds?.includes(clubId) ?? false);
-      }
-    });
+    refreshMembershipStatus();
+    window.addEventListener('focus', refreshMembershipStatus);
 
     return () => {
       cancelled = true;
+      window.removeEventListener('focus', refreshMembershipStatus);
     };
-  }, [session, state.item]);
+  }, [isApplicationDialogOpen, session, state.item]);
 
   if (!state.item) {
     return <PublicDetailNotFound title="Club not found" />;
@@ -593,7 +603,8 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
     treasury: profile.treasury,
     relations: profile.relations,
   };
-  const canApply = !!session?.user.roles.isRegisteredPlayer && !isCurrentMember;
+  const isClubMember = isCurrentMember || isFeaturedMember;
+  const canApply = !!session?.user.roles.isRegisteredPlayer && !isClubMember;
 
   return (
     <>
@@ -610,7 +621,9 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
             tagline={profile.slogan}
             summary={profile.description}
             actions={
-              canApply ? (
+              isClubMember ? (
+                <StatusPill tone="success">你已经是俱乐部成员</StatusPill>
+              ) : canApply ? (
                 <Button variant="secondary" onClick={() => setIsApplicationDialogOpen(true)}>
                   我想申请加入这个俱乐部
                 </Button>
@@ -649,6 +662,7 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
           club={clubSummary}
           open={isApplicationDialogOpen}
           onOpenChange={setIsApplicationDialogOpen}
+          onMembershipConfirmed={() => setIsCurrentMember(true)}
         />
       ) : null}
     </>

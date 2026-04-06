@@ -128,32 +128,46 @@ export async function loadMemberHubOperatorDirectory(
   const currentDisplayName = session?.user.displayName ?? 'Current User';
 
   try {
-    const summary = await apiClient.getDemoSummary();
-    const recommendedOperatorId = summary.recommendedOperatorId?.trim();
-    const recommendedClubs = recommendedOperatorId
+    const currentOperatorClubs = currentOperatorId
       ? await apiClient.getClubs({
-          adminId: recommendedOperatorId,
+          adminId: currentOperatorId,
           activeOnly: true,
           limit: 20,
           offset: 0,
         })
       : { items: [] as ClubSummary[] };
-
-    const clubsById = createClubsById(recommendedClubs.items);
     const operators: MemberHubOperator[] = [];
 
     if (currentOperatorId && session?.user.roles.isRegisteredPlayer) {
-      const isAdmin = recommendedOperatorId === currentOperatorId && recommendedClubs.items.length > 0;
+      const isAdmin = currentOperatorClubs.items.length > 0;
       operators.push({
         id: currentOperatorId,
         label: `${currentDisplayName} / ${isAdmin ? 'Club Admin' : 'Registered Player'}`,
         role: isAdmin ? 'ClubAdmin' : 'RegisteredPlayer',
         playerId: currentOperatorId,
-        managedClubIds: isAdmin ? recommendedClubs.items.map((club) => club.id) : [],
+        managedClubIds: isAdmin ? currentOperatorClubs.items.map((club) => club.id) : [],
       });
     }
 
-    if (recommendedOperatorId && recommendedOperatorId !== currentOperatorId) {
+    const summary =
+      operators.some((operator) => operator.role === 'ClubAdmin')
+        ? null
+        : await apiClient.getDemoSummary({
+            bootstrapIfMissing: false,
+            refreshDerived: false,
+          });
+    const recommendedOperatorId = summary?.recommendedOperatorId?.trim();
+    const recommendedClubs =
+      recommendedOperatorId && recommendedOperatorId !== currentOperatorId
+        ? await apiClient.getClubs({
+            adminId: recommendedOperatorId,
+            activeOnly: true,
+            limit: 20,
+            offset: 0,
+          })
+        : { items: [] as ClubSummary[] };
+
+    if (recommendedOperatorId && recommendedOperatorId !== currentOperatorId && recommendedClubs.items.length > 0) {
       operators.push({
         id: recommendedOperatorId,
         label: 'Demo Admin / Club Admin',
@@ -169,7 +183,7 @@ export async function loadMemberHubOperatorDirectory(
 
     return {
       items: uniqueById(operators),
-      clubsById,
+      clubsById: createClubsById([...currentOperatorClubs.items, ...recommendedClubs.items]),
       source: 'api',
     };
   } catch (error) {

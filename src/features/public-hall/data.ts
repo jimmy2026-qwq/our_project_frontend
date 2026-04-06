@@ -43,6 +43,21 @@ export const DEFAULT_PUBLIC_HALL_STATE: PublicHallState = {
   clubActiveOnly: true,
 };
 
+const HOME_DATA_CACHE_TTL_MS = 15_000;
+
+const homeDataCache = new Map<string, { payload: HomeDataPayload; cachedAt: number }>();
+const homeDataRequests = new Map<string, Promise<HomeDataPayload>>();
+
+function buildHomeDataKey(state: PublicHallState) {
+  return JSON.stringify({
+    scheduleTournamentStatus: state.scheduleTournamentStatus,
+    scheduleStageStatus: state.scheduleStageStatus,
+    leaderboardClubId: state.leaderboardClubId,
+    leaderboardStatus: state.leaderboardStatus,
+    clubActiveOnly: state.clubActiveOnly,
+  });
+}
+
 export async function loadSchedules(state: PublicHallState): Promise<LoadState<PublicSchedule>> {
   try {
     const envelope = await apiClient.getPublicSchedules({
@@ -129,9 +144,34 @@ export async function loadLeaderboard(
 }
 
 export async function loadPublicHallHomeData(state: PublicHallState): Promise<HomeDataPayload> {
-  const [schedules, clubs] = await Promise.all([loadSchedules(state), loadClubs(state)]);
-  const leaderboard = await loadLeaderboard(state, clubs);
-  return { schedules, leaderboard, clubs };
+  const cacheKey = buildHomeDataKey(state);
+  const cached = homeDataCache.get(cacheKey);
+
+  if (cached && Date.now() - cached.cachedAt < HOME_DATA_CACHE_TTL_MS) {
+    return cached.payload;
+  }
+
+  const inFlightRequest = homeDataRequests.get(cacheKey);
+
+  if (inFlightRequest) {
+    return inFlightRequest;
+  }
+
+  const request = (async () => {
+    const [schedules, clubs] = await Promise.all([loadSchedules(state), loadClubs(state)]);
+    const leaderboard = await loadLeaderboard(state, clubs);
+    const payload = { schedules, leaderboard, clubs };
+    homeDataCache.set(cacheKey, { payload, cachedAt: Date.now() });
+    return payload;
+  })();
+
+  homeDataRequests.set(cacheKey, request);
+
+  try {
+    return await request;
+  } finally {
+    homeDataRequests.delete(cacheKey);
+  }
 }
 
 export async function loadTournamentDetail(tournamentId: string): Promise<TournamentDetailState> {

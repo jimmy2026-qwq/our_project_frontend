@@ -39,6 +39,15 @@ export class ApiError extends Error {
   }
 }
 
+export interface BackendAuthPayload {
+  userId: string;
+  username: string;
+  displayName: string;
+  token?: string;
+  authenticated?: boolean;
+  roles: AuthSession['user']['roles'];
+}
+
 async function readErrorMessage(response: Response) {
   const fallback = '请求失败，请稍后再试。';
   const contentType = response.headers.get('content-type') ?? '';
@@ -274,6 +283,38 @@ interface RawPublicClubDetail {
   recentMatches?: RawPublicClubRecentMatch[];
 }
 
+interface RawDashboardOwnerPlayer {
+  playerId: string;
+}
+
+interface RawDashboardOwnerClub {
+  clubId: string;
+}
+
+interface RawDashboard {
+  owner:
+    | { Player: RawDashboardOwnerPlayer }
+    | { Club: RawDashboardOwnerClub };
+  sampleSize: number;
+  dealInRate: number;
+  winRate: number;
+  averageWinPoints: number;
+  riichiRate: number;
+  averagePlacement: number;
+  topFinishRate: number;
+  lastUpdatedAt: string;
+  version: number;
+}
+
+interface RawPlayerProfile {
+  id: string;
+  userId?: string;
+  nickname: string;
+  status?: 'Active' | 'Inactive' | 'Banned';
+  elo?: number;
+  boundClubIds?: string[];
+}
+
 export interface RawRankSnapshot {
   platform: string;
   tier: string;
@@ -408,15 +449,66 @@ function mapPublicClubDetail(item: RawPublicClubDetail): ClubPublicProfile {
   };
 }
 
+function formatPercent(value: number) {
+  return `${(value * 100).toFixed(1)}%`;
+}
+
+function formatDecimal(value: number) {
+  return value.toFixed(2);
+}
+
+function mapDashboard(item: RawDashboard): DashboardSummary {
+  const ownerId = 'Player' in item.owner ? item.owner.Player.playerId : item.owner.Club.clubId;
+  const ownerType = 'Player' in item.owner ? 'player' : 'club';
+  const subjectLabel = ownerType === 'player' ? 'Player dashboard' : 'Club dashboard';
+
+  return {
+    ownerId,
+    ownerType,
+    headline: `${subjectLabel} synced from the backend aggregate.`,
+    metrics: [
+      {
+        label: 'Sample size',
+        value: String(item.sampleSize),
+        accent: 'gold',
+      },
+      {
+        label: 'Win rate',
+        value: formatPercent(item.winRate),
+        accent: 'teal',
+      },
+      {
+        label: 'Avg placement',
+        value: formatDecimal(item.averagePlacement || 0),
+      },
+      {
+        label: 'Riichi rate',
+        value: formatPercent(item.riichiRate),
+      },
+    ],
+  };
+}
+
+function mapPlayerProfile(item: RawPlayerProfile): PlayerProfile {
+  return {
+    playerId: item.id,
+    applicantUserId: item.userId,
+    displayName: item.nickname,
+    playerStatus: item.status,
+    elo: item.elo,
+    clubIds: item.boundClubIds ?? [],
+  };
+}
+
 export const apiClient = {
   login(payload: LoginPayload) {
-    return sendJson<AuthSession>('/auth/login', 'POST', payload);
+    return sendJson<BackendAuthPayload>('/auth/login', 'POST', payload);
   },
   register(payload: RegisterPayload) {
-    return sendJson<AuthSession>('/auth/register', 'POST', payload);
+    return sendJson<BackendAuthPayload>('/auth/register', 'POST', payload);
   },
   getAuthSession(token: string) {
-    return request<AuthSession>('/auth/session', {
+    return request<BackendAuthPayload>('/auth/session', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -484,7 +576,9 @@ export const apiClient = {
     return request<SessionInfo>(`/session${toQueryString(filters)}`);
   },
   getCurrentPlayer(operatorId: string) {
-    return request<PlayerProfile>(`/players/me${toQueryString({ operatorId })}`);
+    return request<RawPlayerProfile>(`/players/me${toQueryString({ operatorId })}`).then(
+      mapPlayerProfile,
+    );
   },
   getDemoSummary(filters: DemoSummaryQuery = {}) {
     return request<DemoSummary>(
@@ -564,14 +658,14 @@ export const apiClient = {
     );
   },
   getPlayerDashboard(playerId: string, operatorId: string) {
-    return request<DashboardSummary>(
+    return request<RawDashboard>(
       `/dashboards/players/${playerId}${toQueryString({ operatorId })}`,
-    );
+    ).then(mapDashboard);
   },
   getClubDashboard(clubId: string, operatorId: string) {
-    return request<DashboardSummary>(
+    return request<RawDashboard>(
       `/dashboards/clubs/${clubId}${toQueryString({ operatorId })}`,
-    );
+    ).then(mapDashboard);
   },
   getTournamentTables(tournamentId: string, stageId: string, filters: TableFilters) {
     return request<ListEnvelope<TournamentTableSummary>>(

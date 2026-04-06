@@ -47,10 +47,12 @@ export function ClubApplicationDialog({
   club,
   open,
   onOpenChange,
+  onMembershipConfirmed,
 }: {
   club: ClubSummary;
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onMembershipConfirmed?: () => void;
 }) {
   const { session } = useAuth();
   const { notifyMutationResult } = useMutationNotice();
@@ -102,6 +104,12 @@ export function ClubApplicationDialog({
   const isMember = state?.playerContext.player?.clubIds?.includes(club.id) ?? false;
   const canSubmit = !!state && !isMember && application?.status !== 'Pending' && application?.status !== 'Approved';
   const canWithdraw = !!application && application.status === 'Pending';
+
+  useEffect(() => {
+    if (isMember) {
+      onMembershipConfirmed?.();
+    }
+  }, [isMember, onMembershipConfirmed]);
 
   const summaryItems = useMemo(
     () =>

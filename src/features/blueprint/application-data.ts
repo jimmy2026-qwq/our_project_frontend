@@ -42,10 +42,24 @@ export interface HomeClubApplicationState {
 const mockApplications = new Map<string, ClubApplication>();
 
 export function formatDateTime(value: string) {
+  const timestamp = Date.parse(value);
+
+  if (Number.isNaN(timestamp)) {
+    return 'Unavailable';
+  }
+
   return new Intl.DateTimeFormat('zh-CN', {
     dateStyle: 'medium',
     timeStyle: 'short',
-  }).format(new Date(value));
+  }).format(new Date(timestamp));
+}
+
+interface RawClubApplicationMutationResponse {
+  id: string;
+  displayName?: string;
+  submittedAt?: string;
+  message?: string | null;
+  status: ClubApplication['status'];
 }
 
 export function createMockClubApplication(
@@ -155,6 +169,21 @@ function toClubApplicationViewModel(view: {
   } satisfies ClubApplication;
 }
 
+function toClubApplicationMutationModel(
+  clubId: string,
+  fallbackApplicantName: string,
+  application: RawClubApplicationMutationResponse,
+): ClubApplication {
+  return {
+    id: application.id,
+    clubId,
+    status: application.status,
+    applicantName: application.displayName?.trim() || fallbackApplicantName,
+    message: application.message?.trim() || '',
+    createdAt: application.submittedAt ?? new Date().toISOString(),
+  };
+}
+
 function getTrackedApplication(operatorId: string, clubId: string, applicationId?: string) {
   if (applicationId) {
     const tracked = readClubApplicationInboxItem(applicationId);
@@ -226,11 +255,12 @@ export async function submitClubApplication(state: HomeClubApplicationState) {
   const message = state.message.trim() || 'I would like to join next split.';
 
   try {
-    const application = await apiClient.submitClubApplication(state.clubId, {
+    const response = await apiClient.submitClubApplication(state.clubId, {
       operatorId: state.operatorId,
       displayName: selectedPlayerName,
       message,
     });
+    const application = toClubApplicationMutationModel(state.clubId, selectedPlayerName, response);
     upsertClubApplicationInboxItem({
       id: application.id,
       clubId: state.clubId,
@@ -276,10 +306,15 @@ export async function withdrawClubApplication(state: HomeClubApplicationState) {
   }
 
   try {
-    const application = await apiClient.withdrawClubApplication(state.clubId, applicationId, {
+    const response = await apiClient.withdrawClubApplication(state.clubId, applicationId, {
       operatorId: state.operatorId,
       note: state.withdrawNote,
     });
+    const application = toClubApplicationMutationModel(
+      state.clubId,
+      state.application.application?.applicantName ?? getFallbackPlayerName(state),
+      response,
+    );
     updateClubApplicationInboxStatus(application.id, application.status);
     return { application, source: 'api' as const };
   } catch (error) {
