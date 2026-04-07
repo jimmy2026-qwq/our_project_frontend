@@ -48,6 +48,10 @@ export interface BackendAuthPayload {
   roles: AuthSession['user']['roles'];
 }
 
+export interface ApiMessagePayload {
+  message: string;
+}
+
 async function readErrorMessage(response: Response) {
   const fallback = '请求失败，请稍后再试。';
   const contentType = response.headers.get('content-type') ?? '';
@@ -187,6 +191,19 @@ export interface CreatedPlayer {
   elo: number;
 }
 
+export interface RawClubApplicationMutationResponse {
+  id: string;
+  applicantUserId?: string | null;
+  displayName: string;
+  submittedAt: string;
+  message?: string | null;
+  status: ClubApplication['status'];
+  reviewedBy?: string | null;
+  reviewedAt?: string | null;
+  reviewNote?: string | null;
+  withdrawnByPrincipalId?: string | null;
+}
+
 export interface ClubApplicationListFilters {
   operatorId: string;
   status?: ClubApplicationView['status'];
@@ -252,6 +269,16 @@ interface RawPublicClubDirectoryEntry {
   powerRating: number;
   treasuryBalance: number;
   relations: RawPublicClubRelation[];
+}
+
+interface RawClub {
+  id: string;
+  name: string;
+  members: string[];
+  powerRating: number;
+  treasuryBalance: number;
+  relations: RawPublicClubRelation[];
+  dissolvedAt?: string | null;
 }
 
 interface RawPublicClubHonor {
@@ -413,6 +440,19 @@ function mapPublicClub(item: RawPublicClubDirectoryEntry): ClubSummary {
   };
 }
 
+function mapClub(item: RawClub): ClubSummary {
+  return {
+    id: item.id,
+    name: item.name,
+    memberCount: item.members.length,
+    powerRating: item.powerRating,
+    treasury: item.treasuryBalance,
+    relations: item.relations.map((relation) =>
+      relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
+    ),
+  };
+}
+
 function mapPublicClubDetail(item: RawPublicClubDetail): ClubPublicProfile {
   const requirementsTextValue = item.applicationPolicy?.requirementsText;
   const requirementsText = Array.isArray(requirementsTextValue)
@@ -515,7 +555,7 @@ export const apiClient = {
     });
   },
   logout(token: string) {
-    return sendJson<{ success: boolean }>(
+    return sendJson<ApiMessagePayload>(
       '/auth/logout',
       'POST',
       {},
@@ -565,7 +605,9 @@ export const apiClient = {
     );
   },
   getClubs(filters: ClubFilters) {
-    return request<ListEnvelope<ClubSummary>>(`/clubs${toQueryString(filters)}`);
+    return request<ListEnvelope<RawClub>>(`/clubs${toQueryString(filters)}`).then((envelope) =>
+      mapEnvelope(envelope, mapClub),
+    );
   },
   getPublicClubs() {
     return request<ListEnvelope<RawPublicClubDirectoryEntry>>('/public/clubs').then((envelope) =>
@@ -608,7 +650,7 @@ export const apiClient = {
     return request<GuestSession>(`/guest-sessions/${guestSessionId}`);
   },
   submitClubApplication(clubId: string, payload: ClubApplicationPayload) {
-    return sendJson<ClubApplication>(`/clubs/${clubId}/applications`, 'POST', {
+    return sendJson<RawClubApplicationMutationResponse>(`/clubs/${clubId}/applications`, 'POST', {
       applicantUserId: encodeBackendOption(undefined),
       displayName: payload.displayName,
       message: encodeBackendOption(payload.message),
@@ -621,7 +663,7 @@ export const apiClient = {
     membershipId: string,
     payload: WithdrawClubApplicationPayload,
   ) {
-    return sendJson<ClubApplication>(
+    return sendJson<RawClubApplicationMutationResponse>(
       `/clubs/${clubId}/applications/${membershipId}/withdraw`,
       'POST',
       {

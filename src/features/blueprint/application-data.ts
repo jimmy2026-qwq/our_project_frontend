@@ -1,4 +1,4 @@
-import { ApiError, apiClient } from '@/api/client';
+import { ApiError, apiClient, type RawClubApplicationMutationResponse } from '@/api/client';
 import type { ClubApplication, ClubSummary, PlayerProfile } from '@/domain/models';
 import {
   readClubApplicationInboxItem,
@@ -52,14 +52,6 @@ export function formatDateTime(value: string) {
     dateStyle: 'medium',
     timeStyle: 'short',
   }).format(new Date(timestamp));
-}
-
-interface RawClubApplicationMutationResponse {
-  id: string;
-  displayName?: string;
-  submittedAt?: string;
-  message?: string | null;
-  status: ClubApplication['status'];
 }
 
 export function createMockClubApplication(
@@ -178,9 +170,9 @@ function toClubApplicationMutationModel(
     id: application.id,
     clubId,
     status: application.status,
-    applicantName: application.displayName?.trim() || fallbackApplicantName,
+    applicantName: application.displayName.trim() || fallbackApplicantName,
     message: application.message?.trim() || '',
-    createdAt: application.submittedAt ?? new Date().toISOString(),
+    createdAt: application.submittedAt,
   };
 }
 
