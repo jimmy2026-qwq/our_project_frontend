@@ -1,4 +1,6 @@
-import { ApiError, apiClient, type RawClubApplicationMutationResponse } from '@/api/client';
+import { authApi } from '@/api/auth';
+import { clubsApi, type RawClubApplicationMutationResponse } from '@/api/clubs';
+import { ApiError } from '@/api/http';
 import type { ClubApplication, ClubSummary, PlayerProfile } from '@/domain/models';
 import {
   readClubApplicationInboxItem,
@@ -98,7 +100,7 @@ export function getFallbackPlayerName(state: Pick<HomeClubApplicationState, 'ope
 
 export async function loadJoinableClubs(): Promise<ClubDirectoryState> {
   try {
-    const envelope = await apiClient.getClubs({
+    const envelope = await clubsApi.getClubs({
       activeOnly: true,
       joinableOnly: true,
       limit: 20,
@@ -122,7 +124,7 @@ export async function loadPlayerContext(
   fallbackDisplayName: string,
 ): Promise<PlayerContextState> {
   try {
-    const player = await apiClient.getCurrentPlayer(operatorId);
+    const player = await authApi.getCurrentPlayer(operatorId);
     return {
       player,
       source: 'api',
@@ -206,7 +208,7 @@ export async function loadTrackedApplication(
   }
 
   try {
-    const view = await apiClient.getClubApplication(clubId, tracked.id, { operatorId });
+    const view = await clubsApi.getClubApplication(clubId, tracked.id, { operatorId });
     const application = toClubApplicationViewModel(view);
 
     upsertClubApplicationInboxItem({
@@ -247,7 +249,7 @@ export async function submitClubApplication(state: HomeClubApplicationState) {
   const message = state.message.trim() || 'I would like to join next split.';
 
   try {
-    const response = await apiClient.submitClubApplication(state.clubId, {
+    const response = await clubsApi.submitClubApplication(state.clubId, {
       operatorId: state.operatorId,
       displayName: selectedPlayerName,
       message,
@@ -298,7 +300,7 @@ export async function withdrawClubApplication(state: HomeClubApplicationState) {
   }
 
   try {
-    const response = await apiClient.withdrawClubApplication(state.clubId, applicationId, {
+    const response = await clubsApi.withdrawClubApplication(state.clubId, applicationId, {
       operatorId: state.operatorId,
       note: state.withdrawNote,
     });

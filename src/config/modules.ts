@@ -39,11 +39,11 @@ export const featureModules: FeatureModule[] = [
   },
   {
     id: 'api-client',
-    title: 'API Client & Normalization',
+    title: 'API Modules & Normalization',
     summary:
-      'Shared request layer that assembles URLs, handles fetch/json behavior, and normalizes backend payloads into frontend domain models.',
+      'Shared API layer that is split by domain, handles fetch/json behavior, and normalizes backend payloads into frontend domain models.',
     entities: ['ListEnvelope', 'PublicSchedule', 'ClubSummary', 'TournamentPublicProfile'],
     primaryRoles: ['Guest', 'RegisteredPlayer', 'ClubAdmin', 'TournamentAdmin', 'SuperAdmin'],
-    routes: ['src/api/client.ts', 'doc/frontend-template-migration-plan.md', 'doc/FRONTEND_INTERFACE_CONTRACTS.md'],
+    routes: ['src/api/auth.ts', 'src/api/public.ts', 'src/api/clubs.ts'],
   },
 ];

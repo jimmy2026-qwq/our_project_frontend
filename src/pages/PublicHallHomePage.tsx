@@ -4,21 +4,28 @@ import {
   PublicClubsSection,
   PublicHallError,
   PublicHallHero,
+  PublicHallLeaderboardLoading,
   PublicHallLoading,
   PublicHallOverviewStrip,
   PublicHallTabs,
   PublicLeaderboardSection,
   PublicSchedulesSection,
 } from '@/features/public-hall/components';
-import { usePublicHallHomeData, usePublicHallState } from '@/features/public-hall/hooks';
+import { usePublicHallHomeData, usePublicHallLeaderboardData, usePublicHallState } from '@/features/public-hall/hooks';
 import type { PublicHallState } from '@/features/public-hall/types';
-import { useRefreshNotice } from '@/hooks';
+import { useAuth, useRefreshNotice } from '@/hooks';
 
 export function PublicHallHomePage() {
   const { state, setState } = usePublicHallState();
+  const { session } = useAuth();
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
   const [pendingRefresh, setPendingRefresh] = useState(false);
-  const { data, isLoading, error } = usePublicHallHomeData(state, reloadKey);
+  const { data, isLoading, error } = usePublicHallHomeData(state, { session }, reloadKey);
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = usePublicHallLeaderboardData(state, data, reloadKey);
   const { notifyRefreshResult } = useRefreshNotice();
 
   const handleStateChange = (patch: Partial<PublicHallState>) => {
@@ -51,7 +58,7 @@ export function PublicHallHomePage() {
     }
 
     notifyRefreshResult(
-      [data.schedules, data.clubs, data.leaderboard],
+      [data.schedules, data.clubs, ...(leaderboardData ? [leaderboardData.leaderboard] : [])],
       {
         failureTitle: 'Public hall refresh failed',
         successTitle: 'Public hall refreshed',
@@ -63,7 +70,7 @@ export function PublicHallHomePage() {
     );
 
     setPendingRefresh(false);
-  }, [data, error, isLoading, notifyRefreshResult, pendingRefresh]);
+  }, [data, error, isLoading, leaderboardData, notifyRefreshResult, pendingRefresh]);
 
   const handleRefresh = () => {
     setPendingRefresh(true);
@@ -94,15 +101,23 @@ export function PublicHallHomePage() {
       />
     );
   } else if (state.activeView === 'leaderboard') {
-    activeViewMarkup = (
-      <PublicLeaderboardSection
-        payload={data.leaderboard}
-        state={state}
-        clubs={data.clubs.envelope.items}
-        onStateChange={handleStateChange}
-        onRefresh={handleRefresh}
-      />
-    );
+    if (isLeaderboardLoading && !leaderboardData) {
+      activeViewMarkup = <PublicHallLeaderboardLoading />;
+    } else if (leaderboardError && !leaderboardData) {
+      activeViewMarkup = <PublicHallError message={leaderboardError} />;
+    } else if (leaderboardData) {
+      activeViewMarkup = (
+        <PublicLeaderboardSection
+          payload={leaderboardData.leaderboard}
+          state={state}
+          clubs={data.clubs.envelope.items}
+          onStateChange={handleStateChange}
+          onRefresh={handleRefresh}
+        />
+      );
+    } else {
+      activeViewMarkup = <PublicHallLeaderboardLoading />;
+    }
   } else {
     activeViewMarkup = (
       <PublicSchedulesSection
@@ -118,13 +133,13 @@ export function PublicHallHomePage() {
     <section className="public-portal">
       <PublicHallHero
         schedules={data.schedules}
-        leaderboard={data.leaderboard}
+        leaderboard={leaderboardData?.leaderboard ?? null}
         clubs={data.clubs}
         onSelectView={(view) => handleStateChange({ activeView: view })}
       />
       <PublicHallOverviewStrip
         schedules={data.schedules}
-        leaderboard={data.leaderboard}
+        leaderboard={leaderboardData?.leaderboard ?? null}
         clubs={data.clubs}
       />
       <PublicHallTabs

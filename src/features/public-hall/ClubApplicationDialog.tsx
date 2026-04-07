@@ -228,14 +228,14 @@ export function ClubApplicationDialog({
               <div className="grid gap-5">
                 <FieldGroup className="guest-flow__form">
                   <TextInputField label="当前申请人" value={selectedPlayerName} readOnly />
-                  <TextInputField label="当前 operatorId" value={state.operatorId} readOnly />
                   <TextareaField
                     label="申请说明"
                     rows={4}
                     value={state.message}
-                    onChange={(event) =>
-                      setState((current) => (current ? { ...current, message: event.currentTarget.value } : current))
-                    }
+                    onChange={(event) => {
+                      const nextMessage = event.currentTarget.value;
+                      setState((current) => (current ? { ...current, message: nextMessage } : current));
+                    }}
                   />
                 </FieldGroup>
 

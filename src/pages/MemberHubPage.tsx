@@ -1,31 +1,22 @@
-import { useReducer } from 'react';
+import { Link } from 'react-router-dom';
 
-import { MemberHubLoading, MemberHubPageSection } from '@/features/member-hub/components';
-import { DEFAULT_MEMBER_HUB_DIRECTORY } from '@/features/member-hub/data';
-import { useMemberHubActions, useMemberHubData, useMemberHubState } from '@/features/member-hub/hooks';
+import { DetailHero, DetailPageShell } from '@/components/shared/data-display';
 
 export function MemberHubPage() {
-  const { state, setState, directory } = useMemberHubState();
-  const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
-  const { playerPayload, clubPayload, inboxPayload, isLoading } = useMemberHubData(directory, state, reloadKey);
-  const actions = useMemberHubActions(directory ?? DEFAULT_MEMBER_HUB_DIRECTORY, state, setState, forceReload);
-
-  if (!directory || isLoading || !playerPayload || !clubPayload || !inboxPayload) {
-    return <MemberHubLoading />;
-  }
-
   return (
-    <MemberHubPageSection
-      directory={directory}
-      state={state}
-      playerPayload={playerPayload}
-      clubPayload={clubPayload}
-      inboxPayload={inboxPayload}
-      onReload={forceReload}
-      onChangeOperator={(operatorId) => void actions.changeOperator(operatorId)}
-      onChangePlayer={actions.changePlayer}
-      onChangeClub={actions.changeClub}
-      onReview={(applicationId, decision) => void actions.handleReview(applicationId, decision)}
+    <DetailPageShell
+      backLink={
+        <Link className="detail-back" to="/public">
+          返回公共大厅
+        </Link>
+      }
+      hero={
+        <DetailHero
+          eyebrow="成员工作台"
+          title="成员工作台已精简"
+          summary="俱乐部加入申请的审批能力已经迁移到俱乐部详情页。其余看板和工作台功能暂不开放。"
+        />
+      }
     />
   );
 }

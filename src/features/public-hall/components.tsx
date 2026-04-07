@@ -1,24 +1,31 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+﻿import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 
+import { clubsApi } from '@/api/clubs';
+import { operationsApi } from '@/api/operations';
 import { DetailCard, DetailHero, DetailList, DetailListItem, DetailPageShell, DetailRow, DetailRows, DirectoryCard, InfoSummaryCard, InfoSummaryGrid, PortalSection } from '@/components/shared/data-display';
+import { ClubApplicationList } from '@/components/shared/domain';
 import { EmptyState } from '@/components/shared/feedback';
 import { CheckboxField, SelectField } from '@/components/shared/forms';
-import { FilterActionRow } from '@/components/shared/layout';
-import { Badge, Button, DescriptionItem, DescriptionList, KeyValueItem, KeyValueList, StatusPill, Tabs, TabsList, TabsTrigger } from '@/components/ui';
+import { ActionButton, FilterActionRow } from '@/components/shared/layout';
+import { Badge, Button, DescriptionItem, DescriptionList, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, KeyValueItem, KeyValueList, LoadingProgress, StatusPill, Tabs, TabsList, TabsTrigger } from '@/components/ui';
 import type {
   ClubPublicProfile,
+  ClubApplicationView,
   ClubSummary,
   PlayerLeaderboardEntry,
   PublicSchedule,
   TournamentPublicProfile,
 } from '@/domain/models';
 import { mockClubProfiles } from '@/mocks/overview';
+import { useDialog, useMutationNotice } from '@/hooks';
 import { useAuth } from '@/hooks/useAuth';
 import { loadPlayerContext } from '@/features/blueprint/application-data';
 
 import type { DetailState, LoadState, PublicHallState, PublicView } from './types';
 import { ClubApplicationDialog } from './ClubApplicationDialog';
+import { ClubTournamentLineupDialog } from './ClubTournamentLineupDialog';
+import { CreateTournamentDialog } from './CreateTournamentDialog';
 import {
   formatDateTime,
   formatNumber,
@@ -28,7 +35,7 @@ import {
   getTournamentStatusLabel,
 } from './utils';
 
-export function PublicHallLoading() {
+export const PublicHallLoading = () => {
   return (
     <section className="public-portal">
       <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
@@ -36,13 +43,20 @@ export function PublicHallLoading() {
           <p className="portal-hero__eyebrow">Guest Lobby</p>
           <h1>Loading public hall...</h1>
           <p className="portal-hero__summary">Fetching public schedules, club cards, and leaderboard data.</p>
+          <LoadingProgress
+            className="mt-6 max-w-[420px]"
+            label="大厅加载中"
+            message="正在同步公开赛程、俱乐部目录和首页摘要。"
+            indeterminate
+            tone="warm"
+          />
         </div>
       </section>
     </section>
   );
-}
+};
 
-export function PublicHallError({ message }: { message: string }) {
+export const PublicHallError = ({ message }: { message: string }) => {
   return (
     <section className="public-portal">
       <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
@@ -56,19 +70,19 @@ export function PublicHallError({ message }: { message: string }) {
   );
 }
 
-export function PublicHallHero({
+export const PublicHallHero = ({
   schedules,
   leaderboard,
   clubs,
   onSelectView,
 }: {
   schedules: LoadState<PublicSchedule>;
-  leaderboard: LoadState<PlayerLeaderboardEntry>;
+  leaderboard: LoadState<PlayerLeaderboardEntry> | null;
   clubs: LoadState<ClubSummary>;
   onSelectView: (view: PublicView) => void;
-}) {
+}) => {
   const nextSchedule = schedules.envelope.items[0];
-  const topPlayer = leaderboard.envelope.items[0];
+  const topPlayer = leaderboard?.envelope.items[0];
   const featuredClub = clubs.envelope.items[0];
 
   return (
@@ -144,15 +158,15 @@ export function PublicHallHero({
   );
 }
 
-export function PublicHallOverviewStrip({
+export const PublicHallOverviewStrip = ({
   schedules,
   leaderboard,
   clubs,
 }: {
   schedules: LoadState<PublicSchedule>;
-  leaderboard: LoadState<PlayerLeaderboardEntry>;
+  leaderboard: LoadState<PlayerLeaderboardEntry> | null;
   clubs: LoadState<ClubSummary>;
-}) {
+}) => {
   const cards = [
     {
       title: 'Public schedules',
@@ -170,8 +184,8 @@ export function PublicHallOverviewStrip({
     },
     {
       title: 'Player leaderboard',
-      value: `${leaderboard.envelope.total}`,
-      detail: leaderboard.envelope.items[0]
+      value: leaderboard ? `${leaderboard.envelope.total}` : '--',
+      detail: leaderboard?.envelope.items[0]
         ? `${leaderboard.envelope.items[0].nickname} currently leads`
         : 'Waiting for leaderboard data',
     },
@@ -191,9 +205,28 @@ export function PublicHallOverviewStrip({
       ))}
     </InfoSummaryGrid>
   );
-}
+};
 
-function getStatusTone(value: string): 'neutral' | 'info' | 'success' | 'warning' | 'danger' {
+export const PublicHallLeaderboardLoading = () => {
+  return (
+    <PortalSection
+      eyebrow="排行榜"
+      title="玩家排行榜"
+      description="排行榜改为按需加载，减少公共大厅首屏等待。"
+      source="api"
+    >
+      <div className="rounded-[28px] border border-[rgba(255,255,255,0.08)] bg-[color:var(--panel)] px-6 py-7 shadow-[var(--shadow-md)]">
+        <LoadingProgress
+          label="排行榜加载中"
+          message="正在按需请求玩家排行榜数据。"
+          indeterminate
+        />
+      </div>
+    </PortalSection>
+  );
+};
+
+const getStatusTone = (value: string): 'neutral' | 'info' | 'success' | 'warning' | 'danger' => {
   const normalized = value.toLowerCase();
 
   if (normalized.includes('active') || normalized.includes('approved') || normalized.includes('finished')) {
@@ -213,15 +246,15 @@ function getStatusTone(value: string): 'neutral' | 'info' | 'success' | 'warning
   }
 
   return 'neutral';
-}
+};
 
-export function PublicHallTabs({
+export const PublicHallTabs = ({
   activeView,
   onSelectView,
 }: {
   activeView: PublicView;
   onSelectView: (view: PublicView) => void;
-}) {
+}) => {
   const tabs: Array<{ id: PublicView; label: string; summary: string }> = [
     { id: 'schedules', label: 'Schedules', summary: 'Browse public tournament stages and timing.' },
     { id: 'clubs', label: 'Clubs', summary: 'Browse public club cards and open profiles.' },
@@ -240,9 +273,9 @@ export function PublicHallTabs({
       </TabsList>
     </Tabs>
   );
-}
+};
 
-export function PublicSchedulesSection({
+export const PublicSchedulesSection = ({
   payload,
   state,
   onStateChange,
@@ -252,98 +285,115 @@ export function PublicSchedulesSection({
   state: PublicHallState;
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
-}) {
-  return (
-    <PortalSection
-      eyebrow="Schedules"
-      title="Public Schedules"
-      description="Loaded from GET /public/schedules and filtered locally in the page state."
-      source={payload.source}
-      warning={payload.warning}
-    >
-      <FilterActionRow onRefresh={onRefresh}>
-        <SelectField
-          label="Tournament status"
-          value={state.scheduleTournamentStatus}
-          onChange={(event) =>
-            onStateChange({
-              scheduleTournamentStatus: event.currentTarget.value as PublicHallState['scheduleTournamentStatus'],
-            })
-          }
-        >
-            <option value="">All</option>
-            <option value="Draft">Draft</option>
-            <option value="Registration">Registration</option>
-            <option value="InProgress">In progress</option>
-            <option value="Finished">Finished</option>
-        </SelectField>
-        <SelectField
-          label="Stage status"
-          value={state.scheduleStageStatus}
-          onChange={(event) =>
-            onStateChange({
-              scheduleStageStatus: event.currentTarget.value as PublicHallState['scheduleStageStatus'],
-            })
-          }
-        >
-            <option value="">All</option>
-            <option value="Pending">Pending</option>
-            <option value="Active">Active</option>
-            <option value="Completed">Completed</option>
-        </SelectField>
-      </FilterActionRow>
-      <div className="schedule-grid grid gap-[22px] md:grid-cols-2">
-        {payload.envelope.items.length > 0 ? (
-          payload.envelope.items.map((item) => (
-            <DirectoryCard
-              key={`${item.tournamentId}-${item.stageId}`}
-              className="schedule-card"
-              top={
-                <div className="schedule-card__top flex items-start justify-between gap-[14px]">
-                  <StatusPill
-                    className="schedule-card__status bg-[rgba(114,216,209,0.14)] text-[color:var(--teal-strong)]"
-                    tone={getStatusTone(item.tournamentStatus)}
-                  >
-                    {getTournamentStatusLabel(item.tournamentStatus)}
-                  </StatusPill>
-                  <StatusPill className="schedule-card__minor text-[color:var(--muted)]" tone={getStatusTone(item.stageStatus)}>
-                    {getStageStatusLabel(item.stageStatus)}
-                  </StatusPill>
-                </div>
-              }
-              title={item.tournamentName}
-              subtitle={item.stageName}
-              meta={
-                <DescriptionList className="schedule-card__meta mt-0 grid gap-3">
-                  <DescriptionItem
-                    className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
-                    label="Starts"
-                    value={formatDateTime(item.scheduledAt)}
-                  />
-                  <DescriptionItem
-                    className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
-                    label="Tournament id"
-                    value={item.tournamentId}
-                    separator={false}
-                  />
-                </DescriptionList>
-              }
-              action={
-                <Link className="detail-link inline-flex mt-[18px]" to={`/public/tournaments/${item.tournamentId}`}>
-                  Open tournament detail
-                </Link>
-              }
-            />
-          ))
-        ) : (
-          <EmptyState>No public schedules match the current filters.</EmptyState>
-        )}
-      </div>
-    </PortalSection>
-  );
-}
+}) => {
+  const { session } = useAuth();
+  const [isCreateTournamentOpen, setIsCreateTournamentOpen] = useState(false);
+  const canCreateTournament = !!session?.user.roles.isSuperAdmin;
 
-export function PublicClubsSection({
+  return (
+    <>
+      <PortalSection
+        eyebrow="赛程"
+        title="公开赛程"
+        description="来自 GET /public/schedules，并在页面本地完成筛选。"
+        source={payload.source}
+        warning={payload.warning}
+      >
+        <FilterActionRow onRefresh={onRefresh}>
+          <SelectField
+            label="赛事状态"
+            value={state.scheduleTournamentStatus}
+            onChange={(event) =>
+              onStateChange({
+                scheduleTournamentStatus: event.currentTarget.value as PublicHallState['scheduleTournamentStatus'],
+              })
+            }
+          >
+            <option value="">全部</option>
+            <option value="Draft">草稿</option>
+            <option value="RegistrationOpen">报名中</option>
+            <option value="InProgress">进行中</option>
+            <option value="Finished">已结束</option>
+          </SelectField>
+          <SelectField
+            label="阶段状态"
+            value={state.scheduleStageStatus}
+            onChange={(event) =>
+              onStateChange({
+                scheduleStageStatus: event.currentTarget.value as PublicHallState['scheduleStageStatus'],
+              })
+            }
+          >
+            <option value="">全部</option>
+            <option value="Pending">待开始</option>
+            <option value="Active">进行中</option>
+            <option value="Completed">已完成</option>
+          </SelectField>
+          {canCreateTournament ? (
+            <ActionButton variant="secondary" onClick={() => setIsCreateTournamentOpen(true)}>
+              新建比赛
+            </ActionButton>
+          ) : null}
+        </FilterActionRow>
+        <div className="schedule-grid grid gap-[22px] md:grid-cols-2">
+          {payload.envelope.items.length > 0 ? (
+            payload.envelope.items.map((item) => (
+              <DirectoryCard
+                key={`${item.tournamentId}-${item.stageId}`}
+                className="schedule-card"
+                top={
+                  <div className="schedule-card__top flex items-start justify-between gap-[14px]">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <StatusPill
+                        className="schedule-card__status bg-[rgba(114,216,209,0.14)] text-[color:var(--teal-strong)]"
+                        tone={getStatusTone(item.tournamentStatus)}
+                      >
+                        {getTournamentStatusLabel(item.tournamentStatus)}
+                      </StatusPill>
+                      {item.isUnpublished ? <StatusPill tone="warning">未发布</StatusPill> : null}
+                    </div>
+                    <StatusPill className="schedule-card__minor text-[color:var(--muted)]" tone={getStatusTone(item.stageStatus)}>
+                      {getStageStatusLabel(item.stageStatus)}
+                    </StatusPill>
+                  </div>
+                }
+                title={item.tournamentName}
+                subtitle={item.stageName}
+                meta={
+                  <DescriptionList className="schedule-card__meta mt-0 grid gap-3">
+                    <DescriptionItem
+                      className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
+                      label="开始时间"
+                      value={formatDateTime(item.scheduledAt)}
+                    />
+                    <DescriptionItem
+                      className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
+                      label="赛事 ID"
+                      value={item.tournamentId}
+                      separator={false}
+                    />
+                  </DescriptionList>
+                }
+                action={
+                  <Link className="detail-link inline-flex mt-[18px]" to={`/public/tournaments/${item.tournamentId}`}>
+                    打开赛事详情
+                  </Link>
+                }
+              />
+            ))
+          ) : (
+            <EmptyState>当前筛选条件下没有可显示的赛程。</EmptyState>
+          )}
+        </div>
+      </PortalSection>
+      {canCreateTournament ? (
+        <CreateTournamentDialog open={isCreateTournamentOpen} onOpenChange={setIsCreateTournamentOpen} />
+      ) : null}
+    </>
+  );
+};
+
+export const PublicClubsSection = ({
   payload,
   state,
   onStateChange,
@@ -353,7 +403,7 @@ export function PublicClubsSection({
   state: PublicHallState;
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
-}) {
+}) => {
   return (
     <PortalSection
       eyebrow="Clubs"
@@ -406,9 +456,9 @@ export function PublicClubsSection({
       </div>
     </PortalSection>
   );
-}
+};
 
-export function PublicLeaderboardSection({
+export const PublicLeaderboardSection = ({
   payload,
   state,
   clubs,
@@ -420,7 +470,7 @@ export function PublicLeaderboardSection({
   clubs: ClubSummary[];
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
-}) {
+}) => {
   return (
     <PortalSection
       eyebrow="Leaderboard"
@@ -485,79 +535,276 @@ export function PublicLeaderboardSection({
       </ol>
     </PortalSection>
   );
-}
+};
 
-export function PublicTournamentDetailSection({
+export const PublicTournamentDetailSection = ({
   state,
   stages,
 }: {
   state: DetailState<TournamentPublicProfile>;
   stages: NonNullable<TournamentPublicProfile['stages']>;
-}) {
+}) => {
+  const navigate = useNavigate();
+  const { session } = useAuth();
+  const [availableClubs, setAvailableClubs] = useState<ClubSummary[]>([]);
+  const [selectedClubId, setSelectedClubId] = useState('');
+  const [isSubmittingTournamentAction, setIsSubmittingTournamentAction] = useState(false);
+  const [publishBlockedOpen, setPublishBlockedOpen] = useState(false);
+  const [localProfile, setLocalProfile] = useState<TournamentPublicProfile | null>(state.item);
+
+  useEffect(() => {
+    setLocalProfile(state.item);
+  }, [state.item]);
+
+  useEffect(() => {
+    if (!session?.user.roles.isRegisteredPlayer || !(session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin)) {
+      return;
+    }
+
+    let cancelled = false;
+    void clubsApi
+      .getClubs({ limit: 100, offset: 0 })
+      .then((envelope) => {
+        if (!cancelled) {
+          setAvailableClubs(envelope.items);
+          setSelectedClubId((current) => current || envelope.items[0]?.id || '');
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setAvailableClubs([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
   if (!state.item) {
     return <PublicDetailNotFound title="Tournament not found" />;
   }
 
-  const profile = state.item;
+  const profile = localProfile ?? state.item;
+  const operatorId = session?.user.operatorId ?? session?.user.userId;
+  const canManageTournament =
+    !!session?.user.roles.isRegisteredPlayer &&
+    (session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin);
+  const canPublishTournament = canManageTournament && profile.status === 'Draft';
+  const invitedClubIds = profile.clubIds ?? [];
+  const invitedClubs = availableClubs.filter((club) => invitedClubIds.includes(club.id));
+  const selectableClubs = availableClubs.filter((club) => !invitedClubIds.includes(club.id));
+
+  const handleInviteClub = async () => {
+    if (!profile.id || !selectedClubId || !operatorId) {
+      return;
+    }
+
+    try {
+      setIsSubmittingTournamentAction(true);
+      await operationsApi.registerTournamentClub(profile.id, selectedClubId, operatorId);
+      setLocalProfile((current) =>
+        current
+          ? {
+              ...current,
+              clubIds: Array.from(new Set([...(current.clubIds ?? []), selectedClubId])),
+              clubCount: (current.clubCount ?? 0) + 1,
+              whitelistType:
+                current.playerCount && current.playerCount > 0
+                  ? 'Mixed'
+                  : 'Club',
+            }
+          : current,
+      );
+      setSelectedClubId(selectableClubs.find((club) => club.id !== selectedClubId)?.id ?? '');
+    } finally {
+      setIsSubmittingTournamentAction(false);
+    }
+  };
+
+  const handlePublishTournament = async () => {
+    if (!operatorId || !profile.id) {
+      return;
+    }
+
+    if ((profile.clubIds?.length ?? 0) === 0) {
+      setPublishBlockedOpen(true);
+      return;
+    }
+
+    try {
+      setIsSubmittingTournamentAction(true);
+      await operationsApi.publishTournament(profile.id, operatorId);
+      setLocalProfile((current) => (current ? { ...current, status: 'RegistrationOpen' } : current));
+      navigate('/public');
+    } finally {
+      setIsSubmittingTournamentAction(false);
+    }
+  };
 
   return (
-    <DetailPageShell
-      backLink={
-        <Link className="detail-back" to="/public">
-          Back to public hall
-        </Link>
-      }
-      hero={
-        <DetailHero
-          eyebrow="Tournament"
-          title={profile.name}
-          tagline={profile.tagline}
-          summary={profile.description}
-          source={state.source}
-          warning={state.warning}
-        />
-      }
-    >
-      <section className="detail-grid grid gap-[22px] md:grid-cols-2">
-        <DetailCard title="Public tournament info">
-          <DetailList>
-            <DetailListItem
-              label="Status"
-              value={<StatusPill tone={getStatusTone(profile.status)}>{getTournamentStatusLabel(profile.status)}</StatusPill>}
-            />
-            <DetailListItem label="Organizer" value={profile.venue} />
-            <DetailListItem label="Stage count" value={profile.stageCount} />
-            <DetailListItem label="Whitelist type" value={profile.whitelistType} />
-            <DetailListItem label="Next stage" value={profile.nextStageName} />
-            <DetailListItem label="Start time" value={formatDateTime(profile.nextScheduledAt)} />
-          </DetailList>
-        </DetailCard>
-        <DetailCard title="Stage overview">
-          <DetailRows>
-            {stages.map((stage) => (
-              <DetailRow
-                key={stage.stageId}
-                title={stage.name}
-                detail={
-                  <>
-                    <StatusPill tone={getStatusTone(stage.status)}>{getStageStatusLabel(stage.status)}</StatusPill>
-                    {' / '}
-                    {stage.tableCount} tables / {stage.roundCount} rounds
-                  </>
-                }
+    <>
+      <DetailPageShell
+        backLink={
+          <Link className="detail-back" to="/public">
+            返回公共大厅
+          </Link>
+        }
+        hero={
+          <DetailHero
+            eyebrow="赛事"
+            title={profile.name}
+            tagline={profile.tagline}
+            summary={profile.description}
+            actions={
+              canPublishTournament ? (
+                <Button variant="secondary" onClick={() => void handlePublishTournament()} disabled={isSubmittingTournamentAction}>
+                  发布比赛
+                </Button>
+              ) : null
+            }
+            source={state.source}
+            warning={state.warning}
+          />
+        }
+      >
+        <section className="detail-grid grid gap-[22px] md:grid-cols-2">
+          <DetailCard title={<span className="text-[1.25rem] font-semibold">赛事信息</span>}>
+            <DetailList>
+              <DetailListItem
+                label="状态"
+                value={<StatusPill tone={getStatusTone(profile.status)}>{getTournamentStatusLabel(profile.status)}</StatusPill>}
               />
-            ))}
-          </DetailRows>
-        </DetailCard>
-      </section>
-    </DetailPageShell>
+              <DetailListItem label="主办方" value={profile.venue} />
+              <DetailListItem label="阶段数量" value={profile.stageCount} />
+              <DetailListItem label="白名单类型" value={profile.whitelistType} />
+              <DetailListItem label="俱乐部数量" value={profile.clubCount ?? profile.clubIds?.length ?? 0} />
+              <DetailListItem label="玩家数量" value={profile.playerCount ?? 0} />
+              <DetailListItem label="白名单数量" value={profile.whitelistCount ?? 0} />
+              <DetailListItem label="下一阶段" value={profile.nextStageName} />
+              <DetailListItem label="开始时间" value={formatDateTime(profile.nextScheduledAt)} />
+            </DetailList>
+          </DetailCard>
+          <div className="grid gap-[22px]">
+            <DetailCard
+              title={
+                <span className="text-[1.25rem] font-semibold">
+                  {invitedClubs.length > 0 ? '参赛俱乐部名单' : '邀请俱乐部'}
+                </span>
+              }
+            >
+              <div className="grid gap-4">
+                {canManageTournament ? (
+                  <>
+                    <p className="m-0 text-[color:var(--muted)]">
+                      后端已支持将俱乐部注册到赛事中。请先邀请俱乐部，再发布比赛。
+                    </p>
+                    <SelectField
+                      label="俱乐部"
+                      value={selectedClubId}
+                      onChange={(event) => setSelectedClubId(event.currentTarget.value)}
+                      disabled={isSubmittingTournamentAction || selectableClubs.length === 0}
+                    >
+                      {selectableClubs.length > 0 ? (
+                        selectableClubs.map((club) => (
+                          <option key={club.id} value={club.id}>
+                            {club.name}
+                          </option>
+                        ))
+                      ) : (
+                        <option value="">没有更多可邀请的俱乐部</option>
+                      )}
+                    </SelectField>
+                    <div className="flex flex-wrap gap-3">
+                      <Button
+                        onClick={() => void handleInviteClub()}
+                        disabled={!selectedClubId || isSubmittingTournamentAction || selectableClubs.length === 0}
+                      >
+                        邀请俱乐部
+                      </Button>
+                    </div>
+                  </>
+                ) : null}
+                {invitedClubs.length > 0 ? (
+                  <DetailRows>
+                    {invitedClubs.map((club) => (
+                      <DetailRow
+                        key={club.id}
+                        title={club.name}
+                        detail={`${club.memberCount} 名成员 / 战力 ${club.powerRating}`}
+                      />
+                    ))}
+                  </DetailRows>
+                ) : (
+                  <EmptyState asListItem={false}>
+                    {canManageTournament ? '暂时还没有邀请任何俱乐部。' : '当前还没有公布参赛俱乐部名单。'}
+                  </EmptyState>
+                )}
+              </div>
+            </DetailCard>
+            <DetailCard title="阶段概览">
+              <DetailRows>
+                {stages.map((stage) => (
+                  <DetailRow
+                    key={stage.stageId}
+                    title={stage.name}
+                    detail={
+                      <>
+                        <StatusPill tone={getStatusTone(stage.status)}>{getStageStatusLabel(stage.status)}</StatusPill>
+                        {' / '}
+                        {stage.tableCount} tables / {stage.roundCount} rounds
+                      </>
+                    }
+                  />
+                ))}
+              </DetailRows>
+            </DetailCard>
+          </div>
+        </section>
+      </DetailPageShell>
+      <Dialog open={publishBlockedOpen} onOpenChange={setPublishBlockedOpen}>
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogSurface>
+            <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
+              <DialogTitle>暂时无法发布</DialogTitle>
+              <DialogDescription>请先选择邀请的俱乐部，再发布这场比赛。</DialogDescription>
+            </DialogHeader>
+            <DialogBody className="px-6 py-5">
+              <p className="m-0 text-[color:var(--muted)]">
+                请先在右侧邀请俱乐部区域至少添加一个俱乐部，然后再尝试发布。
+              </p>
+            </DialogBody>
+            <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
+              <Button variant="secondary" onClick={() => setPublishBlockedOpen(false)}>
+                关闭
+              </Button>
+            </DialogFooter>
+          </DialogSurface>
+        </DialogPortal>
+      </Dialog>
+    </>
   );
-}
+};
 
-export function PublicClubDetailSection({ state }: { state: DetailState<ClubPublicProfile> }) {
+export const PublicClubDetailSection = ({
+  state,
+  onRefreshDetail,
+}: {
+  state: DetailState<ClubPublicProfile>;
+  onRefreshDetail?: () => void;
+}) => {
   const { session } = useAuth();
+  const { confirmDanger } = useDialog();
+  const { notifyMutationResult } = useMutationNotice();
   const [isApplicationDialogOpen, setIsApplicationDialogOpen] = useState(false);
+  const [isLineupDialogOpen, setIsLineupDialogOpen] = useState(false);
+  const [selectedLineupTournament, setSelectedLineupTournament] = useState<ClubPublicProfile['activeTournaments'][number] | null>(null);
   const [isCurrentMember, setIsCurrentMember] = useState(false);
+  const [isCurrentClubAdmin, setIsCurrentClubAdmin] = useState(false);
+  const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);
+  const [applicationInbox, setApplicationInbox] = useState<ClubApplicationView[]>([]);
+  const [isInboxLoading, setIsInboxLoading] = useState(false);
 
   const isFeaturedMember =
     !!session?.user.roles.isRegisteredPlayer &&
@@ -567,6 +814,7 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
   useEffect(() => {
     if (!session?.user.roles.isRegisteredPlayer || !state.item) {
       setIsCurrentMember(false);
+      setIsCurrentClubAdmin(false);
       return;
     }
 
@@ -579,6 +827,15 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
           setIsCurrentMember(result.player?.clubIds?.includes(clubId) ?? false);
         }
       });
+      void clubsApi.getClubs({ adminId: operatorId, limit: 100, offset: 0 }).then((envelope) => {
+        if (!cancelled) {
+          setIsCurrentClubAdmin(envelope.items.some((club) => club.id === clubId));
+        }
+      }).catch(() => {
+        if (!cancelled) {
+          setIsCurrentClubAdmin(false);
+        }
+      });
     };
 
     refreshMembershipStatus();
@@ -589,6 +846,71 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
       window.removeEventListener('focus', refreshMembershipStatus);
     };
   }, [isApplicationDialogOpen, session, state.item]);
+
+  useEffect(() => {
+    if (!session?.user.roles.isRegisteredPlayer || !state.item || !isCurrentClubAdmin) {
+      setApplicationInbox([]);
+      setIsInboxLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const operatorId = session.user.operatorId ?? session.user.userId;
+    setIsInboxLoading(true);
+
+    void clubsApi
+      .getClubApplications(state.item.id, {
+        operatorId,
+        status: 'Pending',
+        limit: 20,
+        offset: 0,
+      })
+      .then((envelope) => {
+        if (!cancelled) {
+          setApplicationInbox(envelope.items);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setApplicationInbox([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsInboxLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isCurrentClubAdmin, session, state.item]);
+
+  useEffect(() => {
+    if (!state.item) {
+      setClubMemberNames([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    void clubsApi
+      .getClubMembers(state.item.id, { limit: 100, offset: 0 })
+      .then((envelope) => {
+        if (!cancelled) {
+          setClubMemberNames(envelope.items.map((item) => item.displayName).filter((name) => name.trim().length > 0));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setClubMemberNames([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [state.item]);
 
   if (!state.item) {
     return <PublicDetailNotFound title="Club not found" />;
@@ -604,13 +926,71 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
     relations: profile.relations,
   };
   const isClubMember = isCurrentMember || isFeaturedMember;
+  const featuredPlayerNames = Array.from(
+    new Map(
+      [...profile.featuredPlayers, ...clubMemberNames].map((name) => [
+        name.trim().toLowerCase(),
+        name,
+      ]),
+    ).values(),
+  );
   const canApply = !!session?.user.roles.isRegisteredPlayer && !isClubMember;
+  const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
+  const actionableTournaments = profile.activeTournaments.filter(
+    (item) => item.source === 'invited' && item.status !== 'Finished',
+  );
+  const canManageLineup =
+    !!session?.user.roles.isRegisteredPlayer && isCurrentClubAdmin && actionableTournaments.length > 0;
+
+  async function handleReview(applicationId: string, decision: 'approve' | 'reject') {
+    if (!profile.id || !operatorId) {
+      return;
+    }
+
+    const confirmed = await confirmDanger({
+      title: decision === 'approve' ? '通过这条申请？' : '拒绝这条申请？',
+      message:
+        decision === 'approve'
+          ? '这会把当前申请标记为通过，并刷新俱乐部申请列表。'
+          : '这会把当前申请标记为拒绝，并刷新俱乐部申请列表。',
+      confirmText: decision === 'approve' ? '通过' : '拒绝',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    const application = applicationInbox.find((item) => item.applicationId === applicationId);
+
+    const result = await clubsApi.reviewClubApplication(profile.id, applicationId, {
+      operatorId,
+      decision,
+      note: `${decision}d from club detail`,
+      ...(decision === 'approve' && application?.applicant.playerId
+        ? { playerId: application.applicant.playerId }
+        : {}),
+    }).then(() => ({ source: 'api' as const }))
+      .catch(() => ({ source: 'mock' as const, warning: '审批请求未成功返回，列表将仅做本地刷新。' }));
+
+    notifyMutationResult(result, {
+      successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
+      successMessage: '俱乐部申请列表已刷新。',
+      fallbackTitle: decision === 'approve' ? '申请已通过（回退）' : '申请已拒绝（回退）',
+      fallbackMessage: '审批已尝试执行，但当前只完成了本地刷新。',
+    });
+
+    setApplicationInbox((current) => current.filter((item) => item.applicationId !== applicationId));
+
+    if (result.source === 'api') {
+      onRefreshDetail?.();
+    }
+  }
 
   return (
     <>
       <DetailPageShell
         backLink={
-          <Link className="detail-back" to="/public">
+          <Link className="detail-back" to="/public" reloadDocument>
             Back to public hall
           </Link>
         }
@@ -621,13 +1001,14 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
             tagline={profile.slogan}
             summary={profile.description}
             actions={
-              isClubMember ? (
-                <StatusPill tone="success">你已经是俱乐部成员</StatusPill>
-              ) : canApply ? (
-                <Button variant="secondary" onClick={() => setIsApplicationDialogOpen(true)}>
-                  我想申请加入这个俱乐部
-                </Button>
-              ) : null
+              <div className="flex flex-wrap items-center gap-3">
+                {isClubMember ? <StatusPill tone="success">你已经是俱乐部成员</StatusPill> : null}
+                {!isClubMember && canApply ? (
+                  <Button variant="secondary" onClick={() => setIsApplicationDialogOpen(true)}>
+                    我想申请加入这个俱乐部
+                  </Button>
+                ) : null}
+              </div>
             }
             source={state.source}
             warning={state.warning}
@@ -641,14 +1022,37 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
               <DetailListItem label="Power" value={<StatusPill tone="warning">{profile.powerRating}</StatusPill>} />
               <DetailListItem label="Treasury" value={formatNumber(profile.treasury)} />
               <DetailListItem label="Relations" value={profile.relations.map(getRelationLabel).join(' / ') || '--'} />
-              <DetailListItem label="Featured players" value={profile.featuredPlayers.join(' / ') || '--'} />
+              <DetailListItem label="Featured players" value={featuredPlayerNames.join(' / ') || '--'} />
             </DetailList>
           </DetailCard>
           <DetailCard title="Recent tournaments">
             <DetailRows>
               {profile.activeTournaments.length > 0 ? (
                 profile.activeTournaments.map((item) => (
-                  <DetailRow key={item} title={item} detail="Visible from the public club profile endpoint." />
+                  <DetailRow
+                    key={item.id}
+                    title={item.name}
+                    detail={
+                      <span className="inline-flex flex-wrap items-center gap-3">
+                        <span>{item.source === 'invited' ? '已被邀请参赛' : '来自俱乐部公开资料接口'}</span>
+                        <Link className="detail-link inline-flex" to={`/public/tournaments/${item.id}`}>
+                          查看赛事详情
+                        </Link>
+                        {canManageLineup && item.source === 'invited' && item.status !== 'Finished' ? (
+                          <button
+                            type="button"
+                            className="detail-link inline-flex cursor-pointer border-0 bg-transparent p-0"
+                            onClick={() => {
+                              setSelectedLineupTournament(item);
+                              setIsLineupDialogOpen(true);
+                            }}
+                          >
+                            拉人参赛
+                          </button>
+                        ) : null}
+                      </span>
+                    }
+                  />
                 ))
               ) : (
                 <EmptyState asListItem>No recent tournament entries were returned.</EmptyState>
@@ -656,20 +1060,69 @@ export function PublicClubDetailSection({ state }: { state: DetailState<ClubPubl
             </DetailRows>
           </DetailCard>
         </section>
+        {isCurrentClubAdmin ? (
+          <section className="detail-grid grid gap-[22px]">
+            <DetailCard title="俱乐部加入申请审批">
+              {isInboxLoading ? (
+                <p className="m-0 text-[color:var(--muted)]">正在加载待审批申请...</p>
+              ) : (
+                <ClubApplicationList
+                  items={applicationInbox.map((item) => ({
+                    id: item.applicationId,
+                    title: item.applicant.displayName,
+                    message: item.message,
+                    submittedAt: formatDateTime(item.submittedAt),
+                    status: item.status,
+                    meta: item.applicant.playerId,
+                    actions:
+                      item.canReview && item.status === 'Pending' ? (
+                        <>
+                          <ActionButton onClick={() => void handleReview(item.applicationId, 'approve')}>
+                            通过
+                          </ActionButton>
+                          <ActionButton onClick={() => void handleReview(item.applicationId, 'reject')}>
+                            拒绝
+                          </ActionButton>
+                        </>
+                      ) : null,
+                  }))}
+                  emptyText="当前没有待审批的加入申请。"
+                />
+              )}
+            </DetailCard>
+          </section>
+        ) : null}
       </DetailPageShell>
       {canApply ? (
         <ClubApplicationDialog
           club={clubSummary}
           open={isApplicationDialogOpen}
           onOpenChange={setIsApplicationDialogOpen}
-          onMembershipConfirmed={() => setIsCurrentMember(true)}
+          onMembershipConfirmed={() => {
+            setIsCurrentMember(true);
+            onRefreshDetail?.();
+          }}
+        />
+      ) : null}
+      {canManageLineup ? (
+        <ClubTournamentLineupDialog
+          clubId={profile.id}
+          operatorId={operatorId}
+          tournament={selectedLineupTournament}
+          open={isLineupDialogOpen}
+          onOpenChange={(nextOpen) => {
+            setIsLineupDialogOpen(nextOpen);
+            if (!nextOpen) {
+              setSelectedLineupTournament(null);
+            }
+          }}
         />
       ) : null}
     </>
   );
-}
+};
 
-export function PublicDetailNotFound({ title }: { title: string }) {
+export const PublicDetailNotFound = ({ title }: { title: string }) => {
   return (
     <DetailPageShell
       backLink={
@@ -686,4 +1139,4 @@ export function PublicDetailNotFound({ title }: { title: string }) {
       }
     />
   );
-}
+};

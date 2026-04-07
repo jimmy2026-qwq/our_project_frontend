@@ -1,24 +1,45 @@
 import { DataPanel, DataTablePanel, ListRow } from '@/components/shared/data-display';
 import { WorkbenchBacklogPanel, WorkbenchContextPanel } from '@/components/shared/domain';
 import { EmptyState, LoadingSection } from '@/components/shared/feedback';
-import { SelectField, TextInputField } from '@/components/shared/forms';
+import { CheckboxField, FieldGroup, SelectField, TextInputField, TextareaField } from '@/components/shared/forms';
 import { SectionIntro } from '@/components/shared/layout';
-import { TableCell, TableRow } from '@/components/ui';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  TableCell,
+  TableRow,
+} from '@/components/ui';
+import type { SeatWind, TableDetail } from '@/api/operations';
 import type { AppealSummary, MatchRecordSummary, TableStatus, TournamentTableSummary } from '@/domain/models';
 
 import {
   formatDateTime,
   getActiveTournament,
-  tournamentContexts,
   type LoadState,
+  type TournamentContext,
   type TournamentOpsState,
 } from './data';
 
-function TablesPanel({ payload }: { payload: LoadState<TournamentTableSummary> }) {
+function TablesPanel({
+  payload,
+  selectedTableId,
+  onSelectTable,
+}: {
+  payload: LoadState<TournamentTableSummary>;
+  selectedTableId: string;
+  onSelectTable: (tableId: string) => void;
+}) {
   return (
     <DataPanel
       title="Table Queue"
-      description="Read tournament stage tables first, and keep the view alive with mock fallback if backend data is missing."
+      description="Current tables in the selected tournament stage."
       source={payload.source}
       warning={payload.warning}
     >
@@ -37,15 +58,184 @@ function TablesPanel({ payload }: { payload: LoadState<TournamentTableSummary> }
                 <>
                   <span>{table.status}</span>
                   <span>{table.seatCount} seats</span>
+                  <Button
+                    size="sm"
+                    variant={selectedTableId === table.id ? 'secondary' : 'outline'}
+                    onClick={() => onSelectTable(table.id)}
+                  >
+                    {selectedTableId === table.id ? 'Selected' : 'Operate'}
+                  </Button>
                 </>
               }
             />
           ))
         ) : (
-          <EmptyState asListItem>No tournament tables match the current filters.</EmptyState>
+          <EmptyState asListItem>No tables matched the current filters.</EmptyState>
         )}
       </ul>
     </DataPanel>
+  );
+}
+
+function TableActionPanel({
+  table,
+  tableDetail,
+  operatorId,
+  isSubmitting,
+  error,
+  resetNote,
+  appealDescription,
+  seatWind,
+  seatReady,
+  seatDisconnected,
+  seatNote,
+  onResetNoteChange,
+  onAppealDescriptionChange,
+  onSeatWindChange,
+  onSeatReadyChange,
+  onSeatDisconnectedChange,
+  onSeatNoteChange,
+  onStartTable,
+  onResetTable,
+  onFileAppeal,
+  onUpdateSeatState,
+}: {
+  table: TournamentTableSummary | null;
+  tableDetail: TableDetail | null;
+  operatorId?: string;
+  isSubmitting: boolean;
+  error?: string | null;
+  resetNote: string;
+  appealDescription: string;
+  seatWind: SeatWind;
+  seatReady: boolean;
+  seatDisconnected: boolean;
+  seatNote: string;
+  onResetNoteChange: (value: string) => void;
+  onAppealDescriptionChange: (value: string) => void;
+  onSeatWindChange: (value: SeatWind) => void;
+  onSeatReadyChange: (value: boolean) => void;
+  onSeatDisconnectedChange: (value: boolean) => void;
+  onSeatNoteChange: (value: string) => void;
+  onStartTable: () => void;
+  onResetTable: () => void;
+  onFileAppeal: () => void;
+  onUpdateSeatState: () => void;
+}) {
+  const canOperate = Boolean(table && operatorId);
+  const playerLabel = table?.playerIds?.length ? table.playerIds.join(', ') : 'Players unavailable';
+  const selectedSeat = tableDetail?.seats.find((seat) => seat.seat === seatWind) ?? null;
+
+  return (
+    <Card className="tournament-ops__actions">
+      <CardHeader>
+        <CardTitle>Table Actions</CardTitle>
+        <CardDescription>Start the table, reset it, file an appeal, or update seat readiness.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-4">
+        {table ? (
+          <div className="grid gap-1 text-[color:var(--muted-strong)]">
+            <strong>{table.tableCode}</strong>
+            <span>{table.id}</span>
+            <span>
+              {table.status} / {table.seatCount} seats / {playerLabel}
+            </span>
+          </div>
+        ) : (
+          <EmptyState asListItem={false}>Choose a table from the queue to unlock actions.</EmptyState>
+        )}
+
+        {!operatorId ? (
+          <Alert variant="warning">
+            <AlertTitle>Operator id unavailable</AlertTitle>
+            <AlertDescription>Log in with a registered account before using tournament operations.</AlertDescription>
+          </Alert>
+        ) : null}
+
+        {error ? (
+          <Alert variant="danger">
+            <AlertTitle>Action failed</AlertTitle>
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        ) : null}
+
+        <FieldGroup>
+          <SelectField
+            label="Seat"
+            value={seatWind}
+            onChange={(event) => onSeatWindChange(event.currentTarget.value as SeatWind)}
+            disabled={!canOperate || isSubmitting}
+          >
+            <option value="East">East</option>
+            <option value="South">South</option>
+            <option value="West">West</option>
+            <option value="North">North</option>
+          </SelectField>
+          {selectedSeat ? (
+            <div className="grid gap-1 text-[color:var(--muted-strong)]">
+              <strong>{selectedSeat.seat}</strong>
+              <span>Player: {selectedSeat.playerId}</span>
+              <span>
+                Ready: {selectedSeat.ready ? 'Yes' : 'No'} / Disconnected: {selectedSeat.disconnected ? 'Yes' : 'No'}
+              </span>
+            </div>
+          ) : null}
+          <div className="grid gap-3 sm:grid-cols-2">
+            <CheckboxField
+              label="Ready"
+              checked={seatReady}
+              onChange={(event) => onSeatReadyChange(event.currentTarget.checked)}
+              disabled={!canOperate || isSubmitting}
+            />
+            <CheckboxField
+              label="Disconnected"
+              checked={seatDisconnected}
+              onChange={(event) => onSeatDisconnectedChange(event.currentTarget.checked)}
+              disabled={!canOperate || isSubmitting}
+            />
+          </div>
+          <TextareaField
+            label="Seat update note"
+            value={seatNote}
+            placeholder="Optional note for the seat state change."
+            onChange={(event) => onSeatNoteChange(event.currentTarget.value)}
+            rows={3}
+            disabled={!canOperate || isSubmitting}
+          />
+          <Button variant="secondary" onClick={onUpdateSeatState} disabled={!canOperate || isSubmitting}>
+            Update seat state
+          </Button>
+          <TextareaField
+            label="Reset note"
+            value={resetNote}
+            placeholder="Why are you force resetting this table?"
+            onChange={(event) => onResetNoteChange(event.currentTarget.value)}
+            rows={3}
+            disabled={!canOperate || isSubmitting}
+          />
+          <TextareaField
+            label="Appeal description"
+            value={appealDescription}
+            placeholder="Describe the issue that should be reviewed."
+            onChange={(event) => onAppealDescriptionChange(event.currentTarget.value)}
+            rows={4}
+            disabled={!canOperate || isSubmitting}
+          />
+        </FieldGroup>
+
+        <div className="flex flex-wrap gap-3">
+          <Button onClick={onStartTable} disabled={!canOperate || isSubmitting}>
+            Start table
+          </Button>
+          <Button variant="danger" onClick={onResetTable} disabled={!canOperate || isSubmitting}>
+            Force reset
+          </Button>
+          <Button variant="outline" onClick={onFileAppeal} disabled={!canOperate || isSubmitting}>
+            File appeal
+          </Button>
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -53,10 +243,10 @@ function RecordsPanel({ payload }: { payload: LoadState<MatchRecordSummary> }) {
   return (
     <DataTablePanel
       title="Match Records"
-      description="Records remain a read-oriented operations view and are good candidates for a richer table later."
+      description="Recent records related to the active tournament stage."
       source={payload.source}
       warning={payload.warning}
-      headers={['Record', 'Table', 'Recorded At', 'Summary']}
+      headers={['Record', 'Table', 'Recorded at', 'Summary']}
       rows={payload.envelope.items.map((record) => (
         <TableRow key={record.id}>
           <TableCell>
@@ -67,7 +257,7 @@ function RecordsPanel({ payload }: { payload: LoadState<MatchRecordSummary> }) {
           <TableCell>{record.summary}</TableCell>
         </TableRow>
       ))}
-      emptyText="No records match the current tournament and stage filters."
+      emptyText="No match records were returned for the current filters."
     />
   );
 }
@@ -76,7 +266,7 @@ function AppealsPanel({ payload }: { payload: LoadState<AppealSummary> }) {
   return (
     <DataTablePanel
       title="Appeals"
-      description="The appeals view is still scaffold-like, but it already reflects the backend-first queue shape we need."
+      description="Open and historical appeals for the selected tournament."
       source={payload.source}
       warning={payload.warning}
       headers={['Appeal', 'Table', 'Status', 'Verdict']}
@@ -90,7 +280,7 @@ function AppealsPanel({ payload }: { payload: LoadState<AppealSummary> }) {
           <TableCell>{appeal.verdict}</TableCell>
         </TableRow>
       ))}
-      emptyText="No appeals match the current tournament or status filter."
+      emptyText="No appeals were returned for the current filters."
     />
   );
 }
@@ -99,23 +289,13 @@ function MissingApiNotes() {
   return (
     <WorkbenchBacklogPanel
       className="tournament-ops__note text-[color:var(--muted-strong)]"
-      title="Next backend contracts to unblock operations"
-      description="We can already render the high-value operations views, but these endpoints would make the page less scaffold-like."
+      title="Permission Visibility"
+      description="The frontend currently checks coarse auth roles. Tournament-scoped permission visibility can be tightened when an operator permission endpoint is available."
       items={[
-        {
-          id: 'tournaments',
-          title: 'GET /tournaments',
-          detail: 'Load the top-level tournament directory instead of relying on hard-coded context.',
-        },
-        {
-          id: 'stages',
-          title: 'GET /tournaments/:id/stages',
-          detail: 'Replace the static stage list with a real backend-driven stage selector.',
-        },
         {
           id: 'permissions',
           title: 'GET /operators/:id/permissions',
-          detail: 'Help scope operational abilities by current operator instead of treating this page as a global workbench.',
+          detail: 'A dedicated permission snapshot would let the frontend hide or reveal tournament tools more precisely.',
         },
       ]}
     />
@@ -126,8 +306,8 @@ export function TournamentOpsLoading() {
   return (
     <LoadingSection
       eyebrow="Tournament Ops"
-      title="Tournament Operations"
-      description="Loading tables, records, and appeals views."
+      title="Loading tournament operations"
+      description="Preparing tables, records, and appeal workflows."
     >
       Loading tournament operations...
     </LoadingSection>
@@ -135,53 +315,104 @@ export function TournamentOpsLoading() {
 }
 
 export function TournamentOpsPageSection({
+  tournaments,
   state,
   tables,
   records,
   appeals,
+  selectedTableId,
+  operatorId,
+  isSubmittingAction,
+  actionError,
+  resetNote,
+  appealDescription,
+  tableDetail,
+  seatWind,
+  seatReady,
+  seatDisconnected,
+  seatNote,
   onReload,
   onStateChange,
+  onSelectTable,
+  onResetNoteChange,
+  onAppealDescriptionChange,
+  onSeatWindChange,
+  onSeatReadyChange,
+  onSeatDisconnectedChange,
+  onSeatNoteChange,
+  onStartTable,
+  onResetTable,
+  onFileAppeal,
+  onUpdateSeatState,
+  hideTournamentSelect = false,
 }: {
+  tournaments: TournamentContext[];
   state: TournamentOpsState;
   tables: LoadState<TournamentTableSummary>;
   records: LoadState<MatchRecordSummary>;
   appeals: LoadState<AppealSummary>;
+  selectedTableId: string;
+  operatorId?: string;
+  tableDetail: TableDetail | null;
+  isSubmittingAction: boolean;
+  actionError?: string | null;
+  resetNote: string;
+  appealDescription: string;
+  seatWind: SeatWind;
+  seatReady: boolean;
+  seatDisconnected: boolean;
+  seatNote: string;
   onReload: () => void;
   onStateChange: (patch: Partial<TournamentOpsState>) => void;
+  onSelectTable: (tableId: string) => void;
+  onResetNoteChange: (value: string) => void;
+  onAppealDescriptionChange: (value: string) => void;
+  onSeatWindChange: (value: SeatWind) => void;
+  onSeatReadyChange: (value: boolean) => void;
+  onSeatDisconnectedChange: (value: boolean) => void;
+  onSeatNoteChange: (value: string) => void;
+  onStartTable: () => void;
+  onResetTable: () => void;
+  onFileAppeal: () => void;
+  onUpdateSeatState: () => void;
+  hideTournamentSelect?: boolean;
 }) {
-  const activeTournament = getActiveTournament(state.tournamentId);
+  const activeTournament = getActiveTournament(tournaments, state.tournamentId);
+  const selectedTable = tables.envelope.items.find((table) => table.id === selectedTableId) ?? null;
 
   return (
     <section className="section">
       <SectionIntro
         eyebrow="Tournament Ops"
-        title="Tournament Operations"
-        description="This feature keeps the backend-first plus mock-fallback flow, while the page-level composition stays thin."
+        title="Tournament Ops"
+        description="Manage current stage tables, records, appeals, and seat readiness from one workbench."
       />
 
       <WorkbenchContextPanel
         className="tournament-ops__controls text-[color:var(--muted-strong)]"
-        title="Tournament Context"
-        description="Keep selector state local to the feature while letting the page remain route-thin."
+        title="Context"
+        description="Choose the stage and narrow the active table, player, and appeal views."
         onReload={onReload}
       >
-        <SelectField
-          label="Tournament"
-          value={state.tournamentId}
-          onChange={(event) => {
-            const nextTournament = getActiveTournament(event.currentTarget.value);
-            onStateChange({
-              tournamentId: nextTournament.id,
-              stageId: nextTournament.stages[0]?.id ?? '',
-            });
-          }}
-        >
-          {tournamentContexts.map((tournament) => (
-            <option key={tournament.id} value={tournament.id}>
-              {tournament.name}
-            </option>
-          ))}
-        </SelectField>
+        {!hideTournamentSelect ? (
+          <SelectField
+            label="Tournament"
+            value={state.tournamentId}
+            onChange={(event) => {
+              const nextTournament = getActiveTournament(tournaments, event.currentTarget.value);
+              onStateChange({
+                tournamentId: nextTournament.id,
+                stageId: nextTournament.stages[0]?.id ?? '',
+              });
+            }}
+          >
+            {tournaments.map((tournament) => (
+              <option key={tournament.id} value={tournament.id}>
+                {tournament.name}
+              </option>
+            ))}
+          </SelectField>
+        ) : null}
         <SelectField label="Stage" value={state.stageId} onChange={(event) => onStateChange({ stageId: event.currentTarget.value })}>
           {activeTournament.stages.map((stage) => (
             <option key={stage.id} value={stage.id}>
@@ -210,9 +441,7 @@ export function TournamentOpsPageSection({
         <SelectField
           label="Appeal status"
           value={state.appealStatus}
-          onChange={(event) =>
-            onStateChange({ appealStatus: event.currentTarget.value as AppealSummary['status'] | '' })
-          }
+          onChange={(event) => onStateChange({ appealStatus: event.currentTarget.value as AppealSummary['status'] | '' })}
         >
           <option value="">All</option>
           <option value="Open">Open</option>
@@ -223,7 +452,30 @@ export function TournamentOpsPageSection({
       </WorkbenchContextPanel>
 
       <div className="tournament-ops__grid grid gap-[18px] md:grid-cols-2">
-        <TablesPanel payload={tables} />
+        <TablesPanel payload={tables} selectedTableId={selectedTableId} onSelectTable={onSelectTable} />
+        <TableActionPanel
+          table={selectedTable}
+          tableDetail={tableDetail}
+          operatorId={operatorId}
+          isSubmitting={isSubmittingAction}
+          error={actionError}
+          resetNote={resetNote}
+          appealDescription={appealDescription}
+          seatWind={seatWind}
+          seatReady={seatReady}
+          seatDisconnected={seatDisconnected}
+          seatNote={seatNote}
+          onResetNoteChange={onResetNoteChange}
+          onAppealDescriptionChange={onAppealDescriptionChange}
+          onSeatWindChange={onSeatWindChange}
+          onSeatReadyChange={onSeatReadyChange}
+          onSeatDisconnectedChange={onSeatDisconnectedChange}
+          onSeatNoteChange={onSeatNoteChange}
+          onStartTable={onStartTable}
+          onResetTable={onResetTable}
+          onFileAppeal={onFileAppeal}
+          onUpdateSeatState={onUpdateSeatState}
+        />
         <RecordsPanel payload={records} />
         <AppealsPanel payload={appeals} />
         <MissingApiNotes />

@@ -169,7 +169,7 @@ export function DetailCard({
   title,
   children,
 }: {
-  title: string;
+  title: ReactNode;
   children: ReactNode;
 }) {
   return (

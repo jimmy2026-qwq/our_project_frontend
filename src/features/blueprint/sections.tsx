@@ -1,4 +1,4 @@
-import { apiClient } from '@/api/client';
+import { operationsApi } from '@/api/operations';
 import { DataPanel, InfoSummaryCard, InfoSummaryGrid, ListRow, MetadataCard, MetricCard, MetricGrid } from '@/components/shared/data-display';
 import { WorkbenchBacklogPanel } from '@/components/shared/domain';
 import { SectionIntro } from '@/components/shared/layout';
@@ -53,7 +53,7 @@ const foundationLayers = [
   {
     title: 'Shared Business Layer',
     body:
-      'The typed domain models, API client, query helpers, and club-application logic remain one of the strongest migration assets and still anchor the current frontend.',
+      'The typed domain models, modular API layer, query helpers, and club-application logic remain one of the strongest migration assets and still anchor the current frontend.',
   },
 ];
 
@@ -68,7 +68,7 @@ const migrationTracks = [
   },
   {
     title: 'What must not regress',
-    detail: 'Normalization inside src/api/client.ts remains migration-critical because backend payloads still do not map cleanly to the current frontend view models.',
+    detail: 'Normalization inside the domain-specific API modules remains migration-critical because backend payloads still do not map cleanly to the current frontend view models.',
   },
   {
     title: 'Why this blueprint exists',
@@ -124,7 +124,7 @@ const sampleRequests = [
   {
     title: 'Tournament table queue',
     description: 'Tables remain one of the most valuable operational entry points in the current tournament workbench.',
-    path: apiClient.buildTournamentTablesPath('tournament-123', 'stage-demo-swiss', {
+    path: operationsApi.buildTournamentTablesPath('tournament-123', 'stage-demo-swiss', {
       status: 'WaitingPreparation',
       limit: 8,
     }),

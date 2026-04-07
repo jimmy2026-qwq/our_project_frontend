@@ -9,7 +9,7 @@ import './index.css';
 import './styles/app.css';
 import './styles/template-shell.css';
 
-function normalizeLegacyHashRoute() {
+const normalizeLegacyHashRoute = () => {
   const hash = window.location.hash;
 
   if (!hash.startsWith('#/')) {
@@ -18,7 +18,7 @@ function normalizeLegacyHashRoute() {
 
   const nextPath = hash.slice(1);
   window.history.replaceState(null, '', nextPath);
-}
+};
 
 normalizeLegacyHashRoute();
 

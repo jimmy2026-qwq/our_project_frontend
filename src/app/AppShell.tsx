@@ -1,10 +1,10 @@
-import { NavLink, Outlet } from 'react-router-dom';
+import { Link, NavLink, Outlet, useLocation } from 'react-router-dom';
 
 import { Button } from '@/components/ui';
 import { useAuth, useNotice } from '@/hooks';
 
 const navigationItems = [
-  { to: '/', label: '项目蓝图', end: true, requiresRegistered: true },
+  { to: '/', label: '项目总览', end: true, requiresRegistered: true },
   { to: '/public', label: '公共大厅', requiresRegistered: false },
   { to: '/member-hub', label: '成员工作台', requiresRegistered: true },
   { to: '/tournament-ops', label: '赛事运营台', requiresRegistered: true },
@@ -23,6 +23,7 @@ function getNavClassName(isActive: boolean) {
 }
 
 export function AppShell() {
+  const location = useLocation();
   const { session, logout } = useAuth();
   const { notifyInfo } = useNotice();
   const isRegisteredPlayer = session?.user.roles.isRegisteredPlayer ?? false;
@@ -32,7 +33,7 @@ export function AppShell() {
 
   async function handleLogout() {
     await logout();
-    notifyInfo('已退出当前身份', '本地会话已清除。');
+    notifyInfo('已退出登录', '当前会话已安全结束。');
   }
 
   return (
@@ -44,7 +45,7 @@ export function AppShell() {
           </span>
           <div>
             <strong>RiichiNexus</strong>
-            <span>前端迁移工作台</span>
+            <span>赛事与俱乐部管理系统</span>
           </div>
         </div>
         <div className="site-header__status flex items-center gap-3">
@@ -54,18 +55,19 @@ export function AppShell() {
           <span className="site-pill">API First</span>
           <span className="site-pill">Mock Fallback</span>
           <Button variant="outline" size="sm" onClick={() => void handleLogout()}>
-            退出
+            退出登录
           </Button>
         </div>
       </header>
+
       <main className="public-shell__content grid gap-[22px]">
         <section className="app-banner grid gap-6 rounded-[var(--radius-xl)] border border-[color:var(--line)] bg-[color:var(--bg-elevated)] px-[30px] py-7 shadow-[var(--shadow-md)] backdrop-blur-[18px] lg:grid-cols-[minmax(0,1.15fr)_minmax(320px,0.85fr)]">
           <div>
             <p className="eyebrow">Template Migration</p>
-            <h1>把当前蓝图前端逐步迁入 template 风格的 React 架构</h1>
+            <h1>前端已经从模板阶段迁移到基于 React Router 的页面结构。</h1>
             <p>
-              当前阶段先落 React 路由壳子，保持现有业务模块还能继续工作。接下来我们会逐步把大页面拆成
-              route、page、component、hook 和 store。
+              现在系统会从统一入口装载，按路由切换页面，并在共享壳层里承载公共大厅、俱乐部详情、
+              赛事详情和后续管理功能。
             </p>
           </div>
           <nav className="app-nav grid content-start gap-3" aria-label="Primary">
@@ -81,15 +83,21 @@ export function AppShell() {
             ))}
           </nav>
         </section>
-        <section className="template-route-root">
+
+        <section key={location.pathname} className="template-route-root">
           <Outlet />
         </section>
       </main>
+
       <footer className="site-footer flex items-center justify-between gap-4 rounded-[20px] border border-[color:var(--line)] bg-[rgba(7,16,24,0.66)] px-[22px] py-[18px] shadow-[var(--shadow-md)] backdrop-blur-[18px]">
-        <p>当前应用已切换到 React + Router 运行壳，后续页面会继续按 template 模式细化拆分。</p>
-        <NavLink to="/public" className="site-footer__link text-[color:var(--teal-strong)] no-underline hover:text-[#b2f4ef]">
-          回到公共大厅
-        </NavLink>
+        <p>当前界面运行在统一应用壳层中，公共大厅入口会始终作为稳定返回点。</p>
+        <Link
+          to="/public"
+          reloadDocument
+          className="site-footer__link text-[color:var(--teal-strong)] no-underline hover:text-[#b2f4ef]"
+        >
+          返回公共大厅
+        </Link>
       </footer>
     </div>
   );

@@ -16,7 +16,7 @@ The frontend has already crossed the largest migration boundary.
 - `react-router-dom` route configuration
 - routed page composition
 - feature-level folders
-- preserved typed API client and normalization logic
+- preserved typed API modules and normalization logic
 
 Because of that, the gap between `front/` and `template/frontend/` is no longer primarily about app runtime architecture.
 
@@ -84,7 +84,10 @@ Current status: preserved and still valuable
 The following pieces remain important and should continue to be preserved:
 
 - `src/domain/models.ts`
-- `src/api/client.ts`
+- `src/api/auth.ts`
+- `src/api/public.ts`
+- `src/api/clubs.ts`
+- `src/api/operations.ts`
 - `src/lib/query.ts`
 - `src/lib/club-applications.ts`
 
@@ -475,7 +478,7 @@ Rules for new work:
 - business-specific data loading belongs in `src/features/<feature>/data.ts`
 - business-specific composition hooks belong in `src/features/<feature>/hooks.ts`
 - shared business contracts stay in `src/domain`
-- backend request and normalization logic stays in `src/api/client.ts`
+- backend request and normalization logic stays in `src/api/*`
 
 Definition of done for Phase A:
 
@@ -681,7 +684,7 @@ Use for:
 
 Avoid:
 
-- duplicating raw backend normalization already handled by `src/api/client.ts`
+- duplicating raw backend normalization already handled by the `src/api/*` modules
 
 ### `src/features/<feature>/hooks.ts`
 
@@ -751,7 +754,7 @@ Use for:
 - stable frontend business models
 - shared type contracts between features
 
-### `src/api/client.ts`
+### `src/api/*`
 
 Use for:
 

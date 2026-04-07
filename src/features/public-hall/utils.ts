@@ -22,6 +22,7 @@ export function getTournamentStatusLabel(status: TournamentStatus | '') {
       '': 'All tournaments',
       Draft: 'Draft',
       Registration: 'Registration',
+      RegistrationOpen: '报名中',
       InProgress: 'In progress',
       Finished: 'Finished',
     } as const

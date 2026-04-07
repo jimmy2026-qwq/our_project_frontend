@@ -10,6 +10,7 @@ export { FilterBar } from './filter-bar';
 export { InfoCard } from './info-card';
 export { Input } from './input';
 export { KeyValueItem, KeyValueList } from './key-value';
+export { LoadingProgress, type LoadingProgressProps } from './loading-progress';
 export { Select } from './select';
 export { Separator } from './separator';
 export { SectionCallout } from './section-callout';

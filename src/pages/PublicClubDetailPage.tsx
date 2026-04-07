@@ -9,7 +9,7 @@ import { useClubDetail } from '@/features/public-hall/hooks';
 
 export function PublicClubDetailPage() {
   const { clubId } = useParams();
-  const { state, isLoading } = useClubDetail(clubId);
+  const { state, isLoading, refresh } = useClubDetail(clubId);
 
   if (isLoading || !state) {
     return <PublicHallLoading />;
@@ -19,5 +19,5 @@ export function PublicClubDetailPage() {
     return <PublicDetailNotFound title="Club not found" />;
   }
 
-  return <PublicClubDetailSection state={state} />;
+  return <PublicClubDetailSection state={state} onRefreshDetail={refresh} />;
 }

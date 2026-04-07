@@ -1,4 +1,6 @@
-import { apiClient } from '@/api/client';
+import { authApi } from '@/api/auth';
+import { clubsApi } from '@/api/clubs';
+import { publicApi } from '@/api/public';
 import type { AuthSession, ClubApplicationView, ClubSummary, DashboardSummary, Role } from '@/domain/models';
 import {
   readClubApplicationInbox,
@@ -129,7 +131,7 @@ export async function loadMemberHubOperatorDirectory(
 
   try {
     const currentOperatorClubs = currentOperatorId
-      ? await apiClient.getClubs({
+      ? await clubsApi.getClubs({
           adminId: currentOperatorId,
           activeOnly: true,
           limit: 20,
@@ -152,14 +154,14 @@ export async function loadMemberHubOperatorDirectory(
     const summary =
       operators.some((operator) => operator.role === 'ClubAdmin')
         ? null
-        : await apiClient.getDemoSummary({
+        : await authApi.getDemoSummary({
             bootstrapIfMissing: false,
             refreshDerived: false,
           });
     const recommendedOperatorId = summary?.recommendedOperatorId?.trim();
     const recommendedClubs =
       recommendedOperatorId && recommendedOperatorId !== currentOperatorId
-        ? await apiClient.getClubs({
+        ? await clubsApi.getClubs({
             adminId: recommendedOperatorId,
             activeOnly: true,
             limit: 20,
@@ -210,7 +212,7 @@ export function createMemberHubState(
 
 export async function loadPlayerDashboard(playerId: string, operatorId: string): Promise<DashboardLoadState> {
   try {
-    const dashboard = await apiClient.getPlayerDashboard(playerId, operatorId);
+    const dashboard = await publicApi.getPlayerDashboard(playerId, operatorId);
     return { dashboard, source: 'api' };
   } catch (error) {
     return {
@@ -223,7 +225,7 @@ export async function loadPlayerDashboard(playerId: string, operatorId: string):
 
 export async function loadClubDashboard(clubId: string, operatorId: string): Promise<DashboardLoadState> {
   try {
-    const dashboard = await apiClient.getClubDashboard(clubId, operatorId);
+    const dashboard = await publicApi.getClubDashboard(clubId, operatorId);
     return { dashboard, source: 'api' };
   } catch (error) {
     return {
@@ -269,7 +271,7 @@ export async function loadClubApplicationInbox(
   }
 
   try {
-    const envelope = await apiClient.getClubApplications(clubId, {
+    const envelope = await clubsApi.getClubApplications(clubId, {
       operatorId,
       status: 'Pending',
       limit: 20,
@@ -311,7 +313,7 @@ export async function reviewApplication(
   decision: 'approve' | 'reject',
 ) {
   try {
-    const application = await apiClient.reviewClubApplication(clubId, applicationId, {
+    const application = await clubsApi.reviewClubApplication(clubId, applicationId, {
       operatorId,
       decision,
       note: `${decision}d from member hub`,

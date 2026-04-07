@@ -1,4 +1,5 @@
-import { ApiError, apiClient, type BackendAuthPayload } from '@/api/client';
+import { authApi, type BackendAuthPayload } from '@/api/auth';
+import { ApiError } from '@/api/http';
 import type { AuthRoleFlags, AuthSession, AuthUser, LoginPayload, RegisterPayload, SessionInfo } from '@/domain/models';
 
 const AUTH_USERS_STORAGE_KEY = 'riichi-nexus.auth.users';
@@ -62,7 +63,7 @@ async function loadSeedUsers() {
   const defaultSeedUsers = getSeedUsers();
 
   try {
-    const summary = await apiClient.getDemoSummary();
+    const summary = await authApi.getDemoSummary();
     const recommendedOperatorId = summary.recommendedOperatorId?.trim();
     const preferredRegisteredOperatorId =
       recommendedOperatorId && recommendedOperatorId !== DEFAULT_REGISTERED_DEMO_OPERATOR_ID
@@ -240,7 +241,7 @@ export async function restoreSession(token: string) {
 
   if (guestSessionId) {
     try {
-      const session = await apiClient.getSession({ guestSessionId });
+      const session = await authApi.getSession({ guestSessionId });
 
       if (session.authenticated) {
         const guestAuthSession = mapGuestSession(session);
@@ -260,7 +261,7 @@ export async function restoreSession(token: string) {
   }
 
   try {
-    const session = mapBackendAuthSession(await apiClient.getAuthSession(token), token);
+    const session = mapBackendAuthSession(await authApi.getAuthSession(token), token);
     persistSession(session);
     return session;
   } catch {
@@ -277,7 +278,7 @@ export async function restoreSession(token: string) {
 
 export async function loginUser(payload: LoginPayload) {
   try {
-    const session = mapBackendAuthSession(await apiClient.login(payload));
+    const session = mapBackendAuthSession(await authApi.login(payload));
     persistSession(session);
     return session;
   } catch (error) {
@@ -300,7 +301,7 @@ export async function loginUser(payload: LoginPayload) {
 
 export async function registerUser(payload: RegisterPayload) {
   try {
-    const session = mapBackendAuthSession(await apiClient.register(payload));
+    const session = mapBackendAuthSession(await authApi.register(payload));
     persistSession(session);
     return session;
   } catch (error) {
@@ -335,8 +336,8 @@ export async function registerUser(payload: RegisterPayload) {
 
 export async function enterGuestMode(displayName = 'Guest') {
   try {
-    const guestSession = await apiClient.createGuestSession({ displayName });
-    const session = await apiClient.getSession({ guestSessionId: guestSession.id });
+    const guestSession = await authApi.createGuestSession({ displayName });
+    const session = await authApi.getSession({ guestSessionId: guestSession.id });
     const guestAuthSession = mapGuestSession(session);
     persistSession(guestAuthSession);
     return guestAuthSession;
@@ -352,9 +353,9 @@ export async function logoutUser(token: string) {
     const guestSessionId = readGuestSessionId(token);
 
     if (guestSessionId) {
-      await apiClient.revokeGuestSession(guestSessionId, 'guest-exit');
+      await authApi.revokeGuestSession(guestSessionId, 'guest-exit');
     } else {
-      await apiClient.logout(token);
+      await authApi.logout(token);
     }
   } catch {
     // Keep the local fallback usable until the backend auth contract lands.

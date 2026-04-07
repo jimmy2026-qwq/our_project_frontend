@@ -5,7 +5,12 @@ export type Role =
   | 'TournamentAdmin'
   | 'SuperAdmin';
 
-export type TournamentStatus = 'Draft' | 'Registration' | 'InProgress' | 'Finished';
+export type TournamentStatus =
+  | 'Draft'
+  | 'Registration'
+  | 'RegistrationOpen'
+  | 'InProgress'
+  | 'Finished';
 export type StageStatus = 'Pending' | 'Active' | 'Completed';
 export type TableStatus =
   | 'WaitingPreparation'
@@ -31,6 +36,7 @@ export interface PublicSchedule {
   stageName: string;
   stageStatus: StageStatus;
   scheduledAt: string;
+  isUnpublished?: boolean;
 }
 
 export interface PlayerLeaderboardEntry {
@@ -62,6 +68,10 @@ export interface TournamentPublicProfile {
   venue: string;
   stageCount: number;
   whitelistType: 'Club' | 'Player' | 'Mixed';
+  clubIds?: string[];
+  clubCount?: number;
+  playerCount?: number;
+  whitelistCount?: number;
   nextStageId: string;
   nextStageName: string;
   nextStageStatus: StageStatus;
@@ -86,7 +96,12 @@ export interface ClubPublicProfile {
   treasury: number;
   relations: Array<'Alliance' | 'Hostile'>;
   featuredPlayers: string[];
-  activeTournaments: string[];
+  activeTournaments: Array<{
+    id: string;
+    name: string;
+    status?: TournamentStatus;
+    source?: 'recent' | 'invited';
+  }>;
 }
 
 export interface GuestSession {

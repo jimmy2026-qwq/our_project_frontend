@@ -1,4 +1,5 @@
 import type {
+  AuthSession,
   ClubPublicProfile,
   ClubSummary,
   ListEnvelope,
@@ -26,8 +27,15 @@ export interface DetailState<T> {
 
 export interface HomeDataPayload {
   schedules: LoadState<PublicSchedule>;
-  leaderboard: LoadState<PlayerLeaderboardEntry>;
   clubs: LoadState<ClubSummary>;
+}
+
+export interface PublicHallViewerContext {
+  session: AuthSession | null;
+}
+
+export interface LeaderboardDataPayload {
+  leaderboard: LoadState<PlayerLeaderboardEntry>;
 }
 
 export interface PublicHallState {

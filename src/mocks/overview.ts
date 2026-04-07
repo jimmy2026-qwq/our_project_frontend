@@ -115,7 +115,10 @@ export const mockClubProfiles: ClubPublicProfile[] = [
     treasury: 560000,
     relations: ['Alliance'],
     featuredPlayers: ['Aoi', 'Kanna', 'Rin'],
-    activeTournaments: ['Riichi Nexus Spring Masters', 'Kanto Club Open'],
+    activeTournaments: [
+      { id: 'mock-tournament-1', name: 'Riichi Nexus Spring Masters', source: 'recent' },
+      { id: 'mock-tournament-2', name: 'Kanto Club Open', source: 'recent' },
+    ],
   },
   {
     id: 'club-2',
@@ -128,7 +131,7 @@ export const mockClubProfiles: ClubPublicProfile[] = [
     treasury: 438000,
     relations: ['Hostile'],
     featuredPlayers: ['Mika', 'Shun', 'Rui'],
-    activeTournaments: ['Riichi Nexus Spring Masters'],
+    activeTournaments: [{ id: 'mock-tournament-1', name: 'Riichi Nexus Spring Masters', source: 'recent' }],
   },
 ];
 
