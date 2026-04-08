@@ -1,0 +1,110 @@
+Project run notes
+
+This project uses:
+- frontend: front
+- backend: our_project
+- database: PostgreSQL on 127.0.0.1:5432
+- current verified database name: tongwen
+- current verified database user: db
+
+Recommended startup order
+1. Start PostgreSQL
+2. Start backend
+3. Start frontend
+
+Recommended shutdown order
+1. Stop frontend
+2. Stop backend
+3. Stop PostgreSQL
+
+Database: start and connect
+
+In cmd:
+sc start postgresql-x64-18
+"C:\Program Files\PostgreSQL\18\bin\psql.exe" -h 127.0.0.1 -p 5432 -U db -d tongwen
+
+In PowerShell:
+sc.exe start postgresql-x64-18
+& "C:\Program Files\PostgreSQL\18\bin\psql.exe" -h 127.0.0.1 -p 5432 -U db -d tongwen
+
+Exit psql:
+\q
+
+Stop database
+
+In cmd:
+sc stop postgresql-x64-18
+
+In PowerShell:
+Stop-Service -Name "postgresql-x64-18"
+
+Backend: start with PostgreSQL mode
+
+Important:
+Connecting with psql does not make the backend use PostgreSQL automatically.
+The backend only switches from memory mode to PostgreSQL mode if the environment
+variables are set in the same terminal before startup.
+
+In cmd:
+cd /d C:\Users\Jimmy\projects\front_backend\our_project
+set RIICHI_STORAGE=postgres
+set RIICHI_DB_URL=jdbc:postgresql://127.0.0.1:5432/tongwen
+set RIICHI_DB_USER=db
+set RIICHI_DB_PASSWORD=root
+sbt run
+
+Alternative backend startup in cmd using template-style variables:
+cd /d C:\Users\Jimmy\projects\front_backend\our_project
+set RIICHI_STORAGE=postgres
+set DB_HOST=127.0.0.1
+set DB_PORT=5432
+set DB_NAME=tongwen
+set DB_USER=db
+set DB_PASSWORD=root
+sbt run
+
+In PowerShell:
+Set-Location C:\Users\Jimmy\projects\front_backend\our_project
+$env:RIICHI_STORAGE="postgres"
+$env:RIICHI_DB_URL="jdbc:postgresql://127.0.0.1:5432/tongwen"
+$env:RIICHI_DB_USER="db"
+$env:RIICHI_DB_PASSWORD="root"
+sbt run
+
+How to confirm backend is not in memory mode
+- Check backend startup output
+- It should show PostgreSQL mode instead of memory
+- If it still shows memory, run the env commands again in the same terminal and restart backend
+
+Frontend: start
+
+In cmd:
+cd /d C:\Users\Jimmy\projects\front_backend\front
+npm run dev
+
+In PowerShell:
+Set-Location C:\Users\Jimmy\projects\front_backend\front
+npm run dev
+
+Frontend API proxy
+- frontend /api requests are proxied to http://127.0.0.1:8080
+- so backend should be running on port 8080 before frontend testing
+
+Useful checks
+
+Check PostgreSQL service status in cmd:
+sc query postgresql-x64-18
+
+Check current env vars in cmd before starting backend:
+set RIICHI_
+set DB_
+
+Check database health from backend project:
+cd /d C:\Users\Jimmy\projects\front_backend\our_project
+sbt "runMain riichinexus.riichiNexusDbAdmin health"
+
+Notes
+- Current database in use is tongwen, not our_project
+- If password changes again, update the backend startup commands above
+- If psql is not in PATH, use:
+  C:\Program Files\PostgreSQL\18\bin\psql.exe

@@ -1,0 +1,143 @@
+RiichiNexus tournament flow
+
+This file describes the tournament flow that the backend actually implements today.
+It does not describe an idealized or future flow.
+
+Terminology
+
+- tournament admin: a player with tournament-scoped admin permission
+- super admin: a global admin who can assign tournament admins
+- lineup: the club-submitted list of players for a stage
+- schedule: the server-side action that materializes tables for the current stage or round
+
+Real flow from tournament creation to entering a table
+
+1. A super admin or an authorized operator creates a tournament.
+
+- Route: POST /tournaments
+- The request can include one or more stages immediately.
+- Each stage includes a format such as Swiss or Knockout.
+- Backend create logic validates basic fields like name, organizer, start time, end time, and stage uniqueness.
+
+2. The creator can assign a tournament admin, or the tournament can be created with an initial admin.
+
+- The create request supports adminId.
+- Super admins can also later assign or revoke tournament admins.
+- Tournament-stage management actions require tournament admin permission.
+
+3. The tournament is published.
+
+- Route: POST /tournaments/:tournamentId/publish
+- Publishing moves the tournament from Draft to RegistrationOpen.
+- A tournament cannot be published without at least one stage.
+
+4. Participants are added to the tournament.
+
+There are two real paths:
+
+- Individual path:
+  - Route: POST /tournaments/:tournamentId/players/:playerId
+  - This is an admin action, not a self-service player registration flow.
+
+- Club path:
+  - Route: POST /tournaments/:tournamentId/clubs/:clubId
+  - This registers the club with the tournament.
+  - Registering a club does not automatically create a lineup for a stage.
+
+Important note:
+
+- The backend does not currently model "a player self-registers for a tournament" as a public player action.
+- The current implementation expects a tournament admin to register players or clubs into the tournament.
+
+5. If the stage is club-driven, a club admin or delegated lineup operator submits a stage lineup.
+
+- Route: POST /tournaments/:tournamentId/stages/:stageId/lineups
+- This is how a club says which members are actually participating in that stage.
+- The backend verifies:
+  - the club exists and is active
+  - the club is registered or whitelisted for the tournament
+  - submitted players belong to the club
+  - submitted players are active
+  - the acting operator is allowed to submit the lineup
+
+Important note:
+
+- For club participation, the effective stage participant pool can come from lineup submissions.
+- Without lineup submissions, scheduling may fall back to tournament-level registered players and club members.
+
+6. The tournament admin triggers scheduling for the stage.
+
+- Route: POST /tournaments/:tournamentId/stages/:stageId/schedule
+- This is a required explicit action.
+- The backend does not automatically schedule tables when players register or when the tournament is published.
+
+What scheduling does:
+
+- For Swiss and other non-knockout formats:
+  - resolve the current participant pool
+  - verify enough active players exist
+  - verify player count rules, such as divisibility by four for standard formats
+  - prepare the next round if needed
+  - materialize tables from pending plans based on scheduling pool size
+
+- For Knockout stages:
+  - use the knockout coordinator to materialize unlocked bracket tables
+
+Important note:
+
+- "System computes and assigns current matches" is implemented, but only after an explicit schedule call.
+
+7. The tournament admin can mark the tournament as started.
+
+- Route: POST /tournaments/:tournamentId/start
+- This changes tournament status to InProgress.
+- The tournament must already have participants.
+
+Important note:
+
+- Starting the tournament does not automatically start every table.
+- It changes tournament state, but table entry is still a separate action.
+
+8. Players or admins prepare table seat state.
+
+- Route: POST /tables/:tableId/seats/:seat/state
+- Seat readiness and disconnect state can be updated before a table starts.
+- A player can update their own seat state, and tournament admins can also manage seat state.
+
+9. The tournament admin starts a specific table.
+
+- Route: POST /tables/:tableId/start
+- This is the real "enter table" step.
+- The table must still be in WaitingPreparation.
+- All seats must be ready.
+- No seat may be disconnected.
+
+What happens on success:
+
+- the table moves to InProgress
+- if all seats were still untouched, the backend auto-marks them ready during start
+- after this point, the table is considered running
+
+What is not automatic today
+
+- a player self-service tournament signup flow
+- automatic club lineup creation after club registration
+- automatic scheduling right after registration
+- automatic table start right after tournament start
+- a single one-click "create tournament -> collect entrants -> generate matches -> start all tables" workflow
+
+Most accurate summary
+
+The backend supports this real chain:
+
+- create tournament
+- assign admin if needed
+- publish tournament
+- register players or clubs
+- submit club lineup if the stage uses club lineups
+- schedule the stage
+- start the tournament
+- update seat readiness if needed
+- start each table
+
+That is the current backend-supported workflow the frontend should model.
