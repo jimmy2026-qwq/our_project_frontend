@@ -140,6 +140,7 @@ export function usePublicHallLeaderboardData(
 export function useTournamentDetail(tournamentId: string | undefined) {
   const [state, setState] = useState<TournamentDetailState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!tournamentId) {
@@ -166,9 +167,13 @@ export function useTournamentDetail(tournamentId: string | undefined) {
     return () => {
       cancelled = true;
     };
-  }, [tournamentId]);
+  }, [reloadKey, tournamentId]);
 
-  return { state, isLoading };
+  return {
+    state,
+    isLoading,
+    refresh: () => setReloadKey((current) => current + 1),
+  };
 }
 
 export function useClubDetail(clubId: string | undefined) {

@@ -10,6 +10,8 @@ import { PublicClubDetailPage } from '@/pages/PublicClubDetailPage';
 import { PublicHallHomePage } from '@/pages/PublicHallHomePage';
 import { PublicTournamentDetailPage } from '@/pages/PublicTournamentDetailPage';
 import { RegisterPage } from '@/pages/RegisterPage';
+import { TableMatchPage } from '@/pages/TableMatchPage';
+import { TablePaifuPage } from '@/pages/TablePaifuPage';
 import { TournamentOpsPage } from '@/pages/TournamentOpsPage';
 
 export const router = createBrowserRouter([
@@ -59,6 +61,14 @@ export const router = createBrowserRouter([
               {
                 path: 'tournament-ops',
                 element: <TournamentOpsPage />,
+              },
+              {
+                path: 'tables/:tableId',
+                element: <TableMatchPage />,
+              },
+              {
+                path: 'tables/:tableId/paifu',
+                element: <TablePaifuPage />,
               },
             ],
           },

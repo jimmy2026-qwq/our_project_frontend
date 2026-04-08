@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
+import { authApi } from '@/api/auth';
 import { ApiError } from '@/api/http';
 import { operationsApi, type SeatWind, type TableDetail } from '@/api/operations';
 import { TournamentOpsLoading, TournamentOpsPageSection } from '@/features/tournament-ops/components';
@@ -10,12 +12,17 @@ import { useAuth, useDialog, useMutationNotice, useNotice, useRefreshNotice } fr
 interface TournamentOpsWorkbenchProps {
   fixedTournamentId?: string;
   hideTournamentSelect?: boolean;
+  reloadKey?: number;
+  canManageActions?: boolean;
 }
 
 export function TournamentOpsWorkbench({
   fixedTournamentId,
   hideTournamentSelect = false,
+  reloadKey: externalReloadKey = 0,
+  canManageActions,
 }: TournamentOpsWorkbenchProps) {
+  const navigate = useNavigate();
   const { state, setState } = useTournamentOpsState();
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
   const [pendingRefresh, setPendingRefresh] = useState(false);
@@ -29,13 +36,21 @@ export function TournamentOpsWorkbench({
   const [seatNote, setSeatNote] = useState('');
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [actionError, setActionError] = useState<string | null>(null);
-  const { directory, tables, records, appeals, isLoading } = useTournamentOpsData(state, reloadKey);
+  const [playerNames, setPlayerNames] = useState<Record<string, string>>({});
+  const { directory, tables, records, appeals, isLoading } = useTournamentOpsData(
+    state,
+    reloadKey + externalReloadKey,
+  );
   const { notifyRefreshResult } = useRefreshNotice();
   const { notifyMutationResult } = useMutationNotice();
   const { notifyWarning } = useNotice();
   const { session } = useAuth();
   const { confirmDanger } = useDialog();
   const operatorId = session?.user.operatorId ?? session?.user.userId;
+  const canManageTournamentActions =
+    canManageActions ??
+    (!!session?.user.roles.isRegisteredPlayer &&
+      (session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin));
   const selectedTable = useMemo(
     () => tables?.envelope.items.find((table) => table.id === selectedTableId) ?? null,
     [selectedTableId, tables],
@@ -119,6 +134,50 @@ export function TournamentOpsWorkbench({
   }, [seatWind, tableDetail]);
 
   useEffect(() => {
+    let cancelled = false;
+
+    async function loadPlayerNames() {
+      if (!tables) {
+        return;
+      }
+
+      const missingPlayerIds = Array.from(
+        new Set(
+          tables.envelope.items.flatMap((table) => table.playerIds).filter((playerId) => !(playerId in playerNames)),
+        ),
+      );
+
+      if (missingPlayerIds.length === 0) {
+        return;
+      }
+
+      const entries = await Promise.all(
+        missingPlayerIds.map(async (playerId) => {
+          try {
+            const profile = await authApi.getPlayer(playerId);
+            return [playerId, profile.displayName] as const;
+          } catch {
+            return [playerId, playerId] as const;
+          }
+        }),
+      );
+
+      if (!cancelled) {
+        setPlayerNames((current) => ({
+          ...current,
+          ...Object.fromEntries(entries),
+        }));
+      }
+    }
+
+    void loadPlayerNames();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [playerNames, tables]);
+
+  useEffect(() => {
     if (!pendingRefresh || isLoading || !directory || !tables || !records || !appeals) {
       return;
     }
@@ -178,7 +237,7 @@ export function TournamentOpsWorkbench({
       return;
     }
 
-    await runTableAction(
+    const succeeded = await runTableAction(
       () => operationsApi.startTable(selectedTable.id, { operatorId }),
       {
         successTitle: 'Table started',
@@ -187,6 +246,10 @@ export function TournamentOpsWorkbench({
         fallbackMessage: 'The table could not be started right now.',
       },
     );
+
+    if (succeeded) {
+      navigate(`/tables/${selectedTable.id}`);
+    }
   }
 
   async function handleResetTable() {
@@ -312,7 +375,9 @@ export function TournamentOpsWorkbench({
       records={records}
       appeals={appeals}
       selectedTableId={selectedTableId}
+      playerNames={playerNames}
       operatorId={operatorId}
+      canManageActions={canManageTournamentActions}
       tableDetail={tableDetail}
       isSubmittingAction={isSubmittingAction}
       actionError={actionError}
@@ -357,6 +422,16 @@ export function TournamentOpsWorkbench({
       onResetTable={() => void handleResetTable()}
       onFileAppeal={() => void handleFileAppeal()}
       onUpdateSeatState={() => void handleUpdateSeatState()}
+      onOpenTablePage={() => {
+        if (selectedTable) {
+          navigate(`/tables/${selectedTable.id}`);
+        }
+      }}
+      onOpenPaifuPage={() => {
+        if (selectedTable) {
+          navigate(`/tables/${selectedTable.id}/paifu`);
+        }
+      }}
     />
   );
 }
