@@ -75,11 +75,19 @@ export interface UpdateSeatStatePayload {
 }
 
 export const operationsApi = {
+  getTables(filters: TableFilters) {
+    return request<ListEnvelope<TournamentTableContract>>(`/tables${toQueryString(filters)}`).then((envelope) => ({
+      ...envelope,
+      items: envelope.items.map(mapTournamentTable),
+    }));
+  },
   getTournaments(filters: TournamentFilters = {}) {
     return request<ListEnvelope<TournamentDirectoryEntryContract>>(`/tournaments${toQueryString(filters)}`);
   },
   getTournamentStages(tournamentId: string) {
-    return request<TournamentStageDirectoryEntryContract[]>(`/tournaments/${tournamentId}/stages`);
+    return request<TournamentStageDirectoryEntryContract[] | { value?: TournamentStageDirectoryEntryContract[] }>(
+      `/tournaments/${tournamentId}/stages`,
+    ).then((payload) => (Array.isArray(payload) ? payload : payload.value ?? []));
   },
   getTournament(tournamentId: string) {
     return request<TournamentDetailContract>(`/tournaments/${tournamentId}`);

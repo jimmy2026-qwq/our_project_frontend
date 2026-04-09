@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { loadPlayerContext } from '@/features/blueprint/application-data';
 import { clubsApi } from '@/api/clubs';
 import type { AuthSession } from '@/domain/auth';
 import type { ClubApplicationView } from '@/domain/clubs';
 import type { ClubPublicProfile } from '@/domain/public';
 import { useDialog, useMutationNotice } from '@/hooks';
-import { loadPlayerContext } from '@/features/blueprint/application-data';
+import { updateClubApplicationInboxStatus, upsertClubApplicationInboxItem } from '@/lib/club-applications';
 
 import type { DetailState } from '../types';
 import type { ClubDetailWorkbenchState } from './club-detail.types';
@@ -207,12 +208,12 @@ export function useClubDetailWorkbench({
     }
 
     const confirmed = await confirmDanger({
-      title: decision === 'approve' ? 'é–«æ°³ç¹ƒæ©æ¬æ½¯é¢å® î‡¬é”›?' : 'éŽ·æŽ”ç²·æ©æ¬æ½¯é¢å® î‡¬é”›?',
+      title: decision === 'approve' ? 'Approve application?' : 'Reject application?',
       message:
         decision === 'approve'
-          ? 'æ©æ¬Žç´°éŽ¶å©‚ç¶‹é“å¶‡æ•µç’‡é”‹çˆ£ç’é¢è´Ÿé–«æ°³ç¹ƒé”›å±½è‹Ÿé’é”‹æŸŠæ·‡å˜ç®°é–®ã„§æ•µç’‡å³°åžªç›ã„£â‚¬?'
-          : 'æ©æ¬Žç´°éŽ¶å©‚ç¶‹é“å¶‡æ•µç’‡é”‹çˆ£ç’é¢è´ŸéŽ·æŽ”ç²·é”›å±½è‹Ÿé’é”‹æŸŠæ·‡å˜ç®°é–®ã„§æ•µç’‡å³°åžªç›ã„£â‚¬?',
-      confirmText: decision === 'approve' ? 'é–«æ°³ç¹ƒ' : 'éŽ·æŽ”ç²·',
+          ? 'This will approve the pending club application and refresh the current club detail view.'
+          : 'This will reject the pending club application and refresh the current club detail view.',
+      confirmText: decision === 'approve' ? 'Approve' : 'Reject',
     });
 
     if (!confirmed) {
@@ -230,22 +231,48 @@ export function useClubDetailWorkbench({
           ? { playerId: application.applicant.playerId }
           : {}),
       })
-      .then(() => ({ source: 'api' as const }))
+      .then((reviewedApplication) => {
+        upsertClubApplicationInboxItem({
+          id: reviewedApplication.applicationId,
+          clubId: reviewedApplication.clubId,
+          clubName: reviewedApplication.clubName,
+          operatorId:
+            reviewedApplication.applicant.applicantUserId ??
+            reviewedApplication.applicant.playerId,
+          applicantName: reviewedApplication.applicant.displayName,
+          message: reviewedApplication.message,
+          status: reviewedApplication.status,
+          submittedAt: reviewedApplication.submittedAt,
+          source: 'api',
+        });
+
+        return { source: 'api' as const };
+      })
       .catch(() => ({
         source: 'mock' as const,
         warning:
-          'ç€¹â„ƒå£’ç’‡é”‹çœ°éˆî…åžšé”ç†»ç¹‘é¥çƒ‡ç´é’æ¥„ã€ƒçå—•ç²Žé‹æ°­æ¹°é¦æ¿åŸ›é‚èˆ¬â‚¬?',
-      }));
+          'The backend review request failed, so the page fell back to local mock behavior. Refresh the page to confirm the real backend state.',
+      }))
+      .then((reviewResult) => {
+        if (reviewResult.source === 'mock') {
+          updateClubApplicationInboxStatus(
+            applicationId,
+            decision === 'approve' ? 'Approved' : 'Rejected',
+          );
+        }
+
+        return reviewResult;
+      });
 
     notifyMutationResult(result, {
-      successTitle: decision === 'approve' ? 'é¢å® î‡¬å®¸æŸ¥â‚¬æ°³ç¹ƒ' : 'é¢å® î‡¬å®¸å‰å«†ç¼?',
-      successMessage: 'æ·‡å˜ç®°é–®ã„§æ•µç’‡å³°åžªç›ã„¥å‡¡é’é”‹æŸŠéŠ†?',
+      successTitle: decision === 'approve' ? 'Application approved' : 'Application rejected',
+      successMessage: 'The application inbox was updated successfully.',
       fallbackTitle:
         decision === 'approve'
-          ? 'é¢å® î‡¬å®¸æŸ¥â‚¬æ°³ç¹ƒé”›å æ´–é–«â‚¬é”›?'
-          : 'é¢å® î‡¬å®¸å‰å«†ç¼æ¿“ç´™é¥ç‚ºâ‚¬â‚¬é”›?',
+          ? 'Application marked approved locally'
+          : 'Application marked rejected locally',
       fallbackMessage:
-        'ç€¹â„ƒå£’å®¸æ’çš¾ç’‡æ›Ÿå¢½ç›å²‹ç´æµ£å——ç¶‹é“å¶…å½§ç€¹å±¾åžšæµœå—˜æ¹°é¦æ¿åŸ›é‚èˆ¬â‚¬?',
+        'The UI updated locally, but the backend request did not complete. Refresh before treating this as final.',
     });
 
     setApplicationInbox((current) => current.filter((item) => item.applicationId !== applicationId));

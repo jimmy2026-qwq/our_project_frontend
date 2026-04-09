@@ -14,7 +14,7 @@ export interface TournamentTableContract {
   tournamentId?: string;
   stageId: string;
   tableNo: number;
-  status: TableStatus;
+  status?: TableStatus;
   seats?: TableSeatContract[];
 }
 

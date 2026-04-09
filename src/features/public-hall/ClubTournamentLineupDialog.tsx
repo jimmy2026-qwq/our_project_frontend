@@ -1,11 +1,11 @@
+import { operationsApi } from '@/api/operations';
+import { useNotice } from '@/hooks';
 import {
   Dialog,
   DialogOverlay,
   DialogPortal,
   DialogSurface,
 } from '@/components/ui';
-import { useNotice } from '@/hooks';
-import { operationsApi } from '@/api/operations';
 
 import { useClubTournamentLineupWorkbench } from './ClubTournamentLineupDialog.hooks';
 import {
@@ -46,8 +46,8 @@ export function ClubTournamentLineupDialog({
   async function handleSubmit() {
     if (!tournament?.id || !workbench.selectedStageId || workbench.selectedPlayerIds.length === 0) {
       notifyWorkbenchWarning(
-        'ç’‡å³°åŽ›é–«å¤‹å«¨é™å‚ç¦ŒéŽ´æ„¬æ†³',
-        'é‘·å†²çš¯é—‡â‚¬ç‘•ä¾€â‚¬å¤‹å«¨æ¶“â‚¬éšå¶„å‹˜æ¶”æ„°å„´éŽ´æ„¬æ†³éŽ»æ„ªæ°¦é’æ¿ç¶‹é“å¶ˆç¦Œæµœå¬®æ¨å¨ˆç‚¹â‚¬?',
+        'Lineup is incomplete',
+        'Select a stage and at least one player before submitting the club lineup.',
       );
       return;
     }
@@ -60,14 +60,16 @@ export function ClubTournamentLineupDialog({
         playerIds: workbench.selectedPlayerIds,
       });
       notifySuccess(
-        'é™å‚ç¦Œéšå¶…å´Ÿå®¸å‰å½æµœ?',
-        'æ·‡å˜ç®°é–®ã„¥å¼¬ç’§æ¶˜æ‚•é—æ›žå‡¡ç¼å¿“æ‚“å§ãƒ¥åŸŒè¤°æ’³å¢ ç’§æ¶—ç°¨é—ƒèˆµî†ŒéŠ†?',
+        'Lineup submitted',
+        'The selected players were submitted for the current tournament stage.',
       );
       onOpenChange(false);
     } catch (error) {
       notifyWarning(
-        'éŽ»æ„ªæ°¦é™å‚ç¦Œéšå¶…å´Ÿæ¾¶è¾«è§¦',
-        error instanceof Error ? error.message : 'éƒçŠ³ç¡¶éŽ»æ„ªæ°¦è¤°æ’³å¢ é™å‚ç¦Œéšå¶…å´ŸéŠ†?',
+        'Unable to submit lineup',
+        error instanceof Error
+          ? error.message
+          : 'The lineup request failed. Please retry after checking the current tournament state.',
       );
     } finally {
       setIsSubmitting(false);

@@ -179,9 +179,9 @@ export const mockDashboards: DashboardSummary[] = [
 ];
 
 export const mockTournamentTables: TournamentTableSummary[] = [
-  { id: 'table-101', stageId: 'stage-swiss-1', tableCode: 'A-01', status: 'WaitingPreparation', playerIds: ['player-a', 'player-b', 'player-c', 'player-d'], seatCount: 4 },
-  { id: 'table-102', stageId: 'stage-swiss-1', tableCode: 'A-02', status: 'InProgress', playerIds: ['player-e', 'player-f', 'player-g', 'player-h'], seatCount: 4 },
-  { id: 'table-201', stageId: 'stage-finals', tableCode: 'F-01', status: 'AppealPending', playerIds: ['player-a', 'player-b', 'player-c', 'player-d'], seatCount: 4 },
+  { id: 'table-101', tournamentId: 'tournament-123', stageId: 'stage-swiss-1', tableCode: 'A-01', status: 'WaitingPreparation', playerIds: ['player-a', 'player-b', 'player-c', 'player-d'], seatCount: 4 },
+  { id: 'table-102', tournamentId: 'tournament-123', stageId: 'stage-swiss-1', tableCode: 'A-02', status: 'InProgress', playerIds: ['player-e', 'player-f', 'player-g', 'player-h'], seatCount: 4 },
+  { id: 'table-201', tournamentId: 'tournament-123', stageId: 'stage-finals', tableCode: 'F-01', status: 'AppealPending', playerIds: ['player-a', 'player-b', 'player-c', 'player-d'], seatCount: 4 },
 ];
 
 export const mockRecords: MatchRecordSummary[] = [

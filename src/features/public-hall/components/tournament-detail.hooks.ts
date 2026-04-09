@@ -14,16 +14,16 @@ import type { TournamentDetailTableItem, TournamentDetailWorkbenchState } from '
 export function getTableStatusLabel(status: string) {
   switch (status) {
     case 'WaitingPreparation':
-      return 'Waiting preparation';
+      return '等待开始';
     case 'InProgress':
-      return 'In progress';
+      return '对局中';
     case 'Scoring':
-      return 'Scoring';
+      return '结算中';
     case 'AppealPending':
     case 'AppealInProgress':
-      return 'Appeal pending';
+      return '申诉处理中';
     case 'Archived':
-      return 'Archived';
+      return '已结束';
     default:
       return status;
   }

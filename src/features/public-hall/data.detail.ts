@@ -117,7 +117,7 @@ export function buildFallbackTournamentStages(
     return profile.stages;
   }
 
-  return mockSchedules
+  const mockStages = mockSchedules
     .filter((item) => item.tournamentId === tournamentId)
     .map((item) => ({
       stageId: item.stageId,
@@ -127,4 +127,23 @@ export function buildFallbackTournamentStages(
       tableCount: 0,
       pendingTablePlanCount: 0,
     }));
+
+  if (mockStages.length > 0) {
+    return mockStages;
+  }
+
+  if (profile.nextStageId) {
+    return [
+      {
+        stageId: profile.nextStageId,
+        name: profile.nextStageName || 'Current stage',
+        status: profile.nextStageStatus,
+        roundCount: 1,
+        tableCount: 0,
+        pendingTablePlanCount: 0,
+      },
+    ];
+  }
+
+  return [];
 }

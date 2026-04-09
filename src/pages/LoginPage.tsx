@@ -20,7 +20,7 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   if (session) {
-    return <Navigate replace to={session.user.roles.isGuest ? '/public' : '/'} />;
+    return <Navigate replace to="/public" />;
   }
 
   async function handleSubmit() {
@@ -43,7 +43,7 @@ export function LoginPage() {
 
       notifySuccess('登录成功', `欢迎回来，${nextSession.user.displayName}。`);
 
-      const from = (location.state as { from?: string } | null)?.from ?? '/';
+      const from = (location.state as { from?: string } | null)?.from ?? '/public';
       navigate(from, { replace: true });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : '登录失败，请稍后重试。');
@@ -58,10 +58,10 @@ export function LoginPage() {
 
     try {
       await enterGuestMode('Guest');
-      notifyInfo('已进入游客模式', '当前可访问公共大厅和现有详情页。');
+      notifyInfo('已进入访客模式', '你现在可以先浏览公共大厅，之后再切换到注册账号。');
       navigate('/public', { replace: true });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '进入游客模式失败，请稍后重试。');
+      setErrorMessage(error instanceof Error ? error.message : '进入访客模式失败，请稍后重试。');
     } finally {
       setIsSubmitting(false);
     }
@@ -70,18 +70,18 @@ export function LoginPage() {
   return (
     <AuthScreen
       eyebrow="Member Access"
-      title="登录 RiichiNexus 工作台"
-      description="页面会优先调用假设存在的 /auth/login 与 /auth/session。接口不可用时自动回退到本地 mock；当前可用示例账号为 123 / 456。"
+      title="登录 RiichiNexus"
+      description="使用账号密码进入系统。登录后默认进入公共大厅，赛事和俱乐部操作都在对应详情页里完成。"
       submitLabel="登录"
       footerPrompt="还没有账号？"
-      footerLinkLabel="创建一个"
+      footerLinkLabel="立即注册"
       footerLinkTo="/register"
       errorMessage={errorMessage}
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
       extraActions={
         <Button variant="outline" size="lg" disabled={isSubmitting} onClick={() => void handleGuestEnter()}>
-          游客模式进入
+          先以访客身份浏览
         </Button>
       }
       fields={[
@@ -89,7 +89,7 @@ export function LoginPage() {
           id: 'login-username',
           label: '用户名',
           autoComplete: 'username',
-          placeholder: '请输入用户名',
+          placeholder: '输入用户名',
           value: username,
           onChange: setUsername,
         },
@@ -98,7 +98,7 @@ export function LoginPage() {
           label: '密码',
           type: 'password',
           autoComplete: 'current-password',
-          placeholder: '请输入密码',
+          placeholder: '输入密码',
           value: password,
           onChange: setPassword,
         },

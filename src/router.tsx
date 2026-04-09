@@ -5,14 +5,13 @@ import { RequireAuth } from '@/components/shared/auth/RequireAuth';
 import { RequireRegisteredUser } from '@/components/shared/auth/RequireRegisteredUser';
 import { BlueprintHomePage } from '@/pages/BlueprintHomePage';
 import { LoginPage } from '@/pages/LoginPage';
-import { MemberHubPage } from '@/pages/MemberHubPage';
 import { PublicClubDetailPage } from '@/pages/PublicClubDetailPage';
 import { PublicHallHomePage } from '@/pages/PublicHallHomePage';
 import { PublicTournamentDetailPage } from '@/pages/PublicTournamentDetailPage';
+import { PlayerDashboardPage } from '@/pages/PlayerDashboardPage';
 import { RegisterPage } from '@/pages/RegisterPage';
 import { TableMatchPage } from '@/pages/TableMatchPage';
 import { TablePaifuPage } from '@/pages/TablePaifuPage';
-import { TournamentOpsPage } from '@/pages/TournamentOpsPage';
 
 export const router = createBrowserRouter([
   {
@@ -30,6 +29,10 @@ export const router = createBrowserRouter([
         path: '/',
         element: <AppShell />,
         children: [
+          {
+            index: true,
+            element: <Navigate replace to="/public" />,
+          },
           {
             path: 'public',
             children: [
@@ -51,16 +54,12 @@ export const router = createBrowserRouter([
             element: <RequireRegisteredUser />,
             children: [
               {
-                index: true,
+                path: 'blueprint',
                 element: <BlueprintHomePage />,
               },
               {
-                path: 'member-hub',
-                element: <MemberHubPage />,
-              },
-              {
-                path: 'tournament-ops',
-                element: <TournamentOpsPage />,
+                path: 'me',
+                element: <PlayerDashboardPage />,
               },
               {
                 path: 'tables/:tableId',

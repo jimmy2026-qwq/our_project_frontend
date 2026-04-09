@@ -3,18 +3,32 @@ import { Link } from 'react-router-dom';
 import { DetailHero, DetailPageShell, PortalSection } from '@/components/shared/data-display';
 import { LoadingProgress } from '@/components/ui';
 
-export const PublicHallLoading = () => {
+interface PublicHallLoadingProps {
+  eyebrow?: string;
+  title?: string;
+  summary?: string;
+  progressLabel?: string;
+  progressMessage?: string;
+}
+
+export const PublicHallLoading = ({
+  eyebrow = 'Guest Lobby',
+  title = 'Loading public hall...',
+  summary = 'Fetching public schedules, club cards, and leaderboard data.',
+  progressLabel = 'Public hall loading',
+  progressMessage = 'Syncing public schedules, club directory, and the homepage summary.',
+}: PublicHallLoadingProps = {}) => {
   return (
     <section className="public-portal">
       <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
         <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))]">
-          <p className="portal-hero__eyebrow">Guest Lobby</p>
-          <h1>Loading public hall...</h1>
-          <p className="portal-hero__summary">Fetching public schedules, club cards, and leaderboard data.</p>
+          <p className="portal-hero__eyebrow">{eyebrow}</p>
+          <h1>{title}</h1>
+          <p className="portal-hero__summary">{summary}</p>
           <LoadingProgress
             className="mt-6 max-w-[420px]"
-            label="Public hall loading"
-            message="Syncing public schedules, club directory, and the homepage summary."
+            label={progressLabel}
+            message={progressMessage}
             indeterminate
             tone="warm"
           />

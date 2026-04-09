@@ -232,6 +232,23 @@ export async function loadTrackedApplication(
       source: 'api',
     };
   } catch (error) {
+    if (error instanceof ApiError && error.status === 404) {
+      updateClubApplicationInboxStatus(tracked.id, 'Rejected');
+
+      return {
+        application: {
+          id: tracked.id,
+          clubId: tracked.clubId,
+          status: 'Rejected',
+          applicantName: tracked.applicantName,
+          message: tracked.message,
+          createdAt: tracked.submittedAt,
+        },
+        source: tracked.source,
+        warning: 'The backend no longer returned this application, so the local record was preserved as rejected.',
+      };
+    }
+
     return {
       application: {
         id: tracked.id,

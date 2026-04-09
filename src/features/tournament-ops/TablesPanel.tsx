@@ -21,8 +21,8 @@ export function TablesPanel({
 }: TablesPanelProps) {
   return (
     <DataPanel
-      title="Table Queue"
-      description="Current tables in the selected tournament stage."
+      title="牌桌队列"
+      description="当前所选赛事阶段下的牌桌列表。"
       source={payload.source}
       warning={payload.warning}
     >
@@ -46,20 +46,20 @@ export function TablesPanel({
                   <Badge variant="outline" className={getTableStatusBadgeClassName(table.status)}>
                     {getTableStatusLabel(table.status)}
                   </Badge>
-                  <span>{table.seatCount} seats</span>
+                  <span>{table.seatCount} 个座位</span>
                   <Button
                     size="sm"
                     variant={selectedTableId === table.id ? 'secondary' : 'outline'}
                     onClick={() => onSelectTable(table.id)}
                   >
-                    {selectedTableId === table.id ? 'Selected' : 'Operate'}
+                    {selectedTableId === table.id ? '已选中' : '查看'}
                   </Button>
                 </>
               }
             />
           ))
         ) : (
-          <EmptyState asListItem>No tables matched the current filters.</EmptyState>
+          <EmptyState asListItem={false}>当前筛选条件下没有牌桌。</EmptyState>
         )}
       </ul>
     </DataPanel>

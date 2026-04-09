@@ -1,5 +1,5 @@
-import { ActionButton } from '@/components/shared/layout';
 import { FieldGroup, SelectField } from '@/components/shared/forms';
+import { ActionButton } from '@/components/shared/layout';
 import {
   DialogBody,
   DialogDescription,
@@ -23,9 +23,10 @@ export function ClubTournamentLineupHeader({
 }) {
   return (
     <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
-      <DialogTitle>éŽ·å¤‰æ±‰é™å‚ç¦Œ</DialogTitle>
+      <DialogTitle>Submit club lineup</DialogTitle>
       <DialogDescription>
-        å§ï½…æ¹ªæ¶“è¡¡â‚¬æ¸°{tournament?.name ?? 'è¤°æ’³å¢ ç’§æ¶—ç°¨'}éˆ¥æ¿‹â‚¬å¤‹å«¨é™å‚ç¦ŒéŽ´æ„¬æ†³éŠ†å‚šå‡¡é™å‚ç¦ŒéŽ´æ„¬æ†³æµ¼æ°­å¸“é¦ã„¥åžªç›ã„¦æ¸¶æ¶“å©‡æ½°éŠ†?
+        Review the invited tournament, pick a stage, and submit the players who should represent the club.
+        Current tournament: {tournament?.name ?? 'Unavailable'}.
       </DialogDescription>
     </DialogHeader>
   );
@@ -61,7 +62,7 @@ export function ClubTournamentLineupBody({
       <div className="grid gap-5">
         <FieldGroup className="grid gap-4 md:grid-cols-2">
           <SelectField
-            label="é—ƒèˆµî†Œ"
+            label="Stage"
             value={selectedStageId}
             onChange={(event) => onSelectedStageIdChange(event.currentTarget.value)}
             disabled={isLoading || stageOptions.length === 0}
@@ -73,32 +74,32 @@ export function ClubTournamentLineupBody({
                 </option>
               ))
             ) : (
-              <option value="">é†å‚›æ£¤é—ƒèˆµî†Œ</option>
+              <option value="">No stage is available for lineup submission</option>
             )}
           </SelectField>
           <SelectField
-            label="å¨²æ˜ç©¬ç»›æ¶¢â‚¬?"
+            label="Member status"
             value={statusFilter}
             onChange={(event) => onStatusFilterChange(event.currentTarget.value as MemberStatusFilter)}
           >
-            <option value="all">éã„©å„´éŽ´æ„¬æ†³</option>
-            <option value="active">æµ å‘®æ¤¿ç’ºå†©åžšé›?</option>
-            <option value="inactive">æµ å‘´æ½ªå¨²æ˜ç©¬éŽ´æ„¬æ†³</option>
+            <option value="all">All members</option>
+            <option value="active">Active only</option>
+            <option value="inactive">Inactive only</option>
           </SelectField>
           <SelectField
-            label="ELO éŽºæŽ‘ç°­"
+            label="ELO sort"
             value={eloSort}
             onChange={(event) => onEloSortChange(event.currentTarget.value as EloSort)}
           >
-            <option value="desc">æµ åº¨ç®é’é¢ç¶†</option>
-            <option value="asc">æµ åºç¶†é’ä¼´ç®</option>
+            <option value="desc">Highest first</option>
+            <option value="asc">Lowest first</option>
           </SelectField>
         </FieldGroup>
 
         <div className="grid gap-3 rounded-[22px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] p-4">
           <div className="flex items-center justify-between gap-3">
-            <strong>æ·‡å˜ç®°é–®ã„¦åžšé›?</strong>
-            <StatusPill tone="info">å®¸æŸ¥â‚¬å¤‹å«¨ {selectedPlayerIds.length} æµœ?</StatusPill>
+            <strong>Eligible members</strong>
+            <StatusPill tone="info">Selected: {selectedPlayerIds.length}</StatusPill>
           </div>
           {visibleMembers.length > 0 ? (
             <div className="grid max-h-[340px] gap-3 overflow-y-auto pr-1">
@@ -114,7 +115,7 @@ export function ClubTournamentLineupBody({
                         ELO {member.elo ?? 0} / {member.playerStatus ?? 'Active'}
                       </span>
                     </span>
-                    {member.isSelected ? <StatusPill tone="success">å®¸æ’å¼¬ç’§?</StatusPill> : null}
+                    {member.isSelected ? <StatusPill tone="success">Selected</StatusPill> : null}
                   </div>
                   <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-[color:var(--text)]">
                     <input
@@ -122,14 +123,16 @@ export function ClubTournamentLineupBody({
                       checked={member.isSelected}
                       onChange={() => onTogglePlayer(member.playerId)}
                     />
-                    é–«å¤‹å«¨ç’‡ãƒ¦åžšé›?
+                    Include this player in the lineup
                   </label>
                 </div>
               ))}
             </div>
           ) : (
             <p className="m-0 text-[color:var(--muted)]">
-              {isLoading ? 'å§ï½…æ¹ªé”çŠºæµ‡éŽ´æ„¬æ†³é’æ¥„ã€ƒ...' : 'è¤°æ’³å¢ ç»›æ¶¢â‚¬å¤‹æ½¯æµ æœµç¬…å¨Œâ„ƒæ¹é™îˆžâ‚¬å¤‹åžšé›æ¨¸â‚¬?'}
+              {isLoading
+                ? 'Loading club members and tournament stages...'
+                : 'No eligible members matched the current filters.'}
             </p>
           )}
         </div>
@@ -153,10 +156,10 @@ export function ClubTournamentLineupFooter({
     <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
       <div className="grid w-full gap-3 sm:grid-cols-2">
         <ActionButton onClick={onSubmit} disabled={isSubmitting || selectedPlayerIds.length === 0}>
-          {isSubmitting ? 'éŽ»æ„ªæ°¦æ¶“?..' : 'éŽ»æ„ªæ°¦é™å‚ç¦Œéšå¶…å´Ÿ'}
+          {isSubmitting ? 'Submitting lineup...' : 'Submit lineup'}
         </ActionButton>
         <ActionButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-          éæŠ½æ£´
+          Close
         </ActionButton>
       </div>
     </DialogFooter>

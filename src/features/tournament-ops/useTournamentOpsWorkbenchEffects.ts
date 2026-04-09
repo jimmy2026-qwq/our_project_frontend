@@ -94,11 +94,16 @@ export function useTournamentOpsWorkbenchEffects({
       return;
     }
 
-    if (tables.envelope.items.some((table) => table.id === selectedTableId)) {
+    const selectedTableStillExists = tables.envelope.items.some((table) => table.id === selectedTableId);
+
+    if (selectedTableStillExists) {
       return;
     }
 
-    setSelectedTableId(tables.envelope.items[0]?.id ?? '');
+    const preferredTable =
+      tables.envelope.items.find((table) => table.status === 'WaitingPreparation') ?? tables.envelope.items[0] ?? null;
+
+    setSelectedTableId(preferredTable?.id ?? '');
   }, [selectedTableId, setSelectedTableId, tables]);
 
   useEffect(() => {

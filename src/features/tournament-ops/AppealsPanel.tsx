@@ -7,11 +7,11 @@ import type { LoadState } from './data';
 export function AppealsPanel({ payload }: { payload: LoadState<AppealSummary> }) {
   return (
     <DataTablePanel
-      title="Appeals"
-      description="Open and historical appeals for the selected tournament."
+      title="申诉列表"
+      description="当前赛事相关的申诉记录。"
       source={payload.source}
       warning={payload.warning}
-      headers={['Appeal', 'Table', 'Status', 'Verdict']}
+      headers={['申诉编号', '牌桌', '状态', '处理结果']}
       rows={payload.envelope.items.map((appeal) => (
         <TableRow key={appeal.id}>
           <TableCell>
@@ -22,7 +22,7 @@ export function AppealsPanel({ payload }: { payload: LoadState<AppealSummary> })
           <TableCell>{appeal.verdict}</TableCell>
         </TableRow>
       ))}
-      emptyText="No appeals were returned for the current filters."
+      emptyText="当前筛选条件下没有申诉记录。"
     />
   );
 }

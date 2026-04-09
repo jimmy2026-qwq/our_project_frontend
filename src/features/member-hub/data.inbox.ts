@@ -54,7 +54,7 @@ export async function reviewApplication(
       id: application.applicationId,
       clubId: application.clubId,
       clubName: application.clubName,
-      operatorId: application.applicant.playerId,
+      operatorId: application.applicant.applicantUserId ?? application.applicant.playerId,
       applicantName: application.applicant.displayName,
       message: application.message,
       status: application.status,

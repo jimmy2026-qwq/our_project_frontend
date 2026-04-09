@@ -1,7 +1,9 @@
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
 
 import { useAuth } from '@/hooks';
 
+import type { StageContext, TournamentDirectoryState } from './data';
 import {
   useTournamentOpsData,
   useTournamentOpsState,
@@ -14,6 +16,8 @@ import { TournamentOpsPageSection } from './TournamentOpsPageSection';
 
 interface TournamentOpsWorkbenchProps {
   fixedTournamentId?: string;
+  fixedTournamentName?: string;
+  fixedStages?: StageContext[];
   hideTournamentSelect?: boolean;
   reloadKey?: number;
   canManageActions?: boolean;
@@ -21,6 +25,8 @@ interface TournamentOpsWorkbenchProps {
 
 export function TournamentOpsWorkbench({
   fixedTournamentId,
+  fixedTournamentName,
+  fixedStages,
   hideTournamentSelect = false,
   reloadKey: externalReloadKey = 0,
   canManageActions,
@@ -28,9 +34,26 @@ export function TournamentOpsWorkbench({
   const navigate = useNavigate();
   const { state, setState } = useTournamentOpsState();
   const workbench = useTournamentOpsWorkbenchState();
+  const directoryOverride = useMemo<TournamentDirectoryState | null>(() => {
+    if (!fixedTournamentId || !fixedStages || fixedStages.length === 0) {
+      return null;
+    }
+
+    return {
+      items: [
+        {
+          id: fixedTournamentId,
+          name: fixedTournamentName ?? fixedTournamentId,
+          stages: fixedStages,
+        },
+      ],
+      source: 'api',
+    };
+  }, [fixedStages, fixedTournamentId, fixedTournamentName]);
   const { directory, tables, records, appeals, isLoading } = useTournamentOpsData(
     state,
     workbench.reloadKey + externalReloadKey,
+    directoryOverride,
   );
   const { session } = useAuth();
   const operatorId = session?.user.operatorId ?? session?.user.userId;
@@ -83,17 +106,30 @@ export function TournamentOpsWorkbench({
     setIsSubmittingAction: workbench.setIsSubmittingAction,
   });
 
-  if (isLoading || !directory || !tables || !records || !appeals) {
+  if (!directory || (isLoading && !tables && !records && !appeals)) {
     return <TournamentOpsLoading />;
   }
+
+  const safeTables = tables ?? {
+    envelope: { items: [], total: 0, limit: 0, offset: 0, hasMore: false, appliedFilters: {} },
+    source: 'api' as const,
+  };
+  const safeRecords = records ?? {
+    envelope: { items: [], total: 0, limit: 0, offset: 0, hasMore: false, appliedFilters: {} },
+    source: 'api' as const,
+  };
+  const safeAppeals = appeals ?? {
+    envelope: { items: [], total: 0, limit: 0, offset: 0, hasMore: false, appliedFilters: {} },
+    source: 'api' as const,
+  };
 
   return (
     <TournamentOpsPageSection
       tournaments={directory.items}
       state={state}
-      tables={tables}
-      records={records}
-      appeals={appeals}
+      tables={safeTables}
+      records={safeRecords}
+      appeals={safeAppeals}
       selectedTableId={workbench.selectedTableId}
       playerNames={workbench.playerNames}
       operatorId={operatorId}

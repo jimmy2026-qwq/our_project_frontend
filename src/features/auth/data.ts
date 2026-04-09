@@ -281,7 +281,8 @@ export async function restoreSession(token: string) {
 
 export async function loginUser(payload: LoginPayload) {
   try {
-    const session = mapBackendAuthSession(await authApi.login(payload));
+    const loginResult = await authApi.login(payload);
+    const session = mapBackendAuthSession(await authApi.getAuthSession(loginResult.token), loginResult.token);
     persistSession(session);
     return session;
   } catch (error) {
@@ -304,7 +305,8 @@ export async function loginUser(payload: LoginPayload) {
 
 export async function registerUser(payload: RegisterPayload) {
   try {
-    const session = mapBackendAuthSession(await authApi.register(payload));
+    const registerResult = await authApi.register(payload);
+    const session = mapBackendAuthSession(await authApi.getAuthSession(registerResult.token), registerResult.token);
     persistSession(session);
     return session;
   } catch (error) {

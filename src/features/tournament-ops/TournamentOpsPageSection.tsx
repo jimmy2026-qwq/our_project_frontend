@@ -101,20 +101,20 @@ export function TournamentOpsPageSection({
   return (
     <section className="section">
       <SectionIntro
-        eyebrow="Tournament Ops"
-        title="Tournament Ops"
-        description="Manage current stage tables, records, appeals, and seat readiness from one workbench."
+        eyebrow="赛事运营"
+        title="赛事运营"
+        description="在一个工作台里查看当前阶段的对局、记录、申诉和准备状态。"
       />
 
       <WorkbenchContextPanel
         className="tournament-ops__controls text-[color:var(--muted-strong)]"
-        title="Context"
-        description="Choose the stage and narrow the active table, player, and appeal views."
+        title="筛选条件"
+        description="选择阶段，并按牌桌、玩家和申诉条件筛选当前视图。"
         onReload={onReload}
       >
         {!hideTournamentSelect ? (
           <SelectField
-            label="Tournament"
+            label="赛事"
             value={state.tournamentId}
             onChange={(event) => {
               const nextTournament = getActiveTournament(tournaments, event.currentTarget.value);
@@ -131,7 +131,7 @@ export function TournamentOpsPageSection({
             ))}
           </SelectField>
         ) : null}
-        <SelectField label="Stage" value={state.stageId} onChange={(event) => onStateChange({ stageId: event.currentTarget.value })}>
+        <SelectField label="阶段" value={state.stageId} onChange={(event) => onStateChange({ stageId: event.currentTarget.value })}>
           {activeTournament.stages.map((stage) => (
             <option key={stage.id} value={stage.id}>
               {stage.name}
@@ -139,33 +139,33 @@ export function TournamentOpsPageSection({
           ))}
         </SelectField>
         <SelectField
-          label="Table status"
+          label="牌桌状态"
           value={state.tableStatus}
           onChange={(event) => onStateChange({ tableStatus: event.currentTarget.value as TableStatus | '' })}
         >
-          <option value="">All</option>
-          <option value="WaitingPreparation">WaitingPreparation</option>
-          <option value="InProgress">InProgress</option>
-          <option value="Scoring">Scoring</option>
-          <option value="Archived">Archived</option>
-          <option value="AppealPending">AppealPending</option>
+          <option value="">全部</option>
+          <option value="WaitingPreparation">等待开始</option>
+          <option value="InProgress">对局中</option>
+          <option value="Scoring">结算中</option>
+          <option value="Archived">已结束</option>
+          <option value="AppealPending">申诉处理中</option>
         </SelectField>
         <TextInputField
-          label="Player id"
+          label="玩家编号"
           value={state.playerId}
           placeholder="player-123"
           onChange={(event) => onStateChange({ playerId: event.currentTarget.value.trim() })}
         />
         <SelectField
-          label="Appeal status"
+          label="申诉状态"
           value={state.appealStatus}
           onChange={(event) => onStateChange({ appealStatus: event.currentTarget.value as AppealSummary['status'] | '' })}
         >
-          <option value="">All</option>
-          <option value="Open">Open</option>
-          <option value="Resolved">Resolved</option>
-          <option value="Rejected">Rejected</option>
-          <option value="Escalated">Escalated</option>
+          <option value="">全部</option>
+          <option value="Open">处理中</option>
+          <option value="Resolved">已处理</option>
+          <option value="Rejected">已驳回</option>
+          <option value="Escalated">已升级</option>
         </SelectField>
       </WorkbenchContextPanel>
 

@@ -39,29 +39,29 @@ export function TournamentOverviewPanel({
   onToggleShowMore: () => void;
 }) {
   return (
-    <DetailCard title={<span className="text-[1.25rem] font-semibold">Tournament overview</span>}>
+    <DetailCard title={<span className="text-[1.25rem] font-semibold">赛事信息</span>}>
       <div className="grid gap-4">
         <DetailList>
           <DetailListItem
-            label="Status"
+            label="状态"
             value={<StatusPill tone={getStatusTone(profile.status)}>{getTournamentStatusLabel(profile.status)}</StatusPill>}
           />
-          <DetailListItem label="Organizer / venue" value={profile.venue} />
+          <DetailListItem label="主办方" value={profile.venue} />
           {showMoreInfo ? (
             <>
-              <DetailListItem label="Stage count" value={profile.stageCount} />
-              <DetailListItem label="Whitelist type" value={profile.whitelistType} />
-              <DetailListItem label="Club count" value={profile.clubCount ?? profile.clubIds?.length ?? 0} />
-              <DetailListItem label="Player count" value={profile.playerCount ?? 0} />
-              <DetailListItem label="Whitelist count" value={profile.whitelistCount ?? 0} />
-              <DetailListItem label="Next stage" value={profile.nextStageName} />
-              <DetailListItem label="Next scheduled time" value={formatDateTime(profile.nextScheduledAt)} />
+              <DetailListItem label="阶段数" value={profile.stageCount} />
+              <DetailListItem label="参赛类型" value={profile.whitelistType} />
+              <DetailListItem label="俱乐部数量" value={profile.clubCount ?? profile.clubIds?.length ?? 0} />
+              <DetailListItem label="玩家数量" value={profile.playerCount ?? 0} />
+              <DetailListItem label="白名单数量" value={profile.whitelistCount ?? 0} />
+              <DetailListItem label="下一阶段" value={profile.nextStageName} />
+              <DetailListItem label="下一次排程时间" value={formatDateTime(profile.nextScheduledAt)} />
             </>
           ) : null}
         </DetailList>
         <div className="flex flex-wrap gap-3">
           <Button variant="outline" onClick={onToggleShowMore}>
-            {showMoreInfo ? 'Show less' : 'Show more'}
+            {showMoreInfo ? '收起详情' : '展开详情'}
           </Button>
         </div>
       </div>
@@ -79,7 +79,7 @@ export function TournamentTablesPanel({
   canManageTournament: boolean;
 }) {
   return (
-    <DetailCard title={<span className="text-[1.25rem] font-semibold">Tournament tables</span>}>
+    <DetailCard title={<span className="text-[1.25rem] font-semibold">对局信息</span>}>
       <div className="grid gap-4">
         {visibleTables.length > 0 ? (
           <DetailRows>
@@ -96,7 +96,7 @@ export function TournamentTablesPanel({
                       <StatusPill tone={getTableStatusTone(table.status)}>{getTableStatusLabel(table.status)}</StatusPill>
                       <span>{playerLabel}</span>
                       <Link className="detail-link inline-flex" to={isFinished ? `/tables/${table.id}/paifu` : `/tables/${table.id}`}>
-                        {isFinished ? 'Open paifu' : 'Open table'}
+                        {isFinished ? '查看牌谱' : '进入牌桌'}
                       </Link>
                     </div>
                   }
@@ -107,8 +107,8 @@ export function TournamentTablesPanel({
         ) : (
           <EmptyState asListItem={false}>
             {canManageTournament
-              ? 'No tables are available yet. Schedule the next stage to populate the table queue.'
-              : 'No public tables are visible yet.'}
+              ? '当前还没有安排好的对局，请先生成对局名单。'
+              : '当前还没有可公开查看的对局。'}
           </EmptyState>
         )}
       </div>
@@ -134,17 +134,15 @@ export function TournamentInvitedClubsPanel({
   onInviteClub: () => void;
 }) {
   return (
-    <DetailCard
-      title={<span className="text-[1.25rem] font-semibold">{invitedClubs.length > 0 ? 'Participating clubs' : 'Invite clubs'}</span>}
-    >
+    <DetailCard title={<span className="text-[1.25rem] font-semibold">{invitedClubs.length > 0 ? '参赛俱乐部名单' : '邀请俱乐部'}</span>}>
       <div className="grid gap-4">
         {canManageTournament ? (
           <>
             <p className="m-0 text-[color:var(--muted)]">
-              Invite clubs into the tournament roster. Newly invited clubs will immediately appear in the participating list.
+              将俱乐部加入本赛事参赛名单。新邀请的俱乐部会立即出现在下方列表中。
             </p>
             <SelectField
-              label="Club"
+              label="俱乐部"
               value={selectedClubId}
               onChange={(event) => onSelectedClubIdChange(event.currentTarget.value)}
               disabled={isSubmittingTournamentAction || selectableClubs.length === 0}
@@ -156,7 +154,7 @@ export function TournamentInvitedClubsPanel({
                   </option>
                 ))
               ) : (
-                <option value="">No clubs available to invite</option>
+                <option value="">没有可邀请的俱乐部</option>
               )}
             </SelectField>
             <div className="flex flex-wrap gap-3">
@@ -164,7 +162,7 @@ export function TournamentInvitedClubsPanel({
                 onClick={onInviteClub}
                 disabled={!selectedClubId || isSubmittingTournamentAction || selectableClubs.length === 0}
               >
-                Invite club
+                邀请俱乐部
               </Button>
             </div>
           </>
@@ -179,13 +177,13 @@ export function TournamentInvitedClubsPanel({
                     {club.name}
                   </Link>
                 }
-                detail={`${club.memberCount} members / Power ${club.powerRating}`}
+                detail={`${club.memberCount} 名成员 / 战力 ${club.powerRating}`}
               />
             ))}
           </DetailRows>
         ) : (
           <EmptyState asListItem={false}>
-            {canManageTournament ? 'No clubs have been added to this tournament yet.' : 'No clubs are visible yet.'}
+            {canManageTournament ? '当前还没有俱乐部加入这场比赛。' : '当前还没有公布参赛俱乐部名单。'}
           </EmptyState>
         )}
       </div>
@@ -199,7 +197,7 @@ export function TournamentStagesPanel({
   stages: NonNullable<TournamentPublicProfile['stages']>;
 }) {
   return (
-    <DetailCard title="Stages">
+    <DetailCard title="阶段信息">
       <DetailRows>
         {stages.map((stage) => (
           <DetailRow
@@ -209,7 +207,7 @@ export function TournamentStagesPanel({
               <>
                 <StatusPill tone={getStatusTone(stage.status)}>{getStageStatusLabel(stage.status)}</StatusPill>
                 {' / '}
-                {stage.tableCount} tables / {stage.roundCount} rounds
+                {stage.tableCount} 桌 / {stage.roundCount} 轮
               </>
             }
           />
@@ -232,17 +230,15 @@ export function PublishBlockedDialog({
         <DialogOverlay />
         <DialogSurface>
           <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
-            <DialogTitle>Cannot publish yet</DialogTitle>
-            <DialogDescription>Add at least one participating club before publishing this tournament.</DialogDescription>
+            <DialogTitle>暂时无法发布比赛</DialogTitle>
+            <DialogDescription>请先至少选择一个参赛俱乐部，再发布这场比赛。</DialogDescription>
           </DialogHeader>
           <DialogBody className="px-6 py-5">
-            <p className="m-0 text-[color:var(--muted)]">
-              Invite or register a club first, then try publishing again.
-            </p>
+            <p className="m-0 text-[color:var(--muted)]">请先邀请或登记俱乐部参赛，然后再尝试发布。</p>
           </DialogBody>
           <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
             <Button variant="secondary" onClick={() => onOpenChange(false)}>
-              Close
+              关闭
             </Button>
           </DialogFooter>
         </DialogSurface>

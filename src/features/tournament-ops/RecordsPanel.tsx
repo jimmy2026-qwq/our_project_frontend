@@ -7,11 +7,11 @@ import { formatDateTime, type LoadState } from './data';
 export function RecordsPanel({ payload }: { payload: LoadState<MatchRecordSummary> }) {
   return (
     <DataTablePanel
-      title="Match Records"
-      description="Recent records related to the active tournament stage."
+      title="对局记录"
+      description="当前赛事阶段相关的最近记录。"
       source={payload.source}
       warning={payload.warning}
-      headers={['Record', 'Table', 'Recorded at', 'Summary']}
+      headers={['记录编号', '牌桌', '记录时间', '摘要']}
       rows={payload.envelope.items.map((record) => (
         <TableRow key={record.id}>
           <TableCell>
@@ -22,7 +22,7 @@ export function RecordsPanel({ payload }: { payload: LoadState<MatchRecordSummar
           <TableCell>{record.summary}</TableCell>
         </TableRow>
       ))}
-      emptyText="No match records were returned for the current filters."
+      emptyText="当前筛选条件下没有返回任何对局记录。"
     />
   );
 }

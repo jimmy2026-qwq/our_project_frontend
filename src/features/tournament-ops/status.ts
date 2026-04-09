@@ -3,15 +3,15 @@ import type { TableStatus } from '@/domain/common';
 export function getTableStatusLabel(status: TableStatus) {
   switch (status) {
     case 'WaitingPreparation':
-      return '閺堫亜绱戝?';
+      return '等待开始';
     case 'InProgress':
-      return '鐎电懓鐪稉?';
+      return '对局中';
     case 'Scoring':
-      return '缂佹挾鐣绘稉?';
+      return '结算中';
     case 'Archived':
-      return '瀹歌尙绮ㄩ弶?';
+      return '已结束';
     case 'AppealPending':
-      return '閻㈠疇鐦旀稉?';
+      return '申诉处理中';
     default:
       return status;
   }
