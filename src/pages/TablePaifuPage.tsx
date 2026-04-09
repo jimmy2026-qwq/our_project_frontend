@@ -2,19 +2,38 @@ import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { ApiError } from '@/api/http';
-import { operationsApi, type TablePaifuDetail } from '@/api/operations';
-import { Alert, AlertDescription, AlertTitle, Badge, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, LoadingProgress, Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui';
+import { operationsApi } from '@/api/operations';
+import {
+  Alert,
+  AlertDescription,
+  AlertTitle,
+  Badge,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  LoadingProgress,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui';
+import type { TablePaifuDetail } from '@/domain/operations';
 
 function getOutcomeLabel(outcome: string) {
   switch (outcome) {
     case 'Tsumo':
-      return '自摸';
+      return 'Tsumo';
     case 'Ron':
-      return '荣和';
+      return 'Ron';
     case 'ExhaustiveDraw':
-      return '流局';
+      return 'Exhaustive Draw';
     case 'AbortiveDraw':
-      return '途中流局';
+      return 'Abortive Draw';
     default:
       return outcome;
   }
@@ -39,7 +58,7 @@ export function TablePaifuPage() {
         if (!cancelled) {
           setPaifu(payload.items[0] ?? null);
           if (!payload.items[0]) {
-            setError('当前牌桌还没有可查看的牌谱。');
+            setError('No paifu record is available for this table yet.');
           }
         }
       } catch (loadError) {
@@ -50,7 +69,7 @@ export function TablePaifuPage() {
               ? loadError.message
               : loadError instanceof Error
                 ? loadError.message
-                : '牌谱暂时无法加载。',
+                : 'Failed to load paifu details.',
           );
         }
       } finally {
@@ -63,7 +82,7 @@ export function TablePaifuPage() {
     if (tableId) {
       void loadPaifu();
     } else {
-      setError('缺少牌桌编号。');
+      setError('Missing table id.');
       setIsLoading(false);
     }
 
@@ -74,11 +93,15 @@ export function TablePaifuPage() {
 
   const rounds = useMemo(() => paifu?.rounds ?? [], [paifu]);
   const standings = useMemo(() => paifu?.finalStandings ?? [], [paifu]);
+  const backLink = paifu?.metadata.tournamentId ? `/public/tournaments/${paifu.metadata.tournamentId}` : '/public';
 
   if (isLoading) {
     return (
       <section className="grid gap-6">
-        <LoadingProgress label="正在加载牌谱" message="正在读取当前牌桌归档后的牌谱记录。" />
+        <LoadingProgress
+          label="Loading paifu"
+          message="Fetching the archived match record and round summaries."
+        />
       </section>
     );
   }
@@ -88,30 +111,30 @@ export function TablePaifuPage() {
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="grid gap-2">
           <div className="flex flex-wrap items-center gap-3">
-            <Badge>牌谱查看</Badge>
-            {paifu ? <Badge>已归档</Badge> : null}
+            <Badge>Table Paifu</Badge>
+            {paifu ? <Badge>Archived match</Badge> : null}
           </div>
           <div>
-            <h1 className="text-[clamp(2rem,3vw,2.5rem)] font-semibold text-[color:var(--text)]">牌桌牌谱</h1>
-            <p className="text-[color:var(--muted-strong)]">牌桌编号 {tableId}</p>
+            <h1 className="text-[clamp(2rem,3vw,2.5rem)] font-semibold text-[color:var(--text)]">Table Paifu</h1>
+            <p className="text-[color:var(--muted-strong)]">Table id {tableId}</p>
           </div>
         </div>
         <div className="flex flex-wrap gap-3">
           <Button variant="outline" onClick={() => forceReload()}>
-            刷新牌谱
+            Refresh
           </Button>
           <Link
-            to="/tournament-ops"
+            to={backLink}
             className="inline-flex min-h-[42px] items-center justify-center rounded-2xl border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] px-4 py-2.5 text-[color:var(--text)] no-underline transition-[transform,border-color] duration-200 hover:-translate-y-px"
           >
-            返回赛事运营台
+            Back to tournament
           </Link>
         </div>
       </div>
 
       {error ? (
         <Alert variant="warning">
-          <AlertTitle>暂无牌谱</AlertTitle>
+          <AlertTitle>Paifu unavailable</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       ) : null}
@@ -120,17 +143,17 @@ export function TablePaifuPage() {
         <>
           <Card>
             <CardHeader>
-              <CardTitle>结算结果</CardTitle>
-              <CardDescription>记录当前牌桌的最终名次与点数。</CardDescription>
+              <CardTitle>Final Standings</CardTitle>
+              <CardDescription>Review the archived finishing order and final points for the table.</CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>名次</TableHead>
-                    <TableHead>玩家</TableHead>
-                    <TableHead>方位</TableHead>
-                    <TableHead>最终点数</TableHead>
+                    <TableHead>Place</TableHead>
+                    <TableHead>Player</TableHead>
+                    <TableHead>Seat</TableHead>
+                    <TableHead>Points</TableHead>
                     <TableHead>Uma</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -151,8 +174,8 @@ export function TablePaifuPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>局回顾</CardTitle>
-              <CardDescription>先展示每局的结果摘要和动作数量，便于快速核对归档内容。</CardDescription>
+              <CardTitle>Round Timeline</CardTitle>
+              <CardDescription>Each block summarizes the round descriptor, outcome, and key scoring details.</CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               {rounds.map((round, index) => (
@@ -162,19 +185,21 @@ export function TablePaifuPage() {
                 >
                   <div className="mb-2 flex flex-wrap items-center gap-3">
                     <strong>
-                      {round.descriptor.roundWind} {round.descriptor.handNumber} 局
+                      {round.descriptor.roundWind} {round.descriptor.handNumber}
                     </strong>
                     <Badge>{getOutcomeLabel(round.result.outcome)}</Badge>
-                    <span className="text-sm text-[color:var(--muted-strong)]">本场动作数 {round.actions.length}</span>
+                    <span className="text-sm text-[color:var(--muted-strong)]">
+                      Actions: {round.actions.length}
+                    </span>
                   </div>
                   <div className="grid gap-1 text-sm text-[color:var(--muted-strong)]">
-                    <span>和牌者：{round.result.winner ?? '无'}</span>
-                    <span>放铳者：{round.result.target ?? '无'}</span>
+                    <span>Winner: {round.result.winner ?? 'N/A'}</span>
+                    <span>Target: {round.result.target ?? 'N/A'}</span>
                     <span>
-                      番符：{round.result.han ?? '-'} 番 / {round.result.fu ?? '-'} 符
+                      Han/Fu: {round.result.han ?? '-'} / {round.result.fu ?? '-'}
                     </span>
-                    <span>点数：{round.result.points}</span>
-                    <span>本局场棒：{round.descriptor.honba}</span>
+                    <span>Points: {round.result.points}</span>
+                    <span>Honba: {round.descriptor.honba}</span>
                   </div>
                 </div>
               ))}

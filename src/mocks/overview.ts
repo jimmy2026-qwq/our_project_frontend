@@ -9,7 +9,7 @@ import type {
   PublicSchedule,
   TournamentPublicProfile,
   TournamentTableSummary,
-} from '../domain/models';
+} from '@/domain';
 
 export const mockSchedules: PublicSchedule[] = [
   {

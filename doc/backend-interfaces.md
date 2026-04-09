@@ -1,28 +1,137 @@
 # Backend Interfaces
 
-## Club Tournament Participation API
+This document records the backend changes that are still recommended after the current frontend structure cleanup.
 
-The frontend currently has to infer a club's "invited / participating tournaments" by reading tournament lists and filtering `participatingClubs` on the client.
+It replaces the older single-topic note about club tournament participation with a broader review of the active frontend/backend integration.
 
-That works as a temporary bridge, but it is not the right long-term contract.
+## Current Summary
 
-The backend should provide an explicit club-facing tournament participation API so the frontend does not have to guess semantics from multiple endpoints.
+The frontend is now in a much better state structurally:
 
-## Why This Should Move To The Backend
+- feature code no longer depends directly on most backend contract files
+- domain types, API contracts, and feature-local types are more clearly separated
+- several oversized feature files have been split
 
-- The backend is the source of truth for invitation and participation state.
-- The frontend is currently doing an `N+1` read pattern: list tournaments, then fetch details, then filter by `clubId`.
-- If statuses expand later, the current client-side inference will become unreliable.
-- Permission-sensitive views are easier to control from a dedicated backend contract.
+However, the backend interfaces are not yet uniformly aligned in the same way as the template project.
 
-## Recommended Primary Endpoint
+The current situation is mixed:
 
-### `GET /clubs/:clubId/tournaments`
+- `public/*` is mostly view-driven already
+- `clubs/*` is partly view-driven, but the frontend still keeps historical compatibility handling
+- `auth/*` is stable enough to use, but still exposes two related response shapes that the frontend currently normalizes together
+- `tournaments/*` and several tournament write endpoints still expose raw domain aggregates rather than dedicated frontend-facing views
 
-Purpose:
+## Priority 1: Tournament Operations Needs Backend Changes
 
-- return the tournaments that are relevant to one club from the club's point of view
-- support both public display and club-admin workflows
+### Why
+
+This is the largest remaining contract mismatch.
+
+The frontend currently consumes a narrowed contract for tournament detail and lineup flows, but the backend routes still return the raw `Tournament` aggregate for several key endpoints.
+
+Current backend examples:
+
+- `GET /tournaments/:tournamentId`
+- `POST /tournaments/:tournamentId/publish`
+- `POST /tournaments/:tournamentId/stages/:stageId/lineups`
+- `POST /tournaments/:tournamentId/stages/:stageId/schedule`
+- `POST /tournaments/:tournamentId/clubs/:clubId`
+
+These routes currently return the domain aggregate instead of a dedicated frontend-facing detail view.
+
+That means the frontend is effectively depending on only a subset of a much larger backend model, which is workable but fragile.
+
+### Recommended backend change
+
+Introduce a dedicated tournament-facing response model for the operations workbench.
+
+Suggested direction:
+
+- add `TournamentDetailView`
+- optionally add `TournamentMutationView` if mutation responses should be slimmer than read responses
+- return those views consistently from the routes above instead of the raw `Tournament`
+
+### Minimum stable fields
+
+The frontend workbench currently needs these categories to stay explicit and stable:
+
+- tournament identity and lifecycle status
+- organizer, startsAt, endsAt
+- participating clubs and players
+- whitelist summary
+- stages with:
+  - `id`
+  - `name`
+  - `format`
+  - `order`
+  - `status`
+  - `currentRound`
+  - `roundCount`
+  - `schedulingPoolSize`
+  - `pendingTablePlanCount`
+  - `scheduledTableCount`
+  - `lineupSubmissions`
+
+### Why frontend-only cleanup is not enough
+
+The frontend can keep trimming and renaming its local types, but as long as these routes return raw aggregates, it still has to guess which subset is safe to rely on.
+
+This is the main place where backend participation is required.
+
+## Priority 2: Club Application Contracts Should Be Tightened
+
+### Why
+
+The backend already builds a dedicated `ClubMembershipApplicationView`, which is good.
+
+But the frontend still keeps compatibility logic for fields that may arrive as:
+
+- `string`
+- `string[]`
+- `number`
+- `number[]`
+
+That compatibility layer suggests the frontend still does not fully trust the live response shape.
+
+### Recommended backend change
+
+Confirm and preserve the current `ClubMembershipApplicationView` serialization as the single supported response shape for:
+
+- `GET /clubs/:clubId/applications`
+- `GET /clubs/:clubId/applications/:applicationId`
+- `POST /clubs/:clubId/applications/:applicationId/review`
+
+If the current backend output is already stable and scalar-valued, the frontend can remove its historical fallback unwrapping afterward.
+
+### Optional follow-up backend improvements
+
+- expose an explicit response schema in OpenAPI for the application list and detail routes
+- keep guest-origin application approval semantics explicit in the review contract
+- document whether `message`, `reviewNote`, `reviewedBy`, and similar fields are always scalar-or-null
+
+### What the frontend can do before backend work lands
+
+- continue using the existing compatibility mapper
+- progressively isolate the compatibility code to one mapper boundary
+
+## Priority 3: Club Tournament Participation Needs A Dedicated Contract
+
+### Why
+
+This is the older gap already identified before the larger review, and it is still valid.
+
+The frontend currently infers a club's tournament participation by combining:
+
+- public club detail
+- recent matches
+- tournament lists
+- tournament detail checks against `participatingClubs`
+
+That is still only a temporary bridge.
+
+### Recommended endpoint
+
+`GET /clubs/:clubId/tournaments`
 
 Suggested query params:
 
@@ -31,11 +140,11 @@ Suggested query params:
   - `active`
   - `all`
 - `viewer`
-  - optional operator id if the backend wants to tailor admin-only fields
+  - optional operator id for role-sensitive fields
 - `limit`
 - `offset`
 
-Suggested response:
+Suggested response shape:
 
 ```json
 {
@@ -60,117 +169,63 @@ Suggested response:
 }
 ```
 
-## Recommended Status Field
+### Related write endpoints that still do not clearly exist
 
-Use a dedicated club-facing status instead of forcing the frontend to infer meaning from `participatingClubs`.
-
-Suggested enum:
-
-- `Invited`
-- `Participating`
-- `Declined`
-- `Withdrawn`
-- `Finished`
-
-Notes:
-
-- If the current backend model has no separate invitation state yet, it is still okay to start with only:
-  - `Participating`
-  - `Finished`
-- But the response field should still exist, so the contract can grow without reshaping the UI again.
-
-## Optional Admin-Oriented Endpoint
-
-### `GET /clubs/:clubId/tournament-invitations`
-
-Purpose:
-
-- only return invitations or actionable participation items for club admins
-
-Suggested response item:
-
-```json
-{
-  "tournamentId": "tournament-7ade2f22",
-  "name": "Spring Open",
-  "status": "Invited",
-  "invitedAt": "2026-04-07T08:00:00Z",
-  "invitedBy": "player-3002d0a9",
-  "requiresLineup": true,
-  "canAccept": true,
-  "canDecline": true
-}
-```
-
-If the backend prefers one endpoint only, this information can also be folded into `GET /clubs/:clubId/tournaments`.
-
-## Decline / Withdraw Capability
-
-The frontend checked the current backend routes and services and did not find a formal "decline tournament participation" or "remove club from tournament" API.
-
-Current relevant capability that does exist:
+The current backend clearly supports registering a club into a tournament:
 
 - `POST /tournaments/:tournamentId/clubs/:clubId`
-  - registers a club into a tournament
 
-Current capability that does not appear to exist yet:
+But a full club-facing lifecycle still appears incomplete:
 
-- club declines an invitation
-- club withdraws from a tournament
+- club declines invitation
+- club withdraws from participation
 - tournament admin removes a club from participation
 
-## Recommended Write Endpoints
+Suggested endpoints:
 
-### Club admin declines invitation
+- `POST /clubs/:clubId/tournaments/:tournamentId/decline`
+- `POST /clubs/:clubId/tournaments/:tournamentId/accept`
+- `POST /tournaments/:tournamentId/clubs/:clubId/remove`
 
-`POST /clubs/:clubId/tournaments/:tournamentId/decline`
+## Priority 4: Auth Contracts Can Be Clarified, But This Is Not A Blocker
 
-Suggested request:
+### Current situation
 
-```json
-{
-  "operatorId": "player-db4bb589",
-  "note": "Club will not participate this split"
-}
-```
+The backend already distinguishes:
 
-### Club admin accepts invitation
+- login/register success response
+- auth session lookup response
 
-If the backend later adds a real invitation state:
+These are close enough for the frontend to normalize safely.
 
-`POST /clubs/:clubId/tournaments/:tournamentId/accept`
+### Recommended backend change
 
-If the backend keeps the current "register directly" model, this endpoint may be unnecessary.
+This is optional, not urgent:
 
-### Tournament admin removes a club
+- keep `AuthSuccessView` and `AuthSessionView` explicit in OpenAPI and docs
+- avoid widening them into a looser shared shape at the backend layer
 
-`POST /tournaments/:tournamentId/clubs/:clubId/remove`
+### Frontend-only cleanup is acceptable here
 
-Suggested request:
+The frontend can independently keep these two response shapes separate in its contract layer without requiring backend work.
 
-```json
-{
-  "operatorId": "player-3002d0a9",
-  "note": "Removed after club requested withdrawal"
-}
-```
+## Frontend-Only Work Still Worth Doing
 
-## Frontend Use After This API Exists
+The frontend can continue improving these areas without waiting for backend changes:
 
-Once the backend provides this contract, the frontend should:
+- keep `auth` login/session contracts separate instead of treating them as one wide payload
+- consume more optional stable fields from public list/detail responses where useful
+- keep reducing feature-local compatibility logic so mismatches stay isolated to API mappers
 
-- stop scanning all tournaments to discover club participation
-- read club tournament items directly from the club endpoint
-- show "查看赛事详情" using the returned `tournamentId`
-- show club-admin actions only when `canAccept`, `canDecline`, or `canSubmitLineup` is true
+## Recommended Order
 
-## Current Temporary Frontend Behavior
+1. Backend: introduce tournament operations detail/mutation views
+2. Backend + frontend: tighten club application response guarantees and remove legacy array/scalar compatibility handling
+3. Backend: add dedicated club tournament participation endpoints
+4. Frontend: continue contract cleanup for auth and public summary/detail consumption
 
-Right now the frontend:
+## Working Rule
 
-- reads `GET /public/clubs/:clubId`
-- keeps `recentMatches` as the base "Recent tournaments" data
-- separately reads tournaments and filters `participatingClubs`
-- merges those into the same list
+If an endpoint already returns a dedicated frontend-facing view, frontend-only cleanup is usually enough.
 
-This is only a temporary compatibility layer and should be removed after the backend provides a dedicated contract.
+If an endpoint still returns a raw aggregate directly from the domain model, treat it as a backend interface problem and prefer fixing the contract at the source.

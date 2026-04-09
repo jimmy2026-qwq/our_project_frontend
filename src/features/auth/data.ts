@@ -1,6 +1,6 @@
-import { authApi, type BackendAuthPayload } from '@/api/auth';
+import { authApi } from '@/api/auth';
 import { ApiError } from '@/api/http';
-import type { AuthRoleFlags, AuthSession, AuthUser, LoginPayload, RegisterPayload, SessionInfo } from '@/domain/models';
+import type { AuthRoleFlags, AuthSession, AuthUser, LoginPayload, RegisterPayload, SessionInfo } from '@/domain/auth';
 
 const AUTH_USERS_STORAGE_KEY = 'riichi-nexus.auth.users';
 const AUTH_SESSION_STORAGE_KEY = 'riichi-nexus.auth.session';
@@ -18,6 +18,9 @@ interface StoredSessionRecord {
   token: string;
   user: AuthUser;
 }
+
+type BackendAuthPayload = Awaited<ReturnType<typeof authApi.login>>;
+type BackendSessionPayload = Awaited<ReturnType<typeof authApi.getAuthSession>>;
 
 let seedUsersCache: StoredAuthUserRecord[] | null = null;
 const DEFAULT_REGISTERED_DEMO_OPERATOR_ID = 'player-4';
@@ -136,8 +139,8 @@ function persistSession(session: AuthSession | null) {
   window.localStorage.setItem(AUTH_SESSION_STORAGE_KEY, JSON.stringify(record));
 }
 
-function mapBackendAuthSession(payload: BackendAuthPayload, tokenOverride?: string): AuthSession {
-  const token = tokenOverride ?? payload.token;
+function mapBackendAuthSession(payload: BackendAuthPayload | BackendSessionPayload, tokenOverride?: string): AuthSession {
+  const token = tokenOverride ?? ('token' in payload ? payload.token : undefined);
 
   if (!token) {
     throw new Error('Authenticated session token is missing from the backend response.');

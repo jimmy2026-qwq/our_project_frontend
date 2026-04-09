@@ -1,7 +1,9 @@
 import { authApi } from '@/api/auth';
-import { clubsApi, type RawClubApplicationMutationResponse } from '@/api/clubs';
+import { clubsApi } from '@/api/clubs';
 import { ApiError } from '@/api/http';
-import type { ClubApplication, ClubSummary, PlayerProfile } from '@/domain/models';
+import type { PlayerProfile } from '@/domain/auth';
+import type { ClubApplication } from '@/domain/clubs';
+import type { ClubSummary } from '@/domain/public';
 import {
   readClubApplicationInboxItem,
   readClubApplicationsByOperator,
@@ -42,6 +44,8 @@ export interface HomeClubApplicationState {
 }
 
 const mockApplications = new Map<string, ClubApplication>();
+
+type ClubApplicationMutation = Awaited<ReturnType<typeof clubsApi.submitClubApplication>>;
 
 export function formatDateTime(value: string) {
   const timestamp = Date.parse(value);
@@ -166,7 +170,7 @@ function toClubApplicationViewModel(view: {
 function toClubApplicationMutationModel(
   clubId: string,
   fallbackApplicantName: string,
-  application: RawClubApplicationMutationResponse,
+  application: ClubApplicationMutation,
 ): ClubApplication {
   return {
     id: application.id,

@@ -1,27 +1,20 @@
 import type {
-  AuthSession,
   DemoSummary,
   GuestSession,
   LoginPayload,
   PlayerProfile,
   RegisterPayload,
   SessionInfo,
-} from '../domain/models';
-import { toQueryString } from '../lib/query';
+} from '@/domain';
+import { toQueryString } from '@/lib/query';
+import type {
+  ApiMessagePayloadContract,
+  AuthSessionContract,
+  AuthSuccessContract,
+  CreatedPlayerContract,
+  PlayerProfileContract,
+} from './contracts/auth';
 import { encodeBackendOption, request, sendJson } from './http';
-
-export interface BackendAuthPayload {
-  userId: string;
-  username: string;
-  displayName: string;
-  token?: string;
-  authenticated?: boolean;
-  roles: AuthSession['user']['roles'];
-}
-
-export interface ApiMessagePayload {
-  message: string;
-}
 
 export interface SessionQuery {
   operatorId?: string;
@@ -41,30 +34,13 @@ export interface CreatePlayerPayload {
   initialElo?: number;
 }
 
-export interface CreatedPlayer {
-  id: string;
-  userId: string;
-  nickname: string;
-  elo: number;
-}
-
 export interface DemoSummaryQuery {
   variant?: 'Basic' | 'Leaderboard' | 'Appeal';
   bootstrapIfMissing?: boolean;
   refreshDerived?: boolean;
 }
 
-interface RawPlayerProfile {
-  id: string;
-  userId?: string;
-  nickname: string;
-  status?: 'Active' | 'Inactive' | 'Banned';
-  elo?: number;
-  boundClubIds?: string[];
-  clubId?: string[];
-}
-
-function mapPlayerProfile(item: RawPlayerProfile): PlayerProfile {
+function mapPlayerProfile(item: PlayerProfileContract): PlayerProfile {
   return {
     playerId: item.id,
     applicantUserId: item.userId,
@@ -77,20 +53,20 @@ function mapPlayerProfile(item: RawPlayerProfile): PlayerProfile {
 
 export const authApi = {
   login(payload: LoginPayload) {
-    return sendJson<BackendAuthPayload>('/auth/login', 'POST', payload);
+    return sendJson<AuthSuccessContract>('/auth/login', 'POST', payload);
   },
   register(payload: RegisterPayload) {
-    return sendJson<BackendAuthPayload>('/auth/register', 'POST', payload);
+    return sendJson<AuthSuccessContract>('/auth/register', 'POST', payload);
   },
   getAuthSession(token: string) {
-    return request<BackendAuthPayload>('/auth/session', {
+    return request<AuthSessionContract>('/auth/session', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
   },
   logout(token: string) {
-    return sendJson<ApiMessagePayload>(
+    return sendJson<ApiMessagePayloadContract>(
       '/auth/logout',
       'POST',
       {},
@@ -129,7 +105,7 @@ export const authApi = {
     );
   },
   createPlayer(payload: CreatePlayerPayload) {
-    return sendJson<CreatedPlayer>(
+    return sendJson<CreatedPlayerContract>(
       '/players',
       'POST',
       {
@@ -143,12 +119,12 @@ export const authApi = {
     );
   },
   getCurrentPlayer(operatorId: string) {
-    return request<RawPlayerProfile>(`/players/me${toQueryString({ operatorId })}`).then(
+    return request<PlayerProfileContract>(`/players/me${toQueryString({ operatorId })}`).then(
       mapPlayerProfile,
     );
   },
   getPlayer(playerId: string) {
-    return request<RawPlayerProfile>(`/players/${playerId}`).then(mapPlayerProfile);
+    return request<PlayerProfileContract>(`/players/${playerId}`).then(mapPlayerProfile);
   },
   getDemoSummary(filters: DemoSummaryQuery = {}) {
     return request<DemoSummary>(

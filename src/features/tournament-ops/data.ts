@@ -5,7 +5,7 @@ import type {
   MatchRecordSummary,
   TableStatus,
   TournamentTableSummary,
-} from '@/domain/models';
+} from '@/domain';
 import { mockAppeals, mockRecords, mockTournamentTables, toMockEnvelope } from '@/mocks/overview';
 
 export type DataSource = 'api' | 'mock';

@@ -1,11 +1,17 @@
 import type {
-  ClubApplication,
   ClubApplicationView,
   ClubSummary,
   ListEnvelope,
   PlayerProfile,
-} from '../domain/models';
-import { toQueryString } from '../lib/query';
+} from '@/domain';
+import { toQueryString } from '@/lib/query';
+import type {
+  ClubApplicationMutationResponseContract,
+  ClubApplicationViewContract,
+  ClubApplicationApplicantContract,
+  ClubContract,
+  ClubMemberContract,
+} from './contracts/clubs';
 import { encodeBackendOption, mapEnvelope, request, sendJson } from './http';
 
 export interface ClubFilters {
@@ -46,69 +52,7 @@ export interface ReviewClubApplicationPayload {
   playerId?: string;
 }
 
-export interface RawClubApplicationMutationResponse {
-  id: string;
-  applicantUserId?: string | null;
-  displayName: string;
-  submittedAt: string;
-  message?: string | null;
-  status: ClubApplication['status'];
-  reviewedBy?: string | null;
-  reviewedAt?: string | null;
-  reviewNote?: string | null;
-  withdrawnByPrincipalId?: string | null;
-}
-
-interface RawClubApplicationView {
-  applicationId: string;
-  clubId: string;
-  clubName: string;
-  applicant: {
-    playerId?: string[] | string;
-    applicantUserId?: string[] | string;
-    displayName: string;
-    playerStatus?: string[] | string;
-    elo?: number[] | number;
-    clubIds?: string[];
-  };
-  submittedAt: string;
-  message?: string[] | string;
-  status: ClubApplicationView['status'];
-  reviewedBy?: string[] | string;
-  reviewedByDisplayName?: string[] | string;
-  reviewedAt?: string[] | string;
-  reviewNote?: string[] | string;
-  withdrawnByPrincipalId?: string[] | string;
-  canReview: boolean;
-  canWithdraw: boolean;
-}
-
-interface RawPublicClubRelation {
-  relation: 'Alliance' | 'Rivalry' | 'Neutral';
-}
-
-interface RawClub {
-  id: string;
-  name: string;
-  members: string[];
-  powerRating: number;
-  treasuryBalance?: number;
-  totalPoints?: number;
-  pointPool?: number;
-  relations?: RawPublicClubRelation[];
-  dissolvedAt?: string | null;
-}
-
-interface RawClubMember {
-  id: string;
-  userId?: string;
-  nickname: string;
-  status?: 'Active' | 'Inactive' | 'Banned';
-  elo?: number;
-  clubId?: string[];
-}
-
-function mapClub(item: RawClub): ClubSummary {
+function mapClub(item: ClubContract): ClubSummary {
   return {
     id: item.id,
     name: item.name,
@@ -121,7 +65,7 @@ function mapClub(item: RawClub): ClubSummary {
   };
 }
 
-function mapClubMember(item: RawClubMember): PlayerProfile {
+function mapClubMember(item: ClubMemberContract): PlayerProfile {
   return {
     playerId: item.id,
     applicantUserId: item.userId,
@@ -140,27 +84,46 @@ function unwrapFirst<T>(value?: T[] | T | null): T | null {
   return value ?? null;
 }
 
-function mapClubApplicationView(item: RawClubApplicationView): ClubApplicationView {
+function normalizeApplicant(applicant: ClubApplicationApplicantContract): ClubApplicationView['applicant'] {
   return {
-    applicationId: item.applicationId,
-    clubId: item.clubId,
-    clubName: item.clubName,
-    applicant: {
-      playerId: unwrapFirst(item.applicant.playerId) ?? '',
-      applicantUserId: unwrapFirst(item.applicant.applicantUserId) ?? undefined,
-      displayName: item.applicant.displayName,
-      playerStatus: (unwrapFirst(item.applicant.playerStatus) as PlayerProfile['playerStatus']) ?? undefined,
-      elo: unwrapFirst(item.applicant.elo) ?? undefined,
-      clubIds: item.applicant.clubIds ?? [],
-    },
-    submittedAt: item.submittedAt,
+    playerId: unwrapFirst(applicant.playerId) ?? '',
+    applicantUserId: unwrapFirst(applicant.applicantUserId) ?? undefined,
+    displayName: applicant.displayName,
+    playerStatus:
+      (unwrapFirst(applicant.playerStatus) as PlayerProfile['playerStatus']) ?? undefined,
+    currentRank: unwrapFirst(applicant.currentRank) ?? undefined,
+    elo: unwrapFirst(applicant.elo) ?? undefined,
+    clubIds: applicant.clubIds ?? [],
+  };
+}
+
+function normalizeApplicationOptionalFields(item: ClubApplicationViewContract) {
+  return {
     message: unwrapFirst(item.message) ?? '',
-    status: item.status,
     reviewedBy: unwrapFirst(item.reviewedBy),
     reviewedByDisplayName: unwrapFirst(item.reviewedByDisplayName),
     reviewedAt: unwrapFirst(item.reviewedAt),
     reviewNote: unwrapFirst(item.reviewNote),
     withdrawnByPrincipalId: unwrapFirst(item.withdrawnByPrincipalId),
+  };
+}
+
+function mapClubApplicationView(item: ClubApplicationViewContract): ClubApplicationView {
+  const optionalFields = normalizeApplicationOptionalFields(item);
+
+  return {
+    applicationId: item.applicationId,
+    clubId: item.clubId,
+    clubName: item.clubName,
+    applicant: normalizeApplicant(item.applicant),
+    submittedAt: item.submittedAt,
+    message: optionalFields.message,
+    status: item.status,
+    reviewedBy: optionalFields.reviewedBy,
+    reviewedByDisplayName: optionalFields.reviewedByDisplayName,
+    reviewedAt: optionalFields.reviewedAt,
+    reviewNote: optionalFields.reviewNote,
+    withdrawnByPrincipalId: optionalFields.withdrawnByPrincipalId,
     canReview: item.canReview,
     canWithdraw: item.canWithdraw,
   };
@@ -168,17 +131,17 @@ function mapClubApplicationView(item: RawClubApplicationView): ClubApplicationVi
 
 export const clubsApi = {
   getClubs(filters: ClubFilters) {
-    return request<ListEnvelope<RawClub>>(`/clubs${toQueryString(filters)}`).then((envelope) =>
+    return request<ListEnvelope<ClubContract>>(`/clubs${toQueryString(filters)}`).then((envelope) =>
       mapEnvelope(envelope, mapClub),
     );
   },
   getClubMembers(clubId: string, filters: { status?: string; nickname?: string; limit?: number; offset?: number } = {}) {
-    return request<ListEnvelope<RawClubMember>>(`/clubs/${clubId}/members${toQueryString(filters)}`).then(
+    return request<ListEnvelope<ClubMemberContract>>(`/clubs/${clubId}/members${toQueryString(filters)}`).then(
       (envelope) => mapEnvelope(envelope, mapClubMember),
     );
   },
   submitClubApplication(clubId: string, payload: ClubApplicationPayload) {
-    return sendJson<RawClubApplicationMutationResponse>(`/clubs/${clubId}/applications`, 'POST', {
+    return sendJson<ClubApplicationMutationResponseContract>(`/clubs/${clubId}/applications`, 'POST', {
       applicantUserId: encodeBackendOption(undefined),
       displayName: payload.displayName,
       message: encodeBackendOption(payload.message),
@@ -191,7 +154,7 @@ export const clubsApi = {
     membershipId: string,
     payload: WithdrawClubApplicationPayload,
   ) {
-    return sendJson<RawClubApplicationMutationResponse>(
+    return sendJson<ClubApplicationMutationResponseContract>(
       `/clubs/${clubId}/applications/${membershipId}/withdraw`,
       'POST',
       {
@@ -202,7 +165,7 @@ export const clubsApi = {
     );
   },
   getClubApplications(clubId: string, filters: ClubApplicationListFilters) {
-    return request<ListEnvelope<RawClubApplicationView>>(
+    return request<ListEnvelope<ClubApplicationViewContract>>(
       `/clubs/${clubId}/applications${toQueryString(filters)}`,
     ).then((envelope) => mapEnvelope(envelope, mapClubApplicationView));
   },
@@ -211,7 +174,7 @@ export const clubsApi = {
     membershipId: string,
     filters: { operatorId?: string; guestSessionId?: string },
   ) {
-    return request<RawClubApplicationView>(
+    return request<ClubApplicationViewContract>(
       `/clubs/${clubId}/applications/${membershipId}${toQueryString(filters)}`,
     ).then(mapClubApplicationView);
   },
@@ -220,7 +183,7 @@ export const clubsApi = {
     membershipId: string,
     payload: ReviewClubApplicationPayload,
   ) {
-    return sendJson<RawClubApplicationView>(
+    return sendJson<ClubApplicationViewContract>(
       `/clubs/${clubId}/applications/${membershipId}/review`,
       'POST',
       {

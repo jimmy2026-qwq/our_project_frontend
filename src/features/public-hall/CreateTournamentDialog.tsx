@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { operationsApi, type TournamentFormat } from '@/api/operations';
+import { operationsApi } from '@/api/operations';
 import { FieldGroup, SelectField, TextInputField } from '@/components/shared/forms';
 import { ActionButton } from '@/components/shared/layout';
 import {
@@ -15,6 +15,7 @@ import {
   DialogSurface,
   DialogTitle,
 } from '@/components/ui';
+import type { TournamentFormat } from '@/domain/operations';
 import { useAuth, useNotice } from '@/hooks';
 
 const LABEL_CREATE = '\u65b0\u5efa\u6bd4\u8d5b';

@@ -25,7 +25,7 @@ import {
   DialogTitle,
   StatusPill,
 } from '@/components/ui';
-import type { ClubSummary } from '@/domain/models';
+import type { ClubSummary } from '@/domain/public';
 
 function getApplicationTone(status?: HomeClubApplicationState['application']['application'] extends infer T
   ? T extends { status: infer S }

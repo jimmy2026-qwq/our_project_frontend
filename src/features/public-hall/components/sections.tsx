@@ -6,7 +6,7 @@ import { EmptyState } from '@/components/shared/feedback';
 import { CheckboxField, SelectField } from '@/components/shared/forms';
 import { ActionButton, FilterActionRow } from '@/components/shared/layout';
 import { DescriptionItem, DescriptionList, KeyValueItem, KeyValueList, StatusPill } from '@/components/ui';
-import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/domain/models';
+import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/domain/public';
 import { mockClubProfiles } from '@/mocks/overview';
 import { useAuth } from '@/hooks/useAuth';
 
