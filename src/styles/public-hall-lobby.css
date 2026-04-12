@@ -1,0 +1,496 @@
+.public-portal--mahjong {
+  position: relative;
+  overflow: hidden;
+  gap: 28px;
+}
+
+.public-portal--lobby {
+  z-index: 1;
+  min-height: calc(100vh - 72px);
+}
+
+.public-lobby {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  grid-template-columns: minmax(0, 7fr) minmax(0, 3fr);
+  gap: 24px;
+  align-items: start;
+  margin-top: 116px;
+  padding: 24px;
+  border: 1px solid transparent;
+  border-radius: 34px;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.public-lobby__main,
+.public-lobby__sidebar {
+  display: grid;
+  gap: 22px;
+  min-height: 0;
+}
+
+.public-lobby__player-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 116px;
+  padding: 14px 16px 14px 24px;
+  border-radius: 0;
+  border: 0;
+  background:
+    linear-gradient(180deg, rgba(48, 87, 154, 0.18), rgba(48, 87, 154, 0) 24%),
+    linear-gradient(180deg, rgba(25, 38, 88, 0.96), rgba(24, 32, 78, 0.94)),
+    rgba(24, 32, 78, 0.94);
+  box-shadow:
+    0 16px 30px rgba(7, 12, 20, 0.18),
+    inset 0 1px 0 rgba(255, 240, 209, 0.16);
+  clip-path: polygon(4% 0, 96% 0, 100% 14%, 100% 86%, 96% 100%, 4% 100%, 0 86%, 0 14%);
+}
+
+.public-lobby__player-card--floating {
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  width: min(268px, calc(100vw - 28px));
+  z-index: 4;
+}
+
+.public-lobby__player-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgba(219, 175, 98, 0.9);
+  clip-path: inherit;
+  pointer-events: none;
+}
+
+.public-lobby__player-card::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border: 1px solid rgba(219, 175, 98, 0.4);
+  clip-path: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0) 22%),
+    linear-gradient(135deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%) 0 0 / 24px 24px,
+    linear-gradient(225deg, rgba(255, 255, 255, 0.035) 25%, transparent 25%) 0 0 / 24px 24px;
+  opacity: 0.75;
+  pointer-events: none;
+}
+
+.public-lobby__player-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 8px;
+  justify-items: center;
+  width: 100%;
+  padding: 4px 16px 0 6px;
+  text-align: center;
+}
+
+.public-lobby__player-link {
+  display: inline-flex;
+  justify-content: center;
+  width: 100%;
+  font-size: clamp(1.1rem, 1.9vw, 1.35rem);
+  font-weight: 700;
+  line-height: 1.05;
+  letter-spacing: 0.02em;
+  color: #f7f3ff;
+  text-decoration: none;
+  text-shadow: 0 8px 18px rgba(3, 8, 14, 0.26);
+}
+
+.public-lobby__player-link--static {
+  text-decoration: none;
+}
+
+.public-lobby__player-meta {
+  display: grid;
+  gap: 3px;
+  justify-items: center;
+  margin: 0;
+  width: min(100%, 220px);
+  padding-bottom: 9px;
+  border-bottom: 1px solid rgba(210, 173, 99, 0.48);
+  box-shadow: inset 0 -1px 0 rgba(46, 57, 118, 0.72);
+}
+
+.public-lobby__player-meta span {
+  color: rgba(228, 232, 255, 0.82);
+  font-size: 0.94rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.public-lobby__player-avatar {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  margin-right: 8px;
+  border: 2px solid rgba(220, 176, 100, 0.92);
+  border-radius: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 228, 165, 0.98), rgba(230, 185, 104, 0.96)),
+    rgba(230, 185, 104, 0.96);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 247, 223, 0.4),
+    0 8px 14px rgba(17, 20, 52, 0.18);
+  text-decoration: none;
+}
+
+.public-lobby__player-avatar-icon {
+  position: relative;
+  display: block;
+  width: 22px;
+  height: 22px;
+  color: rgba(123, 74, 75, 0.96);
+}
+
+.public-lobby__player-avatar-icon::before,
+.public-lobby__player-avatar-icon::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: currentColor;
+}
+
+.public-lobby__player-avatar-icon::before {
+  top: 0;
+  width: 12px;
+  height: 12px;
+  border-radius: 999px;
+}
+
+.public-lobby__player-avatar-icon::after {
+  bottom: 0;
+  width: 20px;
+  height: 12px;
+  border-radius: 12px 12px 7px 7px;
+}
+
+.public-lobby__stage {
+  position: relative;
+  z-index: 1;
+  min-height: calc(100vh - 250px);
+  max-height: calc(100vh - 250px);
+  min-width: 0;
+}
+
+.public-lobby__stage-scroll {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 214, 146, 0.46) rgba(10, 18, 31, 0.18);
+}
+
+.public-lobby__stage-scroll::-webkit-scrollbar {
+  width: 10px;
+}
+
+.public-lobby__stage-scroll::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(10, 18, 31, 0.18);
+}
+
+.public-lobby__stage-scroll::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(245, 214, 146, 0.7), rgba(208, 170, 98, 0.7));
+}
+
+.public-lobby__menu {
+  position: relative;
+  top: 0;
+  display: grid;
+  gap: 24px;
+}
+
+.public-lobby__menu-button {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  align-content: start;
+  gap: 12px;
+  min-height: 174px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+  color: #ffe8cf;
+  cursor: pointer;
+  text-align: left;
+  transition:
+    transform 180ms ease,
+    filter 180ms ease;
+}
+
+.public-lobby__menu-frame {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  clip-path: polygon(5% 0, 95% 0, 100% 10%, 100% 88%, 95% 100%, 5% 100%, 0 88%, 0 10%);
+  border-radius: 30px;
+  background:
+    linear-gradient(180deg, rgba(255, 214, 138, 0.98), rgba(177, 112, 55, 0.98)),
+    rgba(177, 112, 55, 0.98);
+  box-shadow:
+    0 14px 24px rgba(45, 15, 14, 0.22),
+    inset 0 -1px 0 rgba(125, 64, 30, 0.8);
+  pointer-events: none;
+}
+
+.public-lobby__menu-frame::after {
+  content: '';
+  position: absolute;
+  inset: 4px;
+  clip-path: inherit;
+  border-radius: 26px;
+  background:
+    linear-gradient(180deg, rgba(92, 31, 28, 0.98), rgba(72, 24, 24, 0.98)),
+    rgba(72, 24, 24, 0.98);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 225, 183, 0.36),
+    inset 0 -10px 16px rgba(36, 12, 12, 0.28);
+}
+
+.public-lobby__menu-surface {
+  position: absolute;
+  inset: 14px 16px 26px;
+  z-index: 1;
+  overflow: hidden;
+  clip-path: polygon(5% 0, 95% 0, 100% 11%, 100% 88%, 95% 100%, 5% 100%, 0 88%, 0 11%);
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(111, 36, 31, 0.98), rgba(89, 28, 27, 0.98)),
+    rgba(89, 28, 27, 0.98);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 213, 180, 0.18),
+    inset 0 -18px 24px rgba(59, 16, 16, 0.28);
+  pointer-events: none;
+}
+
+.public-lobby__menu-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(255, 214, 188, 0.06), rgba(255, 214, 188, 0) 24%),
+    linear-gradient(135deg, rgba(255, 184, 150, 0.045) 25%, transparent 25%) 0 0 / 26px 26px,
+    linear-gradient(225deg, rgba(255, 184, 150, 0.045) 25%, transparent 25%) 0 0 / 26px 26px,
+    linear-gradient(315deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%) 0 0 / 26px 26px,
+    linear-gradient(45deg, rgba(0, 0, 0, 0.04) 25%, transparent 25%) 0 0 / 26px 26px;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+.public-lobby__menu-flower,
+.public-lobby__menu-alert,
+.public-lobby__menu-copy,
+.public-lobby__menu-tag {
+  position: relative;
+  z-index: 2;
+}
+
+.public-lobby__menu-flower {
+  position: absolute;
+  z-index: 3;
+  width: 40px;
+  height: 40px;
+  background:
+    linear-gradient(180deg, rgba(255, 221, 146, 0.98), rgba(212, 150, 76, 0.98)),
+    rgba(212, 150, 76, 0.98);
+  clip-path: polygon(50% 0, 63% 21%, 86% 8%, 79% 32%, 100% 50%, 79% 68%, 86% 92%, 63% 79%, 50% 100%, 37% 79%, 14% 92%, 21% 68%, 0 50%, 21% 32%, 14% 8%, 37% 21%);
+  filter: drop-shadow(0 5px 8px rgba(61, 19, 16, 0.22));
+  pointer-events: none;
+}
+
+.public-lobby__menu-flower--left {
+  top: -10px;
+  left: -8px;
+  transform: rotate(-14deg);
+}
+
+.public-lobby__menu-flower--right {
+  right: -8px;
+  bottom: 18px;
+  top: auto;
+  transform: rotate(14deg);
+}
+
+.public-lobby__menu-alert {
+  display: none;
+}
+
+.public-lobby__menu-copy {
+  display: grid;
+  gap: 8px;
+  position: relative;
+  z-index: 2;
+  justify-items: center;
+  text-align: center;
+  padding: 24px 30px 0;
+}
+
+.public-lobby__menu-eyebrow {
+  display: block;
+  color: rgba(255, 221, 197, 0.72);
+  font-size: 0.76rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.public-lobby__menu-title {
+  display: block;
+  margin-top: 2px;
+  color: #ffd2c8;
+  font-family: "YouYuan", "STSong", "SimSun", "Noto Serif SC", serif;
+  font-size: clamp(2.1rem, 2.9vw, 2.65rem);
+  font-weight: 800;
+  line-height: 1.02;
+  letter-spacing: 0.12em;
+  text-align: center;
+  text-shadow:
+    0 2px 0 rgba(150, 46, 57, 0.82),
+    0 4px 0 rgba(132, 36, 46, 0.76),
+    0 6px 0 rgba(108, 28, 37, 0.56),
+    0 8px 16px rgba(57, 16, 16, 0.2);
+}
+
+.public-lobby__menu-tag {
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  min-width: 186px;
+  min-height: 44px;
+  padding: 8px 26px;
+  z-index: 3;
+  border: 2px solid rgba(212, 148, 79, 0.95);
+  border-radius: 16px;
+  background: rgba(84, 28, 24, 0.98);
+  color: rgba(255, 240, 229, 0.96);
+  font-size: 0.86rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  transform: translateX(-50%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 220, 186, 0.2),
+    0 8px 14px rgba(47, 16, 15, 0.16);
+}
+
+.public-lobby__menu-tag::before,
+.public-lobby__menu-tag::after {
+  content: none;
+}
+
+.public-lobby__menu-tag::before {
+  left: -7px;
+}
+
+.public-lobby__menu-tag::after {
+  right: -7px;
+}
+
+.public-lobby__menu-button--active {
+  transform: translateY(-3px);
+  filter: saturate(1.04);
+}
+
+.public-lobby__menu-button--active .public-lobby__menu-frame {
+  box-shadow:
+    0 18px 30px rgba(48, 17, 16, 0.26),
+    inset 0 -1px 0 rgba(125, 64, 30, 0.85);
+}
+
+.public-lobby__menu-button--active .public-lobby__menu-surface {
+  background:
+    linear-gradient(180deg, rgba(120, 39, 33, 0.99), rgba(95, 30, 29, 0.99)),
+    rgba(95, 30, 29, 0.99);
+}
+
+.public-lobby__menu-button:hover {
+  transform: translateY(-3px);
+}
+
+.public-lobby__menu-button:hover .public-lobby__menu-frame {
+  box-shadow:
+    0 16px 26px rgba(48, 17, 16, 0.24),
+    inset 0 -1px 0 rgba(125, 64, 30, 0.82);
+}
+
+.public-lobby__menu-button:hover .public-lobby__menu-tag {
+  transform: translateX(-50%);
+}
+
+.public-portal--mahjong::before,
+.public-portal--mahjong::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.public-portal--mahjong::before {
+  inset: 10px 18px auto auto;
+  width: 200px;
+  height: 200px;
+  background: radial-gradient(circle, rgba(247, 214, 135, 0.24), rgba(247, 214, 135, 0) 68%);
+  filter: blur(10px);
+}
+
+.public-portal--mahjong::after {
+  inset: 0;
+  opacity: 0.16;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.1), transparent 16%),
+    url('/mahjong-soul/decorative/background-texture.jpg') center/cover no-repeat;
+  mix-blend-mode: screen;
+}
+
+@media (max-width: 980px) {
+  .public-lobby {
+    grid-template-columns: 1fr;
+    margin-top: 96px;
+    padding: 18px;
+  }
+
+  .public-lobby__player-card--floating {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 100%;
+  }
+
+  .public-lobby__menu {
+    position: static;
+  }
+
+  .public-lobby__stage {
+    min-height: auto;
+    max-height: none;
+  }
+
+  .public-lobby__stage-scroll {
+    height: auto;
+    overflow: visible;
+    padding-right: 0;
+  }
+}

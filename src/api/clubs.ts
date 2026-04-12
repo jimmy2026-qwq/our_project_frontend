@@ -52,6 +52,11 @@ export interface ReviewClubApplicationPayload {
   playerId?: string;
 }
 
+export interface CreateClubPayload {
+  name: string;
+  creatorId: string;
+}
+
 function mapClub(item: ClubContract): ClubSummary {
   return {
     id: item.id,
@@ -130,6 +135,12 @@ function mapClubApplicationView(item: ClubApplicationViewContract): ClubApplicat
 }
 
 export const clubsApi = {
+  createClub(payload: CreateClubPayload) {
+    return sendJson<ClubContract>('/clubs', 'POST', {
+      name: payload.name,
+      creatorId: payload.creatorId,
+    }).then(mapClub);
+  },
   getClubs(filters: ClubFilters) {
     return request<ListEnvelope<ClubContract>>(`/clubs${toQueryString(filters)}`).then((envelope) =>
       mapEnvelope(envelope, mapClub),

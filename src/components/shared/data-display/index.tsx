@@ -105,7 +105,7 @@ export function PortalSection({
   children,
 }: {
   eyebrow: string;
-  title: string;
+  title: ReactNode;
   description: ReactNode;
   source?: 'api' | 'mock';
   warning?: string;
@@ -113,6 +113,7 @@ export function PortalSection({
 }) {
   return (
     <section className="portal-section rounded-[var(--radius-xl)] bg-[color:var(--bg-elevated)] p-[26px]">
+      <div className="portal-section__ornament" aria-hidden="true" />
       <div className="portal-section__head flex items-start justify-between gap-4">
         <div>
           <p className="eyebrow">{eyebrow}</p>
@@ -331,7 +332,7 @@ export function InfoSummaryCard({
 }) {
   return (
     <article className={cx('card shared-summary-card min-h-full', className)}>
-      <span className="mb-3 inline-flex w-fit rounded-full border border-[color:var(--line)] bg-[rgba(236,197,122,0.08)] px-[10px] py-[6px] text-[0.8rem] text-[color:var(--gold)]">
+      <span className="shared-summary-card__label mb-3 inline-flex w-fit rounded-full border border-[color:var(--line)] bg-[rgba(236,197,122,0.08)] px-[10px] py-[6px] text-[0.8rem] text-[color:var(--gold)]">
         {label}
       </span>
       <TitleTag className="mb-[10px] block text-[color:var(--text)]">{title}</TitleTag>

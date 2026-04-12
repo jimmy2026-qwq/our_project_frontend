@@ -19,12 +19,12 @@ export function formatNumber(value: number) {
 export function getTournamentStatusLabel(status: TournamentStatus | '') {
   return (
     {
-      '': 'All tournaments',
-      Draft: 'Draft',
-      Registration: 'Registration',
+      '': '全部赛事',
+      Draft: '未发布',
+      Registration: '报名准备中',
       RegistrationOpen: '报名中',
-      InProgress: 'In progress',
-      Finished: 'Finished',
+      InProgress: '进行中',
+      Finished: '已结束',
     } as const
   )[status];
 }
@@ -32,25 +32,25 @@ export function getTournamentStatusLabel(status: TournamentStatus | '') {
 export function getStageStatusLabel(status: StageStatus | '') {
   return (
     {
-      '': 'All stages',
-      Pending: 'Pending',
-      Active: 'Active',
-      Completed: 'Completed',
+      '': '全部阶段',
+      Pending: '未开始',
+      Active: '进行中',
+      Completed: '已完成',
     } as const
   )[status];
 }
 
 export function getRelationLabel(relation: ClubSummary['relations'][number]) {
-  return relation === 'Alliance' ? 'Alliance' : 'Hostile';
+  return relation === 'Alliance' ? '联盟' : '对抗';
 }
 
 export function getLeaderboardStatusLabel(status: PlayerLeaderboardEntry['status'] | '') {
   return (
     {
-      '': 'All players',
-      Active: 'Active',
-      Inactive: 'Inactive',
-      Banned: 'Banned',
+      '': '全部玩家',
+      Active: '活跃',
+      Inactive: '未活跃',
+      Banned: '封禁',
     } as const
   )[status];
 }

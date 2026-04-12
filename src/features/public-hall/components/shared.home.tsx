@@ -12,69 +12,98 @@ export const PublicHallHero = ({
   const nextSchedule = schedules.envelope.items[0];
   const topPlayer = leaderboard?.envelope.items[0];
   const featuredClub = clubs.envelope.items[0];
+  const quickFacts = [
+    {
+      label: 'Featured Tournament',
+      value: nextSchedule ? nextSchedule.tournamentName : 'Waiting for rotation',
+    },
+    {
+      label: 'Hall Clubs',
+      value: `${clubs.envelope.total} available`,
+    },
+    {
+      label: 'Top Seed',
+      value: topPlayer ? topPlayer.nickname : 'Leaderboard pending',
+    },
+  ];
 
   return (
-    <section className="portal-hero grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
-      <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))] before:pointer-events-none before:absolute before:inset-[auto_-5%_-18%_auto] before:h-[260px] before:w-[260px] before:rounded-full before:bg-[radial-gradient(circle,rgba(114,216,209,0.16),transparent_70%)] before:content-['']">
+    <section className="portal-hero grid gap-[22px] lg:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.75fr)]">
+      <div className="portal-hero__main relative overflow-hidden">
+        <div className="portal-hero__mist" />
+        <div className="portal-hero__tile-art" aria-hidden="true">
+          <img src="/mahjong-soul/tiles/hand-cards.png" alt="" />
+        </div>
+        <div className="portal-hero__frame" aria-hidden="true" />
         <div className="portal-hero__badge-row flex items-center gap-[14px]">
-          <p className="portal-hero__eyebrow">Guest Lobby</p>
+          <p className="portal-hero__eyebrow">Public Hall</p>
           <Badge className="portal-inline-badge" variant={schedules.source === 'api' ? 'success' : 'warning'}>
             {schedules.source === 'api' ? 'Public API' : 'Mock'}
           </Badge>
         </div>
-        <h1>Public Hall</h1>
+        <p className="portal-hero__kicker">Riichi Nexus Lobby</p>
+        <h1>Step into the tournament hall.</h1>
         <p className="portal-hero__summary">
-          Public hall home now loads schedules, clubs, and leaderboard data directly from lightweight public
-          endpoints.
+          A Mahjong Soul inspired front door for public events, club discovery, and live ladder
+          tracking. The data flow stays the same, but the scene now behaves like a destination
+          rather than a dashboard.
         </p>
+        <div className="portal-hero__facts">
+          {quickFacts.map((fact) => (
+            <div key={fact.label} className="portal-hero__fact">
+              <span>{fact.label}</span>
+              <strong>{fact.value}</strong>
+            </div>
+          ))}
+        </div>
         <InfoSummaryGrid className="portal-hero__highlights">
           <InfoSummaryCard
             className="portal-highlight"
-            label="Next featured stage"
+            label="Next Featured Stage"
             title={nextSchedule ? nextSchedule.stageName : 'No schedule yet'}
             detail={nextSchedule ? nextSchedule.scheduledAt : 'Waiting for schedule data'}
             detailAs="small"
           />
           <InfoSummaryCard
             className="portal-highlight"
-            label="Current top player"
+            label="Current Top Player"
             title={topPlayer ? topPlayer.nickname : '--'}
             detail={topPlayer ? `${topPlayer.clubName} / ELO ${topPlayer.elo}` : 'Waiting for leaderboard data'}
             detailAs="small"
           />
         </InfoSummaryGrid>
         <div className="portal-hero__quicklinks">
-          <button className="portal-chip" onClick={() => onSelectView('schedules')}>
-            Schedules
+          <button className="portal-chip portal-chip--schedules" onClick={() => onSelectView('schedules')}>
+            Enter schedules
           </button>
-          <button className="portal-chip" onClick={() => onSelectView('clubs')}>
-            Clubs
+          <button className="portal-chip portal-chip--clubs" onClick={() => onSelectView('clubs')}>
+            Explore clubs
           </button>
-          <button className="portal-chip" onClick={() => onSelectView('leaderboard')}>
-            Leaderboard
+          <button className="portal-chip portal-chip--leaderboard" onClick={() => onSelectView('leaderboard')}>
+            View ladder
           </button>
         </div>
       </div>
       <aside className="portal-hero__aside grid gap-[22px]">
         <InfoSummaryCard
           className="portal-stat portal-stat--accent"
-          label="Next public tournament"
+          label="Featured Tournament"
           title={nextSchedule ? nextSchedule.tournamentName : '--'}
           detail={nextSchedule ? `${nextSchedule.stageName} / ${nextSchedule.scheduledAt}` : 'No upcoming schedule'}
           detailAs="small"
         />
         <InfoSummaryCard
           className="portal-stat"
-          label="Visible clubs"
+          label="Visible Clubs"
           title={clubs.envelope.total}
           detail={featuredClub ? `${featuredClub.name} / Power ${featuredClub.powerRating}` : 'Waiting for club data'}
           detailAs="small"
         />
         <InfoSummaryCard
           className="portal-stat"
-          label="Default leaderboard filter"
+          label="Leaderboard Mode"
           title="Active"
-          detail="Showing active players first"
+          detail="Ladder view opens with active competitors first."
           detailAs="small"
         />
       </aside>
@@ -116,7 +145,7 @@ export const PublicHallOverviewStrip = ({
       {cards.map((card) => (
         <InfoSummaryCard
           key={card.title}
-          className="overview-card rounded-[22px] bg-[color:var(--bg-soft)] px-[22px] py-5 [&_strong]:my-2 [&_strong]:block [&_strong]:text-[2rem] [&_strong]:text-[color:var(--text)] [&_strong]:drop-shadow-[0_4px_18px_rgba(3,8,14,0.22)]"
+          className="overview-card [&_strong]:my-2 [&_strong]:block [&_strong]:text-[2rem] [&_strong]:text-[color:var(--text)]"
           label={card.title}
           title={card.value}
           detail={card.detail}

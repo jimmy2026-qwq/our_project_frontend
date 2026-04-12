@@ -10,7 +10,11 @@ export const PublicHallTabs = ({ activeView, onSelectView }: PublicHallTabsProps
   ];
 
   return (
-    <Tabs value={activeView} onValueChange={(value) => onSelectView(value as PublicHallTabsProps['activeView'])} className="portal-tabs-shell">
+    <Tabs
+      value={activeView}
+      onValueChange={(value) => onSelectView(value as PublicHallTabsProps['activeView'])}
+      className="portal-tabs-shell"
+    >
       <TabsList className="portal-tabs grid gap-[14px] md:grid-cols-3" aria-label="Public hall navigation">
         {tabs.map((tab) => (
           <TabsTrigger key={tab.id} value={tab.id} className="portal-tab cursor-pointer">

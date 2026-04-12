@@ -6,9 +6,7 @@ body,
 
 body {
   margin: 0;
-  background:
-    radial-gradient(circle at top, rgba(212, 231, 255, 0.92), rgba(212, 231, 255, 0) 28%),
-    linear-gradient(180deg, #f4f7fb 0%, #eef3f8 100%);
+  background: transparent;
   color: #16324f;
 }
 
@@ -18,6 +16,9 @@ body {
 
 .template-route-root {
   min-height: 60vh;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
 .legacy-route-mount {

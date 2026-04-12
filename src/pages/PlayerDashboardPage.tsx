@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 import { authApi } from '@/api/auth';
 import { operationsApi } from '@/api/operations';
@@ -16,7 +16,7 @@ import {
   MetricGrid,
 } from '@/components/shared/data-display';
 import { EmptyState } from '@/components/shared/feedback';
-import { Badge } from '@/components/ui';
+import { Badge, Button } from '@/components/ui';
 import { PublicHallLoading } from '@/features/public-hall/components';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { useAuth } from '@/hooks/useAuth';
@@ -27,7 +27,7 @@ interface RecentTableItem extends TournamentTableSummary {
 
 function formatClubList(clubIds: string[]) {
   if (clubIds.length === 0) {
-    return '未加入俱乐部';
+    return '暂无所属俱乐部';
   }
 
   return clubIds.join(' / ');
@@ -57,12 +57,12 @@ function UpcomingMatches({ items }: { items: RecentTableItem[] }) {
                   <Badge variant="outline">{getRecentTableLabel(table.status)}</Badge>
                 </div>
               }
-              detail={`4 人桌 / 阶段 ${table.stageId}`}
+              detail={`4 个座位 / 阶段 ${table.stageId}`}
             />
           ))}
         </DetailRows>
       ) : (
-        <EmptyState asListItem={false}>当前没有即将开始或进行中的对局。</EmptyState>
+        <EmptyState asListItem={false}>当前没有正在进行或即将开始的对局。</EmptyState>
       )}
     </DetailCard>
   );
@@ -89,14 +89,15 @@ function ArchivedMatches({ items }: { items: MatchRecordSummary[] }) {
           ))}
         </DetailRows>
       ) : (
-        <EmptyState asListItem={false}>当前还没有已结束的个人对局记录。</EmptyState>
+        <EmptyState asListItem={false}>当前还没有已结束的最近对局记录。</EmptyState>
       )}
     </DetailCard>
   );
 }
 
 export function PlayerDashboardPage() {
-  const { session } = useAuth();
+  const navigate = useNavigate();
+  const { session, logout } = useAuth();
   const operatorId = session?.user.operatorId ?? '';
 
   const { data, isLoading } = useAsyncResource(async () => {
@@ -143,6 +144,11 @@ export function PlayerDashboardPage() {
     return { player, dashboard, recentTables, archivedRecords };
   }, [operatorId]);
 
+  async function handleLogout() {
+    await logout();
+    navigate('/public');
+  }
+
   if (isLoading) {
     return (
       <PublicHallLoading
@@ -165,9 +171,9 @@ export function PlayerDashboardPage() {
         }
         hero={
           <DetailHero
-            eyebrow="个人看板"
-            title="个人信息不可用"
-            summary="当前无法读取你的个人资料或 dashboard，请稍后刷新重试。"
+            eyebrow="个人主页"
+            title="暂时无法加载个人看板"
+            summary="当前还没有可展示的个人资料或统计信息。"
           />
         }
       />
@@ -185,10 +191,15 @@ export function PlayerDashboardPage() {
       }
       hero={
         <DetailHero
-          eyebrow="个人看板"
+          eyebrow="个人主页"
           title={player.displayName}
           tagline={`ELO ${player.elo}`}
-          summary="这里会展示你的基础资料、当前个人 dashboard，以及最近参与过的对局。"
+          summary="这里集中展示你的基础资料、个人统计，以及最近参与的对局信息。"
+          actions={
+            <Button variant="secondary" onClick={() => void handleLogout()}>
+              登出账号
+            </Button>
+          }
         />
       }
     >
@@ -197,7 +208,7 @@ export function PlayerDashboardPage() {
           <DetailList>
             <DetailListItem label="昵称" value={player.displayName} />
             <DetailListItem label="玩家编号" value={player.playerId} />
-            <DetailListItem label="当前状态" value={player.playerStatus} />
+            <DetailListItem label="状态" value={player.playerStatus} />
             <DetailListItem label="所属俱乐部" value={formatClubList(player.clubIds ?? [])} />
           </DetailList>
         </DetailCard>
@@ -213,7 +224,7 @@ export function PlayerDashboardPage() {
               </MetricGrid>
             </>
           ) : (
-            <EmptyState asListItem={false}>当前还没有可展示的个人 dashboard 数据。</EmptyState>
+            <EmptyState asListItem={false}>当前还没有可展示的统计指标。</EmptyState>
           )}
         </DetailCard>
       </div>

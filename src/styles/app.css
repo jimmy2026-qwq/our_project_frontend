@@ -31,11 +31,7 @@ body {
   min-width: 320px;
   min-height: 100vh;
   color: var(--text);
-  background:
-    radial-gradient(circle at top left, rgba(236, 197, 122, 0.18), transparent 24%),
-    radial-gradient(circle at 85% 10%, rgba(114, 216, 209, 0.14), transparent 22%),
-    radial-gradient(circle at 60% 80%, rgba(114, 216, 209, 0.08), transparent 26%),
-    linear-gradient(160deg, #050b12 0%, #09131e 42%, #0c1724 100%);
+  background: linear-gradient(180deg, #101a2a 0%, #0a1220 100%);
 }
 
 body::before,
@@ -48,20 +44,18 @@ body::after {
 
 body::before {
   background:
-    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
-  background-size: 32px 32px;
-  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.75), transparent);
+    linear-gradient(180deg, rgba(255, 250, 236, 0.28), rgba(255, 250, 236, 0) 18%),
+    radial-gradient(circle at top left, rgba(255, 214, 160, 0.24), transparent 24%),
+    radial-gradient(circle at 86% 10%, rgba(255, 208, 229, 0.28), transparent 20%),
+    radial-gradient(circle at 50% 100%, rgba(82, 136, 208, 0.18), transparent 28%);
+  mix-blend-mode: screen;
 }
 
 body::after {
-  inset: auto 0 0 auto;
-  width: 34vw;
-  height: 34vw;
-  border-radius: 50%;
-  transform: translate(12%, 20%);
-  background: radial-gradient(circle, rgba(236, 197, 122, 0.15), transparent 70%);
-  filter: blur(20px);
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(6, 13, 23, 0.08), rgba(6, 13, 23, 0.24) 48%, rgba(6, 13, 23, 0.46)),
+    linear-gradient(90deg, rgba(8, 17, 28, 0.28), rgba(8, 17, 28, 0.08) 28%, rgba(8, 17, 28, 0.12) 72%, rgba(8, 17, 28, 0.3));
 }
 
 a,
@@ -113,6 +107,7 @@ input {
   gap: 8px;
   border: 1px solid var(--line);
   border-radius: 16px;
+  background-clip: padding-box;
   cursor: pointer;
   color: var(--text);
   text-decoration: none;
@@ -651,18 +646,53 @@ input {
   padding: 26px 0 64px;
 }
 
-.portal-section,
-.portal-tab,
-.portal-stat,
-.schedule-card,
-.club-card,
-.leaderboard-row,
-.detail-hero,
-.detail-card,
-.portal-hero__main {
-  border: 1px solid var(--line);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(18px);
+.app-shell--mahjong {
+  position: relative;
+}
+
+.app-shell__scene {
+  position: fixed;
+  inset: 0;
+  z-index: -3;
+  pointer-events: none;
+  background: url('/public-hall.jpeg') center center / cover no-repeat;
+}
+
+.app-shell__scene::before,
+.app-shell__scene::after,
+.app-shell--mahjong::before,
+.app-shell--mahjong::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.app-shell__scene::before {
+  display: none;
+}
+
+.app-shell__scene::after {
+  display: none;
+}
+
+.app-shell--mahjong::before {
+  top: 64px;
+  right: -20px;
+  width: 300px;
+  height: 300px;
+  background: radial-gradient(circle, rgba(255, 223, 170, 0.26), rgba(255, 223, 170, 0) 70%);
+  filter: blur(18px);
+  z-index: -1;
+}
+
+.app-shell--mahjong::after {
+  left: -40px;
+  top: 220px;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, rgba(255, 183, 217, 0.16), rgba(255, 183, 217, 0) 70%);
+  filter: blur(18px);
+  z-index: -1;
 }
 
 .site-header__brand strong,
@@ -672,25 +702,8 @@ input {
 
 .site-header__brand span,
 .site-footer p,
-.portal-stat span,
-.portal-stat small,
-.portal-tab span,
-.portal-section__head p,
 .shared-filter-row label,
-.shared-filter-row span,
-.schedule-card p,
-.schedule-card__meta dt,
-.club-card p,
-.club-card__subtitle,
-.club-card__stats span,
-.leaderboard-row__main span,
-.leaderboard-row__side span,
-.shared-feedback-warning,
-.detail-stat span,
-.detail-list dt,
-.detail-rows span,
-.portal-highlight span,
-.portal-highlight small {
+.shared-filter-row span {
   color: var(--muted);
 }
 
@@ -703,346 +716,41 @@ input {
   font-size: 0.85rem;
 }
 
-.public-shell__content,
-.public-portal,
-.detail-hero__stats {
+
+.app-shell__content {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
+}
+
+.public-shell__content {
   display: grid;
   gap: 22px;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
-.public-portal,
-.detail-page {
-  color: var(--text);
+.app-shell__route-stage {
+  position: relative;
+  z-index: 1;
+  background: transparent;
+  box-shadow: none;
+  backdrop-filter: none;
 }
 
-.site-footer__link,
-.detail-link,
-.leaderboard-row__link,
-.detail-back {
+.site-footer__link {
   color: var(--teal-strong);
   text-decoration: none;
 }
 
-.site-footer__link:hover,
-.detail-link:hover,
-.leaderboard-row__link:hover,
-.detail-back:hover {
+.site-footer__link:hover {
   color: #b2f4ef;
 }
-
-.portal-hero__badge-row,
-.portal-section__head,
-.shared-feedback-meta {
-  display: flex;
-  gap: 14px;
-}
-
-.portal-hero__badge-row {
-  align-items: center;
-}
-
-.portal-hero__eyebrow,
-.eyebrow {
-  margin: 0;
-  color: var(--gold);
-  font-size: 0.82rem;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-}
-
-.portal-inline-badge,
-.source-badge,
-.schedule-card__status,
-.club-card__power {
-  font-size: 0.78rem;
-  letter-spacing: 0.06em;
-}
-
-.portal-inline-badge {
-  border: 1px solid rgba(114, 216, 209, 0.2);
-  background: rgba(114, 216, 209, 0.08);
-  color: var(--teal-strong);
-}
-
-.portal-hero__main h1,
-.detail-hero h1 {
-  margin: 12px 0 16px;
-  line-height: 0.98;
-  letter-spacing: -0.05em;
-}
-
-.portal-hero__main h1 {
-  max-width: 11ch;
-  font-size: clamp(2.6rem, 5vw, 5.4rem);
-  color: var(--text);
-  text-shadow: 0 6px 24px rgba(3, 8, 14, 0.28);
-}
-
-.portal-hero__summary,
-.detail-hero__summary {
-  margin: 0;
-  color: var(--muted-strong);
-  line-height: 1.8;
-  max-width: 62ch;
-  text-shadow: 0 1px 14px rgba(3, 8, 14, 0.24);
-}
-
-.portal-hero__highlights {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 26px;
-}
-
-.portal-highlight {
-  padding: 16px 18px;
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.portal-highlight strong {
-  display: block;
-  margin: 10px 0 6px;
-  font-size: 1.05rem;
-}
-
-.portal-stat span,
-.portal-stat small,
-.portal-tab span,
-.portal-section__head p,
-.schedule-card__meta dt,
-.club-card__subtitle,
-.club-card__stats span,
-.leaderboard-row__main span,
-.leaderboard-row__side span,
-.shared-feedback-warning,
-.detail-stat span,
-.detail-list dt,
-.detail-rows span,
-.portal-highlight span,
-.portal-highlight small,
-.schedule-card__minor {
-  color: var(--muted-strong);
-  text-shadow: 0 1px 12px rgba(3, 8, 14, 0.18);
-}
-
-.portal-chip,
-.shared-action-button,
-.shared-filter-row select,
-.shared-filter-row input {
-  border: 1px solid var(--line);
-  background: rgba(5, 14, 23, 0.88);
-  color: var(--text);
-}
-
-.portal-chip,
-.shared-action-button {
-  cursor: pointer;
-}
-
-.portal-chip {
-  padding: 12px 18px;
-  border-radius: 999px;
-}
-
-.portal-chip:hover,
-.shared-action-button:hover,
-.portal-tab:hover {
-  transform: translateY(-1px);
-  border-color: rgba(236, 197, 122, 0.32);
-}
-
-.portal-stat {
-  padding: 22px;
-  border-radius: 26px;
-  background: linear-gradient(180deg, rgba(12, 27, 40, 0.92), rgba(8, 19, 29, 0.82));
-}
-
-.portal-stat--accent {
-  border-color: var(--line-strong);
-  background:
-    radial-gradient(circle at top right, rgba(236, 197, 122, 0.14), transparent 36%),
-    linear-gradient(180deg, rgba(19, 38, 56, 0.95), rgba(10, 22, 33, 0.86));
-}
-
-.portal-stat strong,
-.detail-stat strong {
-  display: block;
-  margin: 8px 0;
-  color: var(--text);
-  text-shadow: 0 4px 18px rgba(3, 8, 14, 0.22);
-}
-
-.portal-tab strong,
-.portal-tab span,
-.leaderboard-row__main strong,
-.leaderboard-row__main span,
-.leaderboard-row__side strong,
-.leaderboard-row__side span {
-  display: block;
-}
-
-.portal-tab strong,
-.schedule-card h3,
-.club-card h3,
-.leaderboard-row__main strong,
-.leaderboard-row__side strong,
-.detail-hero h1 {
-  color: var(--text);
-}
-
-.portal-tab span {
-  margin-top: 8px;
-  line-height: 1.65;
-}
-
-.portal-section__head {
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.portal-section__head h2,
-.detail-card__title,
-.leaderboard-row__rank,
-.ui-description-item__value,
-.ui-key-value-item__value {
-  color: var(--text);
-}
-
-.portal-section__head p {
-  margin: 0;
-  line-height: 1.8;
-}
-
-.shared-filter-row {
-  flex-wrap: wrap;
-  margin: 20px 0 2px;
-}
-
-.shared-filter-row label {
-  display: grid;
-  gap: 8px;
-  min-width: 190px;
-}
-
-.shared-filter-row select,
-.shared-action-button {
-  padding: 11px 14px;
-  border-radius: 14px;
-}
-
 .shared-checkbox-field input {
   accent-color: var(--teal);
-}
-
-.source-badge--api {
-  background: rgba(114, 216, 209, 0.14);
-  color: var(--teal-strong);
-}
-
-.source-badge--mock {
-  background: rgba(236, 197, 122, 0.14);
-  color: var(--gold);
-}
-
-.schedule-grid,
-.club-grid {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.detail-card {
-  border-radius: 24px;
-  background: var(--panel);
-}
-.schedule-card__meta dd,
-.club-card__stats strong,
-.detail-list dd {
-  margin: 0;
-  font-weight: 600;
-}
-
-.detail-link,
-.leaderboard-row__link {
-  display: inline-flex;
-  margin-top: 18px;
-}
-
-.detail-back {
-  display: inline-flex;
-  width: fit-content;
-  padding: 6px 0;
-}
-
-.detail-stat,
-.detail-card {
-  padding: 22px;
-}
-
-.detail-stat {
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.03);
-}
-
-.detail-stat strong {
-  font-size: 1.55rem;
-}
-
-@media (max-width: 980px) {
-  .public-shell {
-    width: min(100%, calc(100% - 20px));
-    padding-top: 18px;
-  }
-
-  .portal-hero,
-  .portal-overview,
-  .portal-tabs,
-  .schedule-grid,
-  .club-grid,
-  .detail-grid,
-  .detail-hero,
-  .portal-hero__highlights {
-    grid-template-columns: 1fr;
-  }
-
-  .portal-section__head,
-  .site-header__status {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  .portal-hero__main,
-  .portal-section,
-  .detail-hero {
-    padding: 24px;
-  }
-
-  .shared-feedback-warning,
-  .leaderboard-row__side {
-    text-align: left;
-  }
-
-  .leaderboard-row {
-    grid-template-columns: 1fr;
-  }
-}
-
-@media (max-width: 640px) {
-  .public-shell {
-    width: min(100%, calc(100% - 16px));
-  }
-
-  .portal-hero__main h1 {
-    max-width: none;
-    font-size: clamp(2.3rem, 12vw, 3.5rem);
-  }
-
-  .portal-chip,
-  .shared-action-button,
-  .shared-filter-row select {
-    width: 100%;
-  }
-
 }
 
 .hero,
