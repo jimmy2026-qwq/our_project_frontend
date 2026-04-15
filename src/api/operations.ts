@@ -170,8 +170,10 @@ export const operationsApi = {
   updateSeatState(tableId: string, payload: UpdateSeatStatePayload) {
     return sendJson<unknown>(`/tables/${tableId}/seats/${payload.seat}/state`, 'POST', {
       operatorId: payload.operatorId,
-      ...(payload.ready === undefined ? {} : { ready: payload.ready }),
-      ...(payload.disconnected === undefined ? {} : { disconnected: payload.disconnected }),
+      ...(payload.ready === undefined ? {} : { ready: encodeBackendOption(payload.ready) }),
+      ...(payload.disconnected === undefined
+        ? {}
+        : { disconnected: encodeBackendOption(payload.disconnected) }),
       note: payload.note ? [payload.note] : [],
     });
   },

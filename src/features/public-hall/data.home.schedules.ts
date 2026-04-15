@@ -1,10 +1,23 @@
 import { operationsApi } from '@/api/operations';
 import { publicApi } from '@/api/public';
 import type { ClubSummary, PublicSchedule } from '@/domain/public';
-import { mockClubs, mockSchedules, toMockEnvelope } from '@/mocks/overview';
 
 import type { LoadState, PublicHallState, PublicHallViewerContext } from './types';
 import { mapAdminStageStatus } from './data.shared';
+
+function createEmptyLoadState<T>(): LoadState<T> {
+  return {
+    envelope: {
+      items: [],
+      total: 0,
+      limit: 0,
+      offset: 0,
+      hasMore: false,
+      appliedFilters: {},
+    },
+    source: 'api',
+  };
+}
 
 export async function loadSchedules(state: PublicHallState): Promise<LoadState<PublicSchedule>> {
   try {
@@ -14,20 +27,9 @@ export async function loadSchedules(state: PublicHallState): Promise<LoadState<P
     });
     return { envelope, source: 'api' };
   } catch (error) {
-    const items = mockSchedules.filter((item) => {
-      const tournamentMatch =
-        !state.scheduleTournamentStatus || item.tournamentStatus === state.scheduleTournamentStatus;
-      const stageMatch = !state.scheduleStageStatus || item.stageStatus === state.scheduleStageStatus;
-      return tournamentMatch && stageMatch;
-    });
-
     return {
-      envelope: toMockEnvelope(items, {
-        tournamentStatus: state.scheduleTournamentStatus,
-        stageStatus: state.scheduleStageStatus,
-      }),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Public schedules fallback to mock.',
+      ...createEmptyLoadState<PublicSchedule>(),
+      warning: error instanceof Error ? error.message : 'Unable to load public schedules.',
     };
   }
 }
@@ -86,15 +88,14 @@ export async function loadManagedDraftSchedules(context: PublicHallViewerContext
   return stagesByTournament.flat().sort((left, right) => Date.parse(left.scheduledAt) - Date.parse(right.scheduledAt));
 }
 
-export async function loadClubs(state: PublicHallState): Promise<LoadState<ClubSummary>> {
+export async function loadClubs(_state: PublicHallState): Promise<LoadState<ClubSummary>> {
   try {
     const envelope = await publicApi.getPublicClubs();
     return { envelope, source: 'api' };
   } catch (error) {
     return {
-      envelope: toMockEnvelope(mockClubs, { activeOnly: state.clubActiveOnly }),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Club directory fallback to mock.',
+      ...createEmptyLoadState<ClubSummary>(),
+      warning: error instanceof Error ? error.message : 'Unable to load club directory.',
     };
   }
 }

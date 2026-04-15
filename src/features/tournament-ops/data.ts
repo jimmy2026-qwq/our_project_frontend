@@ -6,7 +6,6 @@ import type {
   TableStatus,
   TournamentTableSummary,
 } from '@/domain';
-import { mockAppeals, mockRecords, mockTournamentTables, toMockEnvelope } from '@/mocks/overview';
 
 export type DataSource = 'api' | 'mock';
 
@@ -41,39 +40,49 @@ export interface TournamentOpsState {
   appealStatus: AppealSummary['status'] | '';
 }
 
-export const fallbackTournamentContexts: TournamentContext[] = [
-  {
-    id: 'tournament-123',
-    name: 'Riichi Nexus Spring Masters',
-    stages: [
-      { id: 'stage-swiss-1', name: 'Swiss Round 1' },
-      { id: 'stage-finals', name: 'Finals' },
-    ],
-  },
-  {
-    id: 'tournament-456',
-    name: 'Kanto Club Open',
-    stages: [{ id: 'stage-qualifier-a', name: 'Qualifier A' }],
-  },
-];
-
 export const DEFAULT_TOURNAMENT_OPS_STATE: TournamentOpsState = {
-  tournamentId: fallbackTournamentContexts[0].id,
-  stageId: fallbackTournamentContexts[0].stages[0].id,
+  tournamentId: '',
+  stageId: '',
   tableStatus: '',
   playerId: '',
   appealStatus: '',
 };
 
+function createEmptyLoadState<T>(): LoadState<T> {
+  return {
+    envelope: {
+      items: [],
+      total: 0,
+      limit: 0,
+      offset: 0,
+      hasMore: false,
+      appliedFilters: {},
+    },
+    source: 'api',
+  };
+}
+
 export function getActiveTournament(tournaments: TournamentContext[], tournamentId: string) {
-  return tournaments.find((tournament) => tournament.id === tournamentId) ?? tournaments[0] ?? fallbackTournamentContexts[0];
+  return tournaments.find((tournament) => tournament.id === tournamentId) ?? tournaments[0] ?? null;
 }
 
 export function normalizeTournamentOpsState(
   tournaments: TournamentContext[],
   state: TournamentOpsState,
 ): TournamentOpsState {
+  if (tournaments.length === 0) {
+    return {
+      ...state,
+      tournamentId: '',
+      stageId: '',
+    };
+  }
+
   const activeTournament = getActiveTournament(tournaments, state.tournamentId);
+  if (!activeTournament) {
+    return state;
+  }
+
   const hasTournament = tournaments.some((tournament) => tournament.id === state.tournamentId);
   const hasStage = activeTournament.stages.some((stage) => stage.id === state.stageId);
 
@@ -107,9 +116,9 @@ export async function loadTournamentDirectory(): Promise<TournamentDirectoryStat
     };
   } catch (error) {
     return {
-      items: fallbackTournamentContexts,
-      source: 'mock',
-      warning: error instanceof Error ? error.message : '赛事目录加载失败，已回退到本地兜底数据。',
+      items: [],
+      source: 'api',
+      warning: error instanceof Error ? error.message : 'Unable to load tournament directory.',
     };
   }
 }
@@ -138,22 +147,9 @@ export async function loadTables(state: TournamentOpsState): Promise<LoadState<T
 
     return { envelope, source: 'api' };
   } catch (error) {
-    const filtered = mockTournamentTables.filter((table) => {
-      const stageMatch = table.stageId === state.stageId;
-      const statusMatch = !state.tableStatus || table.status === state.tableStatus;
-      const playerMatch = !state.playerId || table.playerIds.includes(state.playerId);
-      return stageMatch && statusMatch && playerMatch;
-    });
-
     return {
-      envelope: toMockEnvelope(filtered, {
-        tournamentId: state.tournamentId,
-        stageId: state.stageId,
-        status: state.tableStatus,
-        playerId: state.playerId,
-      }),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : '牌桌数据加载失败，已回退到本地兜底数据。',
+      ...createEmptyLoadState<TournamentTableSummary>(),
+      warning: error instanceof Error ? error.message : 'Unable to load tournament tables.',
     };
   }
 }
@@ -170,21 +166,9 @@ export async function loadRecords(state: TournamentOpsState): Promise<LoadState<
 
     return { envelope, source: 'api' };
   } catch (error) {
-    const filtered = mockRecords.filter((record) => {
-      const tournamentMatch = record.tournamentId === state.tournamentId;
-      const stageMatch = record.stageId === state.stageId;
-      const playerMatch = !state.playerId || record.summary.includes(state.playerId);
-      return tournamentMatch && stageMatch && playerMatch;
-    });
-
     return {
-      envelope: toMockEnvelope(filtered, {
-        tournamentId: state.tournamentId,
-        stageId: state.stageId,
-        playerId: state.playerId,
-      }),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : '对局记录加载失败，已回退到本地兜底数据。',
+      ...createEmptyLoadState<MatchRecordSummary>(),
+      warning: error instanceof Error ? error.message : 'Unable to load match records.',
     };
   }
 }
@@ -200,19 +184,9 @@ export async function loadAppeals(state: TournamentOpsState): Promise<LoadState<
 
     return { envelope, source: 'api' };
   } catch (error) {
-    const filtered = mockAppeals.filter((appeal) => {
-      const tournamentMatch = appeal.tournamentId === state.tournamentId;
-      const statusMatch = !state.appealStatus || appeal.status === state.appealStatus;
-      return tournamentMatch && statusMatch;
-    });
-
     return {
-      envelope: toMockEnvelope(filtered, {
-        tournamentId: state.tournamentId,
-        status: state.appealStatus,
-      }),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : '申诉数据加载失败，已回退到本地兜底数据。',
+      ...createEmptyLoadState<AppealSummary>(),
+      warning: error instanceof Error ? error.message : 'Unable to load appeals.',
     };
   }
 }

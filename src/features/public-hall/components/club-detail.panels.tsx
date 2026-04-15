@@ -12,7 +12,10 @@ import { EmptyState } from '@/components/shared/feedback';
 import { ActionButton } from '@/components/shared/layout';
 import { Button, StatusPill } from '@/components/ui';
 import type { ClubApplicationView } from '@/domain/clubs';
+import type { PlayerProfile } from '@/domain/auth';
 import type { ClubPublicProfile } from '@/domain/public';
+
+import type { ClubAdminMemberEntry } from './club-detail.types';
 
 import { formatDateTime, formatNumber, getRelationLabel } from '../utils';
 
@@ -112,6 +115,69 @@ export function ClubInboxPanel({
           }))}
           emptyText="No pending applications are waiting for review."
         />
+      )}
+    </DetailCard>
+  );
+}
+
+export function ClubAdminMembersPanel({
+  isLoading,
+  members,
+  onAssignAdmin,
+  onRemoveMember,
+}: {
+  isLoading: boolean;
+  members: ClubAdminMemberEntry[];
+  onAssignAdmin: (member: PlayerProfile) => void;
+  onRemoveMember: (member: ClubAdminMemberEntry) => void;
+}) {
+  return (
+    <DetailCard title="Club admin tools">
+      {isLoading ? (
+        <p className="m-0 text-[color:var(--muted)]">Loading club members...</p>
+      ) : members.length > 0 ? (
+        <DetailRows>
+          {members.map((member) => (
+            <DetailRow
+              key={member.playerId}
+              title={member.displayName}
+              detail={
+                <span className="inline-flex flex-wrap items-center gap-3">
+                  <StatusPill tone={member.isAdmin ? 'success' : 'warning'}>
+                    {member.isCurrentUser ? 'You' : member.isAdmin ? 'Admin' : 'Member'}
+                  </StatusPill>
+                  {member.elo ? <span>Elo {member.elo}</span> : null}
+                  {member.currentRank ? (
+                    <span>
+                      {member.currentRank.platform} {member.currentRank.tier}
+                      {typeof member.currentRank.stars === 'number' ? ` ${member.currentRank.stars}` : ''}
+                    </span>
+                  ) : null}
+                  {!member.isAdmin ? (
+                    <button
+                      type="button"
+                      className="detail-link inline-flex cursor-pointer border-0 bg-transparent p-0"
+                      onClick={() => onAssignAdmin(member)}
+                    >
+                      Set as admin
+                    </button>
+                  ) : null}
+                  {!member.isAdmin && !member.isCurrentUser ? (
+                    <button
+                      type="button"
+                      className="detail-link inline-flex cursor-pointer border-0 bg-transparent p-0 text-[color:#ff8f8f]"
+                      onClick={() => onRemoveMember(member)}
+                    >
+                      Remove member
+                    </button>
+                  ) : null}
+                </span>
+              }
+            />
+          ))}
+        </DetailRows>
+      ) : (
+        <EmptyState asListItem>No club members were returned for admin management.</EmptyState>
       )}
     </DetailCard>
   );

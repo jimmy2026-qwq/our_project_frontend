@@ -1,9 +1,14 @@
 import { DataPanel, InfoSummaryCard, InfoSummaryGrid, ListRow, MetricCard, MetricGrid } from '@/components/shared/data-display';
 import { SectionIntro } from '@/components/shared/layout';
-import { mockClubs, mockDashboards, mockLeaderboard, mockSchedules } from '@/mocks/overview';
 
 import { workbenchSteps } from './sections.content';
 import { formatLocalTime } from './sections.shared';
+import {
+  workbenchMockClubs,
+  workbenchMockDashboards,
+  workbenchMockLeaderboard,
+  workbenchMockSchedules,
+} from './sections.workbench.mock';
 
 export function BlueprintWorkbenchSection() {
   return (
@@ -28,7 +33,7 @@ export function BlueprintWorkbenchSection() {
       <div className="workbench-grid">
         <DataPanel title="Public schedule snapshot">
           <ul className="list">
-            {mockSchedules.map((item) => (
+            {workbenchMockSchedules.map((item) => (
               <ListRow
                 key={`${item.tournamentId}-${item.stageId}`}
                 main={
@@ -49,7 +54,7 @@ export function BlueprintWorkbenchSection() {
         </DataPanel>
         <DataPanel title="Leaderboard snapshot">
           <ul className="list">
-            {mockLeaderboard.map((item) => (
+            {workbenchMockLeaderboard.map((item) => (
               <ListRow
                 key={item.playerId}
                 main={
@@ -70,7 +75,7 @@ export function BlueprintWorkbenchSection() {
         </DataPanel>
         <DataPanel title="Club directory snapshot">
           <ul className="list">
-            {mockClubs.map((club) => (
+            {workbenchMockClubs.map((club) => (
               <ListRow
                 key={club.id}
                 main={
@@ -90,7 +95,7 @@ export function BlueprintWorkbenchSection() {
           </ul>
         </DataPanel>
         <DataPanel title="Dashboard preview">
-          {mockDashboards.map((board) => (
+          {workbenchMockDashboards.map((board) => (
             <article key={board.ownerId} className="card dashboard-card">
               <h3>{board.ownerType === 'player' ? 'Player Dashboard' : 'Club Dashboard'}</h3>
               <p>{board.headline}</p>

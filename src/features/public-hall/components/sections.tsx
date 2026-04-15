@@ -7,7 +7,6 @@ import { CheckboxField, SelectField } from '@/components/shared/forms';
 import { ActionButton, FilterActionRow } from '@/components/shared/layout';
 import { DescriptionItem, DescriptionList, KeyValueItem, KeyValueList, StatusPill } from '@/components/ui';
 import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/domain/public';
-import { mockClubProfiles } from '@/mocks/overview';
 import { useAuth } from '@/hooks/useAuth';
 
 import { CreateClubDialog } from '../CreateClubDialog';
@@ -41,12 +40,18 @@ export const PublicSchedulesSection = ({
   return (
     <>
       <PortalSection
+        className="public-schedules-section"
         eyebrow="赛程"
         title={
-          <div className="flex flex-wrap items-center gap-3">
+          <div className="public-schedules__title-row">
             <span>公共赛程</span>
             {canCreateTournament ? (
-              <ActionButton variant="secondary" onClick={() => setIsCreateTournamentOpen(true)}>
+              <ActionButton
+                className="public-schedules__create-button"
+                variant="secondary"
+                size="sm"
+                onClick={() => setIsCreateTournamentOpen(true)}
+              >
                 新建比赛
               </ActionButton>
             ) : null}
@@ -56,7 +61,7 @@ export const PublicSchedulesSection = ({
         source={payload.source}
         warning={payload.warning}
       >
-        <FilterActionRow onRefresh={onRefresh}>
+        <FilterActionRow className="public-schedules__filters" onRefresh={onRefresh}>
           <SelectField
             label="赛事状态"
             value={state.scheduleTournamentStatus}
@@ -87,7 +92,7 @@ export const PublicSchedulesSection = ({
             <option value="Completed">已完成</option>
           </SelectField>
         </FilterActionRow>
-        <div className="schedule-grid grid gap-[22px]">
+        <div className="schedule-grid public-schedules__grid grid gap-[22px]">
           {payload.envelope.items.length > 0 ? (
             payload.envelope.items.map((item) => (
               <DirectoryCard
@@ -169,7 +174,7 @@ export const PublicClubsSection = ({
             <span>Club Directory</span>
             {canCreateClub ? (
               <ActionButton
-                className="px-3 py-2 text-[0.82rem]"
+                className="public-schedules__create-button"
                 variant="secondary"
                 onClick={() => setIsCreateClubOpen(true)}
               >
@@ -280,7 +285,9 @@ export const PublicLeaderboardSection = ({
       <ol className="leaderboard-list m-0 grid list-none gap-[22px] p-0">
         {payload.envelope.items.length > 0 ? (
           payload.envelope.items.map((item, index) => {
-            const club = mockClubProfiles.find((profile) => profile.name === item.clubName);
+            const linkedClub =
+              clubs.find((club) => item.clubIds?.includes(club.id)) ??
+              clubs.find((club) => club.name === item.clubName);
 
             return (
               <li key={item.playerId} className="leaderboard-row grid items-center gap-4 rounded-3xl bg-[color:var(--panel)] px-5 py-[18px] md:grid-cols-[72px_minmax(0,1fr)_auto]">
@@ -290,8 +297,8 @@ export const PublicLeaderboardSection = ({
                 <div className="leaderboard-row__main">
                   <strong>{item.nickname}</strong>
                   <span>{item.clubName || '--'}</span>
-                  {club ? (
-                    <Link className="leaderboard-row__link inline-flex mt-[18px]" to={`/public/clubs/${club.id}`}>
+                  {linkedClub ? (
+                    <Link className="leaderboard-row__link inline-flex mt-[18px]" to={`/public/clubs/${linkedClub.id}`}>
                       打开俱乐部
                     </Link>
                   ) : null}

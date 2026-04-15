@@ -75,3 +75,17 @@ export interface ClubMemberContract {
   elo?: number;
   clubId?: string[];
 }
+
+export interface ClubTournamentParticipationContract {
+  clubId: string;
+  tournamentId: string;
+  name: string;
+  status: string;
+  clubParticipationStatus: 'Invited' | 'Participating';
+  stageName?: string | null;
+  startsAt: string;
+  endsAt: string;
+  canViewDetail: boolean;
+  canSubmitLineup: boolean;
+  canDecline: boolean;
+}

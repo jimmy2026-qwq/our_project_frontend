@@ -1,6 +1,6 @@
 import { clubsApi } from '@/api/clubs';
 import type { Role } from '@/domain/common';
-import { readClubApplicationInbox, updateClubApplicationInboxStatus, upsertClubApplicationInboxItem } from '@/lib/club-applications';
+import { readClubApplicationInbox, upsertClubApplicationInboxItem } from '@/lib/club-applications';
 
 import { toApplicationView, type ApplicationInboxState } from './data.shared';
 
@@ -12,7 +12,7 @@ export async function loadClubApplicationInbox(
   if (role !== 'ClubAdmin') {
     return {
       items: [],
-      source: 'mock',
+      source: 'api',
     };
   }
 
@@ -32,8 +32,8 @@ export async function loadClubApplicationInbox(
       items: readClubApplicationInbox()
         .filter((item) => item.clubId === clubId)
         .map(toApplicationView),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Application inbox fallback to mock.',
+      source: 'api',
+      warning: error instanceof Error ? error.message : 'Unable to load the live application inbox.',
     };
   }
 }
@@ -44,29 +44,21 @@ export async function reviewApplication(
   operatorId: string,
   decision: 'approve' | 'reject',
 ) {
-  try {
-    const application = await clubsApi.reviewClubApplication(clubId, applicationId, {
-      operatorId,
-      decision,
-      note: `${decision}d from member hub`,
-    });
-    upsertClubApplicationInboxItem({
-      id: application.applicationId,
-      clubId: application.clubId,
-      clubName: application.clubName,
-      operatorId: application.applicant.applicantUserId ?? application.applicant.playerId,
-      applicantName: application.applicant.displayName,
-      message: application.message,
-      status: application.status,
-      submittedAt: application.submittedAt,
-      source: 'api',
-    });
-    return { source: 'api' as const };
-  } catch {
-    updateClubApplicationInboxStatus(applicationId, decision === 'approve' ? 'Approved' : 'Rejected');
-    return {
-      source: 'mock' as const,
-      warning: 'The member hub review used the local inbox fallback.',
-    };
-  }
+  const application = await clubsApi.reviewClubApplication(clubId, applicationId, {
+    operatorId,
+    decision,
+    note: `${decision}d from member hub`,
+  });
+  upsertClubApplicationInboxItem({
+    id: application.applicationId,
+    clubId: application.clubId,
+    clubName: application.clubName,
+    operatorId: application.applicant.playerId || application.applicant.applicantUserId || '',
+    applicantName: application.applicant.displayName,
+    message: application.message,
+    status: application.status,
+    submittedAt: application.submittedAt,
+    source: 'api',
+  });
+  return { source: 'api' as const };
 }

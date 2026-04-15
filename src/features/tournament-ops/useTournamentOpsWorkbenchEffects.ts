@@ -207,8 +207,8 @@ export function useTournamentOpsWorkbenchEffects({
         failureTitle: 'Tournament ops refresh failed',
         successTitle: 'Tournament ops refreshed',
         successMessage: 'Tables, records, and appeals were reloaded.',
-        fallbackTitle: 'Tournament ops refreshed with fallback data',
-        fallbackMessage: 'Some tournament ops panels are still using local fallback data.',
+        fallbackTitle: 'Tournament ops refreshed with warnings',
+        fallbackMessage: 'Some tournament ops panels could not be confirmed.',
       },
     );
 

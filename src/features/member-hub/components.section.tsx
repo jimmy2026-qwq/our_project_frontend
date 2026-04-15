@@ -1,4 +1,5 @@
 import { WorkbenchContextPanel } from '@/components/shared/domain';
+import { EmptyState } from '@/components/shared/feedback';
 import { SelectField } from '@/components/shared/forms';
 import { SectionIntro } from '@/components/shared/layout';
 
@@ -24,6 +25,19 @@ export function MemberHubPageSection({
     value: operator.playerId,
     label: operator.label.split(' / ')[0] || operator.playerId,
   }));
+
+  if (directory.items.length === 0) {
+    return (
+      <section className="section">
+        <SectionIntro
+          eyebrow="Member Hub"
+          title="Member Workspace"
+          description="This workspace now depends on live backend operator and dashboard data."
+        />
+        <EmptyState>No member hub operator context is available for the current session.</EmptyState>
+      </section>
+    );
+  }
 
   return (
     <section className="section">

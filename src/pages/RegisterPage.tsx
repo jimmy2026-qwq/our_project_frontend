@@ -62,7 +62,7 @@ export function RegisterPage() {
     <AuthScreen
       eyebrow="Create Account"
       title="创建 RiichiNexus 账号"
-      description="页面会优先调用假设存在的 /auth/register。接口不可用时，前端会回退到本地 mock 账户存储，方便你先联调界面。"
+      description="页面直接调用后端 /auth/register。注册成功后会立即建立当前登录会话。"
       submitLabel="注册"
       footerPrompt="已经有账号了？"
       footerLinkLabel="去登录"

@@ -1,9 +1,22 @@
 import { publicApi } from '@/api/public';
 import type { ClubSummary, PlayerLeaderboardEntry } from '@/domain/public';
-import { mockClubs, mockLeaderboard, toMockEnvelope } from '@/mocks/overview';
 
 import type { LoadState, PublicHallState } from './types';
 import { formatRankLabel, mapLeaderboardStatus } from './data.shared';
+
+function createEmptyLoadState<T>(): LoadState<T> {
+  return {
+    envelope: {
+      items: [],
+      total: 0,
+      limit: 0,
+      offset: 0,
+      hasMore: false,
+      appliedFilters: {},
+    },
+    source: 'api',
+  };
+}
 
 export async function loadLeaderboard(
   state: PublicHallState,
@@ -35,20 +48,9 @@ export async function loadLeaderboard(
       source: 'api',
     };
   } catch (error) {
-    const selectedClubName = mockClubs.find((club) => club.id === state.leaderboardClubId)?.name;
-    const items = mockLeaderboard.filter((item) => {
-      const clubMatch = !selectedClubName || item.clubName === selectedClubName;
-      const statusMatch = !state.leaderboardStatus || item.status === state.leaderboardStatus;
-      return clubMatch && statusMatch;
-    });
-
     return {
-      envelope: toMockEnvelope(items, {
-        clubId: state.leaderboardClubId,
-        status: state.leaderboardStatus,
-      }),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Player leaderboard fallback to mock.',
+      ...createEmptyLoadState<PlayerLeaderboardEntry>(),
+      warning: error instanceof Error ? error.message : 'Unable to load public leaderboard.',
     };
   }
 }

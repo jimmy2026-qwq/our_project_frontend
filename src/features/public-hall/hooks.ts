@@ -144,7 +144,7 @@ export function useTournamentDetail(tournamentId: string | undefined) {
 
   useEffect(() => {
     if (!tournamentId) {
-      setState({ item: null, source: 'mock', warning: 'Tournament id is missing.' });
+      setState({ item: null, source: 'api', warning: 'Tournament id is missing.' });
       setIsLoading(false);
       return;
     }
@@ -183,7 +183,7 @@ export function useClubDetail(clubId: string | undefined) {
 
   useEffect(() => {
     if (!clubId) {
-      setState({ item: null, source: 'mock', warning: 'Club id is missing.' });
+      setState({ item: null, source: 'api', warning: 'Club id is missing.' });
       setIsLoading(false);
       return;
     }

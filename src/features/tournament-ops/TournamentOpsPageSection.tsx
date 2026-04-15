@@ -1,4 +1,5 @@
 import { WorkbenchContextPanel } from '@/components/shared/domain';
+import { EmptyState } from '@/components/shared/feedback';
 import { SelectField, TextInputField } from '@/components/shared/forms';
 import { SectionIntro } from '@/components/shared/layout';
 import type { TableStatus } from '@/domain/common';
@@ -97,6 +98,19 @@ export function TournamentOpsPageSection({
 }: TournamentOpsPageSectionProps) {
   const activeTournament = getActiveTournament(tournaments, state.tournamentId);
   const selectedTable = tables.envelope.items.find((table) => table.id === selectedTableId) ?? null;
+
+  if (!activeTournament) {
+    return (
+      <section className="section">
+        <SectionIntro
+          eyebrow="Tournament Ops"
+          title="Tournament Operations"
+          description="This workbench now depends entirely on live backend tournament data."
+        />
+        <EmptyState>No tournament operations workspace is available right now.</EmptyState>
+      </section>
+    );
+  }
 
   return (
     <section className="section">

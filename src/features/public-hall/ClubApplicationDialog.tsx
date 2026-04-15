@@ -171,8 +171,8 @@ export function ClubApplicationDialog({
       notifyMutationResult(result, {
         successTitle: 'Club application submitted',
         successMessage: 'The request was sent to the backend successfully.',
-        fallbackTitle: 'Club application submitted with fallback',
-        fallbackMessage: 'The request used the local fallback flow.',
+        fallbackTitle: 'Club application needs attention',
+        fallbackMessage: 'The request could not be fully confirmed.',
       });
     } catch (error) {
       notifyWarning('Club application failed', error instanceof Error ? error.message : '提交申请失败，请稍后再试。');
@@ -201,8 +201,8 @@ export function ClubApplicationDialog({
       notifyMutationResult(result, {
         successTitle: 'Application withdrawn',
         successMessage: 'The withdraw request completed successfully.',
-        fallbackTitle: 'Application withdrawn with fallback',
-        fallbackMessage: 'The withdraw flow used the local fallback path.',
+        fallbackTitle: 'Application withdraw needs attention',
+        fallbackMessage: 'The withdraw request could not be fully confirmed.',
       });
     } catch (error) {
       notifyWarning('Withdraw failed', error instanceof Error ? error.message : '撤回申请失败，请稍后再试。');

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { useDialog, useMutationNotice } from '@/hooks';
+import { useDialog, useMutationNotice, useNotice } from '@/hooks';
 import { useAuth } from '@/hooks/useAuth';
 
 import {
@@ -94,6 +94,7 @@ export function useMemberHubActions(
 ) {
   const { confirmDanger } = useDialog();
   const { notifyMutationResult } = useMutationNotice();
+  const { notifyWarning } = useNotice();
 
   async function changeOperator(operatorId: string) {
     const activeOperator = getActiveOperator(directory, operatorId);
@@ -127,15 +128,22 @@ export function useMemberHubActions(
       return;
     }
 
-    const result = await reviewApplication(state.clubId, applicationId, state.operatorId, decision);
-    notifyMutationResult(result, {
-      successTitle: decision === 'approve' ? 'Application approved' : 'Application rejected',
-      successMessage: 'The member hub queue was updated and reloaded.',
-      fallbackTitle:
-        decision === 'approve' ? 'Application approved with fallback' : 'Application rejected with fallback',
-      fallbackMessage: 'The member hub review used the local inbox fallback.',
-    });
-    reload();
+    try {
+      const result = await reviewApplication(state.clubId, applicationId, state.operatorId, decision);
+      notifyMutationResult(result, {
+        successTitle: decision === 'approve' ? 'Application approved' : 'Application rejected',
+        successMessage: 'The member hub queue was updated and reloaded.',
+        fallbackTitle:
+          decision === 'approve' ? 'Application approval requires attention' : 'Application rejection requires attention',
+        fallbackMessage: 'The review result could not be confirmed.',
+      });
+      reload();
+    } catch (error) {
+      notifyWarning(
+        decision === 'approve' ? 'Unable to approve application' : 'Unable to reject application',
+        error instanceof Error ? error.message : 'The review request did not complete.',
+      );
+    }
   }
 
   return {

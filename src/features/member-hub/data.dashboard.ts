@@ -1,6 +1,5 @@
 import { publicApi } from '@/api/public';
-
-import { findMockDashboard, type DashboardLoadState } from './data.shared';
+import type { DashboardLoadState } from './data.shared';
 
 export async function loadPlayerDashboard(playerId: string, operatorId: string): Promise<DashboardLoadState> {
   try {
@@ -8,9 +7,9 @@ export async function loadPlayerDashboard(playerId: string, operatorId: string):
     return { dashboard, source: 'api' };
   } catch (error) {
     return {
-      dashboard: findMockDashboard(playerId),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Player dashboard fallback to mock.',
+      dashboard: null,
+      source: 'api',
+      warning: error instanceof Error ? error.message : 'Unable to load player dashboard.',
     };
   }
 }
@@ -21,9 +20,9 @@ export async function loadClubDashboard(clubId: string, operatorId: string): Pro
     return { dashboard, source: 'api' };
   } catch (error) {
     return {
-      dashboard: findMockDashboard(clubId),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Club dashboard fallback to mock.',
+      dashboard: null,
+      source: 'api',
+      warning: error instanceof Error ? error.message : 'Unable to load club dashboard.',
     };
   }
 }

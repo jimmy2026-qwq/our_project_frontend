@@ -12,6 +12,14 @@ export interface ClubApplicationInboxItem {
 
 const STORAGE_KEY = 'riichi-nexus.club-applications';
 
+export function isProvisionalClubApplicationId(id: string) {
+  return id.startsWith('pending:');
+}
+
+export function createProvisionalClubApplicationId(clubId: string, operatorId: string) {
+  return `pending:${clubId}:${operatorId}`;
+}
+
 function canUseStorage() {
   return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined';
 }
@@ -43,7 +51,34 @@ function writeClubApplicationInbox(items: ClubApplicationInboxItem[]) {
 
 export function upsertClubApplicationInboxItem(item: ClubApplicationInboxItem) {
   const items = readClubApplicationInbox();
-  const next = [item, ...items.filter((existing) => existing.id !== item.id)].slice(0, 20);
+  const incomingProvisional = isProvisionalClubApplicationId(item.id);
+  const next = [
+    item,
+    ...items.filter((existing) => {
+      if (existing.id === item.id) {
+        return false;
+      }
+
+      const sameClubAndOperator =
+        existing.clubId === item.clubId && existing.operatorId === item.operatorId;
+
+      if (!sameClubAndOperator) {
+        return true;
+      }
+
+      const existingProvisional = isProvisionalClubApplicationId(existing.id);
+
+      if (!incomingProvisional && existingProvisional) {
+        return false;
+      }
+
+      if (incomingProvisional && !existingProvisional) {
+        return true;
+      }
+
+      return true;
+    }),
+  ].slice(0, 20);
   writeClubApplicationInbox(next);
 }
 

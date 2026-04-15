@@ -103,6 +103,7 @@ export function PortalSection({
   source,
   warning,
   children,
+  className,
 }: {
   eyebrow: string;
   title: ReactNode;
@@ -110,9 +111,10 @@ export function PortalSection({
   source?: 'api' | 'mock';
   warning?: string;
   children: ReactNode;
+  className?: string;
 }) {
   return (
-    <section className="portal-section rounded-[var(--radius-xl)] bg-[color:var(--bg-elevated)] p-[26px]">
+    <section className={cx('portal-section rounded-[var(--radius-xl)] bg-[color:var(--bg-elevated)] p-[26px]', className)}>
       <div className="portal-section__ornament" aria-hidden="true" />
       <div className="portal-section__head flex items-start justify-between gap-4">
         <div>

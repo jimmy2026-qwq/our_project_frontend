@@ -10,6 +10,7 @@ import type { DetailState } from '../types';
 import { PublicDetailNotFound } from './shared';
 import { useClubDetailWorkbench } from './club-detail.hooks';
 import {
+  ClubAdminMembersPanel,
   ClubHeroActions,
   ClubInboxPanel,
   ClubPublicInfoPanel,
@@ -31,6 +32,8 @@ export const PublicClubDetailSection = ({
     setSelectedLineupTournament,
     setIsCurrentMember,
     handleReview,
+    handleAssignAdmin,
+    handleRemoveMember,
   } = useClubDetailWorkbench({
     state,
     session,
@@ -96,6 +99,12 @@ export const PublicClubDetailSection = ({
               isInboxLoading={workbench.isInboxLoading}
               applicationInbox={workbench.applicationInbox}
               onReview={(applicationId, decision) => void handleReview(applicationId, decision)}
+            />
+            <ClubAdminMembersPanel
+              isLoading={workbench.isClubMembersLoading}
+              members={workbench.clubMembers}
+              onAssignAdmin={(member) => void handleAssignAdmin(member)}
+              onRemoveMember={(member) => void handleRemoveMember(member)}
             />
           </section>
         ) : null}

@@ -1,12 +1,7 @@
 import { publicApi } from '@/api/public';
+import { clubsApi } from '@/api/clubs';
 import { operationsApi } from '@/api/operations';
 import type { ClubPublicProfile, TournamentPublicProfile } from '@/domain/public';
-import {
-  mockClubProfiles,
-  mockClubs,
-  mockSchedules,
-  mockTournamentProfiles,
-} from '@/mocks/overview';
 
 import type { ClubDetailState, TournamentDetailState } from './types';
 import { mapTournamentDetailFromAdminView } from './data.shared';
@@ -24,31 +19,35 @@ export async function loadTournamentDetail(tournamentId: string): Promise<Tourna
         warning: 'This tournament is still in draft mode and is shown through the admin endpoint.',
       };
     } catch {
-      // fall through to mock
+      // fall through
     }
 
     return {
-      item: mockTournamentProfiles.find((profile) => profile.id === tournamentId) ?? null,
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Tournament detail fallback to mock.',
+      item: null,
+      source: 'api',
+      warning: error instanceof Error ? error.message : 'Unable to load tournament detail.',
     };
   }
 }
 
 async function loadInvitedClubTournaments(clubId: string): Promise<ClubPublicProfile['activeTournaments']> {
   try {
-    const tournaments = await operationsApi.getTournaments({ limit: 100, offset: 0 });
-    const details = await Promise.all(
-      tournaments.items.map((tournament) => operationsApi.getTournament(tournament.id)),
-    );
+    const envelope = await clubsApi.getClubTournaments(clubId, {
+      scope: 'recent',
+      limit: 100,
+      offset: 0,
+    });
 
-    return details
-      .filter((tournament) => (tournament.participatingClubs ?? []).includes(clubId))
-      .map((tournament) => ({
-        id: tournament.id,
-        name: tournament.name,
-        status: tournament.status as TournamentPublicProfile['status'],
-        source: 'invited' as const,
+    return envelope.items
+      .filter((item) => item.canViewDetail)
+      .map((item) => ({
+        id: item.tournamentId,
+        name: item.name,
+        status: item.status as TournamentPublicProfile['status'],
+        source:
+          item.clubParticipationStatus === 'Participating'
+            ? ('recent' as const)
+            : ('invited' as const),
       }));
   } catch {
     return [];
@@ -84,52 +83,20 @@ export async function loadClubDetail(clubId: string): Promise<ClubDetailState> {
       source: 'api',
     };
   } catch (error) {
-    const fallbackClub = mockClubs.find((club) => club.id === clubId);
     return {
-      item:
-        mockClubProfiles.find((profile) => profile.id === clubId) ??
-        (fallbackClub
-          ? {
-              id: fallbackClub.id,
-              name: fallbackClub.name,
-              slogan: 'Public club profile',
-              description:
-                'Club detail fell back to the directory payload because the full public detail response was unavailable.',
-              memberCount: fallbackClub.memberCount,
-              powerRating: fallbackClub.powerRating,
-              treasury: fallbackClub.treasury,
-              relations: fallbackClub.relations,
-              featuredPlayers: [],
-              activeTournaments: [],
-            }
-          : null),
-      source: 'mock',
-      warning: error instanceof Error ? error.message : 'Club detail fallback to mock.',
+      item: null,
+      source: 'api',
+      warning: error instanceof Error ? error.message : 'Unable to load club detail.',
     };
   }
 }
 
 export function buildFallbackTournamentStages(
-  tournamentId: string,
+  _tournamentId: string,
   profile: TournamentPublicProfile,
 ): NonNullable<TournamentPublicProfile['stages']> {
   if (profile.stages && profile.stages.length > 0) {
     return profile.stages;
-  }
-
-  const mockStages = mockSchedules
-    .filter((item) => item.tournamentId === tournamentId)
-    .map((item) => ({
-      stageId: item.stageId,
-      name: item.stageName,
-      status: item.stageStatus,
-      roundCount: 1,
-      tableCount: 0,
-      pendingTablePlanCount: 0,
-    }));
-
-  if (mockStages.length > 0) {
-    return mockStages;
   }
 
   if (profile.nextStageId) {

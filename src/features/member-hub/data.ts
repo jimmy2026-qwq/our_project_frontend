@@ -2,7 +2,6 @@ export {
   createMemberHubState,
   DEFAULT_MEMBER_HUB_DIRECTORY,
   DEFAULT_MEMBER_HUB_STATE,
-  fallbackOperators,
   formatDateTime,
   getActiveOperator,
   normalizeClubIdForOperator,

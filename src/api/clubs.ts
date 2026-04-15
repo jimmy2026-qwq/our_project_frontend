@@ -11,6 +11,7 @@ import type {
   ClubApplicationApplicantContract,
   ClubContract,
   ClubMemberContract,
+  ClubTournamentParticipationContract,
 } from './contracts/clubs';
 import { encodeBackendOption, mapEnvelope, request, sendJson } from './http';
 
@@ -55,6 +56,15 @@ export interface ReviewClubApplicationPayload {
 export interface CreateClubPayload {
   name: string;
   creatorId: string;
+}
+
+export interface AssignClubAdminPayload {
+  playerId: string;
+  operatorId: string;
+}
+
+export interface RemoveClubMemberPayload {
+  operatorId?: string;
 }
 
 function mapClub(item: ClubContract): ClubSummary {
@@ -141,6 +151,17 @@ export const clubsApi = {
       creatorId: payload.creatorId,
     }).then(mapClub);
   },
+  assignClubAdmin(clubId: string, payload: AssignClubAdminPayload) {
+    return sendJson<ClubContract>(`/clubs/${clubId}/admins`, 'POST', {
+      playerId: payload.playerId,
+      operatorId: payload.operatorId,
+    }).then(mapClub);
+  },
+  removeClubMember(clubId: string, playerId: string, payload: RemoveClubMemberPayload) {
+    return sendJson<ClubContract>(`/clubs/${clubId}/members/${playerId}/remove`, 'POST', {
+      operatorId: encodeBackendOption(payload.operatorId),
+    }).then(mapClub);
+  },
   getClubs(filters: ClubFilters) {
     return request<ListEnvelope<ClubContract>>(`/clubs${toQueryString(filters)}`).then((envelope) =>
       mapEnvelope(envelope, mapClub),
@@ -149,6 +170,14 @@ export const clubsApi = {
   getClubMembers(clubId: string, filters: { status?: string; nickname?: string; limit?: number; offset?: number } = {}) {
     return request<ListEnvelope<ClubMemberContract>>(`/clubs/${clubId}/members${toQueryString(filters)}`).then(
       (envelope) => mapEnvelope(envelope, mapClubMember),
+    );
+  },
+  getClubTournaments(
+    clubId: string,
+    filters: { scope?: 'recent' | 'active' | 'all'; viewer?: string; limit?: number; offset?: number } = {},
+  ) {
+    return request<ListEnvelope<ClubTournamentParticipationContract>>(
+      `/clubs/${clubId}/tournaments${toQueryString(filters)}`,
     );
   },
   submitClubApplication(clubId: string, payload: ClubApplicationPayload) {
@@ -187,6 +216,14 @@ export const clubsApi = {
   ) {
     return request<ClubApplicationViewContract>(
       `/clubs/${clubId}/applications/${membershipId}${toQueryString(filters)}`,
+    ).then(mapClubApplicationView);
+  },
+  getCurrentClubApplication(
+    clubId: string,
+    filters: { operatorId?: string; guestSessionId?: string },
+  ) {
+    return request<ClubApplicationViewContract>(
+      `/clubs/${clubId}/applications/current${toQueryString(filters)}`,
     ).then(mapClubApplicationView);
   },
   reviewClubApplication(

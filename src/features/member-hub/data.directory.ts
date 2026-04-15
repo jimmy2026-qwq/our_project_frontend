@@ -1,4 +1,3 @@
-import { authApi } from '@/api/auth';
 import { clubsApi } from '@/api/clubs';
 import type { AuthSession } from '@/domain/auth';
 import type { ClubSummary } from '@/domain/public';
@@ -40,47 +39,19 @@ export async function loadMemberHubOperatorDirectory(
       });
     }
 
-    const summary =
-      operators.some((operator) => operator.role === 'ClubAdmin')
-        ? null
-        : await authApi.getDemoSummary({
-            bootstrapIfMissing: false,
-            refreshDerived: false,
-          });
-    const recommendedOperatorId = summary?.recommendedOperatorId?.trim();
-    const recommendedClubs =
-      recommendedOperatorId && recommendedOperatorId !== currentOperatorId
-        ? await clubsApi.getClubs({
-            adminId: recommendedOperatorId,
-            activeOnly: true,
-            limit: 20,
-            offset: 0,
-          })
-        : { items: [] as ClubSummary[] };
-
-    if (recommendedOperatorId && recommendedOperatorId !== currentOperatorId && recommendedClubs.items.length > 0) {
-      operators.push({
-        id: recommendedOperatorId,
-        label: 'Demo Admin / Club Admin',
-        role: 'ClubAdmin',
-        playerId: recommendedOperatorId,
-        managedClubIds: recommendedClubs.items.map((club) => club.id),
-      });
-    }
-
     if (operators.length === 0) {
       return fallback;
     }
 
     return {
       items: uniqueById(operators),
-      clubsById: createClubsById([...currentOperatorClubs.items, ...recommendedClubs.items]),
+      clubsById: createClubsById(currentOperatorClubs.items),
       source: 'api',
     };
   } catch (error) {
     return {
       ...fallback,
-      warning: error instanceof Error ? error.message : 'Operator directory fallback to mock.',
+      warning: error instanceof Error ? error.message : 'Unable to load operator directory.',
     };
   }
 }

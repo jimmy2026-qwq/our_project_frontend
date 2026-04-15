@@ -2,14 +2,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { loadPlayerContext } from '@/features/blueprint/application-data';
 import { clubsApi } from '@/api/clubs';
-import type { AuthSession } from '@/domain/auth';
+import type { AuthSession, PlayerProfile } from '@/domain/auth';
 import type { ClubApplicationView } from '@/domain/clubs';
 import type { ClubPublicProfile } from '@/domain/public';
 import { useDialog, useMutationNotice } from '@/hooks';
-import { updateClubApplicationInboxStatus, upsertClubApplicationInboxItem } from '@/lib/club-applications';
+import { upsertClubApplicationInboxItem } from '@/lib/club-applications';
 
 import type { DetailState } from '../types';
-import type { ClubDetailWorkbenchState } from './club-detail.types';
+import type { ClubAdminMemberEntry, ClubDetailWorkbenchState } from './club-detail.types';
 
 interface UseClubDetailWorkbenchParams {
   state: DetailState<ClubPublicProfile>;
@@ -33,6 +33,8 @@ export function useClubDetailWorkbench({
   const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);
   const [applicationInbox, setApplicationInbox] = useState<ClubApplicationView[]>([]);
   const [isInboxLoading, setIsInboxLoading] = useState(false);
+  const [clubMembers, setClubMembers] = useState<ClubAdminMemberEntry[]>([]);
+  const [isClubMembersLoading, setIsClubMembersLoading] = useState(false);
 
   const profile = state.item;
 
@@ -151,6 +153,74 @@ export function useClubDetailWorkbench({
     };
   }, [profile]);
 
+  useEffect(() => {
+    if (!session?.user.roles.isRegisteredPlayer || !profile || !isCurrentClubAdmin) {
+      setClubMembers([]);
+      setIsClubMembersLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    setIsClubMembersLoading(true);
+
+    void clubsApi
+      .getClubMembers(profile.id, { limit: 100, offset: 0 })
+      .then(async (envelope) => {
+        const members = envelope.items;
+        const adminMembership = await Promise.all(
+          members.map(async (member) => {
+            try {
+              const adminEnvelope = await clubsApi.getClubs({
+                adminId: member.playerId,
+                limit: 100,
+                offset: 0,
+              });
+
+              return adminEnvelope.items.some((club) => club.id === profile.id);
+            } catch {
+              return false;
+            }
+          }),
+        );
+
+        if (!cancelled) {
+          setClubMembers(
+            members
+              .map((member, index) => ({
+                ...member,
+                isAdmin: adminMembership[index] ?? false,
+                isCurrentUser: member.playerId === (session.user.operatorId ?? session.user.userId),
+              }))
+              .sort((left, right) => {
+                if (left.isCurrentUser !== right.isCurrentUser) {
+                  return left.isCurrentUser ? -1 : 1;
+                }
+
+                if (left.isAdmin !== right.isAdmin) {
+                  return left.isAdmin ? -1 : 1;
+                }
+
+                return left.displayName.localeCompare(right.displayName);
+              }),
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setClubMembers([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsClubMembersLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [isCurrentClubAdmin, profile, session]);
+
   const workbench = useMemo<ClubDetailWorkbenchState | null>(() => {
     if (!profile) {
       return null;
@@ -181,6 +251,8 @@ export function useClubDetailWorkbench({
       clubMemberNames,
       applicationInbox,
       isInboxLoading,
+      clubMembers,
+      isClubMembersLoading,
       isFeaturedMember,
       isClubMember,
       featuredPlayerNames,
@@ -191,11 +263,13 @@ export function useClubDetailWorkbench({
   }, [
     applicationInbox,
     clubMemberNames,
+    clubMembers,
     isApplicationDialogOpen,
     isCurrentClubAdmin,
     isCurrentMember,
     isFeaturedMember,
     isInboxLoading,
+    isClubMembersLoading,
     isLineupDialogOpen,
     profile,
     selectedLineupTournament,
@@ -237,8 +311,9 @@ export function useClubDetailWorkbench({
           clubId: reviewedApplication.clubId,
           clubName: reviewedApplication.clubName,
           operatorId:
-            reviewedApplication.applicant.applicantUserId ??
-            reviewedApplication.applicant.playerId,
+            reviewedApplication.applicant.playerId ||
+            reviewedApplication.applicant.applicantUserId ||
+            '',
           applicantName: reviewedApplication.applicant.displayName,
           message: reviewedApplication.message,
           status: reviewedApplication.status,
@@ -247,21 +322,6 @@ export function useClubDetailWorkbench({
         });
 
         return { source: 'api' as const };
-      })
-      .catch(() => ({
-        source: 'mock' as const,
-        warning:
-          'The backend review request failed, so the page fell back to local mock behavior. Refresh the page to confirm the real backend state.',
-      }))
-      .then((reviewResult) => {
-        if (reviewResult.source === 'mock') {
-          updateClubApplicationInboxStatus(
-            applicationId,
-            decision === 'approve' ? 'Approved' : 'Rejected',
-          );
-        }
-
-        return reviewResult;
       });
 
     notifyMutationResult(result, {
@@ -269,15 +329,132 @@ export function useClubDetailWorkbench({
       successMessage: 'The application inbox was updated successfully.',
       fallbackTitle:
         decision === 'approve'
-          ? 'Application marked approved locally'
-          : 'Application marked rejected locally',
+          ? 'Application approval requires attention'
+          : 'Application rejection requires attention',
       fallbackMessage:
-        'The UI updated locally, but the backend request did not complete. Refresh before treating this as final.',
+        'The backend review request did not complete.',
     });
 
     setApplicationInbox((current) => current.filter((item) => item.applicationId !== applicationId));
 
     if (result.source === 'api') {
+      onRefreshDetail?.();
+    }
+  }
+
+  async function refreshClubMembers() {
+    if (!profile || !isCurrentClubAdmin || !session?.user.roles.isRegisteredPlayer) {
+      return;
+    }
+
+    setIsClubMembersLoading(true);
+
+    try {
+      const membersEnvelope = await clubsApi.getClubMembers(profile.id, { limit: 100, offset: 0 });
+      const members = membersEnvelope.items;
+      const adminMembership = await Promise.all(
+        members.map(async (member) => {
+          try {
+            const adminEnvelope = await clubsApi.getClubs({
+              adminId: member.playerId,
+              limit: 100,
+              offset: 0,
+            });
+
+            return adminEnvelope.items.some((club) => club.id === profile.id);
+          } catch {
+            return false;
+          }
+        }),
+      );
+
+      setClubMembers(
+        members
+          .map((member, index) => ({
+            ...member,
+            isAdmin: adminMembership[index] ?? false,
+            isCurrentUser: member.playerId === (session.user.operatorId ?? session.user.userId),
+          }))
+          .sort((left, right) => {
+            if (left.isCurrentUser !== right.isCurrentUser) {
+              return left.isCurrentUser ? -1 : 1;
+            }
+
+            if (left.isAdmin !== right.isAdmin) {
+              return left.isAdmin ? -1 : 1;
+            }
+
+            return left.displayName.localeCompare(right.displayName);
+          }),
+      );
+    } finally {
+      setIsClubMembersLoading(false);
+    }
+  }
+
+  async function handleAssignAdmin(member: PlayerProfile) {
+    if (!profile?.id || !workbench?.operatorId) {
+      return;
+    }
+
+    const confirmed = await confirmDanger({
+      title: 'Promote club admin?',
+      message: `This will grant club admin access to ${member.displayName}.`,
+      confirmText: 'Promote',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    const result = await clubsApi.assignClubAdmin(profile.id, {
+      playerId: member.playerId,
+      operatorId: workbench.operatorId,
+    }).then(() => ({ source: 'api' as const }));
+
+    notifyMutationResult(result, {
+      successTitle: 'Club admin assigned',
+      successMessage: `${member.displayName} can now manage this club.`,
+      fallbackTitle: 'Club admin update requires attention',
+      fallbackMessage: 'The backend update did not complete.',
+    });
+
+    if (result.source === 'api') {
+      await refreshClubMembers();
+      onRefreshDetail?.();
+    }
+  }
+
+  async function handleRemoveMember(member: ClubAdminMemberEntry) {
+    if (!profile?.id || !workbench?.operatorId || member.isAdmin) {
+      return;
+    }
+
+    const confirmed = await confirmDanger({
+      title: 'Remove club member?',
+      message: `This will remove ${member.displayName} from the club membership list.`,
+      confirmText: 'Remove',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    const result = await clubsApi
+      .removeClubMember(profile.id, member.playerId, {
+        operatorId: workbench.operatorId,
+      })
+      .then(() => ({ source: 'api' as const }));
+
+    notifyMutationResult(result, {
+      successTitle: 'Club member removed',
+      successMessage: `${member.displayName} was removed from this club.`,
+      fallbackTitle: 'Club member removal requires attention',
+      fallbackMessage: 'The backend update did not complete.',
+    });
+
+    if (result.source === 'api') {
+      await refreshClubMembers();
       onRefreshDetail?.();
     }
   }
@@ -289,5 +466,7 @@ export function useClubDetailWorkbench({
     setSelectedLineupTournament,
     setIsCurrentMember,
     handleReview,
+    handleAssignAdmin,
+    handleRemoveMember,
   };
 }

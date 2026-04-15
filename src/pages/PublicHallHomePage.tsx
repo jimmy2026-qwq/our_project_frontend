@@ -55,8 +55,8 @@ export function PublicHallHomePage() {
           failureTitle: 'Public hall refresh failed',
           successTitle: 'Public hall refreshed',
           successMessage: 'Live public hall data was reloaded successfully.',
-          fallbackTitle: 'Public hall refreshed with fallback',
-          fallbackMessage: 'Some public hall panels are currently using mock data.',
+          fallbackTitle: 'Public hall refreshed with warnings',
+          fallbackMessage: 'Some public hall panels could not be confirmed.',
         },
         error,
       );
@@ -74,8 +74,8 @@ export function PublicHallHomePage() {
         failureTitle: 'Public hall refresh failed',
         successTitle: 'Public hall refreshed',
         successMessage: 'Live public hall data was reloaded successfully.',
-        fallbackTitle: 'Public hall refreshed with fallback',
-        fallbackMessage: 'Some public hall panels are currently using mock data.',
+        fallbackTitle: 'Public hall refreshed with warnings',
+        fallbackMessage: 'Some public hall panels could not be confirmed.',
       },
       error,
     );
