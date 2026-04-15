@@ -13,19 +13,29 @@ export function PublicClubDetailPage() {
 
   if (isLoading || !state) {
     return (
-      <PublicHallLoading
-        eyebrow="俱乐部详情"
-        title="正在加载俱乐部详情..."
-        summary="正在同步俱乐部资料、成员信息和近期赛事。"
-        progressLabel="俱乐部详情加载中"
-        progressMessage="正在获取俱乐部公开资料、成员状态和相关赛事信息。"
-      />
+      <div className="tournament-detail-page">
+        <PublicHallLoading
+          eyebrow="俱乐部详情"
+          title="正在载入俱乐部详情..."
+          summary="正在同步俱乐部公开信息、近期赛事和成员管理数据。"
+          progressLabel="俱乐部详情加载中"
+          progressMessage="加载完成后会直接进入新的详情界面。"
+        />
+      </div>
     );
   }
 
   if (!state.item) {
-    return <PublicDetailNotFound title="Club not found" />;
+    return (
+      <div className="tournament-detail-page">
+        <PublicDetailNotFound title="Club not found" />
+      </div>
+    );
   }
 
-  return <PublicClubDetailSection state={state} onRefreshDetail={refresh} />;
+  return (
+    <div className="tournament-detail-page">
+      <PublicClubDetailSection state={state} onRefreshDetail={refresh} />
+    </div>
+  );
 }

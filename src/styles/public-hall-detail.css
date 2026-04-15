@@ -235,6 +235,8 @@
 }
 
 .tournament-detail-shell__content {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: calc(100vh - 190px);
   max-height: calc(100vh - 190px);
   overflow: hidden;
@@ -258,12 +260,18 @@
 }
 
 .tournament-detail-shell__panel {
+  display: grid;
+  grid-template-rows: minmax(0, 1fr);
   min-height: 0;
+  height: 100%;
   max-height: 100%;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: hidden;
   padding: 18px;
   border: 2px solid rgba(219, 175, 98, 0.32);
   background: rgba(15, 24, 46, 0.52);
+  box-sizing: border-box;
+  scrollbar-gutter: stable;
 }
 
 .tournament-detail-shell__panel .detail-card,
@@ -279,18 +287,26 @@
 
 .tournament-detail-shell__panel--full {
   height: 100%;
+  min-height: 100%;
 }
 
 .tournament-detail-list {
   display: grid;
+  grid-template-rows: minmax(0, 1fr);
   gap: 14px;
-  min-height: 100%;
+  min-height: 0;
+  height: 100%;
 }
 
 .tournament-detail-list__body {
   display: grid;
   gap: 14px;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  min-height: 0;
+  height: 100%;
+  align-content: start;
+  scrollbar-gutter: stable;
 }
 
 .tournament-detail-list__body--cards {
@@ -333,6 +349,18 @@
   min-width: 132px;
 }
 
+.tournament-detail-list__row-side--member-admin {
+  min-width: 260px;
+}
+
+.tournament-detail-list__action-row {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: nowrap;
+}
+
 .tournament-detail-list__action {
   min-width: 112px;
   margin-top: 0;
@@ -341,6 +369,15 @@
   background: linear-gradient(180deg, rgba(83, 124, 210, 0.92), rgba(56, 85, 162, 0.92));
   color: #f5c98e;
   text-align: center;
+  cursor: pointer;
+}
+
+.tournament-detail-list__action--secondary {
+  background: linear-gradient(180deg, rgba(111, 145, 219, 0.92), rgba(72, 98, 176, 0.92));
+}
+
+.tournament-detail-list__action--danger {
+  background: linear-gradient(180deg, rgba(167, 86, 86, 0.92), rgba(126, 52, 52, 0.92));
 }
 
 .tournament-detail-seat-row {
@@ -414,5 +451,14 @@
 
   .tournament-detail-list__row-side {
     justify-items: start;
+  }
+
+  .tournament-detail-list__row-side--member-admin {
+    min-width: 0;
+  }
+
+  .tournament-detail-list__action-row {
+    flex-wrap: wrap;
+    justify-content: flex-start;
   }
 }

@@ -1,13 +1,14 @@
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { DetailHero, DetailPageShell } from '@/components/shared/data-display';
+import { EmptyState } from '@/components/shared/feedback';
+import { Alert } from '@/components/ui';
 import type { ClubPublicProfile } from '@/domain/public';
 import { useAuth } from '@/hooks/useAuth';
 
 import { ClubApplicationDialog } from '../ClubApplicationDialog';
 import { ClubTournamentLineupDialog } from '../ClubTournamentLineupDialog';
 import type { DetailState } from '../types';
-import { PublicDetailNotFound } from './shared';
 import { useClubDetailWorkbench } from './club-detail.hooks';
 import {
   ClubAdminMembersPanel,
@@ -16,6 +17,9 @@ import {
   ClubPublicInfoPanel,
   ClubRecentTournamentsPanel,
 } from './club-detail.panels';
+import { PublicDetailNotFound } from './shared';
+
+type ClubDetailTab = 'home' | 'tournaments' | 'applications' | 'members';
 
 export const PublicClubDetailSection = ({
   state,
@@ -39,6 +43,7 @@ export const PublicClubDetailSection = ({
     session,
     onRefreshDetail,
   });
+  const [activeTab, setActiveTab] = useState<ClubDetailTab>('home');
 
   if (!state.item || !workbench) {
     return <PublicDetailNotFound title="Club not found" />;
@@ -53,62 +58,107 @@ export const PublicClubDetailSection = ({
     relations: workbench.profile.relations,
   };
 
+  const tabItems: Array<{ id: ClubDetailTab; label: string }> = [
+    { id: 'home', label: '俱乐部主页' },
+    { id: 'tournaments', label: '相关赛事' },
+    ...(workbench.isCurrentClubAdmin
+      ? [
+          { id: 'applications' as const, label: '入会申请' },
+          { id: 'members' as const, label: '成员管理' },
+        ]
+      : []),
+  ];
+
   return (
     <>
-      <DetailPageShell
-        backLink={
-          <Link className="detail-back" to="/public" reloadDocument>
-            Back to public hall
+      <section className="tournament-detail-shell">
+        <header className="tournament-detail-shell__header">
+          <Link className="tournament-detail-shell__back" to="/public">
+            返回大厅
           </Link>
-        }
-        hero={
-          <DetailHero
-            eyebrow="Club"
-            title={workbench.profile.name}
-            tagline={workbench.profile.slogan}
-            summary={workbench.profile.description}
-            actions={
-              <ClubHeroActions
-                isClubMember={workbench.isClubMember}
-                canApply={workbench.canApply}
-                onApply={() => setIsApplicationDialogOpen(true)}
-              />
-            }
-            source={state.source}
-            warning={state.warning}
-          />
-        }
-      >
-        <section className="detail-grid grid gap-[22px] md:grid-cols-2">
-          <ClubPublicInfoPanel
-            profile={workbench.profile}
-            featuredPlayerNames={workbench.featuredPlayerNames}
-          />
-          <ClubRecentTournamentsPanel
-            tournaments={workbench.profile.activeTournaments}
-            canManageLineup={workbench.canManageLineup}
-            onOpenLineup={(tournament) => {
-              setSelectedLineupTournament(tournament);
-              setIsLineupDialogOpen(true);
-            }}
-          />
-        </section>
-        {workbench.isCurrentClubAdmin ? (
-          <section className="detail-grid grid gap-[22px]">
-            <ClubInboxPanel
-              isInboxLoading={workbench.isInboxLoading}
-              applicationInbox={workbench.applicationInbox}
-              onReview={(applicationId, decision) => void handleReview(applicationId, decision)}
+          <div className="tournament-detail-shell__title-card">俱乐部：{workbench.profile.name}</div>
+          <div className="tournament-detail-shell__header-actions">
+            <ClubHeroActions
+              isClubMember={workbench.isClubMember}
+              canApply={workbench.canApply}
+              onApply={() => setIsApplicationDialogOpen(true)}
             />
-            <ClubAdminMembersPanel
-              isLoading={workbench.isClubMembersLoading}
-              members={workbench.clubMembers}
-              onAssignAdmin={(member) => void handleAssignAdmin(member)}
-              onRemoveMember={(member) => void handleRemoveMember(member)}
-            />
-          </section>
-        ) : null}
-      </DetailPageShell>
+          </div>
+        </header>
+
+        <div className="tournament-detail-shell__frame">
+          <aside className="tournament-detail-shell__sidebar">
+            {tabItems.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={`tournament-detail-shell__nav-item ${
+                  activeTab === tab.id ? 'tournament-detail-shell__nav-item--active' : ''
+                }`}
+                onClick={() => setActiveTab(tab.id)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </aside>
+
+          <div className="tournament-detail-shell__content">
+            {activeTab === 'home' ? (
+              <div className="tournament-detail-shell__panel tournament-detail-shell__panel--full">
+                <ClubPublicInfoPanel
+                  profile={workbench.profile}
+                  featuredPlayerNames={workbench.featuredPlayerNames}
+                />
+              </div>
+            ) : null}
+
+            {activeTab === 'tournaments' ? (
+              <div className="tournament-detail-shell__panel tournament-detail-shell__panel--full">
+                <ClubRecentTournamentsPanel
+                  tournaments={workbench.profile.activeTournaments}
+                  canManageLineup={workbench.canManageLineup}
+                  onOpenLineup={(tournament) => {
+                    setSelectedLineupTournament(tournament);
+                    setIsLineupDialogOpen(true);
+                  }}
+                />
+              </div>
+            ) : null}
+
+            {activeTab === 'applications' ? (
+              <div className="tournament-detail-shell__panel tournament-detail-shell__panel--full">
+                {workbench.isCurrentClubAdmin ? (
+                  <ClubInboxPanel
+                    isInboxLoading={workbench.isInboxLoading}
+                    applicationInbox={workbench.applicationInbox}
+                    onReview={(applicationId, decision) => void handleReview(applicationId, decision)}
+                  />
+                ) : (
+                  <EmptyState asListItem={false}>只有俱乐部管理员可以查看申请列表。</EmptyState>
+                )}
+              </div>
+            ) : null}
+
+            {activeTab === 'members' ? (
+              <div className="tournament-detail-shell__panel tournament-detail-shell__panel--full">
+                {workbench.isCurrentClubAdmin ? (
+                  <ClubAdminMembersPanel
+                    isLoading={workbench.isClubMembersLoading}
+                    members={workbench.clubMembers}
+                    onAssignAdmin={(member) => void handleAssignAdmin(member)}
+                    onRemoveMember={(member) => void handleRemoveMember(member)}
+                  />
+                ) : (
+                  <EmptyState asListItem={false}>只有俱乐部管理员可以管理成员。</EmptyState>
+                )}
+              </div>
+            ) : null}
+
+            {state.warning ? <Alert variant="warning">{state.warning}</Alert> : null}
+          </div>
+        </div>
+      </section>
+
       {workbench.canApply ? (
         <ClubApplicationDialog
           club={clubSummary}
@@ -120,6 +170,7 @@ export const PublicClubDetailSection = ({
           }}
         />
       ) : null}
+
       {workbench.canManageLineup ? (
         <ClubTournamentLineupDialog
           clubId={workbench.profile.id}
