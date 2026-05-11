@@ -1,35 +1,64 @@
 # Backend Interfaces
 
-This document records the backend changes that are still recommended after the current frontend structure cleanup.
+This document describes the frontend/backend contract as it exists after the recent structure cleanup and backend refactor.
 
-It replaces the older single-topic note about club tournament participation with a broader review of the active frontend/backend integration.
+It replaces older notes that treated several tournament and club flows as still missing at the backend layer.
 
-## Current Summary
+## Current Status
 
-The frontend is now in a much better state structurally:
+The backend contract is in much better shape than the older migration notes suggested.
 
-- feature code no longer depends directly on most backend contract files
-- domain types, API contracts, and feature-local types are more clearly separated
-- several oversized feature files have been split
+What is already aligned:
 
-However, the backend interfaces are not yet uniformly aligned in the same way as the template project.
+- tournament read and mutation routes now return dedicated frontend-facing views instead of raw aggregates
+- club application responses are stable scalar-or-null fields rather than mixed array/scalar payloads
+- club tournament participation has a dedicated backend contract, including lifecycle actions
+- OpenAPI and Swagger endpoints are available and covered by contract tests
 
-The current situation is mixed:
+What is still mainly a frontend cleanup problem:
 
-- `public/*` is mostly view-driven already
-- `clubs/*` is partly view-driven, but the frontend still keeps historical compatibility handling
-- `auth/*` is stable enough to use, but still exposes two related response shapes that the frontend currently normalizes together
-- `tournaments/*` and several tournament write endpoints still expose raw domain aggregates rather than dedicated frontend-facing views
+- `front/src/api/operations.ts` is still too large and groups too many capabilities together
+- a few transport compatibility helpers still live too close to business-facing API modules
+- `front/src/api/client.ts` still mixes runtime exports and contract exports
 
-## Priority 1: Tournament Operations Needs Backend Changes
+So the main remaining work is no longer "make the backend expose the right shape". It is "keep the frontend contract layer narrow and clean".
 
-### Why
+## Contract Areas
 
-This is the largest remaining contract mismatch.
+### Session and Auth
 
-The frontend currently consumes a narrowed contract for tournament detail and lineup flows, but the backend routes still return the raw `Tournament` aggregate for several key endpoints.
+These routes are stable enough for the current frontend:
 
-Current backend examples:
+- `GET /session`
+- `GET /players/me`
+- `POST /auth/login`
+- `POST /auth/register`
+- `POST /guest-sessions`
+
+The frontend still keeps separate auth/session contracts, which is the right direction.
+
+### Club Applications
+
+These routes are now treated as stable contract surfaces:
+
+- `GET /clubs/:clubId/applications`
+- `GET /clubs/:clubId/applications/:applicationId`
+- `POST /clubs/:clubId/applications`
+- `POST /clubs/:clubId/applications/:applicationId/withdraw`
+- `POST /clubs/:clubId/applications/:applicationId/review`
+
+Frontend expectation:
+
+- `message`, `reviewNote`, `reviewedBy`, `reviewedByPlayerId`, and similar fields are scalar-or-null
+- list/detail/mutation payloads should stay explicitly view-driven
+
+This part no longer needs a backend redesign. The frontend should just avoid reintroducing fallback unwrapping.
+
+### Tournament Detail and Mutation
+
+This was the biggest older mismatch, and it is now fixed.
+
+These routes are expected to return dedicated detail or mutation views:
 
 - `GET /tournaments/:tournamentId`
 - `POST /tournaments/:tournamentId/publish`
@@ -37,195 +66,62 @@ Current backend examples:
 - `POST /tournaments/:tournamentId/stages/:stageId/schedule`
 - `POST /tournaments/:tournamentId/clubs/:clubId`
 
-These routes currently return the domain aggregate instead of a dedicated frontend-facing detail view.
+Frontend contract note:
 
-That means the frontend is effectively depending on only a subset of a much larger backend model, which is workable but fragile.
+- read flows should consume `TournamentDetailContract`
+- write flows should consume `TournamentMutationContract`
+- feature code should depend on API contracts plus mappers, not feature-local copies of the same shape
 
-### Recommended backend change
+### Club Tournament Participation
 
-Introduce a dedicated tournament-facing response model for the operations workbench.
+This area is no longer "missing backend work". It already has its own contract surface.
 
-Suggested direction:
+Current routes:
 
-- add `TournamentDetailView`
-- optionally add `TournamentMutationView` if mutation responses should be slimmer than read responses
-- return those views consistently from the routes above instead of the raw `Tournament`
-
-### Minimum stable fields
-
-The frontend workbench currently needs these categories to stay explicit and stable:
-
-- tournament identity and lifecycle status
-- organizer, startsAt, endsAt
-- participating clubs and players
-- whitelist summary
-- stages with:
-  - `id`
-  - `name`
-  - `format`
-  - `order`
-  - `status`
-  - `currentRound`
-  - `roundCount`
-  - `schedulingPoolSize`
-  - `pendingTablePlanCount`
-  - `scheduledTableCount`
-  - `lineupSubmissions`
-
-### Why frontend-only cleanup is not enough
-
-The frontend can keep trimming and renaming its local types, but as long as these routes return raw aggregates, it still has to guess which subset is safe to rely on.
-
-This is the main place where backend participation is required.
-
-## Priority 2: Club Application Contracts Should Be Tightened
-
-### Why
-
-The backend already builds a dedicated `ClubMembershipApplicationView`, which is good.
-
-But the frontend still keeps compatibility logic for fields that may arrive as:
-
-- `string`
-- `string[]`
-- `number`
-- `number[]`
-
-That compatibility layer suggests the frontend still does not fully trust the live response shape.
-
-### Recommended backend change
-
-Confirm and preserve the current `ClubMembershipApplicationView` serialization as the single supported response shape for:
-
-- `GET /clubs/:clubId/applications`
-- `GET /clubs/:clubId/applications/:applicationId`
-- `POST /clubs/:clubId/applications/:applicationId/review`
-
-If the current backend output is already stable and scalar-valued, the frontend can remove its historical fallback unwrapping afterward.
-
-### Optional follow-up backend improvements
-
-- expose an explicit response schema in OpenAPI for the application list and detail routes
-- keep guest-origin application approval semantics explicit in the review contract
-- document whether `message`, `reviewNote`, `reviewedBy`, and similar fields are always scalar-or-null
-
-### What the frontend can do before backend work lands
-
-- continue using the existing compatibility mapper
-- progressively isolate the compatibility code to one mapper boundary
-
-## Priority 3: Club Tournament Participation Needs A Dedicated Contract
-
-### Why
-
-This is the older gap already identified before the larger review, and it is still valid.
-
-The frontend currently infers a club's tournament participation by combining:
-
-- public club detail
-- recent matches
-- tournament lists
-- tournament detail checks against `participatingClubs`
-
-That is still only a temporary bridge.
-
-### Recommended endpoint
-
-`GET /clubs/:clubId/tournaments`
-
-Suggested query params:
-
-- `scope`
-  - `recent`
-  - `active`
-  - `all`
-- `viewer`
-  - optional operator id for role-sensitive fields
-- `limit`
-- `offset`
-
-Suggested response shape:
-
-```json
-{
-  "items": [
-    {
-      "tournamentId": "tournament-7ade2f22",
-      "name": "Spring Open",
-      "status": "RegistrationOpen",
-      "clubParticipationStatus": "Participating",
-      "stageName": "Swiss Stage 1",
-      "startsAt": "2026-04-07T07:44:11.557Z",
-      "endsAt": "2026-04-07T15:44:11.557Z",
-      "canViewDetail": true,
-      "canSubmitLineup": true,
-      "canDecline": false
-    }
-  ],
-  "total": 1,
-  "limit": 20,
-  "offset": 0,
-  "hasMore": false
-}
-```
-
-### Related write endpoints that still do not clearly exist
-
-The current backend clearly supports registering a club into a tournament:
-
+- `GET /clubs/:clubId/tournaments`
+- `POST /clubs/:clubId/tournaments/:tournamentId/accept`
+- `POST /clubs/:clubId/tournaments/:tournamentId/decline`
 - `POST /tournaments/:tournamentId/clubs/:clubId`
 
-But a full club-facing lifecycle still appears incomplete:
+This should be treated as the single source for club-facing tournament participation state instead of reconstructing it from unrelated public views.
 
-- club declines invitation
-- club withdraws from participation
-- tournament admin removes a club from participation
+### Public Hall
 
-Suggested endpoints:
+Public hall routes are already mostly view-driven:
 
-- `POST /clubs/:clubId/tournaments/:tournamentId/decline`
-- `POST /clubs/:clubId/tournaments/:tournamentId/accept`
-- `POST /tournaments/:tournamentId/clubs/:clubId/remove`
+- `GET /public/schedules`
+- `GET /public/clubs`
+- `GET /public/clubs/:clubId`
+- `GET /public/leaderboards/players`
+- `GET /public/tournaments/:id`
 
-## Priority 4: Auth Contracts Can Be Clarified, But This Is Not A Blocker
+The remaining cleanup here is mostly frontend composition and route coverage, not backend contract redesign.
 
-### Current situation
+## What Changed From The Older Notes
 
-The backend already distinguishes:
+The following older conclusions are now outdated:
 
-- login/register success response
-- auth session lookup response
+- tournament write routes no longer need a new `TournamentDetailView` proposal
+- `TournamentMutationView` is no longer a future suggestion; mutation responses already use a dedicated shape
+- club application array/scalar compatibility is no longer a required frontend bridge
+- club tournament participation routes are no longer hypothetical
 
-These are close enough for the frontend to normalize safely.
+If you encounter a document or comment that still describes those items as missing backend work, treat that text as historical.
 
-### Recommended backend change
+## Remaining Structural Gaps
 
-This is optional, not urgent:
+These are still worth cleaning up, but they are mostly frontend-side concerns:
 
-- keep `AuthSuccessView` and `AuthSessionView` explicit in OpenAPI and docs
-- avoid widening them into a looser shared shape at the backend layer
-
-### Frontend-only cleanup is acceptable here
-
-The frontend can independently keep these two response shapes separate in its contract layer without requiring backend work.
-
-## Frontend-Only Work Still Worth Doing
-
-The frontend can continue improving these areas without waiting for backend changes:
-
-- keep `auth` login/session contracts separate instead of treating them as one wide payload
-- consume more optional stable fields from public list/detail responses where useful
-- keep reducing feature-local compatibility logic so mismatches stay isolated to API mappers
-
-## Recommended Order
-
-1. Backend: introduce tournament operations detail/mutation views
-2. Backend + frontend: tighten club application response guarantees and remove legacy array/scalar compatibility handling
-3. Backend: add dedicated club tournament participation endpoints
-4. Frontend: continue contract cleanup for auth and public summary/detail consumption
+1. Split `front/src/api/operations.ts` by capability
+2. Move remaining transport compatibility helpers behind a narrower boundary
+3. Separate runtime API exports from contract declaration exports
+4. Keep feature code consuming contracts through mappers instead of creating new near-duplicate types
 
 ## Working Rule
 
-If an endpoint already returns a dedicated frontend-facing view, frontend-only cleanup is usually enough.
+Use this rule going forward:
 
-If an endpoint still returns a raw aggregate directly from the domain model, treat it as a backend interface problem and prefer fixing the contract at the source.
+- if a route already returns a dedicated frontend-facing view, prefer frontend cleanup
+- if a route returns a domain aggregate directly, treat it as a backend interface problem
+
+Right now, most high-value frontend-facing routes are already in the first category.

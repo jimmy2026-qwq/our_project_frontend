@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
 import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
@@ -17,7 +17,7 @@ interface AuthField {
 interface AuthScreenProps {
   eyebrow: string;
   title: string;
-  description: string;
+  description?: string;
   submitLabel: string;
   footerPrompt: string;
   footerLinkLabel: string;
@@ -59,24 +59,26 @@ export function AuthScreen({
   onSubmit,
   extraActions,
 }: AuthScreenProps) {
+  useEffect(() => {
+    document.body.classList.add('auth-screen-open');
+
+    return () => {
+      document.body.classList.remove('auth-screen-open');
+    };
+  }, []);
+
   return (
-    <main className="min-h-screen bg-[radial-gradient(circle_at_top,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,#07121c_0%,#0b1a27_48%,#0f2335_100%)] px-6 py-10 text-[color:var(--text)]">
+    <main className="min-h-screen bg-[#0b1620] px-6 py-10 text-[color:var(--text)]">
       <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="grid gap-5">
           <p className="inline-flex w-fit rounded-full border border-[rgba(236,197,122,0.22)] bg-[rgba(255,255,255,0.04)] px-4 py-2 text-sm text-[color:var(--gold)]">
             {eyebrow}
           </p>
           <div className="grid gap-4">
-            <h1 className="max-w-xl text-4xl font-semibold leading-tight text-white sm:text-5xl">
-              {title}
-            </h1>
-            <p className="max-w-xl text-base leading-8 text-[color:var(--muted)]">
-              {description}
-            </p>
-          </div>
-          <div className="grid gap-3 text-sm text-[color:var(--muted)]">
-            <p>页面已经接入当前 `front` 的 API-first 架构。</p>
-            <p>认证接口可用时走真实后端，不可用时自动回退到本地 mock。</p>
+            <h1 className="max-w-xl text-4xl font-semibold leading-tight text-[#c7d0d8] sm:text-5xl">{title}</h1>
+            {description ? (
+              <p className="max-w-xl text-base leading-8 text-[color:var(--muted)]">{description}</p>
+            ) : null}
           </div>
         </div>
 
@@ -84,7 +86,7 @@ export function AuthScreen({
           <CardHeader className="grid gap-3 border-b border-[color:var(--line)]">
             <p className="text-sm uppercase tracking-[0.22em] text-[color:var(--gold)]">{eyebrow}</p>
             <CardTitle className="text-2xl text-white">{title}</CardTitle>
-            <CardDescription>{description}</CardDescription>
+            {description ? <CardDescription>{description}</CardDescription> : null}
           </CardHeader>
           <CardContent className="grid gap-5">
             <form

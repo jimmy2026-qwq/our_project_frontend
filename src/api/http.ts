@@ -70,10 +70,6 @@ export async function sendJson<T>(
   return (await response.json()) as T;
 }
 
-export function encodeBackendOption<T>(value: T | undefined) {
-  return value === undefined ? [] : [value];
-}
-
 export function mapEnvelope<TIn, TOut, TEnvelope extends { items: TIn[] }>(
   envelope: TEnvelope,
   mapper: (item: TIn) => TOut,

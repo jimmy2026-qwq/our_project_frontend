@@ -1,6 +1,6 @@
 # RiichiNexus Frontend Docs
 
-This directory now uses smaller documents grouped by topic instead of a single large README.
+This directory is the current project-facing documentation set for the frontend and the frontend/backend contract boundary.
 
 Start here:
 
@@ -8,20 +8,21 @@ Start here:
 - [Feature Guide](./features.md)
 - [Backend Interfaces](./backend-interfaces.md)
 - [Development Notes](./development.md)
-- [Tournament Flow](./tournaments.txt)
+- [Run Notes](./run.txt)
+- [Requirements](./requirements.txt)
 
-Existing reference documents:
+Reference documents:
 
 - [Frontend Interface Contracts](./FRONTEND_INTERFACE_CONTRACTS.md)
 - [Demo Frontend API](./DEMO_FRONTEND_API.md)
+- [Tournament Flow](./tournaments.txt)
 - [Frontend Template Migration Plan](./frontend-template-migration-plan.md)
 - [Introduction](./introduction.txt)
-- [Requirements](./requirements.txt)
 
 Quick summary:
 
 - app entry is `front/src/main.tsx`
-- routing is handled by `react-router-dom`
+- router config lives in `front/src/router.tsx`
 - shared API access lives in `front/src/api/*`
-- the app still follows an API-first with mock-fallback strategy
-- the main product areas are blueprint home, public hall, member hub, and tournament operations
+- the main mounted product surfaces are public hall, blueprint, player dashboard, and table workflow
+- backend implementation structure now lives primarily under `our_project/src/main/scala/riichinexus/*`

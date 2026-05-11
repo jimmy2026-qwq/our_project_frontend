@@ -3,8 +3,22 @@ import { Link, useNavigate } from 'react-router-dom';
 
 import { operationsApi } from '@/api/operations';
 import { EmptyState } from '@/components/shared/feedback';
-import { Alert, Button, Dialog, DialogBody, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, StatusPill } from '@/components/ui';
-import type { TableDetail, AppealSummary, SeatWind } from '@/domain/operations';
+import {
+  Alert,
+  Button,
+  Dialog,
+  DialogBody,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogSurface,
+  DialogTitle,
+  StatusPill,
+  Textarea,
+} from '@/components/ui';
+import type { AppealSummary, TableDetail, TableSeatState } from '@/domain/operations';
 import type { TournamentPublicProfile } from '@/domain/public';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -19,8 +33,143 @@ import { getTableStatusLabel, getTableStatusTone, useTournamentDetailWorkbench }
 import type { TournamentDetailTableItem } from './tournament-detail.types';
 
 type TournamentDetailTab = 'home' | 'tables' | 'manage' | 'appeals';
+type AppealDecisionType = 'Resolve' | 'Reject' | 'Escalate';
 
-const SEAT_ORDER: SeatWind[] = ['East', 'South', 'West', 'North'];
+function getSeatStatusTone(seat: TableSeatState) {
+  if (seat.disconnected) {
+    return 'danger' as const;
+  }
+
+  if (seat.ready) {
+    return 'success' as const;
+  }
+
+  return 'warning' as const;
+}
+
+function getSeatStatusLabel(seat: TableSeatState) {
+  if (seat.disconnected) {
+    return '已断线';
+  }
+
+  if (seat.ready) {
+    return '已准备';
+  }
+
+  return '待准备';
+}
+
+function getAppealStatusTone(status: AppealSummary['status']) {
+  switch (status) {
+    case 'Resolved':
+      return 'success' as const;
+    case 'Rejected':
+      return 'danger' as const;
+    case 'UnderReview':
+      return 'neutral' as const;
+    case 'Escalated':
+    case 'Open':
+    default:
+      return 'warning' as const;
+  }
+}
+
+function getAppealStatusLabel(status: AppealSummary['status']) {
+  return getAppealStatusText(status);
+  switch (status) {
+    case 'Open':
+      return '待处理';
+    case 'UnderReview':
+      return '审核中';
+    case 'Resolved':
+      return '已解决';
+    case 'Rejected':
+      return '已驳回';
+    case 'Escalated':
+      return '已升级';
+    default:
+      return status;
+  }
+}
+
+function getAppealStatusText(status: AppealSummary['status']) {
+  return getAppealStatusLabelZh(status);
+  switch (status) {
+    case 'Open':
+      return '待处理';
+    case 'UnderReview':
+      return '审核中';
+    case 'Resolved':
+      return '已处理';
+    case 'Rejected':
+      return '已驳回';
+    case 'Escalated':
+      return '已升级';
+    default:
+      return status;
+  }
+}
+
+function getAppealStatusLabelZh(status: AppealSummary['status']) {
+  return getAppealStatusLabelFixed(status);
+  switch (status) {
+    case 'Open':
+      return '待处理';
+    case 'UnderReview':
+      return '审核中';
+    case 'Resolved':
+      return '已处理';
+    case 'Rejected':
+      return '已驳回';
+    case 'Escalated':
+      return '已升级';
+    default:
+      return status;
+  }
+}
+
+function getAppealStatusLabelFixed(status: AppealSummary['status']) {
+  switch (status) {
+    case 'Open':
+      return '\u5f85\u5904\u7406';
+    case 'UnderReview':
+      return '\u5ba1\u6838\u4e2d';
+    case 'Resolved':
+      return '\u5df2\u5904\u7406';
+    case 'Rejected':
+      return '\u5df2\u9a73\u56de';
+    case 'Escalated':
+      return '\u5df2\u5347\u7ea7';
+    default:
+      return status;
+  }
+}
+
+function getAppealDecisionLabel(decision: AppealDecisionType) {
+  switch (decision) {
+    case 'Resolve':
+      return '解决';
+    case 'Reject':
+      return '驳回';
+    case 'Escalate':
+      return '升级';
+    default:
+      return decision;
+  }
+}
+
+function formatDateTime(value?: string | null) {
+  if (!value) {
+    return '--';
+  }
+
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString('zh-CN');
+}
 
 export const PublicTournamentDetailSection = ({
   state,
@@ -45,6 +194,7 @@ export const PublicTournamentDetailSection = ({
     navigate,
     onScheduleSuccess,
   });
+
   const [activeTab, setActiveTab] = useState<TournamentDetailTab>('home');
   const [appeals, setAppeals] = useState<AppealSummary[]>([]);
   const [appealsError, setAppealsError] = useState('');
@@ -53,12 +203,20 @@ export const PublicTournamentDetailSection = ({
   const [tableDetailError, setTableDetailError] = useState('');
   const [isLoadingTableDetail, setIsLoadingTableDetail] = useState(false);
   const [isSubmittingTableAction, setIsSubmittingTableAction] = useState(false);
-  const [seatDrafts, setSeatDrafts] = useState<Record<SeatWind, { ready: boolean; disconnected: boolean }>>({
-    East: { ready: false, disconnected: false },
-    South: { ready: false, disconnected: false },
-    West: { ready: false, disconnected: false },
-    North: { ready: false, disconnected: false },
-  });
+  const [pendingStartConfirmation, setPendingStartConfirmation] = useState<{
+    tableId: string;
+    tableCode: string;
+    unreadyPlayerNames: string[];
+  } | null>(null);
+  const [participantWaitingTableDetails, setParticipantWaitingTableDetails] = useState<Record<string, TableDetail>>({});
+  const [updatingReadyTableId, setUpdatingReadyTableId] = useState('');
+  const [selectedAppealAction, setSelectedAppealAction] = useState<{
+    appeal: AppealSummary;
+    decision: AppealDecisionType;
+  } | null>(null);
+  const [appealVerdict, setAppealVerdict] = useState('');
+  const [appealActionError, setAppealActionError] = useState('');
+  const [submittingAppealId, setSubmittingAppealId] = useState('');
 
   useEffect(() => {
     if (!workbench?.canManageTournament) {
@@ -74,6 +232,7 @@ export const PublicTournamentDetailSection = ({
     }
 
     let cancelled = false;
+
     void operationsApi
       .getAppeals({ tournamentId: workbench.profile.id, limit: 50, offset: 0 })
       .then((envelope) => {
@@ -85,7 +244,7 @@ export const PublicTournamentDetailSection = ({
       .catch((error) => {
         if (!cancelled) {
           setAppeals([]);
-          setAppealsError(error instanceof Error ? error.message : 'Unable to load appeals.');
+          setAppealsError(error instanceof Error ? error.message : '无法加载申诉工单。');
         }
       });
 
@@ -103,31 +262,19 @@ export const PublicTournamentDetailSection = ({
 
     let cancelled = false;
     setIsLoadingTableDetail(true);
+
     void operationsApi
       .getTable(selectedManageTable.id)
       .then((detail) => {
         if (!cancelled) {
           setTableDetail(detail);
-          setSeatDrafts(
-            SEAT_ORDER.reduce(
-              (acc, seatWind) => {
-                const seat = detail.seats.find((item) => item.seat === seatWind);
-                acc[seatWind] = {
-                  ready: seat?.ready ?? false,
-                  disconnected: seat?.disconnected ?? false,
-                };
-                return acc;
-              },
-              {} as Record<SeatWind, { ready: boolean; disconnected: boolean }>,
-            ),
-          );
           setTableDetailError('');
         }
       })
       .catch((error) => {
         if (!cancelled) {
           setTableDetail(null);
-          setTableDetailError(error instanceof Error ? error.message : 'Unable to load table detail.');
+          setTableDetailError(error instanceof Error ? error.message : '无法加载牌桌详情。');
         }
       })
       .finally(() => {
@@ -142,69 +289,229 @@ export const PublicTournamentDetailSection = ({
   }, [selectedManageTable]);
 
   const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
+  const canManageAppeals = !!workbench?.canManageTournament && !!operatorId;
+
+  useEffect(() => {
+    if (!operatorId || !workbench?.visibleTables.length) {
+      setParticipantWaitingTableDetails({});
+      return;
+    }
+
+    const participantWaitingTables = workbench.visibleTables.filter(
+      (table) => table.status === 'WaitingPreparation' && table.playerIds.includes(operatorId),
+    );
+
+    if (participantWaitingTables.length === 0) {
+      setParticipantWaitingTableDetails({});
+      return;
+    }
+
+    let cancelled = false;
+
+    void Promise.all(
+      participantWaitingTables.map(async (table) => {
+        try {
+          const detail = await operationsApi.getTable(table.id);
+          return [table.id, detail] as const;
+        } catch {
+          return [table.id, null] as const;
+        }
+      }),
+    ).then((entries) => {
+      if (!cancelled) {
+        setParticipantWaitingTableDetails(
+          Object.fromEntries(entries.filter((entry): entry is readonly [string, TableDetail] => entry[1] !== null)),
+        );
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [operatorId, workbench?.visibleTables]);
+
   const waitingTables = useMemo(
     () => (workbench?.visibleTables ?? []).filter((table) => table.status === 'WaitingPreparation'),
     [workbench?.visibleTables],
   );
+  const playerNameMap = workbench?.playerNames ?? {};
 
   if (!state.item || !workbench) {
     return <PublicDetailNotFound title="Tournament not found" />;
   }
 
   const tabItems: Array<{ id: TournamentDetailTab; label: string }> = [
-    { id: 'home', label: '赛事主页' },
-    { id: 'tables', label: '对局信息' },
+    { id: 'home', label: '赛事概览' },
+    { id: 'tables', label: '赛事牌桌' },
     ...(workbench.canManageTournament
       ? [
-          { id: 'manage' as const, label: '对局管理' },
+          { id: 'manage' as const, label: '牌桌管理' },
           { id: 'appeals' as const, label: '查看申诉' },
         ]
       : []),
   ];
 
-  async function handleSaveSeatDrafts() {
-    if (!selectedManageTable || !operatorId) {
-      return;
-    }
-
-    try {
-      setIsSubmittingTableAction(true);
-      await Promise.all(
-        SEAT_ORDER.map((seat) =>
-          operationsApi.updateSeatState(selectedManageTable.id, {
-            operatorId,
-            seat,
-            ready: seatDrafts[seat].ready,
-            disconnected: seatDrafts[seat].disconnected,
-          }),
-        ),
-      );
-      onScheduleSuccess?.();
-      const refreshed = await operationsApi.getTable(selectedManageTable.id);
-      setTableDetail(refreshed);
-    } catch (error) {
-      setTableDetailError(error instanceof Error ? error.message : 'Unable to save seat state.');
-    } finally {
-      setIsSubmittingTableAction(false);
-    }
-  }
-
-  async function handleStartManagedTable(tableId: string) {
+  async function actuallyStartManagedTable(tableId: string) {
     if (!operatorId) {
       return;
     }
 
     try {
       setIsSubmittingTableAction(true);
+      setTableDetailError('');
       await operationsApi.startTable(tableId, { operatorId });
       onScheduleSuccess?.();
       if (selectedManageTable?.id === tableId) {
         setSelectedManageTable(null);
       }
     } catch (error) {
-      setTableDetailError(error instanceof Error ? error.message : 'Unable to start table.');
+      setTableDetailError(error instanceof Error ? error.message : '无法开启牌桌。');
     } finally {
       setIsSubmittingTableAction(false);
+    }
+  }
+
+  async function handleStartManagedTable(
+    table: Pick<TournamentDetailTableItem, 'id' | 'tableCode'>,
+    knownDetail?: TableDetail | null,
+  ) {
+    if (!operatorId) {
+      return;
+    }
+
+    try {
+      setIsSubmittingTableAction(true);
+      setTableDetailError('');
+      const detail = knownDetail ?? (await operationsApi.getTable(table.id));
+      const unreadyPlayerNames = detail.seats
+        .filter((seat) => !seat.ready)
+        .map((seat) => playerNameMap[seat.playerId] ?? seat.playerId);
+
+      if (unreadyPlayerNames.length > 0) {
+        setPendingStartConfirmation({
+          tableId: table.id,
+          tableCode: table.tableCode,
+          unreadyPlayerNames,
+        });
+        if (selectedManageTable?.id === table.id) {
+          setTableDetail(detail);
+        }
+        return;
+      }
+
+      await actuallyStartManagedTable(table.id);
+    } catch (error) {
+      setTableDetailError(error instanceof Error ? error.message : '\u65e0\u6cd5\u68c0\u67e5\u724c\u684c\u51c6\u5907\u60c5\u51b5\u3002');
+    } finally {
+      setIsSubmittingTableAction(false);
+    }
+  }
+
+  async function handleForceStartManagedTable() {
+    if (!pendingStartConfirmation) {
+      return;
+    }
+
+    await actuallyStartManagedTable(pendingStartConfirmation.tableId);
+    setPendingStartConfirmation(null);
+  }
+
+  async function handleToggleOwnReady(tableId: string, isReady: boolean) {
+    if (!operatorId) {
+      return;
+    }
+
+    try {
+      setUpdatingReadyTableId(tableId);
+      setTableDetailError('');
+      const nextDetail = await operationsApi.updateOwnReadyState(tableId, {
+        operatorId,
+        ready: !isReady,
+      });
+      setParticipantWaitingTableDetails((current) => ({
+        ...current,
+        [tableId]: nextDetail,
+      }));
+    } catch (error) {
+      setTableDetailError(error instanceof Error ? error.message : '无法更新你的准备状态。');
+    } finally {
+      setUpdatingReadyTableId('');
+    }
+  }
+
+  function updateAppealLocally(nextAppeal: AppealSummary) {
+    setAppeals((current) =>
+      current.map((appeal) => (appeal.id === nextAppeal.id ? { ...appeal, ...nextAppeal } : appeal)),
+    );
+  }
+
+  function openAppealActionDialog(appeal: AppealSummary, decision: AppealDecisionType) {
+    setSelectedAppealAction({ appeal, decision });
+    setAppealActionError('');
+    setAppealVerdict(
+      decision === 'Resolve'
+        ? '已核实申诉内容，工单处理完成。'
+        : decision === 'Reject'
+          ? '已核实当前情况，申诉不成立。'
+          : '当前申诉需要进一步升级处理。',
+    );
+  }
+
+  async function handleAssignAppeal(appeal: AppealSummary) {
+    if (!operatorId) {
+      return;
+    }
+
+    try {
+      setSubmittingAppealId(appeal.id);
+      setAppealsError('');
+      const nextAppeal = await operationsApi.updateAppealWorkflow(appeal.id, {
+        operatorId,
+        assigneeId: operatorId,
+        note: '赛事管理员已认领此工单。',
+      });
+      updateAppealLocally({
+        ...appeal,
+        ...nextAppeal,
+        assigneeId: nextAppeal.assigneeId ?? operatorId,
+      });
+    } catch (error) {
+      setAppealsError(error instanceof Error ? error.message : '无法更新申诉工单。');
+    } finally {
+      setSubmittingAppealId('');
+    }
+  }
+
+  async function handleSubmitAppealDecision() {
+    if (!selectedAppealAction || !operatorId) {
+      return;
+    }
+
+    const verdict = appealVerdict.trim();
+    if (!verdict) {
+      setAppealActionError('请先填写处理结论。');
+      return;
+    }
+
+    try {
+      setSubmittingAppealId(selectedAppealAction.appeal.id);
+      setAppealsError('');
+      setAppealActionError('');
+      const nextAppeal = await operationsApi.adjudicateAppeal(selectedAppealAction.appeal.id, {
+        operatorId,
+        decision: selectedAppealAction.decision,
+        verdict,
+        note: `赛事管理员执行了${getAppealDecisionLabel(selectedAppealAction.decision)}操作。`,
+      });
+      updateAppealLocally(nextAppeal);
+      setSelectedAppealAction(null);
+      setAppealVerdict('');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : '无法处理申诉工单。';
+      setAppealActionError(message);
+      setAppealsError(message);
+    } finally {
+      setSubmittingAppealId('');
     }
   }
 
@@ -212,14 +519,19 @@ export const PublicTournamentDetailSection = ({
     <>
       <section className="tournament-detail-shell">
         <header className="tournament-detail-shell__header">
-          <Link className="tournament-detail-shell__back" to="/public">
+          <button type="button" className="tournament-detail-shell__back" onClick={() => navigate('/public')}>
             返回大厅
-          </Link>
-          <div className="tournament-detail-shell__title-card">赛事：{workbench.profile.name}</div>
+          </button>
+          <div className="tournament-detail-shell__title-card">{`赛事：${workbench.profile.name}`}</div>
           <div className="tournament-detail-shell__header-actions">
             {workbench.canScheduleStage ? (
               <Button onClick={() => void handleScheduleStage()} disabled={workbench.isSubmittingTournamentAction}>
-                排程下一阶段
+                赛段排桌
+              </Button>
+            ) : null}
+            {workbench.isWaitingForLineups ? (
+              <Button variant="outline" disabled>
+                {'\u7b49\u5f85\u4ff1\u4e50\u90e8\u786e\u5b9a\u4eba\u9009'}
               </Button>
             ) : null}
             {workbench.canPublishTournament ? (
@@ -255,25 +567,36 @@ export const PublicTournamentDetailSection = ({
               activeTab === 'home' ? 'tournament-detail-shell__content--with-aside' : ''
             }`}
           >
+            {workbench.tournamentActionError ? <Alert variant="danger">{workbench.tournamentActionError}</Alert> : null}
+
             {activeTab === 'home' ? (
               <>
                 <div className="tournament-detail-shell__panel tournament-detail-shell__panel--main">
-                  <TournamentOverviewPanel
-                    profile={workbench.profile}
-                    showMoreInfo={workbench.showMoreInfo}
-                    onToggleShowMore={() => setShowMoreInfo((current) => !current)}
-                  />
+                  <section className="tournament-detail-list tournament-detail-shell__home-list">
+                    <div className="tournament-detail-list__body tournament-detail-shell__panel-body tournament-detail-shell__home-panel-body">
+                      <TournamentOverviewPanel
+                        profile={workbench.profile}
+                        showMoreInfo={workbench.showMoreInfo}
+                        onToggleShowMore={() => setShowMoreInfo((current) => !current)}
+                      />
+                    </div>
+                  </section>
                 </div>
                 <div className="tournament-detail-shell__panel tournament-detail-shell__panel--aside">
-                  <TournamentInvitedClubsPanel
-                    invitedClubs={workbench.invitedClubs}
-                    selectableClubs={workbench.selectableClubs}
-                    selectedClubId={workbench.selectedClubId}
-                    canManageTournament={workbench.canManageTournament}
-                    isSubmittingTournamentAction={workbench.isSubmittingTournamentAction}
-                    onSelectedClubIdChange={setSelectedClubId}
-                    onInviteClub={() => void handleInviteClub()}
-                  />
+                  <section className="tournament-detail-list">
+                    <div className="tournament-detail-list__body tournament-detail-shell__panel-body">
+                      <TournamentInvitedClubsPanel
+                        invitedClubs={workbench.invitedClubs}
+                        lineupSubmissionCounts={workbench.lineupSubmissionCounts}
+                        selectableClubs={workbench.selectableClubs}
+                        selectedClubId={workbench.selectedClubId}
+                        canManageTournament={workbench.canManageTournament}
+                        isSubmittingTournamentAction={workbench.isSubmittingTournamentAction}
+                        onSelectedClubIdChange={setSelectedClubId}
+                        onInviteClub={() => void handleInviteClub()}
+                      />
+                    </div>
+                  </section>
                 </div>
               </>
             ) : null}
@@ -282,10 +605,19 @@ export const PublicTournamentDetailSection = ({
               <div className="tournament-detail-shell__panel tournament-detail-shell__panel--full">
                 <section className="tournament-detail-list">
                   <div className="tournament-detail-list__body tournament-detail-list__body--cards">
+                    {tableDetailError ? <Alert variant="danger">{tableDetailError}</Alert> : null}
                     {workbench.visibleTables.length > 0 ? (
                       workbench.visibleTables.map((table) => {
-                        const playerLabel = table.playerIds.map((playerId) => workbench.playerNames[playerId] ?? playerId).join(' / ');
+                        const playerLabel = table.playerIds
+                          .map((playerId) => workbench.playerNames[playerId] ?? playerId)
+                          .join(' / ');
                         const isFinished = table.status === 'Archived';
+                        const isWaiting = table.status === 'WaitingPreparation';
+                        const participantTableDetail = participantWaitingTableDetails[table.id];
+                        const ownSeat =
+                          participantTableDetail?.seats.find((seat) => seat.playerId === operatorId) ?? null;
+                        const canUpdateOwnReady =
+                          table.status === 'WaitingPreparation' && !!ownSeat && !ownSeat.disconnected;
 
                         return (
                           <article key={table.id} className="tournament-detail-list__row">
@@ -296,18 +628,40 @@ export const PublicTournamentDetailSection = ({
                             </div>
                             <div className="tournament-detail-list__row-side">
                               <StatusPill tone={getTableStatusTone(table.status)}>{getTableStatusLabel(table.status)}</StatusPill>
-                              <Link
-                                className="detail-link tournament-detail-list__action"
-                                to={isFinished ? `/tables/${table.id}/paifu` : `/tables/${table.id}`}
-                              >
-                                {isFinished ? '查看牌谱' : '进入牌桌'}
-                              </Link>
+                              <div className="tournament-detail-list__action-row">
+                                {canUpdateOwnReady ? (
+                                  <button
+                                    type="button"
+                                    className={`tournament-detail-list__action ${
+                                      ownSeat.ready
+                                        ? 'tournament-detail-list__action--ready'
+                                        : 'tournament-detail-list__action--prepare'
+                                    }`}
+                                    onClick={() => void handleToggleOwnReady(table.id, ownSeat.ready)}
+                                    disabled={updatingReadyTableId === table.id}
+                                  >
+                                    {updatingReadyTableId === table.id ? '处理中...' : ownSeat.ready ? '取消准备' : '标记准备'}
+                                  </button>
+                                ) : null}
+                                {isWaiting ? (
+                                  <span className="tournament-detail-list__action tournament-detail-list__action--disabled">
+                                    等待开桌
+                                  </span>
+                                ) : (
+                                  <Link
+                                    className="detail-link tournament-detail-list__action"
+                                    to={isFinished ? `/tables/${table.id}/paifu` : `/tables/${table.id}`}
+                                  >
+                                    {isFinished ? '查看牌谱' : '进入牌桌'}
+                                  </Link>
+                                )}
+                              </div>
                             </div>
                           </article>
                         );
                       })
                     ) : (
-                      <EmptyState asListItem={false}>当前没有可显示的对局桌次。</EmptyState>
+                      <EmptyState asListItem={false}>当前还没有可展示的赛事牌桌。</EmptyState>
                     )}
                   </div>
                 </section>
@@ -332,14 +686,18 @@ export const PublicTournamentDetailSection = ({
                             <Button variant="outline" size="sm" onClick={() => setSelectedManageTable(table)}>
                               查看详情
                             </Button>
-                            <Button size="sm" onClick={() => void handleStartManagedTable(table.id)} disabled={isSubmittingTableAction}>
-                              开桌
+                            <Button
+                              size="sm"
+                              onClick={() => void handleStartManagedTable(table)}
+                              disabled={isSubmittingTableAction}
+                            >
+                              开启牌桌
                             </Button>
                           </div>
                         </article>
                       ))
                     ) : (
-                      <EmptyState asListItem={false}>当前没有等待开桌的桌次。</EmptyState>
+                      <EmptyState asListItem={false}>当前没有待开启的牌桌。</EmptyState>
                     )}
                   </div>
                 </section>
@@ -352,23 +710,87 @@ export const PublicTournamentDetailSection = ({
                   <div className="tournament-detail-list__body tournament-detail-list__body--cards">
                     {appealsError ? <Alert variant="danger">{appealsError}</Alert> : null}
                     {appeals.length > 0 ? (
-                      appeals.map((appeal) => (
-                        <article key={appeal.id} className="tournament-detail-list__row">
-                          <div className="tournament-detail-list__row-main">
-                            <strong>{appeal.id}</strong>
-                            <span>桌次：{appeal.tableId}</span>
-                            <span>提交人：{appeal.createdBy}</span>
-                          </div>
-                          <div className="tournament-detail-list__row-side">
-                            <StatusPill tone={appeal.status === 'Open' ? 'warning' : appeal.status === 'Resolved' ? 'success' : 'neutral'}>
-                              {appeal.status}
-                            </StatusPill>
-                            <span>{appeal.verdict}</span>
-                          </div>
-                        </article>
-                      ))
+                      appeals.map((appeal) => {
+                        const submitterId = appeal.openedBy ?? appeal.createdBy ?? '';
+                        const submitterLabel = submitterId
+                          ? workbench.playerNames[submitterId] ?? submitterId
+                          : '--';
+                        const isAppealClaimed = !!appeal.assigneeId;
+                        const appealResultText =
+                          appeal.resolution ?? appeal.verdict ?? '\u5f85\u5904\u7406';
+                        const appealStatusText =
+                          appeal.status === 'Open'
+                            ? appealResultText
+                            : getAppealStatusLabel(appeal.status) || appealResultText;
+                        const assigneeLabel = appeal.assigneeId
+                          ? workbench.playerNames[appeal.assigneeId] ?? appeal.assigneeId
+                          : '未认领';
+
+                        return (
+                          <article key={appeal.id} className="tournament-detail-list__row">
+                            <div className="tournament-detail-list__row-main">
+                              <strong>{appeal.id}</strong>
+                              <span>{`牌桌：${appeal.tableId}`}</span>
+                              <span>{`提交人：${submitterLabel}`}</span>
+                              <span>{`提交时间：${formatDateTime(appeal.createdAt)}`}</span>
+                              <span>{appeal.description || '未填写申诉说明。'}</span>
+                            </div>
+                            <div className="tournament-detail-list__row-side">
+                              <StatusPill tone={getAppealStatusTone(appeal.status)}>
+                                {appealStatusText}
+                              </StatusPill>
+                              <span>{`处理人：${assigneeLabel}`}</span>
+                              <span>{`处理结果：${appeal.resolution ?? appeal.verdict ?? '待处理'}`}</span>
+                              <span>{`最近更新：${formatDateTime(appeal.updatedAt ?? appeal.createdAt)}`}</span>
+                              {appeal.status !== 'Resolved' && appeal.status !== 'Rejected' ? (
+                                <div className="tournament-detail-list__action-row">
+                                  {canManageAppeals && !isAppealClaimed ? (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => void handleAssignAppeal(appeal)}
+                                      disabled={submittingAppealId === appeal.id}
+                                    >
+                                      认领到我
+                                    </Button>
+                                  ) : null}
+                                  {canManageAppeals ? (
+                                  <Button
+                                    size="sm"
+                                    onClick={() => openAppealActionDialog(appeal, 'Resolve')}
+                                    disabled={submittingAppealId === appeal.id || !isAppealClaimed}
+                                  >
+                                    解决
+                                  </Button>
+                                ) : null}
+                                  {canManageAppeals ? (
+                                  <Button
+                                    variant="secondary"
+                                    size="sm"
+                                    onClick={() => openAppealActionDialog(appeal, 'Reject')}
+                                    disabled={submittingAppealId === appeal.id || !isAppealClaimed}
+                                  >
+                                    驳回
+                                  </Button>
+                                ) : null}
+                                  {canManageAppeals && appeal.status !== 'Escalated' ? (
+                                    <Button
+                                      variant="outline"
+                                      size="sm"
+                                      onClick={() => openAppealActionDialog(appeal, 'Escalate')}
+                                      disabled={submittingAppealId === appeal.id}
+                                    >
+                                      升级
+                                    </Button>
+                                  ) : null}
+                                </div>
+                              ) : null}
+                            </div>
+                          </article>
+                        );
+                      })
                     ) : (
-                      <EmptyState asListItem={false}>当前没有申诉记录。</EmptyState>
+                      <EmptyState asListItem={false}>当前还没有赛事申诉工单。</EmptyState>
                     )}
                   </div>
                 </section>
@@ -385,10 +807,10 @@ export const PublicTournamentDetailSection = ({
           <DialogOverlay />
           <DialogSurface>
             <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
-              <DialogTitle>{selectedManageTable ? `${selectedManageTable.tableCode} 准备情况` : '桌次详情'}</DialogTitle>
+              <DialogTitle>{selectedManageTable ? `${selectedManageTable.tableCode} 牌桌详情` : '牌桌详情'}</DialogTitle>
             </DialogHeader>
             <DialogBody className="grid gap-4 px-6 py-5">
-              {isLoadingTableDetail ? <p className="m-0 text-[color:var(--muted)]">正在加载桌次详情...</p> : null}
+              {isLoadingTableDetail ? <p className="m-0 text-[color:var(--muted)]">正在加载牌桌详情...</p> : null}
               {tableDetailError ? <Alert variant="danger">{tableDetailError}</Alert> : null}
               {tableDetail?.seats.map((seat) => (
                 <div key={seat.seat} className="tournament-detail-seat-row">
@@ -396,40 +818,10 @@ export const PublicTournamentDetailSection = ({
                     <strong>{seat.seat}</strong>
                     <span>{workbench.playerNames[seat.playerId] ?? seat.playerId}</span>
                   </div>
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={seatDrafts[seat.seat]?.ready ?? false}
-                      onChange={(event) => {
-                        const checked = event.currentTarget.checked;
-                        setSeatDrafts((current) => ({
-                          ...current,
-                          [seat.seat]: {
-                            ...current[seat.seat],
-                            ready: checked,
-                          },
-                        }));
-                      }}
-                    />
-                    <span>已准备</span>
-                  </label>
-                  <label className="inline-flex items-center gap-2">
-                    <input
-                      type="checkbox"
-                      checked={seatDrafts[seat.seat]?.disconnected ?? false}
-                      onChange={(event) => {
-                        const checked = event.currentTarget.checked;
-                        setSeatDrafts((current) => ({
-                          ...current,
-                          [seat.seat]: {
-                            ...current[seat.seat],
-                            disconnected: checked,
-                          },
-                        }));
-                      }}
-                    />
-                    <span>已断线</span>
-                  </label>
+                  <StatusPill tone={getSeatStatusTone(seat)}>{getSeatStatusLabel(seat)}</StatusPill>
+                  <StatusPill tone={seat.disconnected ? 'danger' : 'neutral'}>
+                    {seat.disconnected ? '连接异常' : '连接正常'}
+                  </StatusPill>
                 </div>
               ))}
             </DialogBody>
@@ -437,15 +829,125 @@ export const PublicTournamentDetailSection = ({
               <Button variant="secondary" onClick={() => setSelectedManageTable(null)}>
                 关闭
               </Button>
-              <Button onClick={() => void handleSaveSeatDrafts()} disabled={!selectedManageTable || isSubmittingTableAction}>
-                保存座位状态
-              </Button>
               <Button
                 variant="outline"
-                onClick={() => selectedManageTable && void handleStartManagedTable(selectedManageTable.id)}
+                onClick={() => selectedManageTable && void handleStartManagedTable(selectedManageTable, tableDetail)}
                 disabled={!selectedManageTable || isSubmittingTableAction}
               >
-                开桌
+                开启牌桌
+              </Button>
+            </DialogFooter>
+          </DialogSurface>
+        </DialogPortal>
+      </Dialog>
+
+      <Dialog
+        open={!!pendingStartConfirmation}
+        onOpenChange={(open) => {
+          if (!open) {
+            setPendingStartConfirmation(null);
+          }
+        }}
+      >
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogSurface>
+            <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
+              <DialogTitle>
+                {pendingStartConfirmation
+                  ? `${pendingStartConfirmation.tableCode} \u8fd8\u6709\u73a9\u5bb6\u672a\u51c6\u5907`
+                  : '\u8fd8\u6709\u73a9\u5bb6\u672a\u51c6\u5907'}
+              </DialogTitle>
+              <DialogDescription>
+                {'\u4ee5\u4e0b\u73a9\u5bb6\u8fd8\u6ca1\u6709\u5b8c\u6210\u51c6\u5907\uff0c\u53ef\u4ee5\u9009\u62e9\u518d\u7b49\u7b49\uff0c\u6216\u8005\u76f4\u63a5\u5f3a\u5236\u5f00\u684c\u3002'}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogBody className="grid gap-4 px-6 py-5">
+              <div className="grid gap-2 rounded-[20px] border border-[rgba(236,197,122,0.22)] bg-[rgba(236,197,122,0.08)] p-4">
+                {pendingStartConfirmation?.unreadyPlayerNames.map((playerName) => (
+                  <span key={playerName} className="text-sm text-[color:var(--muted-strong)]">
+                    {playerName}
+                  </span>
+                ))}
+              </div>
+            </DialogBody>
+            <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
+              <Button
+                variant="secondary"
+                onClick={() => setPendingStartConfirmation(null)}
+                disabled={isSubmittingTableAction}
+              >
+                {'\u518d\u7b49\u7b49'}
+              </Button>
+              <Button onClick={() => void handleForceStartManagedTable()} disabled={isSubmittingTableAction}>
+                {isSubmittingTableAction ? '\u5904\u7406\u4e2d...' : '\u5f3a\u5236\u5f00\u684c'}
+              </Button>
+            </DialogFooter>
+          </DialogSurface>
+        </DialogPortal>
+      </Dialog>
+
+      <Dialog
+        open={!!selectedAppealAction}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedAppealAction(null);
+            setAppealVerdict('');
+            setAppealActionError('');
+          }
+        }}
+      >
+        <DialogPortal>
+          <DialogOverlay />
+          <DialogSurface>
+            <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
+              <DialogTitle>
+                {selectedAppealAction
+                  ? `${getAppealDecisionLabel(selectedAppealAction.decision)}申诉工单`
+                  : '处理申诉工单'}
+              </DialogTitle>
+              <DialogDescription>
+                {selectedAppealAction
+                  ? `工单 ${selectedAppealAction.appeal.id} 将被标记为“${getAppealDecisionLabel(selectedAppealAction.decision)}”。`
+                  : '填写处理结论后提交。'}
+              </DialogDescription>
+            </DialogHeader>
+            <DialogBody className="grid gap-4 px-6 py-5">
+              {appealActionError ? <Alert variant="danger">{appealActionError}</Alert> : null}
+              {selectedAppealAction ? (
+                <div className="grid gap-2 rounded-[20px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] p-4 text-sm text-[color:var(--muted-strong)]">
+                  <strong className="text-[color:var(--text)]">{selectedAppealAction.appeal.id}</strong>
+                  <span>{`牌桌：${selectedAppealAction.appeal.tableId}`}</span>
+                  <span>{selectedAppealAction.appeal.description || '未填写申诉说明。'}</span>
+                </div>
+              ) : null}
+              <label className="grid gap-3 text-sm text-[color:var(--muted-strong)]">
+                <span className="font-medium text-[color:var(--text)]">处理结论</span>
+                <Textarea
+                  value={appealVerdict}
+                  onChange={(event) => setAppealVerdict(event.target.value)}
+                  placeholder="请填写这次申诉的处理说明。"
+                  maxLength={1000}
+                />
+              </label>
+            </DialogBody>
+            <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5 sm:grid-cols-[1fr_auto_auto] sm:items-center">
+              <p className="m-0 text-sm text-[color:var(--muted)]">
+                {selectedAppealAction ? `当前操作：${getAppealDecisionLabel(selectedAppealAction.decision)}` : ''}
+              </p>
+              <Button
+                variant="secondary"
+                onClick={() => {
+                  setSelectedAppealAction(null);
+                  setAppealVerdict('');
+                  setAppealActionError('');
+                }}
+                disabled={!!submittingAppealId}
+              >
+                取消
+              </Button>
+              <Button onClick={() => void handleSubmitAppealDecision()} disabled={!selectedAppealAction || !!submittingAppealId}>
+                {submittingAppealId ? '提交中...' : '确认提交'}
               </Button>
             </DialogFooter>
           </DialogSurface>

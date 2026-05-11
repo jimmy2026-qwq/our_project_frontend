@@ -16,6 +16,19 @@ import type {
   MemberStatusFilter,
 } from './ClubTournamentLineupDialog.types';
 
+function getPlayerStatusLabel(status?: string) {
+  switch (status) {
+    case 'Active':
+      return '活跃';
+    case 'Inactive':
+      return '停用';
+    case 'Banned':
+      return '封禁';
+    default:
+      return status || '活跃';
+  }
+}
+
 export function ClubTournamentLineupHeader({
   tournament,
 }: {
@@ -23,10 +36,10 @@ export function ClubTournamentLineupHeader({
 }) {
   return (
     <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
-      <DialogTitle>Submit club lineup</DialogTitle>
+      <DialogTitle>提交俱乐部参赛名单</DialogTitle>
       <DialogDescription>
-        Review the invited tournament, pick a stage, and submit the players who should represent the club.
-        Current tournament: {tournament?.name ?? 'Unavailable'}.
+        请确认受邀赛事、选择赛段，并提交代表俱乐部出战的参赛成员。
+        当前赛事：{tournament?.name ?? '暂无'}。
       </DialogDescription>
     </DialogHeader>
   );
@@ -47,7 +60,7 @@ export function ClubTournamentLineupBody({
 }: {
   isLoading: boolean;
   selectedStageId: string;
-  stageOptions: Array<{ id: string; name: string }>;
+  stageOptions: Array<{ stageId: string; name: string }>;
   statusFilter: MemberStatusFilter;
   eloSort: EloSort;
   selectedPlayerIds: string[];
@@ -57,49 +70,57 @@ export function ClubTournamentLineupBody({
   onEloSortChange: (value: EloSort) => void;
   onTogglePlayer: (playerId: string) => void;
 }) {
+  const hasMultipleStages = stageOptions.length > 1;
+  const singleStage = stageOptions[0] ?? null;
+
   return (
     <DialogBody className="px-6 py-5">
       <div className="grid gap-5">
         <FieldGroup className="grid gap-4 md:grid-cols-2">
-          <SelectField
-            label="Stage"
-            value={selectedStageId}
-            onChange={(event) => onSelectedStageIdChange(event.currentTarget.value)}
-            disabled={isLoading || stageOptions.length === 0}
-          >
-            {stageOptions.length > 0 ? (
-              stageOptions.map((stage) => (
-                <option key={stage.id} value={stage.id}>
+          {hasMultipleStages ? (
+            <SelectField
+              label="赛段"
+              value={selectedStageId}
+              onChange={(event) => onSelectedStageIdChange(event.currentTarget.value)}
+              disabled={isLoading}
+            >
+              {stageOptions.map((stage) => (
+                <option key={stage.stageId} value={stage.stageId}>
                   {stage.name}
                 </option>
-              ))
-            ) : (
-              <option value="">No stage is available for lineup submission</option>
-            )}
-          </SelectField>
+              ))}
+            </SelectField>
+          ) : (
+            <div className="grid gap-2 rounded-[18px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] px-4 py-3">
+              <strong className="text-sm text-[color:var(--muted)]">赛段</strong>
+              <span className="text-[color:var(--text)]">
+                {singleStage ? `${singleStage.name}（已自动选择）` : '当前没有可提交名单的赛段'}
+              </span>
+            </div>
+          )}
           <SelectField
-            label="Member status"
+            label="成员状态"
             value={statusFilter}
             onChange={(event) => onStatusFilterChange(event.currentTarget.value as MemberStatusFilter)}
           >
-            <option value="all">All members</option>
-            <option value="active">Active only</option>
-            <option value="inactive">Inactive only</option>
+            <option value="all">全部成员</option>
+            <option value="active">仅活跃</option>
+            <option value="inactive">仅非活跃</option>
           </SelectField>
           <SelectField
-            label="ELO sort"
+            label="ELO 排序"
             value={eloSort}
             onChange={(event) => onEloSortChange(event.currentTarget.value as EloSort)}
           >
-            <option value="desc">Highest first</option>
-            <option value="asc">Lowest first</option>
+            <option value="desc">从高到低</option>
+            <option value="asc">从低到高</option>
           </SelectField>
         </FieldGroup>
 
         <div className="grid gap-3 rounded-[22px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] p-4">
           <div className="flex items-center justify-between gap-3">
-            <strong>Eligible members</strong>
-            <StatusPill tone="info">Selected: {selectedPlayerIds.length}</StatusPill>
+            <strong>可参赛成员</strong>
+            <StatusPill tone="info">已选：{selectedPlayerIds.length}</StatusPill>
           </div>
           {visibleMembers.length > 0 ? (
             <div className="grid max-h-[340px] gap-3 overflow-y-auto pr-1">
@@ -112,10 +133,13 @@ export function ClubTournamentLineupBody({
                     <span className="grid gap-1">
                       <strong>{member.displayName}</strong>
                       <span className="text-sm text-[color:var(--muted)]">
-                        ELO {member.elo ?? 0} / {member.playerStatus ?? 'Active'}
+                        ELO {member.elo ?? 0} / {getPlayerStatusLabel(member.playerStatus)}
                       </span>
                     </span>
-                    {member.isSelected ? <StatusPill tone="success">Selected</StatusPill> : null}
+                    <div className="flex items-center gap-2">
+                      {member.isCurrentUser ? <StatusPill tone="success">当前用户</StatusPill> : null}
+                      {member.isSelected ? <StatusPill tone="success">已选择</StatusPill> : null}
+                    </div>
                   </div>
                   <label className="inline-flex cursor-pointer items-center gap-2 text-sm text-[color:var(--text)]">
                     <input
@@ -123,7 +147,7 @@ export function ClubTournamentLineupBody({
                       checked={member.isSelected}
                       onChange={() => onTogglePlayer(member.playerId)}
                     />
-                    Include this player in the lineup
+                    将该成员加入参赛名单
                   </label>
                 </div>
               ))}
@@ -131,8 +155,8 @@ export function ClubTournamentLineupBody({
           ) : (
             <p className="m-0 text-[color:var(--muted)]">
               {isLoading
-                ? 'Loading club members and tournament stages...'
-                : 'No eligible members matched the current filters.'}
+                ? '正在加载俱乐部成员和赛事赛段...'
+                : '当前筛选条件下没有可参赛成员。'}
             </p>
           )}
         </div>
@@ -156,10 +180,10 @@ export function ClubTournamentLineupFooter({
     <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
       <div className="grid w-full gap-3 sm:grid-cols-2">
         <ActionButton onClick={onSubmit} disabled={isSubmitting || selectedPlayerIds.length === 0}>
-          {isSubmitting ? 'Submitting lineup...' : 'Submit lineup'}
+          {isSubmitting ? '正在提交名单...' : '提交名单'}
         </ActionButton>
         <ActionButton variant="secondary" onClick={onClose} disabled={isSubmitting}>
-          Close
+          关闭
         </ActionButton>
       </div>
     </DialogFooter>

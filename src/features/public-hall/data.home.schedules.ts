@@ -60,10 +60,10 @@ export async function loadManagedDraftSchedules(context: PublicHallViewerContext
       if (stages.length === 0) {
         return [
           {
-            tournamentId: detail.id,
+            tournamentId: detail.tournamentId,
             tournamentName: detail.name,
             tournamentStatus: 'Draft',
-            stageId: `${detail.id}-draft-stage`,
+            stageId: `${detail.tournamentId}-draft-stage`,
             stageName: 'Draft stage',
             stageStatus: 'Pending',
             scheduledAt: detail.startsAt,
@@ -73,10 +73,10 @@ export async function loadManagedDraftSchedules(context: PublicHallViewerContext
       }
 
       return stages.map((stage) => ({
-        tournamentId: detail.id,
+        tournamentId: detail.tournamentId,
         tournamentName: detail.name,
         tournamentStatus: 'Draft',
-        stageId: stage.id,
+        stageId: stage.stageId,
         stageName: stage.name,
         stageStatus: mapAdminStageStatus(stage.status),
         scheduledAt: detail.startsAt,

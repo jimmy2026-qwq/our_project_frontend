@@ -1,18 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { useAuth } from '@/hooks/useAuth';
-import { useMutationNotice, useNotice } from '@/hooks';
-import {
-  type HomeClubApplicationState,
-  formatDateTime,
-  getFallbackPlayerName,
-  loadPlayerContext,
-  loadTrackedApplication,
-  submitClubApplication,
-  withdrawClubApplication,
-} from '@/features/blueprint/application-data';
-import { ActionButton } from '@/components/shared/layout';
 import { FieldGroup, TextInputField, TextareaField } from '@/components/shared/forms';
+import { ActionButton } from '@/components/shared/layout';
 import {
   Dialog,
   DialogBody,
@@ -25,13 +14,21 @@ import {
   DialogTitle,
   StatusPill,
 } from '@/components/ui';
+import type { ClubApplication } from '@/domain/clubs';
 import type { ClubSummary } from '@/domain/public';
+import {
+  type HomeClubApplicationState,
+  formatDateTime,
+  getFallbackPlayerName,
+  loadPlayerContext,
+  loadTrackedApplication,
+  submitClubApplication,
+  withdrawClubApplication,
+} from '@/features/blueprint/application-data';
+import { useMutationNotice, useNotice } from '@/hooks';
+import { useAuth } from '@/hooks/useAuth';
 
-function getApplicationTone(status?: HomeClubApplicationState['application']['application'] extends infer T
-  ? T extends { status: infer S }
-    ? S
-    : never
-  : never) {
+function getApplicationTone(status?: ClubApplication['status']) {
   if (status === 'Approved') {
     return 'success' as const;
   }
@@ -43,16 +40,33 @@ function getApplicationTone(status?: HomeClubApplicationState['application']['ap
   return 'warning' as const;
 }
 
+function getApplicationStatusLabel(status?: ClubApplication['status']) {
+  switch (status) {
+    case 'Pending':
+      return '待处理';
+    case 'Approved':
+      return '已通过';
+    case 'Rejected':
+      return '已拒绝';
+    case 'Withdrawn':
+      return '已撤回';
+    default:
+      return status ?? '--';
+  }
+}
+
 export function ClubApplicationDialog({
   club,
   open,
   onOpenChange,
   onMembershipConfirmed,
+  onApplicationUpdated,
 }: {
   club: ClubSummary;
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onMembershipConfirmed?: () => void;
+  onApplicationUpdated?: (status: ClubApplication['status'] | null) => void;
 }) {
   const { session } = useAuth();
   const { notifyMutationResult } = useMutationNotice();
@@ -77,12 +91,13 @@ export function ClubApplicationDialog({
       const application = await loadTrackedApplication(operatorId, club.id);
 
       if (!cancelled) {
+        onApplicationUpdated?.(application.application?.status ?? null);
         setState({
           operatorId,
           operatorDisplayName: session.user.displayName,
           clubId: club.id,
-          message: 'I would like to join next split.',
-          withdrawNote: 'schedule changed',
+          message: '我想加入这个俱乐部，参与后续赛事安排。',
+          withdrawNote: '计划有变动',
           clubs: {
             items: [club],
             source: 'api',
@@ -97,7 +112,7 @@ export function ClubApplicationDialog({
     return () => {
       cancelled = true;
     };
-  }, [club, session]);
+  }, [club, onApplicationUpdated, session]);
 
   const selectedPlayerName = state?.playerContext.player?.displayName ?? (state ? getFallbackPlayerName(state) : '');
   const application = state?.application.application ?? null;
@@ -115,10 +130,10 @@ export function ClubApplicationDialog({
     () =>
       application
         ? [
-            { label: 'Status', value: application.status },
-            { label: 'Application id', value: application.id },
-            { label: 'Submitted at', value: formatDateTime(application.createdAt) },
-            { label: 'Note', value: application.message },
+            { label: '状态', value: getApplicationStatusLabel(application.status) },
+            { label: '申请编号', value: application.id },
+            { label: '提交时间', value: formatDateTime(application.createdAt) },
+            { label: '备注', value: application.message || '--' },
           ]
         : [],
     [application],
@@ -145,7 +160,7 @@ export function ClubApplicationDialog({
           }
         : current,
     );
-
+    onApplicationUpdated?.(applicationState.application?.status ?? null);
     setIsRefreshing(false);
   }
 
@@ -169,13 +184,18 @@ export function ClubApplicationDialog({
           : current,
       );
       notifyMutationResult(result, {
-        successTitle: 'Club application submitted',
-        successMessage: 'The request was sent to the backend successfully.',
-        fallbackTitle: 'Club application needs attention',
-        fallbackMessage: 'The request could not be fully confirmed.',
+        successTitle: '申请已提交',
+        successMessage: '俱乐部申请已经成功发送到后端。',
+        fallbackTitle: '申请需要人工确认',
+        fallbackMessage: '这次申请未能完全确认，请稍后刷新状态。',
       });
+      onApplicationUpdated?.(result.application.status);
+      onOpenChange(false);
     } catch (error) {
-      notifyWarning('Club application failed', error instanceof Error ? error.message : '提交申请失败，请稍后再试。');
+      notifyWarning(
+        '申请提交失败',
+        error instanceof Error ? error.message : '无法提交当前俱乐部申请。',
+      );
     }
   }
 
@@ -199,13 +219,17 @@ export function ClubApplicationDialog({
           : current,
       );
       notifyMutationResult(result, {
-        successTitle: 'Application withdrawn',
-        successMessage: 'The withdraw request completed successfully.',
-        fallbackTitle: 'Application withdraw needs attention',
-        fallbackMessage: 'The withdraw request could not be fully confirmed.',
+        successTitle: '申请已撤回',
+        successMessage: '撤回请求已经处理完成。',
+        fallbackTitle: '撤回需要人工确认',
+        fallbackMessage: '这次撤回未能完全确认，请稍后刷新状态。',
       });
+      onApplicationUpdated?.(result.application.status);
     } catch (error) {
-      notifyWarning('Withdraw failed', error instanceof Error ? error.message : '撤回申请失败，请稍后再试。');
+      notifyWarning(
+        '撤回失败',
+        error instanceof Error ? error.message : '无法撤回当前申请。',
+      );
     }
   }
 
@@ -217,19 +241,19 @@ export function ClubApplicationDialog({
           <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
             <DialogTitle>申请加入 {club.name}</DialogTitle>
             <DialogDescription>
-              你可以直接在俱乐部详情页提交入会申请，不需要再跳回项目蓝图页面。
+              你可以在这里查看当前申请状态、修改备注，并提交或撤回申请。
             </DialogDescription>
           </DialogHeader>
 
           <DialogBody className="px-6 py-5">
             {isLoading || !state ? (
-              <p className="m-0 text-[color:var(--muted)]">正在加载你的玩家身份信息...</p>
+              <p className="m-0 text-[color:var(--muted)]">正在加载申请状态...</p>
             ) : (
               <div className="grid gap-5">
                 <FieldGroup className="guest-flow__form">
-                  <TextInputField label="当前申请人" value={selectedPlayerName} readOnly />
+                  <TextInputField label="申请人" value={selectedPlayerName} readOnly />
                   <TextareaField
-                    label="申请说明"
+                    label="申请备注"
                     rows={4}
                     value={state.message}
                     onChange={(event) => {
@@ -241,7 +265,7 @@ export function ClubApplicationDialog({
 
                 {isMember ? (
                   <p className="m-0 rounded-[18px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.04)] px-4 py-3 text-[color:var(--muted)]">
-                    你已经是这个俱乐部的成员了，不需要重复申请。
+                    你已经是俱乐部成员。
                   </p>
                 ) : null}
 
@@ -249,7 +273,9 @@ export function ClubApplicationDialog({
                   <div className="grid gap-3 rounded-[22px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] p-4">
                     <div className="flex items-center justify-between gap-3">
                       <strong>当前申请</strong>
-                      <StatusPill tone={getApplicationTone(application.status)}>{application.status}</StatusPill>
+                      <StatusPill tone={getApplicationTone(application.status)}>
+                        {getApplicationStatusLabel(application.status)}
+                      </StatusPill>
                     </div>
                     <dl className="m-0 grid gap-2">
                       {summaryItems.map((item) => (
@@ -262,7 +288,7 @@ export function ClubApplicationDialog({
                   </div>
                 ) : (
                   <p className="m-0 rounded-[18px] border border-dashed border-[color:var(--line)] px-4 py-3 text-[color:var(--muted)]">
-                    你目前还没有向这个俱乐部提交申请。
+                    当前还没有这家俱乐部的申请记录。
                   </p>
                 )}
               </div>
@@ -272,13 +298,13 @@ export function ClubApplicationDialog({
           <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
             <div className="grid w-full gap-3 sm:grid-cols-2">
               <ActionButton onClick={() => void refreshCurrentState()}>
-                {isRefreshing ? '刷新中...' : '刷新当前状态'}
+                {isRefreshing ? '刷新中...' : '刷新状态'}
               </ActionButton>
               <ActionButton onClick={() => void handleSubmit()} disabled={!canSubmit}>
-                我想申请加入这个俱乐部
+                提交申请
               </ActionButton>
               <ActionButton onClick={() => void handleWithdraw()} disabled={!canWithdraw}>
-                撤回当前申请
+                撤回申请
               </ActionButton>
               <ActionButton variant="secondary" onClick={() => onOpenChange(false)}>
                 关闭

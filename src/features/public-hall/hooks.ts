@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
+import { authApi } from '@/api/auth';
 import {
   DEFAULT_PUBLIC_HALL_STATE,
   loadClubDetail,
@@ -32,14 +33,31 @@ export function usePublicHallHomeData(
   const [isLoading, setIsLoading] = useState(() => !peekPublicHallHomeData(state, context));
   const [error, setError] = useState<string | null>(null);
   const session = context.session;
-  const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
-  const isRegisteredPlayer = session?.user.roles.isRegisteredPlayer ?? false;
-  const isTournamentAdmin = session?.user.roles.isTournamentAdmin ?? false;
-  const isSuperAdmin = session?.user.roles.isSuperAdmin ?? false;
+  const requestState = useMemo<PublicHallState>(
+    () => ({
+      activeView: DEFAULT_PUBLIC_HALL_STATE.activeView,
+      scheduleTournamentStatus: state.scheduleTournamentStatus,
+      scheduleStageStatus: state.scheduleStageStatus,
+      leaderboardClubId: state.leaderboardClubId,
+      leaderboardStatus: state.leaderboardStatus,
+      clubActiveOnly: state.clubActiveOnly,
+    }),
+    [
+      state.clubActiveOnly,
+      state.leaderboardClubId,
+      state.leaderboardStatus,
+      state.scheduleStageStatus,
+      state.scheduleTournamentStatus,
+    ],
+  );
+  const requestContext = useMemo<PublicHallViewerContext>(
+    () => ({ session }),
+    [session],
+  );
 
   useEffect(() => {
     let cancelled = false;
-    const staleData = peekPublicHallHomeData(state, context);
+    const staleData = peekPublicHallHomeData(requestState, requestContext);
 
     if (staleData) {
       setData(staleData);
@@ -48,7 +66,7 @@ export function usePublicHallHomeData(
     setIsLoading(!staleData);
     setError(null);
 
-    void loadPublicHallHomeData(state, context)
+    void loadPublicHallHomeData(requestState, requestContext)
       .then((result) => {
         if (!cancelled) {
           setData(result);
@@ -69,14 +87,9 @@ export function usePublicHallHomeData(
       cancelled = true;
     };
   }, [
-    isRegisteredPlayer,
-    isSuperAdmin,
-    isTournamentAdmin,
-    operatorId,
     reloadKey,
-    state.clubActiveOnly,
-    state.scheduleStageStatus,
-    state.scheduleTournamentStatus,
+    requestContext,
+    requestState,
   ]);
 
   return { data, isLoading, error };
@@ -90,14 +103,25 @@ export function usePublicHallLeaderboardData(
   const [data, setData] = useState<LeaderboardDataPayload | null>(() => peekPublicHallLeaderboardData(state));
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const requestState = useMemo<PublicHallState>(
+    () => ({
+      activeView: DEFAULT_PUBLIC_HALL_STATE.activeView,
+      scheduleTournamentStatus: DEFAULT_PUBLIC_HALL_STATE.scheduleTournamentStatus,
+      scheduleStageStatus: DEFAULT_PUBLIC_HALL_STATE.scheduleStageStatus,
+      leaderboardClubId: state.leaderboardClubId,
+      leaderboardStatus: state.leaderboardStatus,
+      clubActiveOnly: DEFAULT_PUBLIC_HALL_STATE.clubActiveOnly,
+    }),
+    [state.leaderboardClubId, state.leaderboardStatus],
+  );
 
   useEffect(() => {
-    if (!homeData || state.activeView !== 'leaderboard') {
+    if (!homeData) {
       return;
     }
 
     let cancelled = false;
-    const staleData = peekPublicHallLeaderboardData(state);
+    const staleData = peekPublicHallLeaderboardData(requestState);
 
     if (staleData) {
       setData(staleData);
@@ -106,7 +130,7 @@ export function usePublicHallLeaderboardData(
     setIsLoading(!staleData);
     setError(null);
 
-    void loadPublicHallLeaderboardData(state, homeData.clubs)
+    void loadPublicHallLeaderboardData(requestState, homeData.clubs)
       .then((result) => {
         if (!cancelled) {
           setData(result);
@@ -129,9 +153,7 @@ export function usePublicHallLeaderboardData(
   }, [
     homeData,
     reloadKey,
-    state.activeView,
-    state.leaderboardClubId,
-    state.leaderboardStatus,
+    requestState,
   ]);
 
   return { data, isLoading, error };
@@ -150,6 +172,7 @@ export function useTournamentDetail(tournamentId: string | undefined) {
     }
 
     let cancelled = false;
+    setState(null);
     setIsLoading(true);
 
     void loadTournamentDetail(tournamentId)
@@ -176,10 +199,28 @@ export function useTournamentDetail(tournamentId: string | undefined) {
   };
 }
 
-export function useClubDetail(clubId: string | undefined) {
+async function resolveClubViewerId(
+  fallbackViewerId?: string,
+  isRegisteredPlayer = false,
+) {
+  if (!fallbackViewerId || !isRegisteredPlayer) {
+    return fallbackViewerId;
+  }
+
+  try {
+    const player = await authApi.getCurrentPlayer(fallbackViewerId);
+    return player.playerId || fallbackViewerId;
+  } catch {
+    return fallbackViewerId;
+  }
+}
+
+export function useClubDetail(clubId: string | undefined, context?: PublicHallViewerContext) {
   const [state, setState] = useState<ClubDetailState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
+  const operatorId = context?.session?.user.operatorId ?? context?.session?.user.userId;
+  const isRegisteredPlayer = context?.session?.user.roles.isRegisteredPlayer ?? false;
 
   useEffect(() => {
     if (!clubId) {
@@ -191,7 +232,8 @@ export function useClubDetail(clubId: string | undefined) {
     let cancelled = false;
     setIsLoading(true);
 
-    void loadClubDetail(clubId)
+    void resolveClubViewerId(operatorId, isRegisteredPlayer)
+      .then((viewerId) => loadClubDetail(clubId, viewerId))
       .then((result) => {
         if (!cancelled) {
           setState(result);
@@ -206,7 +248,7 @@ export function useClubDetail(clubId: string | undefined) {
     return () => {
       cancelled = true;
     };
-  }, [clubId, reloadKey]);
+  }, [clubId, isRegisteredPlayer, operatorId, reloadKey]);
 
   return {
     state,

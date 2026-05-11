@@ -26,16 +26,16 @@ export const featureModules: FeatureModule[] = [
       'Read-oriented workbench for registered members and club admins, covering player dashboard, club dashboard, and club-application inbox.',
     entities: ['Player Dashboard', 'Club Dashboard', 'Club Application Inbox'],
     primaryRoles: ['RegisteredPlayer', 'ClubAdmin'],
-    routes: ['/member-hub', 'GET /dashboards/players/:playerId', 'GET /clubs/:clubId/applications'],
+    routes: ['/member-hub', 'GET /dashboards/players/:playerId', 'GET /dashboards/clubs/:clubId', 'GET /clubs/:clubId/applications'],
   },
   {
     id: 'tournament-ops',
     title: 'Tournament Operations',
     summary:
-      'Operations-facing surface for tables, records, and appeals. Still partially scaffold-like, but now routed through the React app shell.',
+      'Operations-facing surface for tables, records, and appeals, mounted as a registered route and gated to tournament operators.',
     entities: ['Tournament', 'Stage', 'Table', 'Appeal Ticket'],
     primaryRoles: ['TournamentAdmin'],
-    routes: ['/tournament-ops', 'GET /tournaments/:id/stages/:stageId/tables', 'GET /appeals'],
+    routes: ['/tournament-ops', 'GET /tournaments', 'GET /tournaments/:id/stages/:stageId/tables', 'GET /appeals'],
   },
   {
     id: 'api-client',

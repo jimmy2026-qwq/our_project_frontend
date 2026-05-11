@@ -58,6 +58,15 @@ body::after {
     linear-gradient(90deg, rgba(8, 17, 28, 0.28), rgba(8, 17, 28, 0.08) 28%, rgba(8, 17, 28, 0.12) 72%, rgba(8, 17, 28, 0.3));
 }
 
+body.auth-screen-open {
+  background: #0b1620;
+}
+
+body.auth-screen-open::before,
+body.auth-screen-open::after {
+  display: none;
+}
+
 a,
 button,
 select,

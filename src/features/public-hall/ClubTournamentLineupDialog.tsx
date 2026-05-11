@@ -39,37 +39,40 @@ export function ClubTournamentLineupDialog({
     notifyWarning: notifyWorkbenchWarning,
   } = useClubTournamentLineupWorkbench({
     clubId,
+    operatorId,
     tournament,
     open,
   });
 
   async function handleSubmit() {
-    if (!tournament?.id || !workbench.selectedStageId || workbench.selectedPlayerIds.length === 0) {
+    const effectiveStageId = workbench.selectedStageId || workbench.stageOptions[0]?.stageId || '';
+
+    if (!tournament?.id || !effectiveStageId || workbench.selectedPlayerIds.length === 0) {
       notifyWorkbenchWarning(
-        'Lineup is incomplete',
-        'Select a stage and at least one player before submitting the club lineup.',
+        '参赛名单不完整',
+        '请先选择一个阶段，并至少勾选一名成员后再提交名单。',
       );
       return;
     }
 
     try {
       setIsSubmitting(true);
-      await operationsApi.submitStageLineup(tournament.id, workbench.selectedStageId, {
+      await operationsApi.submitStageLineup(tournament.id, effectiveStageId, {
         clubId,
         operatorId,
         playerIds: workbench.selectedPlayerIds,
       });
       notifySuccess(
-        'Lineup submitted',
-        'The selected players were submitted for the current tournament stage.',
+        '名单提交成功',
+        '已将所选成员提交到当前赛事阶段。',
       );
       onOpenChange(false);
     } catch (error) {
       notifyWarning(
-        'Unable to submit lineup',
+        '无法提交参赛名单',
         error instanceof Error
           ? error.message
-          : 'The lineup request failed. Please retry after checking the current tournament state.',
+          : '参赛名单提交失败，请确认当前赛事状态后重试。',
       );
     } finally {
       setIsSubmitting(false);

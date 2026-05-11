@@ -2,11 +2,11 @@ import type {
   PlayerLeaderboardEntry,
   TournamentPublicProfile,
 } from '@/domain/public';
+import type { TournamentDetailContract } from '@/api/contracts/operations';
 import type {
   PublicHallLeaderboardStatus,
   PublicHallRankSnapshot,
   PublicHallState,
-  PublicHallTournamentAdminDetail,
 } from './types';
 
 export const DEFAULT_PUBLIC_HALL_STATE: PublicHallState = {
@@ -46,12 +46,15 @@ export function mapAdminStageStatus(status?: string): TournamentPublicProfile['n
   return 'Pending';
 }
 
-export function mapTournamentDetailFromAdminView(item: PublicHallTournamentAdminDetail): TournamentPublicProfile {
+export function mapTournamentDetailFromAdminView(item: TournamentDetailContract): TournamentPublicProfile {
   const stages = item.stages ?? [];
   const nextStage = stages[0];
+  const participatingClubIds = item.participatingClubs?.map((club) => club.clubId) ?? [];
+  const participatingPlayerCount = item.participatingPlayers?.length ?? 0;
+  const whitelistSummary = item.whitelistSummary;
 
   return {
-    id: item.id,
+    id: item.tournamentId,
     name: item.name,
     status: (item.status as TournamentPublicProfile['status']) ?? 'Draft',
     tagline: `Organizer: ${item.organizer}`,
@@ -59,26 +62,37 @@ export function mapTournamentDetailFromAdminView(item: PublicHallTournamentAdmin
     venue: item.organizer,
     stageCount: stages.length,
     whitelistType:
-      item.participatingClubs?.length && item.participatingPlayers?.length
+      participatingClubIds.length && participatingPlayerCount
         ? 'Mixed'
-        : item.participatingClubs?.length
+        : participatingClubIds.length
           ? 'Club'
           : 'Player',
-    clubIds: item.participatingClubs ?? [],
-    clubCount: item.participatingClubs?.length ?? 0,
-    playerCount: item.participatingPlayers?.length ?? 0,
-    whitelistCount: item.whitelist?.length ?? 0,
-    nextStageId: nextStage?.id ?? '',
+    clubIds: participatingClubIds,
+    clubCount: participatingClubIds.length,
+    playerCount: participatingPlayerCount,
+    whitelistCount: whitelistSummary?.totalEntries ?? 0,
+    nextStageId: nextStage?.stageId ?? '',
     nextStageName: nextStage?.name ?? 'No stages available',
     nextStageStatus: mapAdminStageStatus(nextStage?.status),
     nextScheduledAt: item.startsAt,
     stages: stages.map((stage) => ({
-      stageId: stage.id,
+      stageId: stage.stageId,
       name: stage.name,
       status: mapAdminStageStatus(stage.status),
       roundCount: stage.roundCount ?? 0,
-      tableCount: 0,
-      pendingTablePlanCount: stage.pendingTablePlans?.length ?? 0,
+      tableCount: stage.scheduledTableCount ?? 0,
+      pendingTablePlanCount: stage.pendingTablePlanCount ?? 0,
+      lineupSubmissions: stage.lineupSubmissions?.map((submission) => ({
+        submissionId: submission.submissionId,
+        clubId: submission.clubId,
+        clubName: submission.clubName,
+        submittedBy: submission.submittedBy,
+        submittedByDisplayName: submission.submittedByDisplayName ?? null,
+        submittedAt: submission.submittedAt,
+        activePlayerIds: submission.activePlayerIds ?? [],
+        reservePlayerIds: submission.reservePlayerIds ?? [],
+        note: submission.note ?? null,
+      })),
     })),
   };
 }

@@ -9,7 +9,7 @@ function normalizeInput(value: string) {
 }
 
 export function RegisterPage() {
-  const { session, register } = useAuth();
+  const { isReady, session, register } = useAuth();
   const { notifySuccess } = useNotice();
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState('');
@@ -19,7 +19,10 @@ export function RegisterPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (session) {
+  const hasRegisteredSession =
+    !!session && session.user.roles.isRegisteredPlayer && !session.user.roles.isGuest;
+
+  if (isReady && hasRegisteredSession) {
     return <Navigate replace to="/" />;
   }
 
@@ -49,7 +52,7 @@ export function RegisterPage() {
         password: normalizedPassword,
       });
 
-      notifySuccess('注册成功', `账号已创建，当前登录用户为 ${nextSession.user.displayName}。`);
+      notifySuccess('注册成功', `欢迎你，${nextSession.user.displayName}。`);
       navigate('/', { replace: true });
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : '注册失败，请稍后重试。');
@@ -60,11 +63,10 @@ export function RegisterPage() {
 
   return (
     <AuthScreen
-      eyebrow="Create Account"
-      title="创建 RiichiNexus 账号"
-      description="页面直接调用后端 /auth/register。注册成功后会立即建立当前登录会话。"
+      eyebrow="创建账号"
+      title="RiichiNexus 账号注册"
       submitLabel="注册"
-      footerPrompt="已经有账号了？"
+      footerPrompt="已有账号？"
       footerLinkLabel="去登录"
       footerLinkTo="/login"
       errorMessage={errorMessage}
@@ -73,17 +75,17 @@ export function RegisterPage() {
       fields={[
         {
           id: 'register-display-name',
-          label: '显示名称',
+          label: '昵称',
           autoComplete: 'nickname',
-          placeholder: '请输入显示名称',
+          placeholder: '请输入昵称',
           value: displayName,
           onChange: setDisplayName,
         },
         {
           id: 'register-username',
-          label: '用户名',
+          label: '账号',
           autoComplete: 'username',
-          placeholder: '请输入用户名',
+          placeholder: '请输入账号',
           value: username,
           onChange: setUsername,
         },

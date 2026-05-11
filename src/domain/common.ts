@@ -19,7 +19,8 @@ export type TableStatus =
   | 'InProgress'
   | 'Scoring'
   | 'Archived'
-  | 'AppealPending';
+  | 'AppealPending'
+  | 'AppealInProgress';
 
 export interface ListEnvelope<T, F = Record<string, unknown>> {
   items: T[];

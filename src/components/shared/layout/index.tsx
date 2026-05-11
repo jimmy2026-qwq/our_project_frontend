@@ -76,7 +76,7 @@ export function PortalFilters({
 export function FilterActionRow({
   children,
   onRefresh,
-  refreshLabel = 'Refresh',
+  refreshLabel = '刷新',
   className,
 }: {
   children: ReactNode;

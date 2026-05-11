@@ -25,7 +25,7 @@ import {
 import type { ClubSummary, TournamentPublicProfile } from '@/domain/public';
 
 import { formatDateTime, getStageStatusLabel, getTournamentStatusLabel } from '../utils';
-import { getStatusTone } from './shared';
+import { getStatusTone } from './shared.status';
 import { getTableStatusLabel, getTableStatusTone } from './tournament-detail.hooks';
 import type { TournamentDetailTableItem } from './tournament-detail.types';
 
@@ -118,6 +118,7 @@ export function TournamentTablesPanel({
 
 export function TournamentInvitedClubsPanel({
   invitedClubs,
+  lineupSubmissionCounts,
   selectableClubs,
   selectedClubId,
   canManageTournament,
@@ -126,6 +127,7 @@ export function TournamentInvitedClubsPanel({
   onInviteClub,
 }: {
   invitedClubs: ClubSummary[];
+  lineupSubmissionCounts: Record<string, number>;
   selectableClubs: ClubSummary[];
   selectedClubId: string;
   canManageTournament: boolean;
@@ -173,9 +175,18 @@ export function TournamentInvitedClubsPanel({
               <DetailRow
                 key={club.id}
                 title={
-                  <Link className="detail-link inline-flex" to={`/public/clubs/${club.id}`}>
-                    {club.name}
-                  </Link>
+                  <span className="flex flex-wrap items-center gap-3">
+                    <Link className="detail-link inline-flex" to={`/public/clubs/${club.id}`}>
+                      {club.name}
+                    </Link>
+                    {canManageTournament ? (
+                      <StatusPill tone={(lineupSubmissionCounts[club.id] ?? 0) > 0 ? 'success' : 'warning'}>
+                        {(lineupSubmissionCounts[club.id] ?? 0) > 0
+                          ? `\u5df2\u786e\u5b9a ${(lineupSubmissionCounts[club.id] ?? 0)} \u4eba`
+                          : '\u5f85\u786e\u5b9a'}
+                      </StatusPill>
+                    ) : null}
+                  </span>
                 }
                 detail={`${club.memberCount} 名成员 / 战力 ${club.powerRating}`}
               />

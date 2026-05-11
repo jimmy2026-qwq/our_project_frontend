@@ -6,10 +6,12 @@ import {
   PublicHallLoading,
 } from '@/features/public-hall/components';
 import { useClubDetail } from '@/features/public-hall/hooks';
+import { useAuth } from '@/hooks/useAuth';
 
 export function PublicClubDetailPage() {
   const { clubId } = useParams();
-  const { state, isLoading, refresh } = useClubDetail(clubId);
+  const { session } = useAuth();
+  const { state, isLoading, refresh } = useClubDetail(clubId, { session });
 
   if (isLoading || !state) {
     return (

@@ -30,10 +30,14 @@ export async function loadTournamentDetail(tournamentId: string): Promise<Tourna
   }
 }
 
-async function loadInvitedClubTournaments(clubId: string): Promise<ClubPublicProfile['activeTournaments']> {
+async function loadClubTournaments(
+  clubId: string,
+  viewerId?: string,
+): Promise<ClubPublicProfile['activeTournaments']> {
   try {
     const envelope = await clubsApi.getClubTournaments(clubId, {
-      scope: 'recent',
+      scope: 'all',
+      viewer: viewerId,
       limit: 100,
       offset: 0,
     });
@@ -48,37 +52,23 @@ async function loadInvitedClubTournaments(clubId: string): Promise<ClubPublicPro
           item.clubParticipationStatus === 'Participating'
             ? ('recent' as const)
             : ('invited' as const),
+        canSubmitLineup: item.canSubmitLineup,
       }));
   } catch {
     return [];
   }
 }
 
-function mergeClubTournaments(
-  current: ClubPublicProfile['activeTournaments'],
-  invited: ClubPublicProfile['activeTournaments'],
-) {
-  const merged = [...current];
-
-  invited.forEach((entry) => {
-    if (!merged.some((item) => item.id === entry.id || item.name === entry.name)) {
-      merged.push(entry);
-    }
-  });
-
-  return merged;
-}
-
-export async function loadClubDetail(clubId: string): Promise<ClubDetailState> {
+export async function loadClubDetail(clubId: string, viewerId?: string): Promise<ClubDetailState> {
   try {
-    const [item, invitedTournaments] = await Promise.all([
+    const [item, activeTournaments] = await Promise.all([
       publicApi.getPublicClubProfile(clubId),
-      loadInvitedClubTournaments(clubId),
+      loadClubTournaments(clubId, viewerId),
     ]);
     return {
       item: {
         ...item,
-        activeTournaments: mergeClubTournaments(item.activeTournaments, invitedTournaments),
+        activeTournaments,
       },
       source: 'api',
     };

@@ -1,26 +1,41 @@
 # Development Notes
 
-## Recommended Next Work
+## Current Priorities
 
-High-value near-term improvements:
+The highest-value remaining cleanup is structural, not framework-level.
 
-- continue pruning superseded helpers, exports, and style blocks now that shared shells are stable
-- continue tightening naming and ownership boundaries across `components/ui`, `components/shared`, and `components/shared/domain`
-- keep reusing the root notice and dialog layer instead of introducing local one-off feedback or confirm implementations
-- add a real public tournaments index page
-- add a richer public clubs search or sort page
-- keep expanding tournament operations from table-level actions into tournament-level actions
+Recommended next work:
 
-Longer-term improvements:
+- continue shrinking backend-specific transport compatibility helpers
+- add one more layer of frontend tests above pure mapper/shared-data functions
+- keep syncing docs whenever transport cleanup removes another legacy edge
+- keep shared UI consolidation moving out of broad global CSS
 
-- continue reducing reliance on `front/src/styles/app.css`
-- move gradually toward the template-oriented frontend stack as the system grows
-- introduce a stronger shared UI and state layer aligned with `template/frontend`
-- adopt Tailwind and shadcn-style patterns in staged migration work where they clearly reduce duplication
+## Requirements-Focused Reading
+
+The current codebase already does reasonably well on:
+
+- module separation
+- frontend/backend contract naming in the tournament and club application flows
+- keeping `public-hall` feature code dependent on shared contracts plus mappers
+
+The remaining weaker spots against `requirements.txt` are:
+
+- transport and type-system boundaries are much cleaner than before, but backend-specific option encoding still exists in a narrow helper layer
+- frontend quality gates exist now (`lint`, `test`, `typecheck`, `build`), but test coverage is still concentrated on pure functions
+- some documentation can drift quickly when transport compatibility helpers are retired
 
 ## Connection Setup
 
 - API base env var: `VITE_API_BASE_URL`
-- default API prefix in frontend: `/api`
+- default frontend API prefix: `/api`
 - Vite dev proxy file: `front/vite.config.ts`
 - current proxy target: `http://127.0.0.1:8080`
+
+## Working Rule
+
+When adding new frontend/backend work:
+
+- put transport contracts in `front/src/api/contracts/*`
+- keep normalization in API modules or dedicated mappers
+- avoid creating feature-local copies of transport contracts unless the feature truly owns a different domain shape

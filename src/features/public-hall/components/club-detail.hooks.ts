@@ -1,11 +1,12 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { loadPlayerContext } from '@/features/blueprint/application-data';
 import { clubsApi } from '@/api/clubs';
 import type { AuthSession, PlayerProfile } from '@/domain/auth';
-import type { ClubApplicationView } from '@/domain/clubs';
+import type { ClubApplication, ClubApplicationView } from '@/domain/clubs';
 import type { ClubPublicProfile } from '@/domain/public';
+import { loadPlayerContext, loadTrackedApplication } from '@/features/blueprint/application-data';
 import { useDialog, useMutationNotice } from '@/hooks';
+import { hasClubAdminOverride, upsertClubAdminOverride } from '@/lib/club-admin-overrides';
 import { upsertClubApplicationInboxItem } from '@/lib/club-applications';
 
 import type { DetailState } from '../types';
@@ -15,6 +16,71 @@ interface UseClubDetailWorkbenchParams {
   state: DetailState<ClubPublicProfile>;
   session: AuthSession | null;
   onRefreshDetail?: () => void;
+}
+
+async function resolveClubAdminAccess(
+  clubId: string,
+  playerId: string,
+) {
+  try {
+    const club = await clubsApi.getClub(clubId);
+
+    if (club.admins?.includes(playerId)) {
+      return true;
+    }
+  } catch {
+    // Fall through to local override.
+  }
+
+  if (hasClubAdminOverride(clubId, playerId)) {
+    return true;
+  }
+
+  return false;
+}
+
+async function loadClubMemberAdminEntries(
+  clubId: string,
+  currentOperatorId: string,
+  currentPlayer: PlayerProfile | null,
+): Promise<ClubAdminMemberEntry[]> {
+  const [club, membersEnvelope] = await Promise.all([
+    clubsApi.getClub(clubId).catch(() => null),
+    clubsApi.getClubMembers(clubId, { limit: 100, offset: 0 }),
+  ]);
+  const members = [...membersEnvelope.items];
+  const adminIds = new Set(club?.admins ?? []);
+
+  if (
+    currentPlayer &&
+    !members.some(
+      (member) =>
+        member.playerId === currentPlayer.playerId ||
+        (!!member.applicantUserId && member.applicantUserId === currentPlayer.applicantUserId),
+    )
+  ) {
+    members.unshift(currentPlayer);
+  }
+
+  return members
+    .map((member) => ({
+      ...member,
+      isAdmin: adminIds.has(member.playerId) || hasClubAdminOverride(clubId, member.playerId),
+      isCurrentUser:
+        (!!currentPlayer && member.playerId === currentPlayer.playerId) ||
+        (!currentPlayer && !!member.applicantUserId && member.applicantUserId === currentOperatorId),
+    }))
+    .sort((left, right) => {
+      if (left.isCurrentUser !== right.isCurrentUser) {
+        return left.isCurrentUser ? -1 : 1;
+      }
+
+      if (left.isAdmin !== right.isAdmin) {
+        return left.isAdmin ? -1 : 1;
+      }
+
+      return left.displayName.localeCompare(right.displayName);
+    });
 }
 
 export function useClubDetailWorkbench({
@@ -31,6 +97,8 @@ export function useClubDetailWorkbench({
   const [isCurrentMember, setIsCurrentMember] = useState(false);
   const [isCurrentClubAdmin, setIsCurrentClubAdmin] = useState(false);
   const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);
+  const [currentPlayerProfile, setCurrentPlayerProfile] = useState<PlayerProfile | null>(null);
+  const [currentApplicationStatus, setCurrentApplicationStatus] = useState<ClubApplication['status'] | null>(null);
   const [applicationInbox, setApplicationInbox] = useState<ClubApplicationView[]>([]);
   const [isInboxLoading, setIsInboxLoading] = useState(false);
   const [clubMembers, setClubMembers] = useState<ClubAdminMemberEntry[]>([]);
@@ -49,6 +117,7 @@ export function useClubDetailWorkbench({
     if (!session?.user.roles.isRegisteredPlayer || !profile) {
       setIsCurrentMember(false);
       setIsCurrentClubAdmin(false);
+      setCurrentApplicationStatus(null);
       return;
     }
 
@@ -57,24 +126,42 @@ export function useClubDetailWorkbench({
     const clubId = profile.id;
 
     const refreshMembershipStatus = () => {
-      void loadPlayerContext(operatorId, session.user.displayName).then((result) => {
+      void (async () => {
+        const playerContext = await loadPlayerContext(operatorId, session.user.displayName);
+
+        if (cancelled) {
+          return;
+        }
+
+        const adminLookupPlayerId = playerContext.player?.playerId ?? operatorId;
+        const isAdmin = await resolveClubAdminAccess(clubId, adminLookupPlayerId);
+
+        if (cancelled) {
+          return;
+        }
+
+        const isMember = playerContext.player?.clubIds?.includes(clubId) ?? false;
+        setCurrentPlayerProfile(playerContext.player);
+        setIsCurrentMember(isMember);
+        setIsCurrentClubAdmin(isAdmin);
+
+        if (isMember) {
+          setCurrentApplicationStatus(null);
+          return;
+        }
+
+        const application = await loadTrackedApplication(operatorId, clubId);
+
         if (!cancelled) {
-          setIsCurrentMember(result.player?.clubIds?.includes(clubId) ?? false);
+          setCurrentApplicationStatus(application.application?.status ?? null);
+        }
+      })().catch(() => {
+        if (!cancelled) {
+          setCurrentPlayerProfile(null);
+          setIsCurrentClubAdmin(false);
+          setCurrentApplicationStatus(null);
         }
       });
-
-      void clubsApi
-        .getClubs({ adminId: operatorId, limit: 100, offset: 0 })
-        .then((envelope) => {
-          if (!cancelled) {
-            setIsCurrentClubAdmin(envelope.items.some((club) => club.id === clubId));
-          }
-        })
-        .catch(() => {
-          if (!cancelled) {
-            setIsCurrentClubAdmin(false);
-          }
-        });
     };
 
     refreshMembershipStatus();
@@ -161,48 +248,13 @@ export function useClubDetailWorkbench({
     }
 
     let cancelled = false;
+    const currentOperatorId = session.user.operatorId ?? session.user.userId;
     setIsClubMembersLoading(true);
 
-    void clubsApi
-      .getClubMembers(profile.id, { limit: 100, offset: 0 })
-      .then(async (envelope) => {
-        const members = envelope.items;
-        const adminMembership = await Promise.all(
-          members.map(async (member) => {
-            try {
-              const adminEnvelope = await clubsApi.getClubs({
-                adminId: member.playerId,
-                limit: 100,
-                offset: 0,
-              });
-
-              return adminEnvelope.items.some((club) => club.id === profile.id);
-            } catch {
-              return false;
-            }
-          }),
-        );
-
+    void loadClubMemberAdminEntries(profile.id, currentOperatorId, currentPlayerProfile)
+      .then((entries) => {
         if (!cancelled) {
-          setClubMembers(
-            members
-              .map((member, index) => ({
-                ...member,
-                isAdmin: adminMembership[index] ?? false,
-                isCurrentUser: member.playerId === (session.user.operatorId ?? session.user.userId),
-              }))
-              .sort((left, right) => {
-                if (left.isCurrentUser !== right.isCurrentUser) {
-                  return left.isCurrentUser ? -1 : 1;
-                }
-
-                if (left.isAdmin !== right.isAdmin) {
-                  return left.isAdmin ? -1 : 1;
-                }
-
-                return left.displayName.localeCompare(right.displayName);
-              }),
-          );
+          setClubMembers(entries);
         }
       })
       .catch(() => {
@@ -219,7 +271,7 @@ export function useClubDetailWorkbench({
     return () => {
       cancelled = true;
     };
-  }, [isCurrentClubAdmin, profile, session]);
+  }, [currentPlayerProfile, isCurrentClubAdmin, profile, session]);
 
   const workbench = useMemo<ClubDetailWorkbenchState | null>(() => {
     if (!profile) {
@@ -234,11 +286,9 @@ export function useClubDetailWorkbench({
     );
     const canApply = !!session?.user.roles.isRegisteredPlayer && !isClubMember;
     const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
-    const actionableTournaments = profile.activeTournaments.filter(
-      (item) => item.source === 'invited' && item.status !== 'Finished',
-    );
+    const actionableTournaments = profile.activeTournaments.filter((item) => item.canSubmitLineup);
     const canManageLineup =
-      !!session?.user.roles.isRegisteredPlayer && isCurrentClubAdmin && actionableTournaments.length > 0;
+      !!session?.user.roles.isRegisteredPlayer && actionableTournaments.length > 0;
 
     return {
       profile,
@@ -249,6 +299,7 @@ export function useClubDetailWorkbench({
       isCurrentMember,
       isCurrentClubAdmin,
       clubMemberNames,
+      currentApplicationStatus,
       applicationInbox,
       isInboxLoading,
       clubMembers,
@@ -264,6 +315,7 @@ export function useClubDetailWorkbench({
     applicationInbox,
     clubMemberNames,
     clubMembers,
+    currentApplicationStatus,
     isApplicationDialogOpen,
     isCurrentClubAdmin,
     isCurrentMember,
@@ -282,12 +334,12 @@ export function useClubDetailWorkbench({
     }
 
     const confirmed = await confirmDanger({
-      title: decision === 'approve' ? 'Approve application?' : 'Reject application?',
+      title: decision === 'approve' ? '确认通过申请？' : '确认拒绝申请？',
       message:
         decision === 'approve'
-          ? 'This will approve the pending club application and refresh the current club detail view.'
-          : 'This will reject the pending club application and refresh the current club detail view.',
-      confirmText: decision === 'approve' ? 'Approve' : 'Reject',
+          ? '这会立刻通过当前待处理申请，并把它从申请列表里移除。'
+          : '这会立刻拒绝当前待处理申请，并把它从申请列表里移除。',
+      confirmText: decision === 'approve' ? '通过' : '拒绝',
     });
 
     if (!confirmed) {
@@ -325,20 +377,19 @@ export function useClubDetailWorkbench({
       });
 
     notifyMutationResult(result, {
-      successTitle: decision === 'approve' ? 'Application approved' : 'Application rejected',
-      successMessage: 'The application inbox was updated successfully.',
+      successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
+      successMessage: '申请列表已经更新。',
       fallbackTitle:
         decision === 'approve'
-          ? 'Application approval requires attention'
-          : 'Application rejection requires attention',
-      fallbackMessage:
-        'The backend review request did not complete.',
+          ? '通过申请需要人工确认'
+          : '拒绝申请需要人工确认',
+      fallbackMessage: '后端处理这次申请时没有完全成功。',
     });
 
     setApplicationInbox((current) => current.filter((item) => item.applicationId !== applicationId));
 
-    if (result.source === 'api') {
-      onRefreshDetail?.();
+    if (decision === 'reject') {
+      setCurrentApplicationStatus('Rejected');
     }
   }
 
@@ -350,43 +401,8 @@ export function useClubDetailWorkbench({
     setIsClubMembersLoading(true);
 
     try {
-      const membersEnvelope = await clubsApi.getClubMembers(profile.id, { limit: 100, offset: 0 });
-      const members = membersEnvelope.items;
-      const adminMembership = await Promise.all(
-        members.map(async (member) => {
-          try {
-            const adminEnvelope = await clubsApi.getClubs({
-              adminId: member.playerId,
-              limit: 100,
-              offset: 0,
-            });
-
-            return adminEnvelope.items.some((club) => club.id === profile.id);
-          } catch {
-            return false;
-          }
-        }),
-      );
-
-      setClubMembers(
-        members
-          .map((member, index) => ({
-            ...member,
-            isAdmin: adminMembership[index] ?? false,
-            isCurrentUser: member.playerId === (session.user.operatorId ?? session.user.userId),
-          }))
-          .sort((left, right) => {
-            if (left.isCurrentUser !== right.isCurrentUser) {
-              return left.isCurrentUser ? -1 : 1;
-            }
-
-            if (left.isAdmin !== right.isAdmin) {
-              return left.isAdmin ? -1 : 1;
-            }
-
-            return left.displayName.localeCompare(right.displayName);
-          }),
-      );
+      const currentOperatorId = session.user.operatorId ?? session.user.userId;
+      setClubMembers(await loadClubMemberAdminEntries(profile.id, currentOperatorId, currentPlayerProfile));
     } finally {
       setIsClubMembersLoading(false);
     }
@@ -398,31 +414,50 @@ export function useClubDetailWorkbench({
     }
 
     const confirmed = await confirmDanger({
-      title: 'Promote club admin?',
-      message: `This will grant club admin access to ${member.displayName}.`,
-      confirmText: 'Promote',
+      title: '设为管理员？',
+      message: `这会授予 ${member.displayName} 俱乐部管理员权限。`,
+      confirmText: '确认设为管理员',
     });
 
     if (!confirmed) {
       return;
     }
 
-    const result = await clubsApi.assignClubAdmin(profile.id, {
+    const updatedClub = await clubsApi.assignClubAdmin(profile.id, {
       playerId: member.playerId,
       operatorId: workbench.operatorId,
-    }).then(() => ({ source: 'api' as const }));
-
-    notifyMutationResult(result, {
-      successTitle: 'Club admin assigned',
-      successMessage: `${member.displayName} can now manage this club.`,
-      fallbackTitle: 'Club admin update requires attention',
-      fallbackMessage: 'The backend update did not complete.',
     });
 
-    if (result.source === 'api') {
-      await refreshClubMembers();
-      onRefreshDetail?.();
-    }
+    notifyMutationResult({ source: 'api' as const }, {
+      successTitle: '管理员设置成功',
+      successMessage: `${member.displayName} 现在可以管理该俱乐部。`,
+      fallbackTitle: '管理员设置需要关注',
+      fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
+    });
+
+    upsertClubAdminOverride(profile.id, member.playerId);
+    const updatedAdminIds = new Set(updatedClub.admins ?? []);
+    setClubMembers((current) =>
+      current
+        .map((entry) => ({
+          ...entry,
+          isAdmin:
+            updatedAdminIds.has(entry.playerId) ||
+            hasClubAdminOverride(profile.id, entry.playerId),
+        }))
+        .sort((left, right) => {
+          if (left.isCurrentUser !== right.isCurrentUser) {
+            return left.isCurrentUser ? -1 : 1;
+          }
+
+          if (left.isAdmin !== right.isAdmin) {
+            return left.isAdmin ? -1 : 1;
+          }
+
+          return left.displayName.localeCompare(right.displayName, 'zh-CN');
+        }),
+    );
+    await refreshClubMembers();
   }
 
   async function handleRemoveMember(member: ClubAdminMemberEntry) {
@@ -431,9 +466,9 @@ export function useClubDetailWorkbench({
     }
 
     const confirmed = await confirmDanger({
-      title: 'Remove club member?',
-      message: `This will remove ${member.displayName} from the club membership list.`,
-      confirmText: 'Remove',
+      title: '移出俱乐部成员？',
+      message: `这会将 ${member.displayName} 从俱乐部成员列表中移除。`,
+      confirmText: '确认移除',
     });
 
     if (!confirmed) {
@@ -447,10 +482,10 @@ export function useClubDetailWorkbench({
       .then(() => ({ source: 'api' as const }));
 
     notifyMutationResult(result, {
-      successTitle: 'Club member removed',
-      successMessage: `${member.displayName} was removed from this club.`,
-      fallbackTitle: 'Club member removal requires attention',
-      fallbackMessage: 'The backend update did not complete.',
+      successTitle: '成员已移除',
+      successMessage: `${member.displayName} 已从该俱乐部移除。`,
+      fallbackTitle: '移除成员需要关注',
+      fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
     });
 
     if (result.source === 'api') {
@@ -459,12 +494,17 @@ export function useClubDetailWorkbench({
     }
   }
 
+  function handleApplicationStatusChange(status: ClubApplication['status'] | null) {
+    setCurrentApplicationStatus(status);
+  }
+
   return {
     workbench,
     setIsApplicationDialogOpen,
     setIsLineupDialogOpen,
     setSelectedLineupTournament,
     setIsCurrentMember,
+    handleApplicationStatusChange,
     handleReview,
     handleAssignAdmin,
     handleRemoveMember,

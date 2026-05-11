@@ -12,15 +12,15 @@ interface PublicHallLoadingProps {
 }
 
 export const PublicHallLoading = ({
-  eyebrow = 'Guest Lobby',
-  title = 'Loading public hall...',
-  summary = 'Fetching public schedules, club cards, and leaderboard data.',
-  progressLabel = 'Public hall loading',
-  progressMessage = 'Syncing public schedules, club directory, and the homepage summary.',
+  eyebrow = '公共大厅',
+  title = '正在加载公共大厅...',
+  summary = '正在同步公开赛程、俱乐部卡片和排行榜数据。',
+  progressLabel = '公共大厅加载中',
+  progressMessage = '请稍候，我们正在同步公共大厅首页所需的数据。',
 }: PublicHallLoadingProps = {}) => {
   return (
     <section className="public-portal">
-      <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
+      <section className="portal-hero portal-hero--loading grid gap-[22px]">
         <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))]">
           <p className="portal-hero__eyebrow">{eyebrow}</p>
           <h1>{title}</h1>
@@ -41,10 +41,10 @@ export const PublicHallLoading = ({
 export const PublicHallError = ({ message }: { message: string }) => {
   return (
     <section className="public-portal">
-      <section className="portal-hero portal-hero--loading grid gap-[22px] lg:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.8fr)]">
+      <section className="portal-hero portal-hero--loading grid gap-[22px]">
         <div className="portal-hero__main relative overflow-hidden rounded-[var(--radius-xl)] p-[38px] shadow-[var(--shadow-lg)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))]">
-          <p className="portal-hero__eyebrow">Guest Lobby</p>
-          <h1>Public hall failed to render</h1>
+          <p className="portal-hero__eyebrow">公共大厅</p>
+          <h1>公共大厅加载失败</h1>
           <p className="portal-hero__summary">{message}</p>
         </div>
       </section>
@@ -55,15 +55,15 @@ export const PublicHallError = ({ message }: { message: string }) => {
 export const PublicHallLeaderboardLoading = () => {
   return (
     <PortalSection
-      eyebrow="Leaderboard"
-      title="Player Leaderboard"
-      description="The leaderboard now loads on demand so the public hall can render faster."
+      eyebrow="排行榜"
+      title="选手排行榜"
+      description="正在获取公共大厅的最新排行榜数据。"
       source="api"
     >
       <div className="rounded-[28px] border border-[rgba(255,255,255,0.08)] bg-[color:var(--panel)] px-6 py-7 shadow-[var(--shadow-md)]">
         <LoadingProgress
-          label="Loading leaderboard"
-          message="Fetching the latest player ranking data."
+          label="排行榜加载中"
+          message="正在获取最新的选手排名数据。"
           indeterminate
         />
       </div>
@@ -76,14 +76,14 @@ export const PublicDetailNotFound = ({ title }: { title: string }) => {
     <DetailPageShell
       backLink={
         <Link className="detail-back" to="/public">
-          Back to public hall
+          返回公共大厅
         </Link>
       }
       hero={
         <DetailHero
-          eyebrow="Not Found"
+          eyebrow="未找到"
           title={title}
-          summary="The requested public detail view is not available right now."
+          summary="当前无法找到你请求的公共详情页面。"
         />
       }
     />

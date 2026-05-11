@@ -173,6 +173,29 @@
   text-shadow: 0 10px 28px rgba(3, 8, 14, 0.34);
 }
 
+.portal-hero--loading {
+  width: min(100%, 1480px);
+  margin: 0 auto;
+}
+
+.portal-hero--loading .portal-hero__main {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 42px 44px 40px;
+}
+
+.portal-hero--loading .portal-hero__main h1 {
+  max-width: none;
+  font-size: clamp(2.6rem, 4vw, 4.3rem);
+  letter-spacing: -0.04em;
+  white-space: nowrap;
+}
+
+.portal-hero--loading .portal-hero__summary {
+  max-width: 72ch;
+}
+
 .portal-hero__summary {
   margin: 0;
   color: var(--muted-strong);
@@ -417,7 +440,14 @@
   line-height: 1.1;
 }
 
-.public-schedules-section {
+.public-schedules-section,
+.public-directory-section,
+.public-leaderboard-section {
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 250px);
+  height: calc(100vh - 250px);
+  max-height: calc(100vh - 250px);
   border: 1px solid rgba(219, 175, 98, 0.28);
   border-radius: 24px;
   background:
@@ -428,43 +458,55 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.public-schedules-section .portal-section__ornament {
+.public-schedules-section .portal-section__ornament,
+.public-directory-section .portal-section__ornament,
+.public-leaderboard-section .portal-section__ornament {
   display: none;
 }
 
-.public-schedules-section .portal-section__head {
+.public-schedules-section .portal-section__head,
+.public-directory-section .portal-section__head,
+.public-leaderboard-section .portal-section__head {
   position: relative;
   display: block;
   align-items: flex-start;
 }
 
-.public-schedules-section .portal-section__head > div {
+.public-schedules-section .portal-section__head > div,
+.public-directory-section .portal-section__head > div,
+.public-leaderboard-section .portal-section__head > div {
   width: 100%;
   display: grid;
 }
 
-.public-schedules-section .portal-section__head > .shared-feedback-meta {
+.public-schedules-section .portal-section__head > .shared-feedback-meta,
+.public-directory-section .portal-section__head > .shared-feedback-meta,
+.public-leaderboard-section .portal-section__head > .shared-feedback-meta {
   display: none;
 }
 
-.public-schedules-section .portal-section__head .eyebrow {
+.public-schedules-section .portal-section__head .eyebrow,
+.public-directory-section .portal-section__head .eyebrow,
+.public-leaderboard-section .portal-section__head .eyebrow {
   justify-self: start;
 }
 
-.public-schedules-section .portal-section__head h2 {
+.public-schedules-section .portal-section__head h2,
+.public-directory-section .portal-section__head h2,
+.public-leaderboard-section .portal-section__head h2 {
   width: 100%;
   margin-top: 6px;
   text-align: center;
 }
 
-.public-schedules-section .public-schedules__title-row {
+.public-schedules__title-row {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
   width: 100%;
 }
 
-.public-schedules-section .public-schedules__title-row > span {
+.public-schedules__title-row > span {
   grid-column: 2;
   justify-self: center;
   min-width: 220px;
@@ -479,7 +521,7 @@
     0 6px 16px rgba(10, 12, 30, 0.14);
 }
 
-.public-schedules-section .public-schedules__create-button {
+.public-schedules__create-button {
   grid-column: 3;
   justify-self: end;
   position: static;
@@ -500,11 +542,14 @@
   text-shadow: none;
 }
 
-.public-schedules-section .portal-section__head p {
+.public-schedules-section .portal-section__head p,
+.public-directory-section .portal-section__head p,
+.public-leaderboard-section .portal-section__head p {
   text-align: center;
 }
 
 .public-schedules__filters {
+  flex: 0 0 auto;
   align-items: center;
   gap: 12px 18px;
 }
@@ -615,6 +660,117 @@
   text-align: center;
 }
 
+.public-schedules__grid,
+.public-directory__grid,
+.public-leaderboard__list {
+  flex: 1 1 auto;
+  min-height: 0;
+  height: 100%;
+  max-height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 10px;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(245, 214, 146, 0.46) rgba(10, 18, 31, 0.18);
+}
+
+.public-schedules__grid::-webkit-scrollbar,
+.public-directory__grid::-webkit-scrollbar,
+.public-leaderboard__list::-webkit-scrollbar {
+  width: 10px;
+}
+
+.public-schedules__grid::-webkit-scrollbar-track,
+.public-directory__grid::-webkit-scrollbar-track,
+.public-leaderboard__list::-webkit-scrollbar-track {
+  border-radius: 999px;
+  background: rgba(10, 18, 31, 0.18);
+}
+
+.public-schedules__grid::-webkit-scrollbar-thumb,
+.public-directory__grid::-webkit-scrollbar-thumb,
+.public-leaderboard__list::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(245, 214, 146, 0.7), rgba(208, 170, 98, 0.7));
+}
+
+.public-directory__grid .public-directory-card,
+.public-leaderboard__list .public-leaderboard__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px 24px;
+  align-items: start;
+  border-radius: 0;
+  border: 2px solid rgba(219, 175, 98, 0.42);
+  background:
+    linear-gradient(180deg, rgba(29, 42, 78, 0.9), rgba(28, 40, 74, 0.88)),
+    rgba(28, 40, 74, 0.88);
+  box-shadow: none;
+}
+
+.public-directory__grid .public-directory-card::before,
+.public-leaderboard__list .public-leaderboard__row::before {
+  content: none;
+}
+
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__main,
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__side {
+  margin: 0;
+}
+
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__main strong,
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__side strong {
+  color: rgba(239, 189, 111, 0.96);
+}
+
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__main span,
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__side span {
+  color: rgba(225, 230, 243, 0.92);
+}
+
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__link {
+  justify-self: end;
+  min-width: 112px;
+  margin-top: 0;
+  padding: 10px 22px;
+  border: 1px solid rgba(219, 175, 98, 0.36);
+  background: linear-gradient(180deg, rgba(83, 124, 210, 0.92), rgba(56, 85, 162, 0.92));
+  color: #f5c98e;
+  text-align: center;
+}
+
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__main {
+  display: grid;
+  gap: 8px;
+}
+
+.public-leaderboard__list .public-leaderboard__row .leaderboard-row__side {
+  display: grid;
+  gap: 8px;
+  justify-items: end;
+  min-width: 168px;
+}
+
+.public-directory__grid .public-directory-card .public-directory-card__meta {
+  grid-column: 2;
+  grid-row: 2;
+  display: grid;
+  grid-template-columns: repeat(2, auto);
+  gap: 10px 18px;
+  align-items: center;
+}
+
+.public-directory__grid .public-directory-card .public-directory-card__meta .ui-key-value-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.public-directory__grid .public-directory-card .public-directory-card__meta .ui-key-value-item__label,
+.public-directory__grid .public-directory-card .public-directory-card__meta .ui-key-value-item__value {
+  white-space: nowrap;
+}
+
 .source-badge--api {
   background: rgba(114, 216, 209, 0.14);
   color: var(--teal-strong);
@@ -723,6 +879,14 @@
 }
 
 @media (max-width: 980px) {
+  .public-schedules-section,
+  .public-directory-section,
+  .public-leaderboard-section {
+    min-height: auto;
+    height: auto;
+    max-height: none;
+  }
+
   .public-schedules-section .portal-section__head h2 > div {
     justify-content: center;
     padding-bottom: 0;
@@ -737,11 +901,32 @@
     grid-template-columns: 1fr;
   }
 
+  .public-directory__grid .public-directory-card,
+  .public-leaderboard__list .public-leaderboard__row {
+    grid-template-columns: 1fr;
+  }
+
   .public-schedules__grid .schedule-card .schedule-card__meta > [data-slot='description-item']:last-child .ui-description-item__value,
   .public-schedules__grid .schedule-card .detail-link {
     grid-column: 1;
     text-align: left;
     justify-self: start;
+  }
+
+  .public-directory__grid .public-directory-card > p:first-of-type,
+  .public-directory__grid .public-directory-card .detail-link,
+  .public-leaderboard__list .public-leaderboard__row .leaderboard-row__side,
+  .public-leaderboard__list .public-leaderboard__row .leaderboard-row__link {
+    grid-column: 1;
+    text-align: left;
+    justify-self: start;
+    justify-items: start;
+  }
+
+  .public-directory__grid .public-directory-card .public-directory-card__meta {
+    grid-column: 1;
+    grid-row: auto;
+    grid-template-columns: 1fr;
   }
 
   .public-shell {
@@ -767,6 +952,14 @@
   .portal-hero__main,
   .portal-section {
     padding: 24px;
+  }
+
+  .portal-hero--loading .portal-hero__main {
+    padding: 30px 28px;
+  }
+
+  .portal-hero--loading .portal-hero__main h1 {
+    white-space: normal;
   }
 
   .shared-feedback-warning,

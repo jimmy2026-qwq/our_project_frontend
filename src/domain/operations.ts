@@ -64,11 +64,21 @@ export interface MatchRecordSummary {
 export interface AppealSummary {
   id: string;
   tournamentId: string;
+  stageId: string;
   tableId: string;
-  status: 'Open' | 'Resolved' | 'Rejected' | 'Escalated';
-  createdBy: string;
+  status: 'Open' | 'UnderReview' | 'Resolved' | 'Rejected' | 'Escalated';
+  openedBy: string;
+  createdBy?: string;
+  description: string;
+  attachments?: string[];
+  priority?: string | null;
+  assigneeId?: string | null;
+  dueAt?: string | null;
   createdAt: string;
-  verdict: string;
+  updatedAt?: string;
+  resolution?: string | null;
+  verdict?: string | null;
+  reopenCount?: number;
 }
 
 export interface PaifuFinalStanding {

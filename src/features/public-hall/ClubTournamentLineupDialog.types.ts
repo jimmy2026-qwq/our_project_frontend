@@ -1,6 +1,6 @@
 import type { PlayerProfile } from '@/domain/auth';
 import type { ClubPublicProfile } from '@/domain/public';
-import type { PublicHallTournamentAdminDetail } from './types';
+import type { TournamentDetailContract } from '@/api/contracts/operations';
 
 export type ClubTournamentItem = ClubPublicProfile['activeTournaments'][number];
 export type MemberStatusFilter = 'all' | 'active' | 'inactive';
@@ -8,6 +8,7 @@ export type EloSort = 'desc' | 'asc';
 
 export interface MemberListItem extends PlayerProfile {
   isSelected: boolean;
+  isCurrentUser: boolean;
 }
 
 export interface ClubTournamentLineupWorkbench {
@@ -18,7 +19,7 @@ export interface ClubTournamentLineupWorkbench {
   statusFilter: MemberStatusFilter;
   eloSort: EloSort;
   selectedPlayerIds: string[];
-  tournamentDetail: PublicHallTournamentAdminDetail | null;
-  stageOptions: NonNullable<PublicHallTournamentAdminDetail['stages']>;
+  tournamentDetail: TournamentDetailContract | null;
+  stageOptions: NonNullable<TournamentDetailContract['stages']>;
   visibleMembers: MemberListItem[];
 }

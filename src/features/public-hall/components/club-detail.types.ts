@@ -1,4 +1,4 @@
-import type { ClubApplicationView } from '@/domain/clubs';
+import type { ClubApplication, ClubApplicationView } from '@/domain/clubs';
 import type { PlayerProfile } from '@/domain/auth';
 import type { ClubPublicProfile } from '@/domain/public';
 
@@ -16,6 +16,7 @@ export interface ClubDetailWorkbenchState {
   isCurrentMember: boolean;
   isCurrentClubAdmin: boolean;
   clubMemberNames: string[];
+  currentApplicationStatus: ClubApplication['status'] | null;
   applicationInbox: ClubApplicationView[];
   isInboxLoading: boolean;
   clubMembers: ClubAdminMemberEntry[];

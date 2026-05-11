@@ -14,23 +14,18 @@ export interface ClubApplicationMutationResponseContract {
 }
 
 export interface ClubApplicationApplicantContract {
-  playerId?: string[] | string;
-  applicantUserId?: string[] | string;
+  playerId?: string;
+  applicantUserId?: string;
   displayName: string;
-  playerStatus?: string[] | string;
+  playerStatus?: string;
   currentRank?:
-    | {
-        platform: string;
-        tier: string;
-        stars?: number | null;
-      }[]
     | {
         platform: string;
         tier: string;
         stars?: number | null;
       }
     | null;
-  elo?: number[] | number;
+  elo?: number;
   clubIds?: string[];
 }
 
@@ -40,13 +35,13 @@ export interface ClubApplicationViewContract {
   clubName: string;
   applicant: ClubApplicationApplicantContract;
   submittedAt: string;
-  message?: string[] | string;
+  message?: string;
   status: ClubApplicationView['status'];
-  reviewedBy?: string[] | string;
-  reviewedByDisplayName?: string[] | string;
-  reviewedAt?: string[] | string;
-  reviewNote?: string[] | string;
-  withdrawnByPrincipalId?: string[] | string;
+  reviewedBy?: string | null;
+  reviewedByDisplayName?: string | null;
+  reviewedAt?: string | null;
+  reviewNote?: string | null;
+  withdrawnByPrincipalId?: string | null;
   canReview: boolean;
   canWithdraw: boolean;
 }
@@ -59,6 +54,7 @@ export interface ClubContract {
   id: string;
   name: string;
   members: string[];
+  admins?: string[];
   powerRating: number;
   treasuryBalance?: number;
   totalPoints?: number;
@@ -69,11 +65,11 @@ export interface ClubContract {
 
 export interface ClubMemberContract {
   id: string;
-  userId?: string;
+  userId: string;
   nickname: string;
-  status?: 'Active' | 'Inactive' | 'Banned';
-  elo?: number;
-  clubId?: string[];
+  status: 'Active' | 'Inactive' | 'Banned';
+  elo: number;
+  boundClubIds: string[];
 }
 
 export interface ClubTournamentParticipationContract {

@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { DirectoryCard, PortalSection } from '@/components/shared/data-display';
+import { PortalSection } from '@/components/shared/data-display';
 import { EmptyState } from '@/components/shared/feedback';
 import { CheckboxField, SelectField } from '@/components/shared/forms';
 import { ActionButton, FilterActionRow } from '@/components/shared/layout';
-import { DescriptionItem, DescriptionList, KeyValueItem, KeyValueList, StatusPill } from '@/components/ui';
+import { StatusPill } from '@/components/ui';
 import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/domain/public';
 import { useAuth } from '@/hooks/useAuth';
 
@@ -17,10 +17,9 @@ import {
   formatNumber,
   getLeaderboardStatusLabel,
   getRelationLabel,
-  getStageStatusLabel,
   getTournamentStatusLabel,
 } from '../utils';
-import { getStatusTone } from './shared';
+import { getStatusTone } from './shared.status';
 
 export const PublicSchedulesSection = ({
   payload,
@@ -44,7 +43,7 @@ export const PublicSchedulesSection = ({
         eyebrow="赛程"
         title={
           <div className="public-schedules__title-row">
-            <span>公共赛程</span>
+            <span>公开赛程</span>
             {canCreateTournament ? (
               <ActionButton
                 className="public-schedules__create-button"
@@ -52,12 +51,12 @@ export const PublicSchedulesSection = ({
                 size="sm"
                 onClick={() => setIsCreateTournamentOpen(true)}
               >
-                新建比赛
+                创建比赛
               </ActionButton>
             ) : null}
           </div>
         }
-        description="这里展示当前公开可见的赛事和阶段安排。"
+        description="查看当前公共大厅中的公开赛事、赛事状态和阶段进度。"
         source={payload.source}
         warning={payload.warning}
       >
@@ -71,14 +70,14 @@ export const PublicSchedulesSection = ({
               })
             }
           >
-            <option value="">全部</option>
-            <option value="Draft">未发布</option>
+            <option value="">全部状态</option>
+            <option value="Draft">草稿</option>
             <option value="RegistrationOpen">报名中</option>
             <option value="InProgress">进行中</option>
             <option value="Finished">已结束</option>
           </SelectField>
           <SelectField
-            label="阶段状态"
+            label="赛事阶段"
             value={state.scheduleStageStatus}
             onChange={(event) =>
               onStateChange({
@@ -86,62 +85,43 @@ export const PublicSchedulesSection = ({
               })
             }
           >
-            <option value="">全部</option>
+            <option value="">全部阶段</option>
             <option value="Pending">未开始</option>
             <option value="Active">进行中</option>
             <option value="Completed">已完成</option>
           </SelectField>
         </FilterActionRow>
-        <div className="schedule-grid public-schedules__grid grid gap-[22px]">
-          {payload.envelope.items.length > 0 ? (
-            payload.envelope.items.map((item) => (
-              <DirectoryCard
-                key={`${item.tournamentId}-${item.stageId}`}
-                className="schedule-card"
-                top={
-                  <div className="schedule-card__top flex items-start justify-between gap-[14px]">
+        <section className="tournament-detail-list">
+          <div className="tournament-detail-list__body tournament-detail-list__body--cards public-schedules__grid">
+            {payload.envelope.items.length > 0 ? (
+              payload.envelope.items.map((item) => (
+                <article key={`${item.tournamentId}-${item.stageId}`} className="tournament-detail-list__row public-directory-card">
+                  <div className="tournament-detail-list__row-main public-directory-card__main">
                     <div className="flex flex-wrap items-center gap-2">
-                      <StatusPill
-                        className="schedule-card__status bg-[rgba(114,216,209,0.14)] text-[color:var(--teal-strong)]"
-                        tone={getStatusTone(item.tournamentStatus)}
-                      >
-                        {getTournamentStatusLabel(item.tournamentStatus)}
-                      </StatusPill>
+                      <strong>{item.tournamentName}</strong>
                       {item.isUnpublished ? <StatusPill tone="warning">未发布</StatusPill> : null}
                     </div>
-                    <StatusPill className="schedule-card__minor text-[color:var(--muted)]" tone={getStatusTone(item.stageStatus)}>
-                      {getStageStatusLabel(item.stageStatus)}
-                    </StatusPill>
+                    <span>{item.stageName}</span>
+                    <span>{`开始时间：${formatDateTime(item.scheduledAt)}`}</span>
                   </div>
-                }
-                title={item.tournamentName}
-                subtitle={item.stageName}
-                meta={
-                  <DescriptionList className="schedule-card__meta mt-0 grid gap-3">
-                    <DescriptionItem
-                      className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
-                      label="开始时间"
-                      value={formatDateTime(item.scheduledAt)}
-                    />
-                    <DescriptionItem
-                      className="grid gap-[10px] sm:grid-cols-2 sm:items-start"
-                      label="赛事编号"
-                      value={item.tournamentId}
-                      separator={false}
-                    />
-                  </DescriptionList>
-                }
-                action={
-                  <Link className="detail-link inline-flex mt-[18px]" to={`/public/tournaments/${item.tournamentId}`}>
-                    打开赛事详情
-                  </Link>
-                }
-              />
-            ))
-          ) : (
-            <EmptyState>当前没有符合条件的公开赛程。</EmptyState>
-          )}
-        </div>
+                  <div className="tournament-detail-list__row-side">
+                    <StatusPill
+                      className="schedule-card__status bg-[rgba(114,216,209,0.14)] text-[color:var(--teal-strong)]"
+                      tone={getStatusTone(item.tournamentStatus)}
+                    >
+                      {getTournamentStatusLabel(item.tournamentStatus)}
+                    </StatusPill>
+                    <Link className="detail-link tournament-detail-list__action" to={`/public/tournaments/${item.tournamentId}`}>
+                      查看赛事详情
+                    </Link>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <EmptyState>当前没有可展示的公开赛程。</EmptyState>
+            )}
+          </div>
+        </section>
       </PortalSection>
       {canCreateTournament ? (
         <CreateTournamentDialog open={isCreateTournamentOpen} onOpenChange={setIsCreateTournamentOpen} />
@@ -168,14 +148,16 @@ export const PublicClubsSection = ({
   return (
     <>
       <PortalSection
+        className="public-directory-section"
         eyebrow="俱乐部"
         title={
-          <div className="flex flex-wrap items-center gap-3">
-            <span>Club Directory</span>
+          <div className="public-schedules__title-row">
+            <span>俱乐部名录</span>
             {canCreateClub ? (
               <ActionButton
                 className="public-schedules__create-button"
                 variant="secondary"
+                size="sm"
                 onClick={() => setIsCreateClubOpen(true)}
               >
                 创建俱乐部
@@ -183,52 +165,40 @@ export const PublicClubsSection = ({
             ) : null}
           </div>
         }
-        description="这里展示当前公开可见的俱乐部名录和基础信息。"
+        description="查看当前公共大厅可浏览的俱乐部信息、成员规模和基础战力概览。"
         source={payload.source}
         warning={payload.warning}
       >
-        <FilterActionRow onRefresh={onRefresh}>
+        <FilterActionRow className="public-schedules__filters" onRefresh={onRefresh}>
           <CheckboxField
-            label="仅显示活跃俱乐部"
+            label="只显示可加入俱乐部"
             checked={state.clubActiveOnly}
             onChange={(event) => onStateChange({ clubActiveOnly: event.currentTarget.checked })}
           />
         </FilterActionRow>
-        <div className="club-grid grid gap-[22px]">
-          {payload.envelope.items.length > 0 ? (
-            payload.envelope.items.map((club) => (
-              <DirectoryCard
-                key={club.id}
-                className="club-card"
-                top={
-                  <div className="club-card__top flex items-start justify-between gap-[14px]">
-                    <div>
-                      <p className="club-card__subtitle">{club.memberCount} 名成员</p>
-                    </div>
-                    <StatusPill className="club-card__power bg-[rgba(236,197,122,0.14)] text-[color:var(--gold)]" tone="warning">
-                      战力 {club.powerRating}
-                    </StatusPill>
+        <section className="tournament-detail-list">
+          <div className="tournament-detail-list__body tournament-detail-list__body--cards public-directory__grid">
+            {payload.envelope.items.length > 0 ? (
+              payload.envelope.items.map((club) => (
+                <article key={club.id} className="tournament-detail-list__row public-directory-card">
+                  <div className="tournament-detail-list__row-main public-directory-card__main">
+                    <strong>{club.name}</strong>
+                    <span>{`战力值：${club.powerRating}`}</span>
+                    <span>{`金库：${formatNumber(club.treasury)}    关系：${club.relations.map(getRelationLabel).join(' / ') || '--'}`}</span>
                   </div>
-                }
-                title={club.name}
-                summary="公开俱乐部卡片只展示俱乐部的基础资料、资金和关系摘要。"
-                meta={
-                  <KeyValueList className="club-card__stats mt-0 grid gap-[10px] sm:grid-cols-2">
-                    <KeyValueItem label="资金" value={formatNumber(club.treasury)} />
-                    <KeyValueItem label="关系" value={club.relations.map(getRelationLabel).join(' / ') || '--'} />
-                  </KeyValueList>
-                }
-                action={
-                  <Link className="detail-link inline-flex mt-[18px]" to={`/public/clubs/${club.id}`}>
-                    打开俱乐部详情
-                  </Link>
-                }
-              />
-            ))
-          ) : (
-            <EmptyState>当前没有可公开查看的俱乐部。</EmptyState>
-          )}
-        </div>
+                  <div className="tournament-detail-list__row-side">
+                    <span>{`成员数：${club.memberCount}`}</span>
+                    <Link className="detail-link tournament-detail-list__action" to={`/public/clubs/${club.id}`}>
+                      查看详情
+                    </Link>
+                  </div>
+                </article>
+              ))
+            ) : (
+              <EmptyState>当前没有可展示的俱乐部名录。</EmptyState>
+            )}
+          </div>
+        </section>
       </PortalSection>
       {canCreateClub ? <CreateClubDialog open={isCreateClubOpen} onOpenChange={setIsCreateClubOpen} /> : null}
     </>
@@ -250,13 +220,18 @@ export const PublicLeaderboardSection = ({
 }) => {
   return (
     <PortalSection
-      eyebrow="排行榜"
-      title="玩家排行榜"
-      description="这里展示公开排行榜中的玩家表现。"
+      className="public-leaderboard-section"
+      eyebrow="排行"
+      title={
+        <div className="public-schedules__title-row">
+          <span>选手排名</span>
+        </div>
+      }
+      description="查看当前公共大厅中的选手 Elo 排名、所属俱乐部和当前状态。"
       source={payload.source}
       warning={payload.warning}
     >
-      <FilterActionRow onRefresh={onRefresh}>
+      <FilterActionRow className="public-schedules__filters" onRefresh={onRefresh}>
         <SelectField
           label="俱乐部"
           value={state.leaderboardClubId}
@@ -276,44 +251,44 @@ export const PublicLeaderboardSection = ({
             onStateChange({ leaderboardStatus: event.currentTarget.value as PublicHallState['leaderboardStatus'] })
           }
         >
-          <option value="">全部</option>
+          <option value="">全部状态</option>
           <option value="Active">活跃</option>
-          <option value="Inactive">未活跃</option>
+          <option value="Inactive">停用</option>
           <option value="Banned">封禁</option>
         </SelectField>
       </FilterActionRow>
-      <ol className="leaderboard-list m-0 grid list-none gap-[22px] p-0">
-        {payload.envelope.items.length > 0 ? (
-          payload.envelope.items.map((item, index) => {
-            const linkedClub =
-              clubs.find((club) => item.clubIds?.includes(club.id)) ??
-              clubs.find((club) => club.name === item.clubName);
+      <section className="tournament-detail-list">
+        <div className="tournament-detail-list__body tournament-detail-list__body--cards public-leaderboard__list">
+          {payload.envelope.items.length > 0 ? (
+            payload.envelope.items.map((item, index) => {
+              const linkedClub =
+                clubs.find((club) => item.clubIds?.includes(club.id)) ??
+                clubs.find((club) => club.name === item.clubName);
 
-            return (
-              <li key={item.playerId} className="leaderboard-row grid items-center gap-4 rounded-3xl bg-[color:var(--panel)] px-5 py-[18px] md:grid-cols-[72px_minmax(0,1fr)_auto]">
-                <div className="leaderboard-row__rank inline-flex h-[52px] w-[52px] items-center justify-center rounded-[18px] bg-[linear-gradient(145deg,rgba(236,197,122,0.16),rgba(114,216,209,0.16)),rgba(255,255,255,0.02)] text-[1.1rem] font-bold">
-                  {item.rank || index + 1}
-                </div>
-                <div className="leaderboard-row__main">
-                  <strong>{item.nickname}</strong>
-                  <span>{item.clubName || '--'}</span>
-                  {linkedClub ? (
-                    <Link className="leaderboard-row__link inline-flex mt-[18px]" to={`/public/clubs/${linkedClub.id}`}>
-                      打开俱乐部
-                    </Link>
-                  ) : null}
-                </div>
-                <div className="leaderboard-row__side text-right">
-                  <strong>ELO {item.elo}</strong>
-                  <span>{getLeaderboardStatusLabel(item.status)}</span>
-                </div>
-              </li>
-            );
-          })
-        ) : (
-          <EmptyState>当前筛选条件下没有排行榜数据。</EmptyState>
-        )}
-      </ol>
+              return (
+                <article key={item.playerId} className="tournament-detail-list__row public-leaderboard__row">
+                  <div className="tournament-detail-list__row-main">
+                    <strong>{item.nickname}</strong>
+                    <span>{`俱乐部：${item.clubName || '--'}`}</span>
+                    <span>{`状态：${getLeaderboardStatusLabel(item.status)}`}</span>
+                  </div>
+                  <div className="tournament-detail-list__row-side">
+                    <strong>{`ELO ${item.elo}`}</strong>
+                    <span>{`排名：${item.rank || index + 1}`}</span>
+                    {linkedClub ? (
+                      <Link className="detail-link tournament-detail-list__action" to={`/public/clubs/${linkedClub.id}`}>
+                        查看俱乐部
+                      </Link>
+                    ) : null}
+                  </div>
+                </article>
+              );
+            })
+          ) : (
+            <EmptyState>当前没有可展示的选手排名。</EmptyState>
+          )}
+        </div>
+      </section>
     </PortalSection>
   );
 };

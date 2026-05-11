@@ -30,12 +30,30 @@ export interface StageLineupSeatContract {
 }
 
 export interface StageLineupSubmissionContract {
-  id: string;
+  submissionId: string;
   clubId: string;
+  clubName?: string;
   submittedBy: string;
+  submittedByDisplayName?: string | null;
   submittedAt: string;
-  seats: StageLineupSeatContract[];
+  activePlayerIds: string[];
+  reservePlayerIds: string[];
   note?: string | null;
+}
+
+export interface TournamentParticipantClubContract {
+  clubId: string;
+  clubName: string;
+  memberCount: number;
+  activeMemberCount: number;
+}
+
+export interface TournamentWhitelistSummaryContract {
+  totalEntries: number;
+  clubCount: number;
+  playerCount: number;
+  clubIds: string[];
+  playerIds: string[];
 }
 
 export interface TournamentStageDirectoryEntryContract {
@@ -52,25 +70,35 @@ export interface TournamentStageDirectoryEntryContract {
 }
 
 export interface TournamentDetailStageContract {
-  id: string;
+  stageId: string;
   name: string;
   status: string;
+  format?: string;
+  order?: number;
+  currentRound?: number;
   roundCount?: number;
-  pendingTablePlans?: unknown[];
+  schedulingPoolSize?: number;
+  pendingTablePlanCount?: number;
+  scheduledTableCount?: number;
   lineupSubmissions?: StageLineupSubmissionContract[];
 }
 
 export interface TournamentDetailContract {
-  id: string;
+  tournamentId: string;
   name: string;
   organizer: string;
   status: string;
   startsAt: string;
   endsAt: string;
-  participatingClubs?: string[];
-  participatingPlayers?: string[];
-  whitelist?: unknown[];
+  participatingClubs?: TournamentParticipantClubContract[];
+  participatingPlayers?: Array<{ playerId: string }>;
+  whitelistSummary?: TournamentWhitelistSummaryContract;
   stages?: TournamentDetailStageContract[];
+}
+
+export interface TournamentMutationContract {
+  tournament: TournamentDetailContract;
+  scheduledTables: TournamentTableContract[];
 }
 
 export interface CreatedTournamentContract {

@@ -4,25 +4,42 @@ import type { AppealSummary } from '@/domain/operations';
 
 import type { LoadState } from './data';
 
+function getAppealStatusLabel(status: AppealSummary['status']) {
+  switch (status) {
+    case 'Open':
+      return '待处理';
+    case 'UnderReview':
+      return '审核中';
+    case 'Resolved':
+      return '已解决';
+    case 'Rejected':
+      return '已驳回';
+    case 'Escalated':
+      return '已升级';
+    default:
+      return status;
+  }
+}
+
 export function AppealsPanel({ payload }: { payload: LoadState<AppealSummary> }) {
   return (
     <DataTablePanel
-      title="申诉列表"
-      description="当前赛事相关的申诉记录。"
+      title="赛事申诉"
+      description="查看当前赛事相关的申诉工单，以及它们的处理状态和处理结果。"
       source={payload.source}
       warning={payload.warning}
-      headers={['申诉编号', '牌桌', '状态', '处理结果']}
+      headers={['工单 ID', '牌桌', '状态', '处理结果']}
       rows={payload.envelope.items.map((appeal) => (
         <TableRow key={appeal.id}>
           <TableCell>
             <strong>{appeal.id}</strong>
           </TableCell>
           <TableCell>{appeal.tableId}</TableCell>
-          <TableCell>{appeal.status}</TableCell>
-          <TableCell>{appeal.verdict}</TableCell>
+          <TableCell>{getAppealStatusLabel(appeal.status)}</TableCell>
+          <TableCell>{appeal.resolution || '待处理'}</TableCell>
         </TableRow>
       ))}
-      emptyText="当前筛选条件下没有申诉记录。"
+      emptyText="当前还没有赛事申诉工单。"
     />
   );
 }

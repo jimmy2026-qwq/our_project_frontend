@@ -89,6 +89,17 @@ export interface TournamentPublicProfile {
     pendingTablePlanCount: number;
     standings?: unknown | null;
     bracket?: unknown | null;
+    lineupSubmissions?: Array<{
+      submissionId: string;
+      clubId: string;
+      clubName?: string;
+      submittedBy: string;
+      submittedByDisplayName?: string | null;
+      submittedAt: string;
+      activePlayerIds: string[];
+      reservePlayerIds: string[];
+      note?: string | null;
+    }>;
   }>;
 }
 
@@ -145,6 +156,7 @@ export interface ClubPublicProfile {
     name: string;
     status?: TournamentStatus;
     source?: 'recent' | 'invited';
+    canSubmitLineup?: boolean;
   }>;
 }
 

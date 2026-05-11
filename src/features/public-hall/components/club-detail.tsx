@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { EmptyState } from '@/components/shared/feedback';
 import { Alert } from '@/components/ui';
@@ -28,6 +28,7 @@ export const PublicClubDetailSection = ({
   state: DetailState<ClubPublicProfile>;
   onRefreshDetail?: () => void;
 }) => {
+  const navigate = useNavigate();
   const { session } = useAuth();
   const {
     workbench,
@@ -35,6 +36,7 @@ export const PublicClubDetailSection = ({
     setIsLineupDialogOpen,
     setSelectedLineupTournament,
     setIsCurrentMember,
+    handleApplicationStatusChange,
     handleReview,
     handleAssignAdmin,
     handleRemoveMember,
@@ -63,7 +65,7 @@ export const PublicClubDetailSection = ({
     { id: 'tournaments', label: '相关赛事' },
     ...(workbench.isCurrentClubAdmin
       ? [
-          { id: 'applications' as const, label: '入会申请' },
+          { id: 'applications' as const, label: '申请处理' },
           { id: 'members' as const, label: '成员管理' },
         ]
       : []),
@@ -73,14 +75,19 @@ export const PublicClubDetailSection = ({
     <>
       <section className="tournament-detail-shell">
         <header className="tournament-detail-shell__header">
-          <Link className="tournament-detail-shell__back" to="/public">
-            返回大厅
-          </Link>
-          <div className="tournament-detail-shell__title-card">俱乐部：{workbench.profile.name}</div>
+          <button
+            type="button"
+            className="tournament-detail-shell__back"
+            onClick={() => navigate('/public')}
+          >
+            返回公共大厅
+          </button>
+          <div className="tournament-detail-shell__title-card">俱乐部详情 / {workbench.profile.name}</div>
           <div className="tournament-detail-shell__header-actions">
             <ClubHeroActions
               isClubMember={workbench.isClubMember}
               canApply={workbench.canApply}
+              currentApplicationStatus={workbench.currentApplicationStatus}
               onApply={() => setIsApplicationDialogOpen(true)}
             />
           </div>
@@ -134,7 +141,7 @@ export const PublicClubDetailSection = ({
                     onReview={(applicationId, decision) => void handleReview(applicationId, decision)}
                   />
                 ) : (
-                  <EmptyState asListItem={false}>只有俱乐部管理员可以查看申请列表。</EmptyState>
+                  <EmptyState asListItem={false}>你当前没有处理这家俱乐部申请的权限。</EmptyState>
                 )}
               </div>
             ) : null}
@@ -149,7 +156,7 @@ export const PublicClubDetailSection = ({
                     onRemoveMember={(member) => void handleRemoveMember(member)}
                   />
                 ) : (
-                  <EmptyState asListItem={false}>只有俱乐部管理员可以管理成员。</EmptyState>
+                  <EmptyState asListItem={false}>你当前没有管理这家俱乐部成员的权限。</EmptyState>
                 )}
               </div>
             ) : null}
@@ -164,14 +171,16 @@ export const PublicClubDetailSection = ({
           club={clubSummary}
           open={workbench.isApplicationDialogOpen}
           onOpenChange={setIsApplicationDialogOpen}
+          onApplicationUpdated={handleApplicationStatusChange}
           onMembershipConfirmed={() => {
             setIsCurrentMember(true);
+            handleApplicationStatusChange(null);
             onRefreshDetail?.();
           }}
         />
       ) : null}
 
-      {workbench.canManageLineup ? (
+      {workbench.canManageLineup || !!workbench.selectedLineupTournament ? (
         <ClubTournamentLineupDialog
           clubId={workbench.profile.id}
           operatorId={workbench.operatorId}

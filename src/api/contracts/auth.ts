@@ -1,4 +1,4 @@
-import type { AuthSession, DemoSummary } from '@/domain';
+import type { AuthSession } from '@/domain';
 
 export interface AuthSuccessContract {
   userId: string;
@@ -22,12 +22,11 @@ export interface ApiMessagePayloadContract {
 
 export interface PlayerProfileContract {
   id: string;
-  userId?: string;
+  userId: string;
   nickname: string;
-  status?: 'Active' | 'Inactive' | 'Banned';
-  elo?: number;
-  boundClubIds?: string[];
-  clubId?: string[];
+  status: 'Active' | 'Inactive' | 'Banned';
+  elo: number;
+  boundClubIds: string[];
 }
 
 export interface CreatedPlayerContract {
@@ -36,5 +35,3 @@ export interface CreatedPlayerContract {
   nickname: string;
   elo: number;
 }
-
-export type DemoSummaryContract = DemoSummary;

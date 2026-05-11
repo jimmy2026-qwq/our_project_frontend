@@ -10,7 +10,7 @@ function normalizeInput(value: string) {
 }
 
 export function LoginPage() {
-  const { session, login, enterGuestMode } = useAuth();
+  const { isReady, session, login, enterGuestMode } = useAuth();
   const { notifyInfo, notifySuccess } = useNotice();
   const navigate = useNavigate();
   const location = useLocation();
@@ -19,7 +19,10 @@ export function LoginPage() {
   const [errorMessage, setErrorMessage] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  if (session) {
+  const hasRegisteredSession =
+    !!session && session.user.roles.isRegisteredPlayer && !session.user.roles.isGuest;
+
+  if (isReady && hasRegisteredSession) {
     return <Navigate replace to="/public" />;
   }
 
@@ -28,7 +31,7 @@ export function LoginPage() {
     const normalizedPassword = normalizeInput(password);
 
     if (!normalizedUsername || !normalizedPassword) {
-      setErrorMessage('请输入用户名和密码。');
+      setErrorMessage('请输入账号和密码。');
       return;
     }
 
@@ -58,10 +61,10 @@ export function LoginPage() {
 
     try {
       await enterGuestMode('Guest');
-      notifyInfo('已进入访客模式', '你现在可以先浏览公共大厅，之后再切换到注册账号。');
+      notifyInfo('已进入游客模式', '你可以先浏览公共大厅，登录后再进行完整操作。');
       navigate('/public', { replace: true });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '进入访客模式失败，请稍后重试。');
+      setErrorMessage(error instanceof Error ? error.message : '进入游客模式失败，请稍后重试。');
     } finally {
       setIsSubmitting(false);
     }
@@ -69,9 +72,8 @@ export function LoginPage() {
 
   return (
     <AuthScreen
-      eyebrow="Member Access"
-      title="登录 RiichiNexus"
-      description="使用账号密码进入系统。登录后默认进入公共大厅，赛事和俱乐部操作都在对应详情页里完成。"
+      eyebrow="账号登录"
+      title="RiichiNexus 账号登录"
       submitLabel="登录"
       footerPrompt="还没有账号？"
       footerLinkLabel="立即注册"
@@ -81,15 +83,15 @@ export function LoginPage() {
       onSubmit={handleSubmit}
       extraActions={
         <Button variant="outline" size="lg" disabled={isSubmitting} onClick={() => void handleGuestEnter()}>
-          先以访客身份浏览
+          游客进入
         </Button>
       }
       fields={[
         {
           id: 'login-username',
-          label: '用户名',
+          label: '账号',
           autoComplete: 'username',
-          placeholder: '输入用户名',
+          placeholder: '请输入账号',
           value: username,
           onChange: setUsername,
         },
@@ -98,7 +100,7 @@ export function LoginPage() {
           label: '密码',
           type: 'password',
           autoComplete: 'current-password',
-          placeholder: '输入密码',
+          placeholder: '请输入密码',
           value: password,
           onChange: setPassword,
         },

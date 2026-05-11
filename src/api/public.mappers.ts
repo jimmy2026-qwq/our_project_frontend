@@ -121,14 +121,8 @@ export function mapPublicClub(item: PublicClubDirectoryEntryContract): ClubSumma
 }
 
 export function mapPublicClubDetail(item: PublicClubDetailContract): ClubPublicProfile {
-  const requirementsTextValue = item.applicationPolicy?.requirementsText;
-  const requirementsText = Array.isArray(requirementsTextValue)
-    ? requirementsTextValue.find((value) => value.trim().length > 0)
-    : requirementsTextValue?.trim();
-  const expectedReviewSlaValue = item.applicationPolicy?.expectedReviewSlaHours;
-  const expectedReviewSlaHours = Array.isArray(expectedReviewSlaValue)
-    ? expectedReviewSlaValue[0]
-    : expectedReviewSlaValue;
+  const requirementsText = item.applicationPolicy?.requirementsText?.trim() || undefined;
+  const expectedReviewSlaHours = item.applicationPolicy?.expectedReviewSlaHours ?? undefined;
   const honors = item.honors ?? [];
   const relations = item.relations ?? [];
   const currentLineup = item.currentLineup ?? [];
@@ -189,24 +183,14 @@ function formatDecimal(value: number) {
 }
 
 export function parseDashboardOwner(owner: DashboardOwnerContract): Pick<DashboardSummary, 'ownerId' | 'ownerType'> {
-  if (typeof owner === 'string') {
-    const [kind, value] = owner.split(':', 2);
+  const [kind, value] = owner.split(':', 2);
 
-    if (kind === 'player' && value) {
-      return { ownerId: value, ownerType: 'player' };
-    }
-
-    if (kind === 'club' && value) {
-      return { ownerId: value, ownerType: 'club' };
-    }
+  if (kind === 'player' && value) {
+    return { ownerId: value, ownerType: 'player' };
   }
 
-  if (typeof owner !== 'string' && 'Player' in owner) {
-    return { ownerId: owner.Player.playerId, ownerType: 'player' };
-  }
-
-  if (typeof owner !== 'string' && 'Club' in owner) {
-    return { ownerId: owner.Club.clubId, ownerType: 'club' };
+  if (kind === 'club' && value) {
+    return { ownerId: value, ownerType: 'club' };
   }
 
   return { ownerId: 'unknown', ownerType: 'player' };
@@ -214,29 +198,29 @@ export function parseDashboardOwner(owner: DashboardOwnerContract): Pick<Dashboa
 
 export function mapDashboard(item: DashboardContract): DashboardSummary {
   const { ownerId, ownerType } = parseDashboardOwner(item.owner);
-  const subjectLabel = ownerType === 'player' ? 'Player dashboard' : 'Club dashboard';
+  const subjectLabel = ownerType === 'player' ? '个人数据看板' : '俱乐部数据看板';
 
   return {
     ownerId,
     ownerType,
-    headline: `${subjectLabel} synced from the backend aggregate.`,
+    headline: `${subjectLabel}已根据后端聚合数据完成同步。`,
     metrics: [
       {
-        label: 'Sample size',
+        label: '样本数',
         value: String(item.sampleSize),
         accent: 'gold',
       },
       {
-        label: 'Win rate',
+        label: '和牌率',
         value: formatPercent(item.winRate),
         accent: 'teal',
       },
       {
-        label: 'Avg placement',
+        label: '平均顺位',
         value: formatDecimal(item.averagePlacement || 0),
       },
       {
-        label: 'Riichi rate',
+        label: '立直率',
         value: formatPercent(item.riichiRate),
       },
     ],

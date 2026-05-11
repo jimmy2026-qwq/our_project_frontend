@@ -97,7 +97,7 @@ export function PublicHallHomePage() {
   }
 
   if (!data) {
-    return <PublicHallError message="Public hall data is unavailable." />;
+    return <PublicHallError message="当前无法获取公共大厅数据。" />;
   }
 
   let activeViewMarkup;
@@ -164,6 +164,7 @@ export function PublicHallHomePage() {
   const displayName =
     currentPlayer?.displayName ?? session?.user.displayName ?? session?.user.username ?? 'Guest Player';
   const eloText = currentPlayer?.elo ? `${currentPlayer.elo}` : 'Guest';
+  const showLoginEntry = !session || session.user.roles.isGuest || !session.user.roles.isRegisteredPlayer;
 
   return (
     <section className="public-portal public-portal--mahjong public-portal--lobby">
@@ -177,12 +178,12 @@ export function PublicHallHomePage() {
           </strong>
         </div>
         <Link
-          to="/me"
-          className="public-lobby__player-avatar"
+          to={showLoginEntry ? '/login' : '/me'}
+          className={showLoginEntry ? 'public-lobby__player-login' : 'public-lobby__player-avatar'}
           aria-label="进入个人主页"
           title="进入个人主页"
         >
-          <span className="public-lobby__player-avatar-icon" aria-hidden="true" />
+          {showLoginEntry ? '登录' : <span className="public-lobby__player-avatar-icon" aria-hidden="true" />}
         </Link>
       </section>
 

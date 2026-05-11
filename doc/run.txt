@@ -1,11 +1,9 @@
 Project run notes
 
 This project uses:
-- frontend: front
-- backend: our_project
-- database: PostgreSQL on 127.0.0.1:5432
-- current verified database name: tongwen
-- current verified database user: db
+- frontend: `front`
+- backend: `our_project`
+- database: PostgreSQL on `127.0.0.1:5432`
 
 Recommended startup order
 1. Start PostgreSQL
@@ -38,14 +36,24 @@ sc stop postgresql-x64-18
 In PowerShell:
 Stop-Service -Name "postgresql-x64-18"
 
-Backend: start with PostgreSQL mode
-
-Important:
-Connecting with psql does not make the backend use PostgreSQL automatically.
-The backend only switches from memory mode to PostgreSQL mode if the environment
-variables are set in the same terminal before startup.
+Backend: start with in-memory mode
 
 In cmd:
+cd /d C:\Users\Jimmy\projects\front_backend\our_project
+sbt run
+
+In PowerShell:
+Set-Location C:\Users\Jimmy\projects\front_backend\our_project
+sbt run
+
+Backend: start with PostgreSQL mode
+
+The backend chooses PostgreSQL if:
+- `RIICHI_STORAGE=postgres`, or
+- `RIICHI_DB_URL` is set, or
+- template-style `DB_*` variables are present and normalized into postgres settings
+
+Direct URL style in cmd:
 cd /d C:\Users\Jimmy\projects\front_backend\our_project
 set RIICHI_STORAGE=postgres
 set RIICHI_DB_URL=jdbc:postgresql://127.0.0.1:5432/tongwen
@@ -53,7 +61,7 @@ set RIICHI_DB_USER=db
 set RIICHI_DB_PASSWORD=root
 sbt run
 
-Alternative backend startup in cmd using template-style variables:
+Template-style variables in cmd:
 cd /d C:\Users\Jimmy\projects\front_backend\our_project
 set RIICHI_STORAGE=postgres
 set DB_HOST=127.0.0.1
@@ -63,7 +71,7 @@ set DB_USER=db
 set DB_PASSWORD=root
 sbt run
 
-In PowerShell:
+Direct URL style in PowerShell:
 Set-Location C:\Users\Jimmy\projects\front_backend\our_project
 $env:RIICHI_STORAGE="postgres"
 $env:RIICHI_DB_URL="jdbc:postgresql://127.0.0.1:5432/tongwen"
@@ -71,10 +79,20 @@ $env:RIICHI_DB_USER="db"
 $env:RIICHI_DB_PASSWORD="root"
 sbt run
 
-How to confirm backend is not in memory mode
+Template-style variables in PowerShell:
+Set-Location C:\Users\Jimmy\projects\front_backend\our_project
+$env:RIICHI_STORAGE="postgres"
+$env:DB_HOST="127.0.0.1"
+$env:DB_PORT="5432"
+$env:DB_NAME="tongwen"
+$env:DB_USER="db"
+$env:DB_PASSWORD="root"
+sbt run
+
+How to confirm backend mode
 - Check backend startup output
-- It should show PostgreSQL mode instead of memory
-- If it still shows memory, run the env commands again in the same terminal and restart backend
+- In postgres mode, the backend should report PostgreSQL-backed startup rather than the default in-memory path
+- If it still starts in memory mode, restart from the same terminal after setting the environment variables again
 
 Frontend: start
 
@@ -87,8 +105,8 @@ Set-Location C:\Users\Jimmy\projects\front_backend\front
 npm run dev
 
 Frontend API proxy
-- frontend /api requests are proxied to http://127.0.0.1:8080
-- so backend should be running on port 8080 before frontend testing
+- frontend `/api` requests are proxied to `http://127.0.0.1:8080`
+- backend should be running on port `8080` before frontend testing
 
 Useful checks
 
@@ -103,8 +121,13 @@ Check database health from backend project:
 cd /d C:\Users\Jimmy\projects\front_backend\our_project
 sbt "runMain riichinexus.riichiNexusDbAdmin health"
 
+Additional admin checks:
+sbt "runMain riichinexus.riichiNexusDbAdmin stats"
+
 Notes
-- Current database in use is tongwen, not our_project
-- If password changes again, update the backend startup commands above
-- If psql is not in PATH, use:
-  C:\Program Files\PostgreSQL\18\bin\psql.exe
+- the backend main entry is `our_project/src/main/scala/Main.scala`
+- database assembly now lives under `riichinexus.bootstrap`
+- postgres and memory implementations now live under `riichinexus.infrastructure.*`
+- if the database password changes, update the startup commands above
+- if `psql` is not in PATH, use:
+  `C:\Program Files\PostgreSQL\18\bin\psql.exe`

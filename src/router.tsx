@@ -3,24 +3,21 @@ import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AppShell } from '@/app/AppShell';
 import { RequireAuth } from '@/components/shared/auth/RequireAuth';
 import { RequireRegisteredUser } from '@/components/shared/auth/RequireRegisteredUser';
-import { BlueprintHomePage } from '@/pages/BlueprintHomePage';
-import { LoginPage } from '@/pages/LoginPage';
-import { PublicClubDetailPage } from '@/pages/PublicClubDetailPage';
-import { PublicHallHomePage } from '@/pages/PublicHallHomePage';
-import { PublicTournamentDetailPage } from '@/pages/PublicTournamentDetailPage';
-import { PlayerDashboardPage } from '@/pages/PlayerDashboardPage';
-import { RegisterPage } from '@/pages/RegisterPage';
-import { TableMatchPage } from '@/pages/TableMatchPage';
-import { TablePaifuPage } from '@/pages/TablePaifuPage';
 
 export const router = createBrowserRouter([
   {
     path: '/login',
-    element: <LoginPage />,
+    lazy: async () => {
+      const { LoginPage } = await import('@/pages/LoginPage');
+      return { Component: LoginPage };
+    },
   },
   {
     path: '/register',
-    element: <RegisterPage />,
+    lazy: async () => {
+      const { RegisterPage } = await import('@/pages/RegisterPage');
+      return { Component: RegisterPage };
+    },
   },
   {
     element: <RequireAuth />,
@@ -38,15 +35,24 @@ export const router = createBrowserRouter([
             children: [
               {
                 index: true,
-                element: <PublicHallHomePage />,
+                lazy: async () => {
+                  const { PublicHallHomePage } = await import('@/pages/PublicHallHomePage');
+                  return { Component: PublicHallHomePage };
+                },
               },
               {
                 path: 'tournaments/:tournamentId',
-                element: <PublicTournamentDetailPage />,
+                lazy: async () => {
+                  const { PublicTournamentDetailPage } = await import('@/pages/PublicTournamentDetailPage');
+                  return { Component: PublicTournamentDetailPage };
+                },
               },
               {
                 path: 'clubs/:clubId',
-                element: <PublicClubDetailPage />,
+                lazy: async () => {
+                  const { PublicClubDetailPage } = await import('@/pages/PublicClubDetailPage');
+                  return { Component: PublicClubDetailPage };
+                },
               },
             ],
           },
@@ -55,19 +61,45 @@ export const router = createBrowserRouter([
             children: [
               {
                 path: 'blueprint',
-                element: <BlueprintHomePage />,
+                lazy: async () => {
+                  const { BlueprintHomePage } = await import('@/pages/BlueprintHomePage');
+                  return { Component: BlueprintHomePage };
+                },
+              },
+              {
+                path: 'member-hub',
+                lazy: async () => {
+                  const { MemberHubPage } = await import('@/pages/MemberHubPage');
+                  return { Component: MemberHubPage };
+                },
               },
               {
                 path: 'me',
-                element: <PlayerDashboardPage />,
+                lazy: async () => {
+                  const { PlayerDashboardPage } = await import('@/pages/PlayerDashboardPage');
+                  return { Component: PlayerDashboardPage };
+                },
+              },
+              {
+                path: 'tournament-ops',
+                lazy: async () => {
+                  const { TournamentOpsPage } = await import('@/pages/TournamentOpsPage');
+                  return { Component: TournamentOpsPage };
+                },
               },
               {
                 path: 'tables/:tableId',
-                element: <TableMatchPage />,
+                lazy: async () => {
+                  const { TableMatchPage } = await import('@/pages/TableMatchPage');
+                  return { Component: TableMatchPage };
+                },
               },
               {
                 path: 'tables/:tableId/paifu',
-                element: <TablePaifuPage />,
+                lazy: async () => {
+                  const { TablePaifuPage } = await import('@/pages/TablePaifuPage');
+                  return { Component: TablePaifuPage };
+                },
               },
             ],
           },

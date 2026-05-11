@@ -35,7 +35,11 @@ export function PublicTournamentDetailPage() {
 
   return (
     <div className="tournament-detail-page">
-      <PublicTournamentDetailSection state={state} onScheduleSuccess={refresh} />
+      <PublicTournamentDetailSection
+        key={tournamentId ?? 'missing-tournament'}
+        state={state}
+        onScheduleSuccess={refresh}
+      />
     </div>
   );
 }

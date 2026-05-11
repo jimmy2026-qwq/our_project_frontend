@@ -82,9 +82,9 @@ export interface PublicClubRecentMatchContract {
 }
 
 export interface PublicClubApplicationPolicyContract {
-  requirementsText?: string | string[] | null;
+  requirementsText?: string | null;
   applicationsOpen?: boolean;
-  expectedReviewSlaHours?: number | number[] | null;
+  expectedReviewSlaHours?: number | null;
   pendingApplicationCount?: number | null;
 }
 
@@ -105,18 +105,7 @@ export interface PublicClubDetailContract {
   recentMatches?: PublicClubRecentMatchContract[];
 }
 
-export interface LegacyDashboardOwnerPlayerContract {
-  playerId: string;
-}
-
-export interface LegacyDashboardOwnerClubContract {
-  clubId: string;
-}
-
-export type DashboardOwnerContract =
-  | string
-  | { Player: LegacyDashboardOwnerPlayerContract }
-  | { Club: LegacyDashboardOwnerClubContract };
+export type DashboardOwnerContract = `player:${string}` | `club:${string}`;
 
 export interface DashboardContract {
   owner: DashboardOwnerContract;

@@ -1,326 +1,354 @@
 # RiichiNexus Frontend Interface Contracts
 
-This document captures the stable backend response shapes the frontend is expected to consume next.
+This document is the current frontend-facing contract summary for the code under `front/src/api/contracts`.
 
-Base URL examples assume:
+It is not meant to duplicate every backend route definition. Its job is to record:
 
-```text
-http://localhost:8080
-```
+- which contract files are the current source of truth
+- which route families consume which contracts
+- which shapes are already stable
+- which legacy edges still exist
 
-## 0. Generated Contract Docs
+For generated backend docs, use:
 
-### GET `/openapi.json`
+- `GET /openapi.json`
+- `GET /swagger`
 
-Returns the generated OpenAPI 3.1 contract for the frontend-facing backend interfaces covered in this document.
+## Source Of Truth
 
-### GET `/swagger`
+Current frontend contract files:
 
-Returns a Swagger UI page that loads `/openapi.json` for interactive inspection during integration and review.
+- `front/src/api/contracts/auth.ts`
+- `front/src/api/contracts/clubs.ts`
+- `front/src/api/contracts/operations.ts`
+- `front/src/api/contracts/public.ts`
 
-## 1. Session
+Working rule:
 
-### GET `/session`
+- transport declarations live in `api/contracts/*`
+- API modules in `front/src/api/*.ts` consume those declarations
+- feature code should prefer API modules and mappers over importing raw contract types everywhere
 
-Query:
+## 1. Auth And Session Contracts
 
-- `operatorId` for a registered player session
-- `guestSessionId` for a guest session
+Defined in `front/src/api/contracts/auth.ts`.
 
-Example:
+Current exported contracts:
 
-```bash
-curl "http://localhost:8080/session?operatorId=player-123"
-```
+- `AuthSuccessContract`
+- `AuthSessionContract`
+- `ApiMessagePayloadContract`
+- `PlayerProfileContract`
+- `CreatedPlayerContract`
+- `DemoSummaryContract`
 
-Stable shape:
+Main route families:
 
-```json
-{
-  "principalKind": "RegisteredPlayer",
-  "principalId": "player-123",
-  "displayName": "Alice",
-  "authenticated": true,
-  "roles": {
-    "isGuest": false,
-    "isRegisteredPlayer": true,
-    "isClubAdmin": true,
-    "isTournamentAdmin": false,
-    "isSuperAdmin": false
-  },
-  "player": {},
-  "guestSession": null
-}
-```
+- `POST /auth/login`
+- `POST /auth/register`
+- `GET /auth/session`
+- `POST /auth/logout`
+- `GET /session`
+- `GET /players/me`
+- `GET /players/:playerId`
+- `POST /guest-sessions`
+- `GET /guest-sessions/:guestSessionId`
 
-### GET `/players/me`
+Important note:
 
-Query:
+- `GET /session` is consumed as a richer domain-facing session object
+- `GET /players/me` and `GET /players/:playerId` still normalize `PlayerProfileContract` into frontend `PlayerProfile`
 
-- `operatorId`
+Current status:
 
-Returns the canonical `Player` aggregate for the current registered player.
+- `PlayerProfileContract` has been tightened to the current backend shape
+- frontend normalization still maps it into the richer domain `PlayerProfile`
 
-## 2. Club Application Inbox
+## 2. Club Contracts
 
-### GET `/clubs/:clubId/applications`
+Defined in `front/src/api/contracts/clubs.ts`.
 
-Query:
+Current exported contracts:
 
-- `operatorId`
+- `ClubApplicationMutationResponseContract`
+- `ClubApplicationApplicantContract`
+- `ClubApplicationViewContract`
+- `PublicClubRelationContract`
+- `ClubContract`
+- `ClubMemberContract`
+- `ClubTournamentParticipationContract`
+
+Main route families:
+
+- `GET /clubs`
+- `GET /clubs/:clubId`
+- `GET /clubs/:clubId/members`
+- `POST /clubs`
+- `POST /clubs/:clubId/admins`
+- `POST /clubs/:clubId/members/:playerId/remove`
+- `POST /clubs/:clubId/applications`
+- `POST /clubs/:clubId/applications/:membershipId/withdraw`
+- `GET /clubs/:clubId/applications`
+- `GET /clubs/:clubId/applications/:membershipId`
+- `GET /clubs/:clubId/applications/current`
+- `POST /clubs/:clubId/applications/:membershipId/review`
+- `GET /clubs/:clubId/tournaments`
+
+What is now stable:
+
+- club application fields are scalar-or-null, not array-or-scalar unions
+- club tournament participation has a dedicated contract instead of being reconstructed from unrelated public data
+
+Important contract shapes:
+
+### `ClubApplicationViewContract`
+
+Used for inbox/detail/review flows.
+
+Key fields:
+
+- `applicationId`
+- `clubId`
+- `clubName`
+- `applicant`
+- `submittedAt`
+- `message`
 - `status`
-- `applicantUserId`
-- `displayName`
-- standard paging params `limit`, `offset`
+- `reviewedBy`
+- `reviewedByDisplayName`
+- `reviewedAt`
+- `reviewNote`
+- `withdrawnByPrincipalId`
+- `canReview`
+- `canWithdraw`
 
-Example:
+### `ClubTournamentParticipationContract`
 
-```bash
-curl "http://localhost:8080/clubs/club-123/applications?operatorId=player-admin&status=Pending&limit=20"
-```
+Used for club-facing tournament participation state.
 
-Paged item shape:
+Key fields:
 
-```json
-{
-  "applicationId": "membership-123",
-  "clubId": "club-123",
-  "clubName": "EastWind Club",
-  "applicant": {
-    "playerId": "player-234",
-    "applicantUserId": "demo-bob",
-    "displayName": "Bob",
-    "playerStatus": "Active",
-    "currentRank": {},
-    "elo": 1540,
-    "clubIds": []
-  },
-  "submittedAt": "2026-03-29T10:00:00Z",
-  "message": "I'd like to join.",
-  "status": "Pending",
-  "reviewedBy": null,
-  "reviewedByDisplayName": null,
-  "reviewedAt": null,
-  "reviewNote": null,
-  "withdrawnByPrincipalId": null,
-  "canReview": true,
-  "canWithdraw": false
-}
-```
+- `clubId`
+- `tournamentId`
+- `name`
+- `status`
+- `clubParticipationStatus`
+- `stageName`
+- `startsAt`
+- `endsAt`
+- `canViewDetail`
+- `canSubmitLineup`
+- `canDecline`
 
-### GET `/clubs/:clubId/applications/:membershipId`
+Related backend lifecycle routes exist for accept/decline, but the current frontend API layer mainly consumes the participation list contract first and does not yet expose dedicated wrappers for every lifecycle action.
 
-Query:
+## 3. Tournament And Table Contracts
 
-- `operatorId` or `guestSessionId`
+Defined in `front/src/api/contracts/operations.ts`.
 
-Returns the same stable `ClubMembershipApplicationView` shape as the inbox list.
+Current exported contracts:
 
-### POST `/clubs/:clubId/applications/:membershipId/review`
+- `SeatWindContract`
+- `TableSeatContract`
+- `TournamentTableContract`
+- `TournamentDirectoryEntryContract`
+- `StageLineupSeatContract`
+- `StageLineupSubmissionContract`
+- `TournamentParticipantClubContract`
+- `TournamentWhitelistSummaryContract`
+- `TournamentStageDirectoryEntryContract`
+- `TournamentDetailStageContract`
+- `TournamentDetailContract`
+- `TournamentMutationContract`
+- `CreatedTournamentContract`
 
-Body:
+Main route families:
 
-```json
-{
-  "operatorId": "player-admin",
-  "decision": "approve",
-  "note": "Accepted for the spring roster."
-}
-```
-
-Supported decisions:
-
-- `approve`
-- `reject`
-
-Optional field for guest-origin applications:
-
-```json
-{
-  "operatorId": "player-admin",
-  "decision": "approve",
-  "playerId": "player-234",
-  "note": "Bound guest application to the registered player record."
-}
-```
-
-Returns the reviewed `ClubMembershipApplicationView`.
-
-Note:
-
-- when a guest session is upgraded to a registered player, pending guest-origin applications are automatically rebound to that player's `userId`
-- because of that, the frontend should usually not need `playerId` during a normal approve flow after account upgrade
-
-## 3. Club Discovery
-
-### GET `/clubs`
-
-Important query filters:
-
-- `activeOnly=true`
-- `joinableOnly=true`
-
-`joinableOnly=true` is now driven by the club's configured recruitment policy:
-
-- club is not dissolved
-- `recruitmentPolicy.applicationsOpen == true`
-
-### POST `/clubs/:clubId/recruitment-policy`
-
-Admin-only configuration endpoint for club recruitment metadata.
-
-Body:
-
-```json
-{
-  "operatorId": "player-admin",
-  "applicationsOpen": true,
-  "requirementsText": "Please have at least one recent ranked match record.",
-  "expectedReviewSlaHours": 48,
-  "note": "Adjusted for open recruiting week."
-}
-```
-
-Returns the updated `Club` aggregate, including:
-
-```json
-{
-  "recruitmentPolicy": {
-    "applicationsOpen": true,
-    "requirementsText": "Please have at least one recent ranked match record.",
-    "expectedReviewSlaHours": 48
-  }
-}
-```
-
-## 4. Public Club Detail
-
-### GET `/public/clubs/:clubId`
-
-Stable shape:
-
-```json
-{
-  "clubId": "club-123",
-  "name": "EastWind Club",
-  "memberCount": 4,
-  "activeMemberCount": 4,
-  "adminCount": 1,
-  "powerRating": 1562.5,
-  "totalPoints": 320,
-  "treasuryBalance": 120000,
-  "pointPool": 320,
-  "relations": [],
-  "honors": [],
-  "applicationPolicy": {
-    "applicationsOpen": true,
-    "requirementsText": "Please have at least one recent ranked match record.",
-    "expectedReviewSlaHours": 48,
-    "pendingApplicationCount": 2
-  },
-  "currentLineup": [],
-  "recentMatches": []
-}
-```
-
-Notes:
-
-- `currentLineup` is the current active member snapshot used for public club panels.
-- when the club has submitted an official stage lineup, `currentLineup` prefers the latest submitted active lineup over the full member list
-- `recentMatches` is the latest club-related archived match list.
-
-## 5. Tournament Stage Directory
-
-### GET `/tournaments/:id/stages`
-
-Stable item shape:
-
-```json
-{
-  "stageId": "stage-demo-swiss",
-  "name": "Swiss Stage 1",
-  "format": "Swiss",
-  "order": 1,
-  "status": "Active",
-  "currentRound": 1,
-  "roundCount": 3,
-  "schedulingPoolSize": 4,
-  "pendingTablePlanCount": 0,
-  "scheduledTableCount": 2
-}
-```
-
-## 6. Public Tournament Index
-
-### GET `/public/tournaments`
-
-Stable list item shape:
-
-```json
-{
-  "tournamentId": "tournament-123",
-  "name": "RiichiNexus Spring Demo",
-  "organizer": "Frontend Demo",
-  "status": "InProgress",
-  "startsAt": "2026-03-29T09:00:00Z",
-  "endsAt": "2026-03-29T18:00:00Z",
-  "stageCount": 2,
-  "activeStageCount": 1,
-  "participantCount": 8,
-  "clubCount": 2,
-  "playerCount": 2
-}
-```
-
-## 7. Public Tournament Detail
-
-### GET `/public/tournaments/:id`
-
-Stable shape:
-
-```json
-{
-  "tournamentId": "tournament-123",
-  "name": "RiichiNexus Spring Demo",
-  "organizer": "Frontend Demo",
-  "status": "InProgress",
-  "startsAt": "2026-03-29T09:00:00Z",
-  "endsAt": "2026-03-29T18:00:00Z",
-  "clubIds": ["club-1", "club-2"],
-  "playerIds": ["player-1", "player-2"],
-  "whitelistCount": 4,
-  "stages": [
-    {
-      "stageId": "stage-demo-swiss",
-      "name": "Swiss Stage 1",
-      "format": "Swiss",
-      "order": 1,
-      "status": "Active",
-      "currentRound": 1,
-      "roundCount": 3,
-      "tableCount": 2,
-      "archivedTableCount": 1,
-      "pendingTablePlanCount": 0,
-      "standings": {},
-      "bracket": null
-    }
-  ]
-}
-```
-
-Notes:
-
-- `standings` uses the same shape as `GET /tournaments/:id/stages/:stageId/standings`
-- `bracket` uses the same shape as `GET /tournaments/:id/stages/:stageId/bracket`
-- knockout/finals stages will return a non-null `bracket`
-
-## 8. Existing High-Value Endpoints Still Supported
-
-- `GET /tournaments/:id/stages/:stageId/standings`
-- `GET /tournaments/:id/stages/:stageId/bracket`
+- `GET /tournaments`
+- `GET /tournaments/:tournamentId`
+- `GET /tournaments/:tournamentId/stages`
+- `POST /tournaments/:tournamentId/publish`
+- `POST /tournaments/:tournamentId/stages/:stageId/schedule`
+- `POST /tournaments/:tournamentId/stages/:stageId/lineups`
+- `POST /tournaments/:tournamentId/clubs/:clubId`
+- `POST /tournaments`
+- `GET /tables`
+- `GET /tables/:tableId`
+- `POST /tables/:tableId/start`
+- `POST /tables/:tableId/reset`
+- `POST /tables/:tableId/appeals`
 - `POST /tables/:tableId/seats/:seat/state`
+- `POST /tables/:tableId/ready`
+- `GET /records`
 - `GET /appeals`
-- `GET /advanced-stats/players/:playerId`
-- `GET /advanced-stats/clubs/:clubId`
+- `POST /appeals/:appealId/adjudicate`
+- `POST /appeals/:appealId/workflow`
 
-These endpoints remain part of the current frontend integration path.
+### `TournamentDetailContract`
+
+This is the stable read shape for tournament detail flows.
+
+Key fields:
+
+- `tournamentId`
+- `name`
+- `organizer`
+- `status`
+- `startsAt`
+- `endsAt`
+- `participatingClubs`
+- `participatingPlayers`
+- `whitelistSummary`
+- `stages`
+
+### `TournamentMutationContract`
+
+This is the stable write-response shape for tournament mutation flows.
+
+Shape:
+
+```json
+{
+  "tournament": {},
+  "scheduledTables": []
+}
+```
+
+Use it for:
+
+- publish
+- stage scheduling
+- club registration into tournament
+- stage lineup submission
+
+This is one of the most important corrections from the older docs: mutation routes are no longer documented as returning raw tournament aggregates.
+
+### `TournamentStageDirectoryEntryContract`
+
+Used for stage list and stage-picker style flows.
+
+Key fields:
+
+- `stageId`
+- `name`
+- `format`
+- `order`
+- `status`
+- `currentRound`
+- `roundCount`
+- `schedulingPoolSize`
+- `pendingTablePlanCount`
+- `scheduledTableCount`
+
+Current transport edge:
+
+- `GET /tournaments/:id/stages` is still tolerated as either a raw array or `{ value?: array }`
+- tournament mutation POST routes still use a narrow compatibility helper in `front/src/api/tournaments.transport.ts`
+- several mutation payloads still use backend-specific option encoding such as `[]`
+
+Those are transport cleanup targets, not reasons to redefine the contracts themselves.
+
+## 4. Public Contracts
+
+Defined in `front/src/api/contracts/public.ts`.
+
+Current exported contracts:
+
+- `PublicScheduleContract`
+- `PublicTournamentStageContract`
+- `PublicTournamentDetailContract`
+- `PublicClubRelationContract`
+- `PublicClubDirectoryEntryContract`
+- `PublicClubHonorContract`
+- `PublicClubLineupMemberContract`
+- `PublicClubRecentMatchContract`
+- `PublicClubApplicationPolicyContract`
+- `PublicClubDetailContract`
+- `LegacyDashboardOwnerPlayerContract`
+- `LegacyDashboardOwnerClubContract`
+- `DashboardOwnerContract`
+- `DashboardContract`
+- `RankSnapshotContract`
+- `PlayerLeaderboardEntryContract`
+
+Main route families:
+
+- `GET /public/schedules`
+- `GET /public/clubs`
+- `GET /public/clubs/:clubId`
+- `GET /public/tournaments/:tournamentId`
+- `GET /public/leaderboards/players`
+- `GET /dashboards/players/:playerId`
+- `GET /dashboards/clubs/:clubId`
+
+### `PublicTournamentDetailContract`
+
+Key fields:
+
+- `tournamentId`
+- `name`
+- `organizer`
+- `status`
+- `startsAt`
+- `endsAt`
+- `clubIds`
+- `playerIds`
+- `whitelistCount`
+- `stages`
+
+### `PublicClubDetailContract`
+
+Key fields:
+
+- `clubId`
+- `name`
+- `memberCount`
+- `activeMemberCount`
+- `adminCount`
+- `powerRating`
+- `totalPoints`
+- `treasuryBalance`
+- `pointPool`
+- `relations`
+- `honors`
+- `applicationPolicy`
+- `currentLineup`
+- `recentMatches`
+
+### `DashboardContract`
+
+Current ownership shape is now narrow:
+
+- `owner` is `DashboardOwnerContract`
+- `DashboardOwnerContract` is a tagged string contract: ``player:${string}`` or ``club:${string}``
+
+## 5. What Is Already Clean
+
+These areas should now be treated as structurally settled:
+
+- tournament mutation responses use `TournamentMutationContract`
+- public hall no longer depends on a duplicate feature-local admin detail contract family
+- club/application array-scalar compatibility has been removed from the contract layer
+- club tournament participation has a dedicated contract
+
+## 6. Known Legacy Edges Still Present
+
+These are the remaining places where the transport boundary is not perfectly clean yet:
+
+1. `front/src/api/backend-option.transport.ts`
+   - still carries backend-specific `Option` array encoding
+2. `front/src/api/tournaments.transport.ts`
+   - still carries a narrow `operatorId` POST compatibility helper for mutation routes
+3. `GET /tournaments/:id/stages`
+   - still tolerates both a raw array and `{ value?: array }`
+4. several transport builders
+   - still intentionally emit `[]` for optional backend fields where the server contract has not been fully simplified
+
+## 7. Usage Rule
+
+When adding or changing frontend/backend integration:
+
+- update `front/src/api/contracts/*` first if the transport shape changes
+- keep mapper logic in API modules or dedicated mapper files
+- avoid creating a new feature-local type if an existing contract already represents the transport shape
+- if a route already returns a frontend-facing view, prefer adapting frontend mappers instead of inventing another intermediate contract

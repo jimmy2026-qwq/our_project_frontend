@@ -2,150 +2,158 @@
 
 This document describes the frontend as it exists today under `front/src`.
 
-## Current Architecture
+## Current Shape
 
-The frontend is now running in a routed React application shell.
+The frontend is a routed React application mounted from `front/src/main.tsx` and driven by `createBrowserRouter` in `front/src/router.tsx`.
 
-Current foundation:
+Current top-level structure under `front/src`:
 
-- app entry is `front/src/main.tsx`
-- navigation is handled by `react-router-dom`
-- route pages now exist for blueprint home, public hall, member hub, and tournament operations
-- the app still preserves the original API-first plus mock-fallback strategy
-- `front/src/api/*` now provides the shared typed request and normalization layer
-- feature code is now mostly split by `pages -> features -> shared/domain/ui`
+- `api/`
+- `app/`
+- `components/`
+- `config/`
+- `domain/`
+- `features/`
+- `hooks/`
+- `lib/`
+- `modules/`
+- `pages/`
+- `providers/`
+- `styles/`
 
-This means the codebase is no longer primarily a manual DOM prototype shell, and the blueprint homepage is now also rendered through native React components.
+This is no longer a prototype shell and it is no longer especially close to the template's lighter directory layout. It is now a fuller app-specific structure.
 
 ## Current Route Map
 
-Top-level routes:
+Mounted routes today:
 
-- `/` -> project blueprint home
-- `/public` -> public hall
-- `/member-hub` -> member hub
-- `/tournament-ops` -> tournament operations
-
-Public detail routes:
-
+- `/login`
+- `/register`
+- `/public`
 - `/public/tournaments/:tournamentId`
 - `/public/clubs/:clubId`
+- `/blueprint`
+- `/me`
+- `/tables/:tableId`
+- `/tables/:tableId/paifu`
 
-There is still no guest-facing player detail route.
+Routing notes:
 
-## Current Feature Structure
+- `/` redirects to `/public`
+- most app routes sit under `AppShell`
+- the app uses `RequireAuth` for authenticated access
+- `RequireRegisteredUser` protects registered-user-only routes such as `/blueprint`, `/member-hub`, `/me`, `/tournament-ops`, and table pages
 
-Main React-oriented structure under `front/src`:
+Mounted registered-user workspaces now include:
 
-- `app/`
-  - app shell and routed layout
-- `pages/`
-  - route-level page components
+- `/member-hub`
+- `/tournament-ops`
+
+## Feature Organization
+
+Main feature directories:
+
+- `features/auth`
 - `features/blueprint`
-  - blueprint home composition and home club-application workbench
-- `features/public-hall`
-  - public hall home, filters, and public detail views
 - `features/member-hub`
-  - player dashboard, club dashboard, and application inbox workbench
+- `features/public-hall`
 - `features/tournament-ops`
-  - tables, records, and appeals workbench
-- `api/`
-  - typed backend API modules and normalization layer
-- `domain/`
-  - shared domain models
-- `mocks/`
-  - mock/default data for fallback mode
 
-## Current UI Layering
+How to read them:
 
-The frontend now has a clearer internal layering than the earlier prototype phase.
+- `public-hall` is the most clearly mounted public-facing area
+- `blueprint` is the registered-user workbench and project-facing demonstration surface
+- `member-hub` and `tournament-ops` now have mounted route entrypoints and still retain deeper feature-level logic under their own directories
 
-Current UI split:
+## API Layer
+
+The API layer lives under `front/src/api`.
+
+Current key pieces:
+
+- `auth.ts`
+- `clubs.ts`
+- `operations.ts`
+- `public.ts`
+- `contracts/*`
+- `http.ts`
+- feature-specific mapper files such as `public.mappers.ts`
+
+Current contract direction:
+
+- frontend-facing transport contracts live in `api/contracts/*`
+- feature code should consume contracts through API modules and mappers
+- feature-local duplicate contract types have largely been removed from `public-hall`
+
+Current structural gap:
+
+- `operations.ts` is still too broad and should eventually be split by capability
+
+## UI Layering
+
+The UI layer is clearer than it was in the earlier migration phase.
+
+Current reusable layers:
 
 - `components/ui/`
-  - low-level reusable primitives such as button, card, input, dialog, table, badge, tabs, and structured display elements
+  - low-level primitives
 - `components/shared/layout`
-  - section intro, panel head, action/filter toolbar, and similar layout-oriented wrappers
+  - layout-oriented wrappers
 - `components/shared/feedback`
-  - loading, empty, source, and warning presentation
+  - loading, empty, warning, and source presentation
 - `components/shared/data-display`
-  - data panels, detail shells, summary cards, metadata cards, list/metric/detail display helpers
+  - summary, metadata, and detail display shells
 - `components/shared/domain`
-  - business-aware reusable shells such as dashboard panels, workbench guide/result/backlog panels, and club application list presentation
+  - domain-aware reusable presentation
 - `components/shared/forms`
-  - labeled field wrappers and shared input/select/textarea/checkbox shells
+  - shared form wrappers and field composition
 
-Practical reading:
+This means feature pages are increasingly composition-oriented rather than raw-markup-heavy.
 
-- the codebase no longer jumps directly from feature-local markup to raw primitives
-- repeated presentation patterns have started moving into stable shared APIs
-- feature files are increasingly composition-oriented rather than markup-heavy
-- the most-used shared families now also own more of their own layout and separator semantics instead of depending mainly on `app.css`
+## Data Strategy
 
-## Current Interaction Infrastructure
+The frontend is still API-first, but some areas keep local fallback or bridge behavior so the UI remains usable during partial backend failure.
 
-The app now has a small root-level interaction layer mounted from `front/src/main.tsx`.
+That fallback strategy no longer lives in a single `mocks/` directory.
 
-Current pieces:
+Instead, fallback behavior is now spread across:
 
-- `providers/AppFeedbackProvider.tsx`
-  - root notice stack
-- `providers/DialogProvider.tsx`
-  - root confirm dialog orchestration
-- `hooks/useNotice.ts`
-  - basic success/warning/info notice helper
-- `hooks/useRefreshNotice.ts`
-  - shared refresh success/fallback/failure notice helper
-- `hooks/useMutationNotice.ts`
-  - shared mutation success/fallback notice helper
-- `hooks/useDialog.ts`
-  - confirm dialog helper, including destructive confirm convenience
+- feature-local fallback builders
+- local bridge helpers in `lib/`
+- shared notice hooks that can surface partial-success states
 
-Current rule of thumb:
+Important correction from older docs:
 
-- one-off operation feedback should prefer root notices
-- confirm-style destructive actions should prefer the shared dialog hook
-- feature-local state should stay in feature hooks unless it truly becomes cross-page state
+- `front/src/mocks/` is no longer part of the current source layout
 
-Current rendering status:
+## Backend Alignment
 
-- the root notice stack now renders through the shared `Alert + Button` primitive path
-- the root confirm dialog now renders through `DialogSurface`, `DialogBody`, `DialogFooter`, and shared button variants
-- app-level interaction logic stays provider/hook-based, but the view layer is now much closer to the same primitive path feature code uses
+The frontend now talks to a backend whose internal structure has moved to:
 
-## Legacy Pieces Still Present
+- `riichinexus.api`
+- `riichinexus.application`
+- `riichinexus.bootstrap`
+- `riichinexus.domain`
+- `riichinexus.infrastructure`
 
-The old DOM-oriented route/runtime layer has now been removed from the main codebase.
+That matters for documentation because older notes that reference the previous top-level bridge layers are now out of date.
 
-What still remains is mostly structural cleanup work, not old runtime ownership.
+## What Still Needs Cleanup
 
-Examples of remaining follow-up areas:
+The main architecture work left is not a big framework migration. It is mostly boundary cleanup:
 
-- repeated visual patterns that are still being consolidated into `src/components/shared`
-- large shared stylesheet coverage in `front/src/styles/app.css`
-- pruning superseded CSS and class names now that newer shared shells are in active use
-
-## Template-Mode Direction
-
-The target direction remains aligned with `template/frontend/`:
-
-- keep React app mounting and declarative routing
-- continue splitting route pages into reusable feature components and hooks
-- preserve API normalization in `front/src/api/*`
-- preserve API-first plus mock-fallback behavior behind clearer abstractions
-- continue reducing reliance on oversized shared styling and move more of the app toward reusable shared UI patterns
-- keep the app-level interaction layer narrow and reusable instead of growing a broad modal or store layer too early
-- keep pushing reusable structure into template-compatible component implementations instead of leaving it in large global style blocks
+- split oversized API modules, especially `operations.ts`
+- keep transport compatibility helpers away from business-facing feature code
+- narrow `api/client.ts` so runtime exports and contract exports are less mixed
+- continue shrinking broad global styling in `styles/app.css`
 
 ## What Should Be Preserved
 
-The following parts remain migration-critical:
+These parts are now stable enough to treat as intentional architecture:
 
-- domain models in `front/src/domain`
-- shared API-module and normalization logic in `front/src/api/*`
-- backend contract knowledge in `front/doc/DEMO_FRONTEND_API.md`
-- backend contract knowledge in `front/doc/FRONTEND_INTERFACE_CONTRACTS.md`
-- API-first plus mock-fallback behavior across public hall, member hub, and tournament operations
-- the current information architecture: blueprint home, public hall, member hub, and tournament operations
-- the newer shared UI boundaries under `front/src/components/shared`
-- the current notice and confirm provider layer with hook-based usage
+- router-driven app shell
+- API contracts plus mapper boundary under `front/src/api`
+- feature-based page composition
+- shared UI layers under `components/shared`
+- provider and hook based notice/dialog infrastructure
+- the current public hall, blueprint, player dashboard, and table workflow surfaces
