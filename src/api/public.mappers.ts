@@ -16,6 +16,24 @@ import type {
   PublicTournamentStageContract,
 } from './contracts/public';
 
+function unwrapSingletonArray<T>(value: T | T[] | null | undefined): T | undefined {
+  if (Array.isArray(value)) {
+    return value[0];
+  }
+
+  return value ?? undefined;
+}
+
+function normalizeOptionalString(value: string | string[] | null | undefined): string | undefined {
+  const normalized = unwrapSingletonArray(value);
+  return typeof normalized === 'string' ? normalized.trim() || undefined : undefined;
+}
+
+function normalizeOptionalNumber(value: number | number[] | null | undefined): number | undefined {
+  const normalized = unwrapSingletonArray(value);
+  return typeof normalized === 'number' ? normalized : undefined;
+}
+
 export function mapPublicSchedule(item: PublicScheduleContract): PublicSchedule {
   return {
     tournamentId: item.tournamentId,
@@ -121,8 +139,8 @@ export function mapPublicClub(item: PublicClubDirectoryEntryContract): ClubSumma
 }
 
 export function mapPublicClubDetail(item: PublicClubDetailContract): ClubPublicProfile {
-  const requirementsText = item.applicationPolicy?.requirementsText?.trim() || undefined;
-  const expectedReviewSlaHours = item.applicationPolicy?.expectedReviewSlaHours ?? undefined;
+  const requirementsText = normalizeOptionalString(item.applicationPolicy?.requirementsText);
+  const expectedReviewSlaHours = normalizeOptionalNumber(item.applicationPolicy?.expectedReviewSlaHours);
   const honors = item.honors ?? [];
   const relations = item.relations ?? [];
   const currentLineup = item.currentLineup ?? [];

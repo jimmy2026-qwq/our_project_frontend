@@ -12,20 +12,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     let isMounted = true;
 
     async function bootstrap() {
-      const persisted = readPersistedSession();
+      try {
+        const persisted = readPersistedSession();
 
-      if (!persisted) {
+        if (!persisted) {
+          if (isMounted) {
+            setIsReady(true);
+          }
+          return;
+        }
+
+        const nextSession = await restoreSession(persisted.token);
+
+        if (isMounted) {
+          setSession(nextSession);
+        }
+      } catch {
+        if (isMounted) {
+          setSession(null);
+        }
+      } finally {
         if (isMounted) {
           setIsReady(true);
         }
-        return;
-      }
-
-      const nextSession = await restoreSession(persisted.token);
-
-      if (isMounted) {
-        setSession(nextSession);
-        setIsReady(true);
       }
     }
 

@@ -4,3 +4,4 @@
 4 区分类和 api declaration
 5 每个 api 单独放在一个文件
 6 输入输出和类型系统分开
+7 前端 xxxApiMessage(input, output) -> 访问 /api/xxxApiMessage 而不是用 /api/auth/log-in，做到编译通过就没有问题
