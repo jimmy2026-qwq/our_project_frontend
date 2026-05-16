@@ -19,20 +19,22 @@
 src/
   api/
     auth/
+    player/
     publicquery/
     club/
-    competition/
-    appeal/
+    tournament/
+      appeal/
     opsanalytics/
     dictionary/
     platformadmin/
     shared/
   objects/
     auth/
+    player/
     publicquery/
     club/
-    competition/
-    appeal/
+    tournament/
+      appeal/
     opsanalytics/
     dictionary/
     platformadmin/
@@ -79,14 +81,24 @@ src/api/auth/
   requests/
     authn.requests.ts
     sessions.requests.ts
+    guest-sessions.requests.ts
   responses/
     authn.responses.ts
     sessions.responses.ts
-    players.responses.ts
+    guest-sessions.responses.ts
   authn.api.ts
   sessions.api.ts
-  players.api.ts
+  guest-sessions.api.ts
   demo.api.ts
+  transport.ts
+  index.ts
+
+src/api/player/
+  requests/
+    players.requests.ts
+  responses/
+    players.responses.ts
+  players.api.ts
   transport.ts
   index.ts
 
@@ -124,21 +136,27 @@ src/api/club/
   transport.ts
   index.ts
 
-src/api/competition/
+src/api/tournament/
   requests/
     tournaments.requests.ts
+    stages.requests.ts
     tables.requests.ts
+    settlements.requests.ts
   responses/
     tournaments.responses.ts
+    stages.responses.ts
     tables.responses.ts
     records.responses.ts
+    settlements.responses.ts
   tournaments.api.ts
+  stages.api.ts
   tables.api.ts
   records.api.ts
+  settlements.api.ts
   transport.ts
   index.ts
 
-src/api/appeal/
+src/api/tournament/appeal/
   requests/
     appeals.requests.ts
   responses/
@@ -158,6 +176,33 @@ src/api/opsanalytics/
   advanced-stats.api.ts
   domain-events.api.ts
   performance.api.ts
+  index.ts
+
+src/api/dictionary/
+  requests/
+    entries.requests.ts
+    namespaces.requests.ts
+  responses/
+    entries.responses.ts
+    namespaces.responses.ts
+  entries.api.ts
+  namespaces.api.ts
+  transport.ts
+  index.ts
+
+src/api/platformadmin/
+  requests/
+    club-governance.requests.ts
+    platform-roles.requests.ts
+    player-moderation.requests.ts
+  responses/
+    club-governance.responses.ts
+    platform-roles.responses.ts
+    player-moderation.responses.ts
+  club-governance.api.ts
+  platform-roles.api.ts
+  player-moderation.api.ts
+  transport.ts
   index.ts
 ```
 
@@ -185,10 +230,11 @@ src/api/opsanalytics/
 ```text
 src/objects/
   auth/
+  player/
   publicquery/
   club/
-  competition/
-  appeal/
+  tournament/
+    appeal/
   opsanalytics/
   dictionary/
   platformadmin/
@@ -281,11 +327,14 @@ src/objects/
 前端按后端服务名对齐：
 
 - 后端 `auth` 对应前端 `api/auth`、`objects/auth`
+- 后端 `player` 对应前端 `api/player`、`objects/player`
 - 后端 `publicquery` 对应前端 `api/publicquery`、`objects/publicquery`
 - 后端 `club` 对应前端 `api/club`、`objects/club`
-- 后端 `competition` 对应前端 `api/competition`、`objects/competition`
-- 后端 `appeal` 对应前端 `api/appeal`、`objects/appeal`
+- 后端 `tournament` 对应前端 `api/tournament`、`objects/tournament`
+- 后端 `tournament/appeal` 对应前端 `api/tournament/appeal`、`objects/tournament/appeal`
 - 后端 `opsanalytics` 对应前端 `api/opsanalytics`、`objects/opsanalytics`
+- 后端 `dictionary` 对应前端 `api/dictionary`、`objects/dictionary`
+- 后端 `platformadmin` 对应前端 `api/platformadmin`、`objects/platformadmin`
 
 页面和 feature 不必强行一比一，但 API 和类型层尽量对齐服务边界。
 
@@ -310,9 +359,11 @@ src/objects/
 - `src/api/clubs.*`
   迁入 `src/api/club/`
 - `src/api/tournaments.ts`、`src/api/tables.ts`、`src/api/records.ts`
-  迁入 `src/api/competition/`
+  迁入 `src/api/tournament/`
 - `src/api/appeals.ts`
-  迁入 `src/api/appeal/`
+  迁入 `src/api/tournament/appeal/`
+- `src/api/auth.players.ts`
+  迁入 `src/api/player/`
 - `src/api/operations.ts`
   根据实际内容拆到 `opsanalytics`、`platformadmin`、`dictionary`
 
