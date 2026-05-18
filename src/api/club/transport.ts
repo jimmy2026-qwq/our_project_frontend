@@ -1,10 +1,10 @@
 import { encodeBackendOption } from '../shared/backend-option.transport';
 import type {
   ClubApplicationPayload,
+  RemoveClubMemberPayload,
   ReviewClubApplicationPayload,
   WithdrawClubApplicationPayload,
-} from './requests/applications.requests';
-import type { RemoveClubMemberPayload } from './requests/members.requests';
+} from '@/objects/club';
 
 export function buildRemoveClubMemberRequest(payload: RemoveClubMemberPayload) {
   return {

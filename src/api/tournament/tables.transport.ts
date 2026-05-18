@@ -4,7 +4,7 @@ import type {
   StartTablePayload,
   UpdateOwnReadyStatePayload,
   UpdateSeatStatePayload,
-} from './tables.api';
+} from '@/objects/tournament';
 
 export function buildStartTableRequest(payload: StartTablePayload = {}) {
   return {

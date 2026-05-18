@@ -1,5 +1,5 @@
 import type { PlayerProfile } from '@/objects';
-import type { PlayerProfileContract } from './responses/players.responses';
+import type { PlayerProfileContract } from '@/objects/player';
 
 export function mapPlayerProfile(item: PlayerProfileContract): PlayerProfile {
   return {

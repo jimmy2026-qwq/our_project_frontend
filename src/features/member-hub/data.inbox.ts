@@ -1,6 +1,9 @@
 import { clubsApi } from '@/api/club';
 import type { Role } from '@/objects/shared/common';
-import { readClubApplicationInbox, upsertClubApplicationInboxItem } from '@/lib/club-applications';
+import {
+  readClubApplicationInbox,
+  upsertClubApplicationInboxItem,
+} from '@/lib/club-applications';
 
 import { toApplicationView, type ApplicationInboxState } from './data.shared';
 
@@ -33,7 +36,10 @@ export async function loadClubApplicationInbox(
         .filter((item) => item.clubId === clubId)
         .map(toApplicationView),
       source: 'api',
-      warning: error instanceof Error ? error.message : 'Unable to load the live application inbox.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load the live application inbox.',
     };
   }
 }
@@ -44,16 +50,23 @@ export async function reviewApplication(
   operatorId: string,
   decision: 'approve' | 'reject',
 ) {
-  const application = await clubsApi.reviewClubApplication(clubId, applicationId, {
-    operatorId,
-    decision,
-    note: `${decision}d from member hub`,
-  });
+  const application = await clubsApi.reviewClubApplication(
+    clubId,
+    applicationId,
+    {
+      operatorId,
+      decision,
+      note: `${decision}d from member hub`,
+    },
+  );
   upsertClubApplicationInboxItem({
     id: application.applicationId,
     clubId: application.clubId,
     clubName: application.clubName,
-    operatorId: application.applicant.playerId || application.applicant.applicantUserId || '',
+    operatorId:
+      application.applicant.playerId ||
+      application.applicant.applicantUserId ||
+      '',
     applicantName: application.applicant.displayName,
     message: application.message,
     status: application.status,

@@ -44,7 +44,9 @@ export interface HomeClubApplicationState {
   application: ApplicationState;
 }
 
-type ClubApplicationMutation = Awaited<ReturnType<typeof clubsApi.submitClubApplication>>;
+type ClubApplicationMutation = Awaited<
+  ReturnType<typeof clubsApi.submitClubApplication>
+>;
 
 export function formatDateTime(value: string) {
   const timestamp = Date.parse(value);
@@ -63,7 +65,9 @@ export function getSelectedClubName(clubId: string, clubs: ClubSummary[]) {
   return clubs.find((club) => club.id === clubId)?.name ?? clubId;
 }
 
-export function getFallbackPlayerName(state: Pick<HomeClubApplicationState, 'operatorDisplayName' | 'operatorId'>) {
+export function getFallbackPlayerName(
+  state: Pick<HomeClubApplicationState, 'operatorDisplayName' | 'operatorId'>,
+) {
   return state.operatorDisplayName || state.operatorId;
 }
 
@@ -83,7 +87,10 @@ export async function loadJoinableClubs(): Promise<ClubDirectoryState> {
     return {
       items: [],
       source: 'api',
-      warning: error instanceof Error ? error.message : 'Unable to load joinable clubs.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load joinable clubs.',
     };
   }
 }
@@ -102,7 +109,10 @@ export async function loadPlayerContext(
     return {
       player: null,
       source: 'api',
-      warning: error instanceof Error ? error.message : 'Unable to load current player context.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load current player context.',
     };
   }
 }
@@ -144,7 +154,11 @@ function toClubApplicationMutationModel(
   };
 }
 
-function getTrackedApplication(operatorId: string, clubId: string, applicationId?: string) {
+function getTrackedApplication(
+  operatorId: string,
+  clubId: string,
+  applicationId?: string,
+) {
   if (applicationId) {
     const tracked = readClubApplicationInboxItem(applicationId);
 
@@ -174,7 +188,9 @@ async function loadCurrentPendingApplication(
   operatorId: string,
 ): Promise<ApplicationState | null> {
   try {
-    const view = await clubsApi.getCurrentClubApplication(clubId, { operatorId });
+    const view = await clubsApi.getCurrentClubApplication(clubId, {
+      operatorId,
+    });
     const application = toClubApplicationViewModel(view);
 
     upsertClubApplicationInboxItem({
@@ -209,7 +225,11 @@ export async function loadTrackedApplication(
 ): Promise<ApplicationState> {
   const tracked = getTrackedApplication(operatorId, clubId, applicationId);
 
-  if (!applicationId && tracked?.status !== 'Rejected' && tracked?.status !== 'Withdrawn') {
+  if (
+    !applicationId &&
+    tracked?.status !== 'Rejected' &&
+    tracked?.status !== 'Withdrawn'
+  ) {
     try {
       const current = await loadCurrentPendingApplication(clubId, operatorId);
 
@@ -220,7 +240,10 @@ export async function loadTrackedApplication(
       if (!tracked) {
         return {
           application: null,
-          warning: error instanceof Error ? error.message : 'Unable to load the current club application.',
+          warning:
+            error instanceof Error
+              ? error.message
+              : 'Unable to load the current club application.',
         };
       }
     }
@@ -245,12 +268,15 @@ export async function loadTrackedApplication(
         createdAt: tracked.submittedAt,
       },
       source: tracked.source,
-      warning: 'The backend no longer reports a pending application, so the provisional local record was preserved as rejected.',
+      warning:
+        'The backend no longer reports a pending application, so the provisional local record was preserved as rejected.',
     };
   }
 
   try {
-    const view = await clubsApi.getClubApplication(clubId, tracked.id, { operatorId });
+    const view = await clubsApi.getClubApplication(clubId, tracked.id, {
+      operatorId,
+    });
     const application = toClubApplicationViewModel(view);
 
     upsertClubApplicationInboxItem({
@@ -283,7 +309,8 @@ export async function loadTrackedApplication(
           createdAt: tracked.submittedAt,
         },
         source: tracked.source,
-        warning: 'The backend no longer returned this application, so the local record was preserved as rejected.',
+        warning:
+          'The backend no longer returned this application, so the local record was preserved as rejected.',
       };
     }
 
@@ -297,7 +324,10 @@ export async function loadTrackedApplication(
         createdAt: tracked.submittedAt,
       },
       source: tracked.source,
-      warning: error instanceof Error ? error.message : 'Application status fallback to local bridge.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Application status fallback to local bridge.',
     };
   }
 }
@@ -313,7 +343,11 @@ export async function submitClubApplication(state: HomeClubApplicationState) {
       displayName: selectedPlayerName,
       message,
     });
-    const application = toClubApplicationMutationModel(state.clubId, selectedPlayerName, response);
+    const application = toClubApplicationMutationModel(
+      state.clubId,
+      selectedPlayerName,
+      response,
+    );
     upsertClubApplicationInboxItem({
       id: application.id,
       clubId: state.clubId,
@@ -331,13 +365,17 @@ export async function submitClubApplication(state: HomeClubApplicationState) {
       error instanceof ApiError &&
       /already has a pending application/i.test(error.message)
     ) {
-      const current = await loadCurrentPendingApplication(state.clubId, state.operatorId);
+      const current = await loadCurrentPendingApplication(
+        state.clubId,
+        state.operatorId,
+      );
 
       if (current?.application) {
         return {
           application: current.application,
           source: current.source ?? 'api',
-          warning: 'The backend reported that the pending application already exists, so the current live record was loaded instead.',
+          warning:
+            'The backend reported that the pending application already exists, so the current live record was loaded instead.',
         };
       }
 
@@ -365,7 +403,8 @@ export async function submitClubApplication(state: HomeClubApplicationState) {
       return {
         application: provisionalApplication,
         source: 'api' as const,
-        warning: 'The backend reported that a pending application already exists, so the local view was synchronized to pending.',
+        warning:
+          'The backend reported that a pending application already exists, so the local view was synchronized to pending.',
       };
     }
 
@@ -385,17 +424,24 @@ export async function withdrawClubApplication(state: HomeClubApplicationState) {
   }
 
   if (isProvisionalClubApplicationId(applicationId)) {
-    throw new Error('This pending application has not been fully synchronized yet. Please refresh after the backend exposes the live application record.');
+    throw new Error(
+      'This pending application has not been fully synchronized yet. Please refresh after the backend exposes the live application record.',
+    );
   }
 
   try {
-    const response = await clubsApi.withdrawClubApplication(state.clubId, applicationId, {
-      operatorId: state.operatorId,
-      note: state.withdrawNote,
-    });
+    const response = await clubsApi.withdrawClubApplication(
+      state.clubId,
+      applicationId,
+      {
+        operatorId: state.operatorId,
+        note: state.withdrawNote,
+      },
+    );
     const application = toClubApplicationMutationModel(
       state.clubId,
-      state.application.application?.applicantName ?? getFallbackPlayerName(state),
+      state.application.application?.applicantName ??
+        getFallbackPlayerName(state),
       response,
     );
     updateClubApplicationInboxStatus(application.id, application.status);

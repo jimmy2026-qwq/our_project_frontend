@@ -1,9 +1,8 @@
 import type { ListEnvelope } from '@/objects';
+import type { PublicScheduleContract, ScheduleFilters } from '@/objects/publicquery';
 import { toQueryString } from '@/lib/query';
-import type { PublicScheduleContract } from './responses/publicquery.responses';
 import { mapPublicSchedule } from './mappers';
 import { mapEnvelope, request } from '../shared/http';
-import type { ScheduleFilters } from './requests/publicquery.requests';
 
 export const publicSchedulesApi = {
   getPublicSchedules(filters: ScheduleFilters) {

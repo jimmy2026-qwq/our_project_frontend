@@ -7,7 +7,9 @@ export function useTournamentOpsWorkbenchState() {
   const [pendingRefresh, setPendingRefresh] = useState(false);
   const [selectedTableId, setSelectedTableId] = useState('');
   const [tableDetail, setTableDetail] = useState<TableDetail | null>(null);
-  const [resetNote, setResetNote] = useState('Reset requested from tournament ops.');
+  const [resetNote, setResetNote] = useState(
+    'Reset requested from tournament ops.',
+  );
   const [appealDescription, setAppealDescription] = useState('');
   const [seatWind, setSeatWind] = useState<SeatWind>('East');
   const [seatReady, setSeatReady] = useState(false);

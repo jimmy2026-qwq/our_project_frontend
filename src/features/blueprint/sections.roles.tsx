@@ -1,4 +1,4 @@
-import { MetadataCard } from './presentation';
+import { MetadataCard } from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
 import { Separator } from '@/components/ui';
 import { roleCapabilities } from '@/config/roles';
@@ -22,8 +22,14 @@ export function BlueprintRoleMatrixSection() {
             details={
               <>
                 <Separator />
-                <p><strong>Can read</strong> {capability.canRead.join(' / ') || 'None'}</p>
-                <p><strong>Can write</strong> {capability.canWrite.join(' / ') || 'None'}</p>
+                <p>
+                  <strong>Can read</strong>{' '}
+                  {capability.canRead.join(' / ') || 'None'}
+                </p>
+                <p>
+                  <strong>Can write</strong>{' '}
+                  {capability.canWrite.join(' / ') || 'None'}
+                </p>
               </>
             }
           />

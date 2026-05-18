@@ -2,7 +2,7 @@ import { encodeBackendOption } from '../../shared/backend-option.transport';
 import type {
   AdjudicateAppealPayload,
   UpdateAppealWorkflowPayload,
-} from './appeals.api';
+} from '@/objects/tournament/appeal';
 
 export function buildAdjudicateAppealRequest(payload: AdjudicateAppealPayload) {
   return {

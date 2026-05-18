@@ -5,7 +5,7 @@ import type {
   TournamentDetailContract,
   TournamentDetailStageContract,
   TournamentStageDirectoryEntryContract,
-} from '@/api/tournament/responses/tournament.responses';
+} from '@/objects/tournament';
 import { tournamentApi } from '@/api/tournament';
 import { publicApi } from '@/api/publicquery';
 import type { PlayerProfile } from '@/objects/auth';
@@ -21,12 +21,23 @@ import type {
 } from './ClubTournamentLineupDialog.types';
 import { playerApi } from '@/api/player';
 
-type PublicTournamentStage = NonNullable<TournamentPublicProfile['stages']>[number];
+type PublicTournamentStage = NonNullable<
+  TournamentPublicProfile['stages']
+>[number];
 
-function getSelectedPlayerIds(detail: TournamentDetailContract | null, clubId: string, stageId: string) {
+function getSelectedPlayerIds(
+  detail: TournamentDetailContract | null,
+  clubId: string,
+  stageId: string,
+) {
   const stage = detail?.stages?.find((item) => item.stageId === stageId);
-  const submission = stage?.lineupSubmissions?.find((item) => item.clubId === clubId);
-  return [...(submission?.activePlayerIds ?? []), ...(submission?.reservePlayerIds ?? [])];
+  const submission = stage?.lineupSubmissions?.find(
+    (item) => item.clubId === clubId,
+  );
+  return [
+    ...(submission?.activePlayerIds ?? []),
+    ...(submission?.reservePlayerIds ?? []),
+  ];
 }
 
 async function loadTournamentStageDirectory(tournamentId: string) {
@@ -39,7 +50,8 @@ async function loadTournamentStageDirectory(tournamentId: string) {
 
 async function loadPublicStagesForLineup(tournamentId: string) {
   try {
-    const publicDetail = await publicApi.getPublicTournamentProfile(tournamentId);
+    const publicDetail =
+      await publicApi.getPublicTournamentProfile(tournamentId);
     return (publicDetail.stages ?? []).map(mapPublicStageToDetailStage);
   } catch {
     return [];
@@ -63,7 +75,9 @@ function mapStageDirectoryEntryToDetailStage(
   };
 }
 
-function mapPublicStageToDetailStage(stage: PublicTournamentStage): TournamentDetailStageContract {
+function mapPublicStageToDetailStage(
+  stage: PublicTournamentStage,
+): TournamentDetailStageContract {
   return {
     stageId: stage.stageId,
     name: stage.name,
@@ -81,7 +95,9 @@ function mergeTournamentStages(
   stageDirectory: TournamentDetailStageContract[],
   detailStages: TournamentDetailStageContract[],
 ) {
-  const detailById = new Map(detailStages.map((stage) => [stage.stageId, stage]));
+  const detailById = new Map(
+    detailStages.map((stage) => [stage.stageId, stage]),
+  );
   const mergedDirectory = stageDirectory.map((stage) => {
     const detailStage = detailById.get(stage.stageId);
 
@@ -99,13 +115,18 @@ function mergeTournamentStages(
   });
 
   const extraDetailStages = detailStages.filter(
-    (stage) => !stageDirectory.some((directoryStage) => directoryStage.stageId === stage.stageId),
+    (stage) =>
+      !stageDirectory.some(
+        (directoryStage) => directoryStage.stageId === stage.stageId,
+      ),
   );
 
   return [...mergedDirectory, ...extraDetailStages];
 }
 
-async function loadTournamentDetailForLineup(tournament: ClubTournamentItem): Promise<TournamentDetailContract> {
+async function loadTournamentDetailForLineup(
+  tournament: ClubTournamentItem,
+): Promise<TournamentDetailContract> {
   const [detailResult, stageDirectory, publicStages] = await Promise.all([
     tournamentApi.getTournament(tournament.id).catch(() => null),
     loadTournamentStageDirectory(tournament.id),
@@ -113,10 +134,15 @@ async function loadTournamentDetailForLineup(tournament: ClubTournamentItem): Pr
   ]);
 
   const fallbackStages =
-    stageDirectory.length > 0 ? stageDirectory.map(mapStageDirectoryEntryToDetailStage) : publicStages;
+    stageDirectory.length > 0
+      ? stageDirectory.map(mapStageDirectoryEntryToDetailStage)
+      : publicStages;
 
   if (detailResult) {
-    const mergedStages = mergeTournamentStages(fallbackStages, detailResult.stages ?? []);
+    const mergedStages = mergeTournamentStages(
+      fallbackStages,
+      detailResult.stages ?? [],
+    );
 
     return {
       ...detailResult,
@@ -160,7 +186,8 @@ export function useClubTournamentLineupWorkbench({
   const [statusFilter, setStatusFilter] = useState<MemberStatusFilter>('all');
   const [eloSort, setEloSort] = useState<EloSort>('desc');
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
-  const [tournamentDetail, setTournamentDetail] = useState<TournamentDetailContract | null>(null);
+  const [tournamentDetail, setTournamentDetail] =
+    useState<TournamentDetailContract | null>(null);
   const [initializedStageId, setInitializedStageId] = useState('');
 
   useEffect(() => {
@@ -189,7 +216,8 @@ export function useClubTournamentLineupWorkbench({
 
           if (operatorId) {
             try {
-              const currentPlayer = await playerApi.getCurrentPlayer(operatorId);
+              const currentPlayer =
+                await playerApi.getCurrentPlayer(operatorId);
 
               if (
                 !items.some(
@@ -213,7 +241,9 @@ export function useClubTournamentLineupWorkbench({
         if (!cancelled) {
           notifyWarning(
             'éŽ´æ„¬æ†³é’æ¥„ã€ƒé”çŠºæµ‡æ¾¶è¾«è§¦',
-            error instanceof Error ? error.message : 'éƒçŠ³ç¡¶ç’‡è¯²å½‡æ·‡å˜ç®°é–®ã„¦åžšé›æ¨ºåžªç›ã„£â‚¬?',
+            error instanceof Error
+              ? error.message
+              : 'éƒçŠ³ç¡¶ç’‡è¯²å½‡æ·‡å˜ç®°é–®ã„¦åžšé›æ¨ºåžªç›ã„£â‚¬?',
           );
         }
       })
@@ -253,7 +283,9 @@ export function useClubTournamentLineupWorkbench({
         if (!cancelled) {
           notifyWarning(
             'ç’§æ¶—ç°¨ç’‡ï¸½å„é”çŠºæµ‡æ¾¶è¾«è§¦',
-            error instanceof Error ? error.message : 'éƒçŠ³ç¡¶ç’‡è¯²å½‡ç’§æ¶—ç°¨ç’‡ï¸½å„éŠ†?',
+            error instanceof Error
+              ? error.message
+              : 'éƒçŠ³ç¡¶ç’‡è¯²å½‡ç’§æ¶—ç°¨ç’‡ï¸½å„éŠ†?',
           );
           setTournamentDetail(null);
           setSelectedStageId('');
@@ -282,7 +314,9 @@ export function useClubTournamentLineupWorkbench({
       return;
     }
 
-    setSelectedPlayerIds(getSelectedPlayerIds(tournamentDetail, clubId, selectedStageId));
+    setSelectedPlayerIds(
+      getSelectedPlayerIds(tournamentDetail, clubId, selectedStageId),
+    );
     setInitializedStageId(selectedStageId);
   }, [clubId, initializedStageId, selectedStageId, tournamentDetail]);
 
@@ -307,7 +341,8 @@ export function useClubTournamentLineupWorkbench({
       ...member,
       isSelected: selectedPlayerIds.includes(member.playerId),
       isCurrentUser:
-        member.playerId === operatorId || (!!member.applicantUserId && member.applicantUserId === operatorId),
+        member.playerId === operatorId ||
+        (!!member.applicantUserId && member.applicantUserId === operatorId),
     }));
 
     return withSelection.sort((left, right) => {
@@ -344,7 +379,9 @@ export function useClubTournamentLineupWorkbench({
 
   function togglePlayer(playerId: string) {
     setSelectedPlayerIds((current) =>
-      current.includes(playerId) ? current.filter((item) => item !== playerId) : [...current, playerId],
+      current.includes(playerId)
+        ? current.filter((item) => item !== playerId)
+        : [...current, playerId],
     );
   }
 

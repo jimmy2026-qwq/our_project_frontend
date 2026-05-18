@@ -9,15 +9,22 @@ import {
   type TournamentContext,
   type TournamentOpsState,
 } from './data';
-import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/objects/tournament';
+import type {
+  AppealSummary,
+  MatchRecordSummary,
+  TournamentTableSummary,
+} from '@/objects/tournament';
 
 export function useTournamentOpsPanelData(
   tournaments: TournamentContext[],
   state: TournamentOpsState,
   reloadKey = 0,
 ) {
-  const [tables, setTables] = useState<LoadState<TournamentTableSummary> | null>(null);
-  const [records, setRecords] = useState<LoadState<MatchRecordSummary> | null>(null);
+  const [tables, setTables] =
+    useState<LoadState<TournamentTableSummary> | null>(null);
+  const [records, setRecords] = useState<LoadState<MatchRecordSummary> | null>(
+    null,
+  );
   const [appeals, setAppeals] = useState<LoadState<AppealSummary> | null>(null);
   const [isLoadingPanelData, setIsLoadingPanelData] = useState(true);
 

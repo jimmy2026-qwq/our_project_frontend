@@ -1,10 +1,14 @@
-import { DataTablePanel } from './presentation';
+import { DataTablePanel } from '@/components/ui';
 import { TableCell, TableRow } from '@/components/ui';
 import type { MatchRecordSummary } from '@/objects/tournament';
 
 import { formatDateTime, type LoadState } from './data';
 
-export function RecordsPanel({ payload }: { payload: LoadState<MatchRecordSummary> }) {
+export function RecordsPanel({
+  payload,
+}: {
+  payload: LoadState<MatchRecordSummary>;
+}) {
   return (
     <DataTablePanel
       title="对局记录"

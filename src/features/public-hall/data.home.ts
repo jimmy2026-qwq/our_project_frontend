@@ -24,7 +24,11 @@ import {
   setInFlightLeaderboardRequest,
 } from './data.home.cache';
 import { loadLeaderboard } from './data.home.leaderboard';
-import { loadClubs, loadManagedDraftSchedules, loadSchedules } from './data.home.schedules';
+import {
+  loadClubs,
+  loadManagedDraftSchedules,
+  loadSchedules,
+} from './data.home.schedules';
 
 export {
   getCachedPublicHallHomeData,

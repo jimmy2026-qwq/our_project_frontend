@@ -14,8 +14,12 @@ describe('public-hall data.shared', () => {
   });
 
   it('formats rank labels with and without stars', () => {
-    expect(formatRankLabel({ platform: 'Tenhou', tier: '5-dan' })).toBe('Tenhou 5-dan');
-    expect(formatRankLabel({ platform: 'MahjongSoul', tier: 'Master', stars: 2 })).toBe('MahjongSoul Master 2');
+    expect(formatRankLabel({ platform: 'Tenhou', tier: '5-dan' })).toBe(
+      'Tenhou 5-dan',
+    );
+    expect(
+      formatRankLabel({ platform: 'MahjongSoul', tier: 'Master', stars: 2 }),
+    ).toBe('MahjongSoul Master 2');
     expect(formatRankLabel(null)).toBeNull();
   });
 
@@ -34,9 +38,22 @@ describe('public-hall data.shared', () => {
       status: 'InProgress',
       startsAt: '2026-05-11T10:00:00Z',
       endsAt: '2026-05-11T18:00:00Z',
-      participatingClubs: [{ clubId: 'club-1', clubName: 'Club One', memberCount: 4, activeMemberCount: 4 }],
+      participatingClubs: [
+        {
+          clubId: 'club-1',
+          clubName: 'Club One',
+          memberCount: 4,
+          activeMemberCount: 4,
+        },
+      ],
       participatingPlayers: [{ playerId: 'player-1' }],
-      whitelistSummary: { clubIds: ['club-1'], playerIds: ['player-1'], totalEntries: 2, clubCount: 1, playerCount: 1 },
+      whitelistSummary: {
+        clubIds: ['club-1'],
+        playerIds: ['player-1'],
+        totalEntries: 2,
+        clubCount: 1,
+        playerCount: 1,
+      },
       stages: [
         {
           stageId: 'stage-1',

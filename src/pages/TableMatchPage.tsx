@@ -132,7 +132,9 @@ export function TableMatchPage() {
   const [appealError, setAppealError] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
-  const backLink = table?.tournamentId ? `/public/tournaments/${table.tournamentId}` : '/public';
+  const backLink = table?.tournamentId
+    ? `/public/tournaments/${table.tournamentId}`
+    : '/public';
   const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
 
   useEffect(() => {
@@ -232,7 +234,10 @@ export function TableMatchPage() {
 
   async function handleSubmitAppeal() {
     if (!table || !operatorId || !ownSeat) {
-      notifyInfo('暂时无法提交申诉', '请使用本桌参赛玩家账号进入牌桌后再提交申诉。');
+      notifyInfo(
+        '暂时无法提交申诉',
+        '请使用本桌参赛玩家账号进入牌桌后再提交申诉。',
+      );
       return;
     }
 
@@ -251,7 +256,10 @@ export function TableMatchPage() {
       });
       setAppealDescription('');
       setIsAppealDialogOpen(false);
-      notifySuccess('申诉已提交', `牌桌 ${String(table.tableNo).padStart(2, '0')} 的申诉工单已经创建。`);
+      notifySuccess(
+        '申诉已提交',
+        `牌桌 ${String(table.tableNo).padStart(2, '0')} 的申诉工单已经创建。`,
+      );
       forceReload();
     } catch (submitError) {
       const message =
@@ -272,7 +280,10 @@ export function TableMatchPage() {
 
   async function handleToggleOwnReady() {
     if (!table || !ownSeat || !operatorId) {
-      notifyInfo('Ready state unavailable', 'Sign in as a seated player to update your own ready status.');
+      notifyInfo(
+        'Ready state unavailable',
+        'Sign in as a seated player to update your own ready status.',
+      );
       return;
     }
 
@@ -351,7 +362,9 @@ export function TableMatchPage() {
         <div className="grid gap-2">
           <div className="flex flex-wrap items-center gap-3">
             <Badge>牌桌对局</Badge>
-            <StatusPill tone={table.status === 'InProgress' ? 'success' : 'warning'}>
+            <StatusPill
+              tone={table.status === 'InProgress' ? 'success' : 'warning'}
+            >
               {getTableStatusLabel(table.status)}
             </StatusPill>
             {isRefreshing ? <Badge>刷新中</Badge> : null}
@@ -367,8 +380,15 @@ export function TableMatchPage() {
         </div>
         <div className="flex flex-wrap gap-3">
           {canUpdateOwnReady ? (
-            <Button onClick={() => void handleToggleOwnReady()} disabled={isUpdatingOwnReady}>
-              {isUpdatingOwnReady ? '正在更新...' : ownSeat.ready ? '取消准备' : '标记为已准备'}
+            <Button
+              onClick={() => void handleToggleOwnReady()}
+              disabled={isUpdatingOwnReady}
+            >
+              {isUpdatingOwnReady
+                ? '正在更新...'
+                : ownSeat.ready
+                  ? '取消准备'
+                  : '标记为已准备'}
             </Button>
           ) : null}
           <Button variant="outline" onClick={() => forceReload()}>
@@ -394,7 +414,9 @@ export function TableMatchPage() {
           {session?.user.roles.isRegisteredPlayer && ownSeat ? (
             <div className="flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-[rgba(236,197,122,0.22)] bg-[rgba(236,197,122,0.08)] px-4 py-3 text-sm text-[color:var(--muted-strong)]">
               <div className="grid gap-1">
-                <strong className="text-[color:var(--text)]">我的座位：{ownSeat.seat}</strong>
+                <strong className="text-[color:var(--text)]">
+                  我的座位：{ownSeat.seat}
+                </strong>
                 <span>
                   {ownSeat.disconnected
                     ? '当前座位已标记为断线，暂时不能在这里修改准备状态。'
@@ -424,11 +446,15 @@ export function TableMatchPage() {
               className="md:col-start-1 md:row-start-2"
             />
             <div className="rounded-[28px] border border-[rgba(236,197,122,0.22)] bg-[radial-gradient(circle_at_top,rgba(236,197,122,0.16),transparent_55%),linear-gradient(180deg,rgba(17,38,52,0.92),rgba(8,20,30,0.96))] p-6 text-center shadow-[var(--shadow-md)] md:col-start-2 md:row-start-2">
-              <p className="mb-2 text-sm uppercase tracking-[0.32em] text-[color:var(--muted)]">Riichi Table</p>
+              <p className="mb-2 text-sm uppercase tracking-[0.32em] text-[color:var(--muted)]">
+                Riichi Table
+              </p>
               <div className="grid gap-2 text-sm text-[color:var(--muted-strong)]">
                 <span>状态：{getTableStatusLabel(table.status)}</span>
                 <span>已就位人数：{table.seats.length} / 4</span>
-                <span>准备情况：{allReady ? '全部就绪' : '仍在等待玩家准备'}</span>
+                <span>
+                  准备情况：{allReady ? '全部就绪' : '仍在等待玩家准备'}
+                </span>
               </div>
             </div>
             <SeatCard
@@ -465,7 +491,8 @@ export function TableMatchPage() {
                     ? '只有本桌参赛玩家可以发起赛事申诉。'
                     : table.status === 'Archived'
                       ? '牌桌已归档，不能再创建新的申诉工单。'
-                      : table.status === 'AppealPending' || table.status === 'AppealInProgress'
+                      : table.status === 'AppealPending' ||
+                          table.status === 'AppealInProgress'
                         ? '当前牌桌已有进行中的申诉工单。'
                         : '如对本桌赛事过程有异议，可在这里提交申诉说明。'}
               </p>
@@ -499,7 +526,9 @@ export function TableMatchPage() {
                 </Alert>
               ) : null}
               <label className="grid gap-3 text-sm text-[color:var(--muted-strong)]">
-                <span className="font-medium text-[color:var(--text)]">申诉说明</span>
+                <span className="font-medium text-[color:var(--text)]">
+                  申诉说明
+                </span>
                 <Textarea
                   value={appealDescription}
                   onChange={(event) => setAppealDescription(event.target.value)}
@@ -515,10 +544,17 @@ export function TableMatchPage() {
               <p className="m-0 text-sm text-[color:var(--muted)]">
                 提交人：{operatorId || '未登录'}
               </p>
-              <Button variant="outline" onClick={() => setIsAppealDialogOpen(false)} disabled={isSubmittingAppeal}>
+              <Button
+                variant="outline"
+                onClick={() => setIsAppealDialogOpen(false)}
+                disabled={isSubmittingAppeal}
+              >
                 取消
               </Button>
-              <Button onClick={() => void handleSubmitAppeal()} disabled={!canFileAppeal || isSubmittingAppeal}>
+              <Button
+                onClick={() => void handleSubmitAppeal()}
+                disabled={!canFileAppeal || isSubmittingAppeal}
+              >
                 {isSubmittingAppeal ? '提交中...' : '提交申诉'}
               </Button>
             </DialogFooter>

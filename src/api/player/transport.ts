@@ -1,5 +1,5 @@
 import { encodeBackendOption } from '../shared/backend-option.transport';
-import type { CreatePlayerPayload } from './requests/players.requests';
+import type { CreatePlayerPayload } from '@/objects/player';
 
 export function buildCreatePlayerRequest(payload: CreatePlayerPayload) {
   return {

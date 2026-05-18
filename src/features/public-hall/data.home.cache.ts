@@ -1,12 +1,26 @@
-import type { HomeDataPayload, LeaderboardDataPayload, PublicHallState, PublicHallViewerContext } from './types';
+import type {
+  HomeDataPayload,
+  LeaderboardDataPayload,
+  PublicHallState,
+  PublicHallViewerContext,
+} from './types';
 import { PUBLIC_HALL_CACHE_TTL_MS } from './data.shared';
 
-const homeDataCache = new Map<string, { payload: HomeDataPayload; cachedAt: number }>();
+const homeDataCache = new Map<
+  string,
+  { payload: HomeDataPayload; cachedAt: number }
+>();
 const homeDataRequests = new Map<string, Promise<HomeDataPayload>>();
-const leaderboardCache = new Map<string, { payload: LeaderboardDataPayload; cachedAt: number }>();
+const leaderboardCache = new Map<
+  string,
+  { payload: LeaderboardDataPayload; cachedAt: number }
+>();
 const leaderboardRequests = new Map<string, Promise<LeaderboardDataPayload>>();
 
-export function buildHomeDataKey(state: PublicHallState, context: PublicHallViewerContext) {
+export function buildHomeDataKey(
+  state: PublicHallState,
+  context: PublicHallViewerContext,
+) {
   const session = context.session;
   return JSON.stringify({
     scheduleTournamentStatus: state.scheduleTournamentStatus,
@@ -67,7 +81,10 @@ export function getInFlightHomeDataRequest(cacheKey: string) {
   return homeDataRequests.get(cacheKey);
 }
 
-export function setInFlightHomeDataRequest(cacheKey: string, request: Promise<HomeDataPayload>) {
+export function setInFlightHomeDataRequest(
+  cacheKey: string,
+  request: Promise<HomeDataPayload>,
+) {
   homeDataRequests.set(cacheKey, request);
 }
 
@@ -75,7 +92,10 @@ export function clearInFlightHomeDataRequest(cacheKey: string) {
   homeDataRequests.delete(cacheKey);
 }
 
-export function setCachedPublicHallHomeData(cacheKey: string, payload: HomeDataPayload) {
+export function setCachedPublicHallHomeData(
+  cacheKey: string,
+  payload: HomeDataPayload,
+) {
   homeDataCache.set(cacheKey, { payload, cachedAt: Date.now() });
 }
 
@@ -83,7 +103,10 @@ export function getInFlightLeaderboardRequest(cacheKey: string) {
   return leaderboardRequests.get(cacheKey);
 }
 
-export function setInFlightLeaderboardRequest(cacheKey: string, request: Promise<LeaderboardDataPayload>) {
+export function setInFlightLeaderboardRequest(
+  cacheKey: string,
+  request: Promise<LeaderboardDataPayload>,
+) {
   leaderboardRequests.set(cacheKey, request);
 }
 
@@ -91,6 +114,9 @@ export function clearInFlightLeaderboardRequest(cacheKey: string) {
   leaderboardRequests.delete(cacheKey);
 }
 
-export function setCachedPublicHallLeaderboardData(cacheKey: string, payload: LeaderboardDataPayload) {
+export function setCachedPublicHallLeaderboardData(
+  cacheKey: string,
+  payload: LeaderboardDataPayload,
+) {
   leaderboardCache.set(cacheKey, { payload, cachedAt: Date.now() });
 }

@@ -66,18 +66,28 @@ export function CreateTournamentDialog({
   }, [open]);
 
   const operatorId = session?.user.operatorId ?? session?.user.userId;
-  const canCreate = !!session?.user.roles.isSuperAdmin && !!operatorId && name.trim().length > 0 && !isSubmitting;
+  const canCreate =
+    !!session?.user.roles.isSuperAdmin &&
+    !!operatorId &&
+    name.trim().length > 0 &&
+    !isSubmitting;
 
   async function handleSubmit() {
     if (!session?.user.roles.isSuperAdmin || !operatorId) {
-      notifyWarning('\u65e0\u6cd5\u521b\u5efa\u6bd4\u8d5b', '\u5f53\u524d\u8d26\u53f7\u6ca1\u6709\u521b\u5efa\u6bd4\u8d5b\u6240\u9700\u7684\u6743\u9650\u3002');
+      notifyWarning(
+        '\u65e0\u6cd5\u521b\u5efa\u6bd4\u8d5b',
+        '\u5f53\u524d\u8d26\u53f7\u6ca1\u6709\u521b\u5efa\u6bd4\u8d5b\u6240\u9700\u7684\u6743\u9650\u3002',
+      );
       return;
     }
 
     const trimmedName = name.trim();
 
     if (!trimmedName) {
-      notifyWarning('\u8bf7\u586b\u5199\u8d5b\u4e8b\u540d\u79f0', '\u8d5b\u4e8b\u540d\u79f0\u4e0d\u80fd\u4e3a\u7a7a\u3002');
+      notifyWarning(
+        '\u8bf7\u586b\u5199\u8d5b\u4e8b\u540d\u79f0',
+        '\u8d5b\u4e8b\u540d\u79f0\u4e0d\u80fd\u4e3a\u7a7a\u3002',
+      );
       return;
     }
 
@@ -100,13 +110,18 @@ export function CreateTournamentDialog({
         },
       });
 
-      notifySuccess('\u6bd4\u8d5b\u5df2\u521b\u5efa', `${created.name} \u5df2\u521b\u5efa\uff0c\u6b63\u5728\u8fdb\u5165\u8d5b\u4e8b\u8be6\u60c5\u9875\u3002`);
+      notifySuccess(
+        '\u6bd4\u8d5b\u5df2\u521b\u5efa',
+        `${created.name} \u5df2\u521b\u5efa\uff0c\u6b63\u5728\u8fdb\u5165\u8d5b\u4e8b\u8be6\u60c5\u9875\u3002`,
+      );
       onOpenChange(false);
       navigate(`/public/tournaments/${created.id}`);
     } catch (error) {
       notifyWarning(
         '\u521b\u5efa\u6bd4\u8d5b\u5931\u8d25',
-        error instanceof Error ? error.message : '\u521b\u5efa\u6bd4\u8d5b\u65f6\u53d1\u751f\u672a\u77e5\u9519\u8bef\u3002',
+        error instanceof Error
+          ? error.message
+          : '\u521b\u5efa\u6bd4\u8d5b\u65f6\u53d1\u751f\u672a\u77e5\u9519\u8bef\u3002',
       );
     } finally {
       setIsSubmitting(false);
@@ -121,7 +136,9 @@ export function CreateTournamentDialog({
           <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
             <DialogTitle>{LABEL_CREATE}</DialogTitle>
             <DialogDescription>
-              {'\u5148\u521b\u5efa\u6bd4\u8d5b\u57fa\u7840\u4fe1\u606f\u4e0e\u9996\u4e2a\u9636\u6bb5\u3002\u4ff1\u4e50\u90e8\u9080\u8bf7\u548c\u540e\u7eed\u8d5b\u7a0b\u914d\u7f6e\u7a0d\u540e\u518d\u8865\u3002'}
+              {
+                '\u5148\u521b\u5efa\u6bd4\u8d5b\u57fa\u7840\u4fe1\u606f\u4e0e\u9996\u4e2a\u9636\u6bb5\u3002\u4ff1\u4e50\u90e8\u9080\u8bf7\u548c\u540e\u7eed\u8d5b\u7a0b\u914d\u7f6e\u7a0d\u540e\u518d\u8865\u3002'
+              }
             </DialogDescription>
           </DialogHeader>
 
@@ -137,22 +154,35 @@ export function CreateTournamentDialog({
               <SelectField
                 label={LABEL_FORMAT}
                 value={format}
-                onChange={(event) => setFormat(event.currentTarget.value as TournamentFormat)}
+                onChange={(event) =>
+                  setFormat(event.currentTarget.value as TournamentFormat)
+                }
                 disabled={isSubmitting}
               >
                 <option value="Swiss">{FORMAT_SWISS}</option>
                 <option value="Knockout">{FORMAT_KNOCKOUT}</option>
               </SelectField>
-              <TextInputField label={LABEL_ADMIN} value={session?.user.displayName ?? ''} readOnly />
+              <TextInputField
+                label={LABEL_ADMIN}
+                value={session?.user.displayName ?? ''}
+                readOnly
+              />
             </FieldGroup>
           </DialogBody>
 
           <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
             <div className="grid w-full gap-3 sm:grid-cols-2">
-              <ActionButton onClick={() => void handleSubmit()} disabled={!canCreate}>
+              <ActionButton
+                onClick={() => void handleSubmit()}
+                disabled={!canCreate}
+              >
                 {isSubmitting ? LABEL_SUBMITTING : LABEL_SUBMIT}
               </ActionButton>
-              <ActionButton variant="secondary" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              <ActionButton
+                variant="secondary"
+                onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
+              >
                 {LABEL_CANCEL}
               </ActionButton>
             </div>

@@ -1,10 +1,18 @@
-import { DataPanel, MetricCard, MetricGrid } from './presentation';
-import { ClubApplicationList, DashboardFallbackNotice, DashboardPanelShell } from './presentation';
+import { DataPanel, MetricCard, MetricGrid } from '@/components/ui';
+import {
+  ClubApplicationList,
+  DashboardFallbackNotice,
+  DashboardPanelShell,
+} from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { ActionButton } from '@/components/ui';
 
 import { formatDateTime, getActiveOperator } from './data';
-import type { ApplicationInboxPanelProps, DashboardPanelProps, DashboardPlaceholderProps } from './components.types';
+import type {
+  ApplicationInboxPanelProps,
+  DashboardPanelProps,
+  DashboardPlaceholderProps,
+} from './components.types';
 
 function DashboardMetrics({ payload }: Pick<DashboardPanelProps, 'payload'>) {
   if (!payload.dashboard) {
@@ -16,14 +24,24 @@ function DashboardMetrics({ payload }: Pick<DashboardPanelProps, 'payload'>) {
       <p>{payload.dashboard.headline}</p>
       <MetricGrid>
         {payload.dashboard.metrics.map((metric) => (
-          <MetricCard key={metric.label} label={metric.label} value={metric.value} accent={metric.accent ?? 'default'} />
+          <MetricCard
+            key={metric.label}
+            label={metric.label}
+            value={metric.value}
+            accent={metric.accent ?? 'default'}
+          />
         ))}
       </MetricGrid>
     </>
   );
 }
 
-export function DashboardPlaceholder({ title, path, payload, roleNote }: DashboardPlaceholderProps) {
+export function DashboardPlaceholder({
+  title,
+  path,
+  payload,
+  roleNote,
+}: DashboardPlaceholderProps) {
   return (
     <DashboardPanelShell
       title={title}
@@ -35,8 +53,9 @@ export function DashboardPlaceholder({ title, path, payload, roleNote }: Dashboa
         <DashboardFallbackNotice>
           <>
             <p>
-              This panel still keeps the current "show API dashboard when available, otherwise fall back to an explanatory
-              placeholder" pattern so the page stays stable during the migration.
+              This panel still keeps the current "show API dashboard when
+              available, otherwise fall back to an explanatory placeholder"
+              pattern so the page stays stable during the migration.
             </p>
             <p>{roleNote}</p>
           </>
@@ -46,7 +65,12 @@ export function DashboardPlaceholder({ title, path, payload, roleNote }: Dashboa
   );
 }
 
-export function ApplicationInboxPanel({ directory, state, payload, onReview }: ApplicationInboxPanelProps) {
+export function ApplicationInboxPanel({
+  directory,
+  state,
+  payload,
+  onReview,
+}: ApplicationInboxPanelProps) {
   const activeOperator = getActiveOperator(directory, state.operatorId);
 
   if (activeOperator.role !== 'ClubAdmin') {
@@ -55,12 +79,17 @@ export function ApplicationInboxPanel({ directory, state, payload, onReview }: A
         title="Club Application Inbox"
         description="Only club admins can review pending membership applications."
       >
-        <EmptyState>The current operator is not a club admin, so this panel stays in an explanatory state.</EmptyState>
+        <EmptyState>
+          The current operator is not a club admin, so this panel stays in an
+          explanatory state.
+        </EmptyState>
       </DataPanel>
     );
   }
 
-  const pendingCount = payload.items.filter((item) => item.status === 'Pending').length;
+  const pendingCount = payload.items.filter(
+    (item) => item.status === 'Pending',
+  ).length;
 
   return (
     <DataPanel
@@ -81,8 +110,16 @@ export function ApplicationInboxPanel({ directory, state, payload, onReview }: A
           actions:
             item.canReview && item.status === 'Pending' ? (
               <>
-                <ActionButton onClick={() => onReview(item.applicationId, 'approve')}>Approve</ActionButton>
-                <ActionButton onClick={() => onReview(item.applicationId, 'reject')}>Reject</ActionButton>
+                <ActionButton
+                  onClick={() => onReview(item.applicationId, 'approve')}
+                >
+                  Approve
+                </ActionButton>
+                <ActionButton
+                  onClick={() => onReview(item.applicationId, 'reject')}
+                >
+                  Reject
+                </ActionButton>
               </>
             ) : null,
         }))}
@@ -94,7 +131,13 @@ export function ApplicationInboxPanel({ directory, state, payload, onReview }: A
 
 export function DashboardPanel({ title, path, payload }: DashboardPanelProps) {
   return (
-    <DashboardPanelShell title={title} path={path} source={payload.source} warning={payload.warning} className="dashboard-card">
+    <DashboardPanelShell
+      title={title}
+      path={path}
+      source={payload.source}
+      warning={payload.warning}
+      className="dashboard-card"
+    >
       <DashboardMetrics payload={payload} />
     </DashboardPanelShell>
   );

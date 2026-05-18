@@ -38,7 +38,11 @@ export function CreateClubDialog({
   }, [open]);
 
   const operatorId = session?.user.operatorId ?? session?.user.userId;
-  const canCreate = !!session?.user.roles.isRegisteredPlayer && !!operatorId && name.trim().length > 0 && !isSubmitting;
+  const canCreate =
+    !!session?.user.roles.isRegisteredPlayer &&
+    !!operatorId &&
+    name.trim().length > 0 &&
+    !isSubmitting;
 
   async function handleSubmit() {
     if (!session?.user.roles.isRegisteredPlayer || !operatorId) {
@@ -58,7 +62,10 @@ export function CreateClubDialog({
         name: trimmedName,
         creatorId: operatorId,
       });
-      notifySuccess('俱乐部已创建', `${created.name} 已创建，当前账号已被设为俱乐部管理员。`);
+      notifySuccess(
+        '俱乐部已创建',
+        `${created.name} 已创建，当前账号已被设为俱乐部管理员。`,
+      );
       onOpenChange(false);
       navigate(`/public/clubs/${created.id}`);
     } catch (error) {
@@ -78,7 +85,9 @@ export function CreateClubDialog({
         <DialogSurface>
           <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
             <DialogTitle>创建俱乐部</DialogTitle>
-            <DialogDescription>创建成功后，你会自动成为该俱乐部的管理员。</DialogDescription>
+            <DialogDescription>
+              创建成功后，你会自动成为该俱乐部的管理员。
+            </DialogDescription>
           </DialogHeader>
 
           <DialogBody className="px-6 py-5">
@@ -90,16 +99,27 @@ export function CreateClubDialog({
                 onChange={(event) => setName(event.currentTarget.value)}
                 disabled={isSubmitting}
               />
-              <TextInputField label="创建者" value={session?.user.displayName ?? ''} readOnly />
+              <TextInputField
+                label="创建者"
+                value={session?.user.displayName ?? ''}
+                readOnly
+              />
             </FieldGroup>
           </DialogBody>
 
           <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
             <div className="grid w-full gap-3 sm:grid-cols-2">
-              <ActionButton onClick={() => void handleSubmit()} disabled={!canCreate}>
+              <ActionButton
+                onClick={() => void handleSubmit()}
+                disabled={!canCreate}
+              >
                 {isSubmitting ? '创建中...' : '创建并进入详情'}
               </ActionButton>
-              <ActionButton variant="secondary" onClick={() => onOpenChange(false)} disabled={isSubmitting}>
+              <ActionButton
+                variant="secondary"
+                onClick={() => onOpenChange(false)}
+                disabled={isSubmitting}
+              >
                 取消
               </ActionButton>
             </div>

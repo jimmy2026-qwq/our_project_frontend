@@ -1,7 +1,5 @@
 import type { StageStatus, TournamentStatus } from '../shared/common';
 
-export type { DashboardSummary } from './dashboard';
-
 export interface PublicSchedule {
   tournamentId: string;
   tournamentName: string;
@@ -168,3 +166,6 @@ export interface DemoSummary {
   playerLeaderboard?: PlayerLeaderboardEntry[];
   recommendedOperatorId?: string;
 }
+
+export * from './requests';
+export * from './responses';

@@ -8,7 +8,7 @@ import type {
   ClubApplicationViewContract,
   ClubContract,
   ClubMemberContract,
-} from './responses/club.responses';
+} from '@/objects/club';
 
 export function mapClub(item: ClubContract): ClubSummary {
   return {

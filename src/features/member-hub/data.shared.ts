@@ -1,7 +1,7 @@
 import type { AuthSession } from '@/objects/auth';
 import type { Role } from '@/objects/shared/common';
 import type { ClubApplicationView } from '@/objects/club';
-import type { DashboardSummary } from '@/objects/publicquery';
+import type { DashboardSummary } from '@/objects/opsanalytics';
 import type { ClubSummary } from '@/objects/publicquery';
 import type { ClubApplicationInboxItem } from '@/lib/club-applications';
 
@@ -83,8 +83,11 @@ export function createClubsById(items: ClubSummary[]) {
   return Object.fromEntries(items.map((club) => [club.id, club] as const));
 }
 
-export function buildFallbackDirectory(session: AuthSession | null): MemberHubOperatorDirectory {
-  const sessionOperatorId = session?.user.operatorId ?? session?.user.userId ?? '';
+export function buildFallbackDirectory(
+  session: AuthSession | null,
+): MemberHubOperatorDirectory {
+  const sessionOperatorId =
+    session?.user.operatorId ?? session?.user.userId ?? '';
   const sessionDisplayName = session?.user.displayName ?? 'Current User';
   const currentOperator =
     sessionOperatorId && session?.user.roles.isRegisteredPlayer
@@ -109,8 +112,13 @@ export function createMemberHubState(
   preferredOperatorId?: string,
 ): MemberHubState {
   const activeOperator =
-    directory.items.find((operator) => operator.id === preferredOperatorId) ?? directory.items[0] ?? EMPTY_OPERATOR;
-  const firstClubId = activeOperator.managedClubIds[0] ?? Object.keys(directory.clubsById)[0] ?? '';
+    directory.items.find((operator) => operator.id === preferredOperatorId) ??
+    directory.items[0] ??
+    EMPTY_OPERATOR;
+  const firstClubId =
+    activeOperator.managedClubIds[0] ??
+    Object.keys(directory.clubsById)[0] ??
+    '';
 
   return {
     operatorId: activeOperator.id,
@@ -119,7 +127,9 @@ export function createMemberHubState(
   };
 }
 
-export function toApplicationView(item: ClubApplicationInboxItem): ClubApplicationView {
+export function toApplicationView(
+  item: ClubApplicationInboxItem,
+): ClubApplicationView {
   return {
     applicationId: item.id,
     clubId: item.clubId,
@@ -141,16 +151,30 @@ export function toApplicationView(item: ClubApplicationInboxItem): ClubApplicati
   };
 }
 
-export function getActiveOperator(directory: MemberHubOperatorDirectory, operatorId: string) {
-  return directory.items.find((operator) => operator.id === operatorId) ?? directory.items[0] ?? EMPTY_OPERATOR;
+export function getActiveOperator(
+  directory: MemberHubOperatorDirectory,
+  operatorId: string,
+) {
+  return (
+    directory.items.find((operator) => operator.id === operatorId) ??
+    directory.items[0] ??
+    EMPTY_OPERATOR
+  );
 }
 
-export function normalizeClubIdForOperator(directory: MemberHubOperatorDirectory, state: MemberHubState) {
+export function normalizeClubIdForOperator(
+  directory: MemberHubOperatorDirectory,
+  state: MemberHubState,
+) {
   const activeOperator = getActiveOperator(directory, state.operatorId);
 
   if (activeOperator.managedClubIds.includes(state.clubId)) {
     return state.clubId;
   }
 
-  return activeOperator.managedClubIds[0] ?? Object.keys(directory.clubsById)[0] ?? '';
+  return (
+    activeOperator.managedClubIds[0] ??
+    Object.keys(directory.clubsById)[0] ??
+    ''
+  );
 }

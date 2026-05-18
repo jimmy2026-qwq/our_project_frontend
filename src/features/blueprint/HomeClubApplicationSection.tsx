@@ -1,6 +1,15 @@
-import { DataPanel } from './presentation';
-import { ClubApplicationList, WorkbenchGuidePanel, WorkbenchResultSummary } from './presentation';
-import { FieldGroup, SelectField, TextInputField, TextareaField } from '@/components/ui';
+import { DataPanel } from '@/components/ui';
+import {
+  ClubApplicationList,
+  WorkbenchGuidePanel,
+  WorkbenchResultSummary,
+} from '@/components/ui';
+import {
+  FieldGroup,
+  SelectField,
+  TextInputField,
+  TextareaField,
+} from '@/components/ui';
 import { ActionButton, SectionIntro } from '@/components/ui';
 import { Card, CardContent, Skeleton, StatusPill } from '@/components/ui';
 
@@ -40,14 +49,22 @@ export function HomeClubApplicationSection() {
     );
   }
 
-  const selectedPlayerName = state.playerContext.player?.displayName ?? getFallbackPlayerName(state);
+  const selectedPlayerName =
+    state.playerContext.player?.displayName ?? getFallbackPlayerName(state);
   const application = state.application.application;
-  const source = state.application.source ?? state.playerContext.source ?? state.clubs.source;
-  const warning = state.application.warning ?? state.playerContext.warning ?? state.clubs.warning;
+  const source =
+    state.application.source ??
+    state.playerContext.source ??
+    state.clubs.source;
+  const warning =
+    state.application.warning ??
+    state.playerContext.warning ??
+    state.clubs.warning;
   const applicationTone =
     application?.status === 'Approved'
       ? 'success'
-      : application?.status === 'Rejected' || application?.status === 'Withdrawn'
+      : application?.status === 'Rejected' ||
+          application?.status === 'Withdrawn'
         ? 'danger'
         : 'warning';
 
@@ -64,8 +81,10 @@ export function HomeClubApplicationSection() {
         title="Registered Player Club Application"
         description={
           <>
-            The form calls <code>POST /clubs/:clubId/applications</code> first. If the backend is unavailable, it falls
-            back to mock handling and mirrors the result into the local inbox bridge so the member hub flow stays connected.
+            The form calls <code>POST /clubs/:clubId/applications</code> first.
+            If the backend is unavailable, it falls back to mock handling and
+            mirrors the result into the local inbox bridge so the member hub
+            flow stays connected.
           </>
         }
         source={source}
@@ -73,19 +92,32 @@ export function HomeClubApplicationSection() {
         noteTitle="Current migration state"
         noteBody={
           <span>
-            The operator is derived from the active login session rather than a page-local selector, which keeps the
-            application flow aligned with real user identity.
+            The operator is derived from the active login session rather than a
+            page-local selector, which keeps the application flow aligned with
+            real user identity.
           </span>
         }
       >
         <FieldGroup className="guest-flow__form">
-          <TextInputField label="Current applicant" value={selectedPlayerName} readOnly />
-          <TextInputField label="Current operatorId" value={state.operatorId} readOnly />
+          <TextInputField
+            label="Current applicant"
+            value={selectedPlayerName}
+            readOnly
+          />
+          <TextInputField
+            label="Current operatorId"
+            value={state.operatorId}
+            readOnly
+          />
           <SelectField
             label="Target club"
             value={state.clubId}
             onChange={(event) =>
-              setState((current) => (current ? { ...current, clubId: event.currentTarget.value } : current))
+              setState((current) =>
+                current
+                  ? { ...current, clubId: event.currentTarget.value }
+                  : current,
+              )
             }
           >
             {state.clubs.items.map((club) => (
@@ -99,13 +131,22 @@ export function HomeClubApplicationSection() {
             rows={4}
             value={state.message}
             onChange={(event) =>
-              setState((current) => (current ? { ...current, message: event.currentTarget.value } : current))
+              setState((current) =>
+                current
+                  ? { ...current, message: event.currentTarget.value }
+                  : current,
+              )
             }
           />
         </FieldGroup>
         <div className="public-join-card__actions">
-          <ActionButton onClick={() => void handleSubmit()}>Submit club application</ActionButton>
-          <ActionButton disabled={!application || application.status !== 'Pending'} onClick={() => void handleWithdraw()}>
+          <ActionButton onClick={() => void handleSubmit()}>
+            Submit club application
+          </ActionButton>
+          <ActionButton
+            disabled={!application || application.status !== 'Pending'}
+            onClick={() => void handleWithdraw()}
+          >
             Withdraw current application
           </ActionButton>
           <ActionButton onClick={() => void refreshCurrentApplication()}>
@@ -116,13 +157,24 @@ export function HomeClubApplicationSection() {
           <WorkbenchResultSummary
             headline={
               <>
-                {selectedPlayerName} {'->'} {getSelectedClubName(application.clubId, state.clubs.items)}
+                {selectedPlayerName} {'->'}{' '}
+                {getSelectedClubName(application.clubId, state.clubs.items)}
               </>
             }
             items={[
-              { label: 'Status', value: <StatusPill tone={applicationTone}>{application.status}</StatusPill> },
+              {
+                label: 'Status',
+                value: (
+                  <StatusPill tone={applicationTone}>
+                    {application.status}
+                  </StatusPill>
+                ),
+              },
               { label: 'Application id', value: application.id },
-              { label: 'Submitted at', value: formatDateTime(application.createdAt) },
+              {
+                label: 'Submitted at',
+                value: formatDateTime(application.createdAt),
+              },
               { label: 'Note', value: application.message },
             ]}
           />
@@ -134,7 +186,8 @@ export function HomeClubApplicationSection() {
               { label: 'Current operatorId', value: state.operatorId },
               {
                 label: 'Bridge behavior',
-                value: 'The result will also be mirrored into the local inbox bridge so the member hub flow can continue.',
+                value:
+                  'The result will also be mirrored into the local inbox bridge so the member hub flow can continue.',
               },
             ]}
           />

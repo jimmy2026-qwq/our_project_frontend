@@ -1,5 +1,10 @@
 import { EmptyState } from '@/components/ui';
-import { CheckboxField, FieldGroup, SelectField, TextareaField } from '@/components/ui';
+import {
+  CheckboxField,
+  FieldGroup,
+  SelectField,
+  TextareaField,
+} from '@/components/ui';
 import {
   Alert,
   AlertDescription,
@@ -11,7 +16,11 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui';
-import type { SeatWind, TableDetail, TournamentTableSummary } from '@/objects/tournament';
+import type {
+  SeatWind,
+  TableDetail,
+  TournamentTableSummary,
+} from '@/objects/tournament';
 
 import { getTableStatusLabel } from './status';
 
@@ -72,9 +81,12 @@ export function TableActionPanel({
 }: TableActionPanelProps) {
   const canOperate = Boolean(table && operatorId && canManageActions);
   const playerLabel = table?.playerIds?.length
-    ? table.playerIds.map((playerId) => playerNames[playerId] ?? playerId).join(', ')
+    ? table.playerIds
+        .map((playerId) => playerNames[playerId] ?? playerId)
+        .join(', ')
     : '暂无玩家信息';
-  const selectedSeat = tableDetail?.seats.find((seat) => seat.seat === seatWind) ?? null;
+  const selectedSeat =
+    tableDetail?.seats.find((seat) => seat.seat === seatWind) ?? null;
   const isWaitingTable = table?.status === 'WaitingPreparation';
   const isArchivedTable = table?.status === 'Archived';
   const isStartedTable = Boolean(table && !isWaitingTable && !isArchivedTable);
@@ -97,17 +109,22 @@ export function TableActionPanel({
             <strong>{table.tableCode}</strong>
             <span>{table.id}</span>
             <span>
-              {getTableStatusLabel(table.status)} / {table.seatCount} 个座位 / {playerLabel}
+              {getTableStatusLabel(table.status)} / {table.seatCount} 个座位 /{' '}
+              {playerLabel}
             </span>
           </div>
         ) : (
-          <EmptyState asListItem={false}>请先从左侧牌桌列表中选择一张桌子。</EmptyState>
+          <EmptyState asListItem={false}>
+            请先从左侧牌桌列表中选择一张桌子。
+          </EmptyState>
         )}
 
         {!operatorId && canManageActions ? (
           <Alert variant="warning">
             <AlertTitle>当前没有可用操作员身份</AlertTitle>
-            <AlertDescription>请先使用已注册账号登录，再进行赛事管理操作。</AlertDescription>
+            <AlertDescription>
+              请先使用已注册账号登录，再进行赛事管理操作。
+            </AlertDescription>
           </Alert>
         ) : null}
 
@@ -133,7 +150,9 @@ export function TableActionPanel({
               <SelectField
                 label="座位"
                 value={seatWind}
-                onChange={(event) => onSeatWindChange(event.currentTarget.value as SeatWind)}
+                onChange={(event) =>
+                  onSeatWindChange(event.currentTarget.value as SeatWind)
+                }
                 disabled={!canOperate || isSubmitting}
               >
                 <option value="East">东</option>
@@ -146,7 +165,8 @@ export function TableActionPanel({
                   <strong>{selectedSeat.seat}</strong>
                   <span>玩家：{selectedSeat.playerId}</span>
                   <span>
-                    已准备：{selectedSeat.ready ? '是' : '否'} / 已断线：{selectedSeat.disconnected ? '是' : '否'}
+                    已准备：{selectedSeat.ready ? '是' : '否'} / 已断线：
+                    {selectedSeat.disconnected ? '是' : '否'}
                   </span>
                 </div>
               ) : null}
@@ -154,13 +174,17 @@ export function TableActionPanel({
                 <CheckboxField
                   label="已准备"
                   checked={seatReady}
-                  onChange={(event) => onSeatReadyChange(event.currentTarget.checked)}
+                  onChange={(event) =>
+                    onSeatReadyChange(event.currentTarget.checked)
+                  }
                   disabled={!canOperate || isSubmitting}
                 />
                 <CheckboxField
                   label="已断线"
                   checked={seatDisconnected}
-                  onChange={(event) => onSeatDisconnectedChange(event.currentTarget.checked)}
+                  onChange={(event) =>
+                    onSeatDisconnectedChange(event.currentTarget.checked)
+                  }
                   disabled={!canOperate || isSubmitting}
                 />
               </div>
@@ -168,18 +192,26 @@ export function TableActionPanel({
                 label="座位状态备注"
                 value={seatNote}
                 placeholder="可选，填写这次座位状态更新的备注。"
-                onChange={(event) => onSeatNoteChange(event.currentTarget.value)}
+                onChange={(event) =>
+                  onSeatNoteChange(event.currentTarget.value)
+                }
                 rows={3}
                 disabled={!canOperate || isSubmitting}
               />
-              <Button variant="secondary" onClick={onUpdateSeatState} disabled={!canOperate || isSubmitting}>
+              <Button
+                variant="secondary"
+                onClick={onUpdateSeatState}
+                disabled={!canOperate || isSubmitting}
+              >
                 更新座位状态
               </Button>
               <TextareaField
                 label="重置备注"
                 value={resetNote}
                 placeholder="请填写强制重置这张牌桌的原因。"
-                onChange={(event) => onResetNoteChange(event.currentTarget.value)}
+                onChange={(event) =>
+                  onResetNoteChange(event.currentTarget.value)
+                }
                 rows={3}
                 disabled={!canOperate || isSubmitting}
               />
@@ -187,20 +219,33 @@ export function TableActionPanel({
                 label="申诉说明"
                 value={appealDescription}
                 placeholder="请描述需要复核的问题。"
-                onChange={(event) => onAppealDescriptionChange(event.currentTarget.value)}
+                onChange={(event) =>
+                  onAppealDescriptionChange(event.currentTarget.value)
+                }
                 rows={4}
                 disabled={!canOperate || isSubmitting}
               />
             </FieldGroup>
 
             <div className="flex flex-wrap gap-3">
-              <Button onClick={onStartTable} disabled={!canOperate || isSubmitting}>
+              <Button
+                onClick={onStartTable}
+                disabled={!canOperate || isSubmitting}
+              >
                 开始牌桌
               </Button>
-              <Button variant="danger" onClick={onResetTable} disabled={!canOperate || isSubmitting}>
+              <Button
+                variant="danger"
+                onClick={onResetTable}
+                disabled={!canOperate || isSubmitting}
+              >
                 强制重置
               </Button>
-              <Button variant="outline" onClick={onFileAppeal} disabled={!canOperate || isSubmitting}>
+              <Button
+                variant="outline"
+                onClick={onFileAppeal}
+                disabled={!canOperate || isSubmitting}
+              >
                 发起申诉
               </Button>
             </div>
@@ -218,7 +263,11 @@ export function TableActionPanel({
               </Alert>
             ) : null}
             <div className="flex flex-wrap gap-3">
-              <Button variant="secondary" onClick={onOpenTablePage} disabled={!table}>
+              <Button
+                variant="secondary"
+                onClick={onOpenTablePage}
+                disabled={!table}
+              >
                 进入牌桌
               </Button>
             </div>
@@ -227,7 +276,11 @@ export function TableActionPanel({
 
         {isArchivedTable ? (
           <div className="flex flex-wrap gap-3">
-            <Button variant="secondary" onClick={onOpenPaifuPage} disabled={!table}>
+            <Button
+              variant="secondary"
+              onClick={onOpenPaifuPage}
+              disabled={!table}
+            >
               查看牌谱
             </Button>
           </div>

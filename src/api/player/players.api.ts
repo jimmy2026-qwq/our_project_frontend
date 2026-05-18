@@ -1,8 +1,7 @@
 import { toQueryString } from '@/lib/query';
 import { request, sendJson } from '../shared/http';
 import { mapPlayerProfile } from './mappers';
-import type { CreatePlayerPayload } from './requests/players.requests';
-import type { CreatedPlayerContract, PlayerProfileContract } from './responses/players.responses';
+import type { CreatePlayerPayload, CreatedPlayerContract, PlayerProfileContract } from '@/objects/player';
 import { buildCreatePlayerRequest } from './transport';
 
 export const playerApi = {

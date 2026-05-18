@@ -1,4 +1,8 @@
-import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/objects/publicquery';
+import type {
+  ClubSummary,
+  PlayerLeaderboardEntry,
+  PublicSchedule,
+} from '@/objects/publicquery';
 
 import type { LoadState, PublicView } from '../types';
 

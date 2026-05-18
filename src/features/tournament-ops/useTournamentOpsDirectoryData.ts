@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import {
-  loadTournamentDirectory,
-  type TournamentDirectoryState,
-} from './data';
+import { loadTournamentDirectory, type TournamentDirectoryState } from './data';
 
 export function useTournamentOpsDirectoryData(reloadKey = 0) {
-  const [directory, setDirectory] = useState<TournamentDirectoryState | null>(null);
+  const [directory, setDirectory] = useState<TournamentDirectoryState | null>(
+    null,
+  );
   const [isLoadingDirectory, setIsLoadingDirectory] = useState(true);
 
   useEffect(() => {

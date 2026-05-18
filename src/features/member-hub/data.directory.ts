@@ -35,7 +35,9 @@ export async function loadMemberHubOperatorDirectory(
         label: `${currentDisplayName} / ${isAdmin ? 'Club Admin' : 'Registered Player'}`,
         role: isAdmin ? 'ClubAdmin' : 'RegisteredPlayer',
         playerId: currentOperatorId,
-        managedClubIds: isAdmin ? currentOperatorClubs.items.map((club) => club.id) : [],
+        managedClubIds: isAdmin
+          ? currentOperatorClubs.items.map((club) => club.id)
+          : [],
       });
     }
 
@@ -51,7 +53,10 @@ export async function loadMemberHubOperatorDirectory(
   } catch (error) {
     return {
       ...fallback,
-      warning: error instanceof Error ? error.message : 'Unable to load operator directory.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load operator directory.',
     };
   }
 }

@@ -1,9 +1,8 @@
 import type { ListEnvelope } from '@/objects';
+import type { ClubContract, ClubFilters, CreateClubPayload } from '@/objects/club';
 import { toQueryString } from '@/lib/query';
-import type { ClubContract } from './responses/club.responses';
 import { mapEnvelope, request, sendJson } from '../shared/http';
 import { mapClub } from './mappers';
-import type { ClubFilters, CreateClubPayload } from './requests/core.requests';
 
 export const clubsCoreApi = {
   getClub(clubId: string) {

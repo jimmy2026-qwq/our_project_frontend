@@ -20,7 +20,9 @@ export function RegisterPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasRegisteredSession =
-    !!session && session.user.roles.isRegisteredPlayer && !session.user.roles.isGuest;
+    !!session &&
+    session.user.roles.isRegisteredPlayer &&
+    !session.user.roles.isGuest;
 
   if (isReady && hasRegisteredSession) {
     return <Navigate replace to="/" />;
@@ -32,7 +34,12 @@ export function RegisterPage() {
     const normalizedPassword = normalizeInput(password);
     const normalizedConfirmPassword = normalizeInput(confirmPassword);
 
-    if (!normalizedDisplayName || !normalizedUsername || !normalizedPassword || !normalizedConfirmPassword) {
+    if (
+      !normalizedDisplayName ||
+      !normalizedUsername ||
+      !normalizedPassword ||
+      !normalizedConfirmPassword
+    ) {
       setErrorMessage('请完整填写注册信息。');
       return;
     }
@@ -55,7 +62,9 @@ export function RegisterPage() {
       notifySuccess('注册成功', `欢迎你，${nextSession.user.displayName}。`);
       navigate('/', { replace: true });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '注册失败，请稍后重试。');
+      setErrorMessage(
+        error instanceof Error ? error.message : '注册失败，请稍后重试。',
+      );
     } finally {
       setIsSubmitting(false);
     }

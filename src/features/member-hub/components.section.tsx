@@ -1,10 +1,14 @@
-import { WorkbenchContextPanel } from './presentation';
+import { WorkbenchContextPanel } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { SelectField } from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
 
 import { getActiveOperator } from './data';
-import { ApplicationInboxPanel, DashboardPanel, DashboardPlaceholder } from './components.panels';
+import {
+  ApplicationInboxPanel,
+  DashboardPanel,
+  DashboardPlaceholder,
+} from './components.panels';
 import type { MemberHubPageSectionProps } from './components.types';
 
 export function MemberHubPageSection({
@@ -34,7 +38,9 @@ export function MemberHubPageSection({
           title="Member Workspace"
           description="This workspace now depends on live backend operator and dashboard data."
         />
-        <EmptyState>No member hub operator context is available for the current session.</EmptyState>
+        <EmptyState>
+          No member hub operator context is available for the current session.
+        </EmptyState>
       </section>
     );
   }
@@ -53,24 +59,37 @@ export function MemberHubPageSection({
         description="Switch operator scope and dashboard targets without pushing that state back into the page shell."
         onReload={onReload}
       >
-        <SelectField label="Operator" value={state.operatorId} onChange={(event) => onChangeOperator(event.currentTarget.value)}>
+        <SelectField
+          label="Operator"
+          value={state.operatorId}
+          onChange={(event) => onChangeOperator(event.currentTarget.value)}
+        >
           {directory.items.map((operator) => (
             <option key={operator.id} value={operator.id}>
               {operator.label}
             </option>
           ))}
         </SelectField>
-        <SelectField label="Player dashboard" value={state.playerId} onChange={(event) => onChangePlayer(event.currentTarget.value)}>
+        <SelectField
+          label="Player dashboard"
+          value={state.playerId}
+          onChange={(event) => onChangePlayer(event.currentTarget.value)}
+        >
           {playerOptions.map((player) => (
             <option key={player.value} value={player.value}>
               {player.label}
             </option>
           ))}
         </SelectField>
-        <SelectField label="Managed club" value={state.clubId} onChange={(event) => onChangeClub(event.currentTarget.value)}>
+        <SelectField
+          label="Managed club"
+          value={state.clubId}
+          onChange={(event) => onChangeClub(event.currentTarget.value)}
+        >
           {clubOptions.map((club) => {
             const disabled =
-              activeOperator.role !== 'ClubAdmin' || !activeOperator.managedClubIds.includes(club.id);
+              activeOperator.role !== 'ClubAdmin' ||
+              !activeOperator.managedClubIds.includes(club.id);
 
             return (
               <option key={club.id} value={club.id} disabled={disabled}>
@@ -82,7 +101,12 @@ export function MemberHubPageSection({
       </WorkbenchContextPanel>
 
       <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">
-        <ApplicationInboxPanel directory={directory} state={state} payload={inboxPayload} onReview={onReview} />
+        <ApplicationInboxPanel
+          directory={directory}
+          state={state}
+          payload={inboxPayload}
+          onReview={onReview}
+        />
       </div>
 
       <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">
@@ -101,7 +125,9 @@ export function MemberHubPageSection({
           />
         )}
 
-        {activeOperator.role === 'ClubAdmin' && clubPayload.source === 'api' && clubPayload.dashboard ? (
+        {activeOperator.role === 'ClubAdmin' &&
+        clubPayload.source === 'api' &&
+        clubPayload.dashboard ? (
           <DashboardPanel
             title="Club Dashboard"
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}

@@ -4,13 +4,22 @@ import { clubsApi } from '@/api/club';
 import type { AuthSession, PlayerProfile } from '@/objects/auth';
 import type { ClubApplication, ClubApplicationView } from '@/objects/club';
 import type { ClubPublicProfile } from '@/objects/publicquery';
-import { loadPlayerContext, loadTrackedApplication } from '@/features/blueprint/application-data';
+import {
+  loadPlayerContext,
+  loadTrackedApplication,
+} from '@/features/blueprint/application-data';
 import { useDialog, useMutationNotice } from '@/hooks';
-import { hasClubAdminOverride, upsertClubAdminOverride } from '@/lib/club-admin-overrides';
+import {
+  hasClubAdminOverride,
+  upsertClubAdminOverride,
+} from '@/lib/club-admin-overrides';
 import { upsertClubApplicationInboxItem } from '@/lib/club-applications';
 
 import type { DetailState } from '../types';
-import type { ClubAdminMemberEntry, ClubDetailWorkbenchState } from './club-detail.types';
+import type {
+  ClubAdminMemberEntry,
+  ClubDetailWorkbenchState,
+} from './club-detail.types';
 
 interface UseClubDetailWorkbenchParams {
   state: DetailState<ClubPublicProfile>;
@@ -18,10 +27,7 @@ interface UseClubDetailWorkbenchParams {
   onRefreshDetail?: () => void;
 }
 
-async function resolveClubAdminAccess(
-  clubId: string,
-  playerId: string,
-) {
+async function resolveClubAdminAccess(clubId: string, playerId: string) {
   try {
     const club = await clubsApi.getClub(clubId);
 
@@ -56,7 +62,8 @@ async function loadClubMemberAdminEntries(
     !members.some(
       (member) =>
         member.playerId === currentPlayer.playerId ||
-        (!!member.applicantUserId && member.applicantUserId === currentPlayer.applicantUserId),
+        (!!member.applicantUserId &&
+          member.applicantUserId === currentPlayer.applicantUserId),
     )
   ) {
     members.unshift(currentPlayer);
@@ -65,10 +72,14 @@ async function loadClubMemberAdminEntries(
   return members
     .map((member) => ({
       ...member,
-      isAdmin: adminIds.has(member.playerId) || hasClubAdminOverride(clubId, member.playerId),
+      isAdmin:
+        adminIds.has(member.playerId) ||
+        hasClubAdminOverride(clubId, member.playerId),
       isCurrentUser:
         (!!currentPlayer && member.playerId === currentPlayer.playerId) ||
-        (!currentPlayer && !!member.applicantUserId && member.applicantUserId === currentOperatorId),
+        (!currentPlayer &&
+          !!member.applicantUserId &&
+          member.applicantUserId === currentOperatorId),
     }))
     .sort((left, right) => {
       if (left.isCurrentUser !== right.isCurrentUser) {
@@ -92,14 +103,20 @@ export function useClubDetailWorkbench({
   const { notifyMutationResult } = useMutationNotice();
   const [isApplicationDialogOpen, setIsApplicationDialogOpen] = useState(false);
   const [isLineupDialogOpen, setIsLineupDialogOpen] = useState(false);
-  const [selectedLineupTournament, setSelectedLineupTournament] =
-    useState<ClubPublicProfile['activeTournaments'][number] | null>(null);
+  const [selectedLineupTournament, setSelectedLineupTournament] = useState<
+    ClubPublicProfile['activeTournaments'][number] | null
+  >(null);
   const [isCurrentMember, setIsCurrentMember] = useState(false);
   const [isCurrentClubAdmin, setIsCurrentClubAdmin] = useState(false);
   const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);
-  const [currentPlayerProfile, setCurrentPlayerProfile] = useState<PlayerProfile | null>(null);
-  const [currentApplicationStatus, setCurrentApplicationStatus] = useState<ClubApplication['status'] | null>(null);
-  const [applicationInbox, setApplicationInbox] = useState<ClubApplicationView[]>([]);
+  const [currentPlayerProfile, setCurrentPlayerProfile] =
+    useState<PlayerProfile | null>(null);
+  const [currentApplicationStatus, setCurrentApplicationStatus] = useState<
+    ClubApplication['status'] | null
+  >(null);
+  const [applicationInbox, setApplicationInbox] = useState<
+    ClubApplicationView[]
+  >([]);
   const [isInboxLoading, setIsInboxLoading] = useState(false);
   const [clubMembers, setClubMembers] = useState<ClubAdminMemberEntry[]>([]);
   const [isClubMembersLoading, setIsClubMembersLoading] = useState(false);
@@ -110,7 +127,9 @@ export function useClubDetailWorkbench({
     !!session?.user.roles.isRegisteredPlayer &&
     !!profile &&
     profile.featuredPlayers.some(
-      (name) => name.trim().toLowerCase() === session.user.displayName.trim().toLowerCase(),
+      (name) =>
+        name.trim().toLowerCase() ===
+        session.user.displayName.trim().toLowerCase(),
     );
 
   useEffect(() => {
@@ -127,20 +146,28 @@ export function useClubDetailWorkbench({
 
     const refreshMembershipStatus = () => {
       void (async () => {
-        const playerContext = await loadPlayerContext(operatorId, session.user.displayName);
+        const playerContext = await loadPlayerContext(
+          operatorId,
+          session.user.displayName,
+        );
 
         if (cancelled) {
           return;
         }
 
-        const adminLookupPlayerId = playerContext.player?.playerId ?? operatorId;
-        const isAdmin = await resolveClubAdminAccess(clubId, adminLookupPlayerId);
+        const adminLookupPlayerId =
+          playerContext.player?.playerId ?? operatorId;
+        const isAdmin = await resolveClubAdminAccess(
+          clubId,
+          adminLookupPlayerId,
+        );
 
         if (cancelled) {
           return;
         }
 
-        const isMember = playerContext.player?.clubIds?.includes(clubId) ?? false;
+        const isMember =
+          playerContext.player?.clubIds?.includes(clubId) ?? false;
         setCurrentPlayerProfile(playerContext.player);
         setIsCurrentMember(isMember);
         setIsCurrentClubAdmin(isAdmin);
@@ -174,7 +201,11 @@ export function useClubDetailWorkbench({
   }, [isApplicationDialogOpen, profile, session]);
 
   useEffect(() => {
-    if (!session?.user.roles.isRegisteredPlayer || !profile || !isCurrentClubAdmin) {
+    if (
+      !session?.user.roles.isRegisteredPlayer ||
+      !profile ||
+      !isCurrentClubAdmin
+    ) {
       setApplicationInbox([]);
       setIsInboxLoading(false);
       return;
@@ -225,7 +256,9 @@ export function useClubDetailWorkbench({
       .then((envelope) => {
         if (!cancelled) {
           setClubMemberNames(
-            envelope.items.map((item) => item.displayName).filter((name) => name.trim().length > 0),
+            envelope.items
+              .map((item) => item.displayName)
+              .filter((name) => name.trim().length > 0),
           );
         }
       })
@@ -241,7 +274,11 @@ export function useClubDetailWorkbench({
   }, [profile]);
 
   useEffect(() => {
-    if (!session?.user.roles.isRegisteredPlayer || !profile || !isCurrentClubAdmin) {
+    if (
+      !session?.user.roles.isRegisteredPlayer ||
+      !profile ||
+      !isCurrentClubAdmin
+    ) {
       setClubMembers([]);
       setIsClubMembersLoading(false);
       return;
@@ -251,7 +288,11 @@ export function useClubDetailWorkbench({
     const currentOperatorId = session.user.operatorId ?? session.user.userId;
     setIsClubMembersLoading(true);
 
-    void loadClubMemberAdminEntries(profile.id, currentOperatorId, currentPlayerProfile)
+    void loadClubMemberAdminEntries(
+      profile.id,
+      currentOperatorId,
+      currentPlayerProfile,
+    )
       .then((entries) => {
         if (!cancelled) {
           setClubMembers(entries);
@@ -281,14 +322,20 @@ export function useClubDetailWorkbench({
     const isClubMember = isCurrentMember || isFeaturedMember;
     const featuredPlayerNames = Array.from(
       new Map(
-        [...profile.featuredPlayers, ...clubMemberNames].map((name) => [name.trim().toLowerCase(), name]),
+        [...profile.featuredPlayers, ...clubMemberNames].map((name) => [
+          name.trim().toLowerCase(),
+          name,
+        ]),
       ).values(),
     );
     const canApply = !!session?.user.roles.isRegisteredPlayer && !isClubMember;
     const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
-    const actionableTournaments = profile.activeTournaments.filter((item) => item.canSubmitLineup);
+    const actionableTournaments = profile.activeTournaments.filter(
+      (item) => item.canSubmitLineup,
+    );
     const canManageLineup =
-      !!session?.user.roles.isRegisteredPlayer && actionableTournaments.length > 0;
+      !!session?.user.roles.isRegisteredPlayer &&
+      actionableTournaments.length > 0;
 
     return {
       profile,
@@ -328,7 +375,10 @@ export function useClubDetailWorkbench({
     session,
   ]);
 
-  async function handleReview(applicationId: string, decision: 'approve' | 'reject') {
+  async function handleReview(
+    applicationId: string,
+    decision: 'approve' | 'reject',
+  ) {
     if (!workbench?.profile.id || !workbench.operatorId) {
       return;
     }
@@ -346,7 +396,9 @@ export function useClubDetailWorkbench({
       return;
     }
 
-    const application = workbench.applicationInbox.find((item) => item.applicationId === applicationId);
+    const application = workbench.applicationInbox.find(
+      (item) => item.applicationId === applicationId,
+    );
 
     const result = await clubsApi
       .reviewClubApplication(workbench.profile.id, applicationId, {
@@ -386,7 +438,9 @@ export function useClubDetailWorkbench({
       fallbackMessage: '后端处理这次申请时没有完全成功。',
     });
 
-    setApplicationInbox((current) => current.filter((item) => item.applicationId !== applicationId));
+    setApplicationInbox((current) =>
+      current.filter((item) => item.applicationId !== applicationId),
+    );
 
     if (decision === 'reject') {
       setCurrentApplicationStatus('Rejected');
@@ -394,7 +448,11 @@ export function useClubDetailWorkbench({
   }
 
   async function refreshClubMembers() {
-    if (!profile || !isCurrentClubAdmin || !session?.user.roles.isRegisteredPlayer) {
+    if (
+      !profile ||
+      !isCurrentClubAdmin ||
+      !session?.user.roles.isRegisteredPlayer
+    ) {
       return;
     }
 
@@ -402,7 +460,13 @@ export function useClubDetailWorkbench({
 
     try {
       const currentOperatorId = session.user.operatorId ?? session.user.userId;
-      setClubMembers(await loadClubMemberAdminEntries(profile.id, currentOperatorId, currentPlayerProfile));
+      setClubMembers(
+        await loadClubMemberAdminEntries(
+          profile.id,
+          currentOperatorId,
+          currentPlayerProfile,
+        ),
+      );
     } finally {
       setIsClubMembersLoading(false);
     }
@@ -428,12 +492,15 @@ export function useClubDetailWorkbench({
       operatorId: workbench.operatorId,
     });
 
-    notifyMutationResult({ source: 'api' as const }, {
-      successTitle: '管理员设置成功',
-      successMessage: `${member.displayName} 现在可以管理该俱乐部。`,
-      fallbackTitle: '管理员设置需要关注',
-      fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
-    });
+    notifyMutationResult(
+      { source: 'api' as const },
+      {
+        successTitle: '管理员设置成功',
+        successMessage: `${member.displayName} 现在可以管理该俱乐部。`,
+        fallbackTitle: '管理员设置需要关注',
+        fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
+      },
+    );
 
     upsertClubAdminOverride(profile.id, member.playerId);
     const updatedAdminIds = new Set(updatedClub.admins ?? []);
@@ -494,7 +561,9 @@ export function useClubDetailWorkbench({
     }
   }
 
-  function handleApplicationStatusChange(status: ClubApplication['status'] | null) {
+  function handleApplicationStatusChange(
+    status: ClubApplication['status'] | null,
+  ) {
     setCurrentApplicationStatus(status);
   }
 

@@ -1,7 +1,17 @@
 import { useEffect, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-import { Alert, AlertDescription, Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Input } from '@/components/ui';
+import {
+  Alert,
+  AlertDescription,
+  Button,
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+  Input,
+} from '@/components/ui';
 import { cx } from '@/lib/cx';
 
 interface AuthField {
@@ -32,7 +42,9 @@ interface AuthScreenProps {
 function AuthFieldInput({ field }: { field: AuthField }) {
   return (
     <label htmlFor={field.id} className="grid gap-2">
-      <span className="text-sm font-medium text-[color:var(--text)]">{field.label}</span>
+      <span className="text-sm font-medium text-[color:var(--text)]">
+        {field.label}
+      </span>
       <Input
         id={field.id}
         type={field.type ?? 'text'}
@@ -75,18 +87,26 @@ export function AuthScreen({
             {eyebrow}
           </p>
           <div className="grid gap-4">
-            <h1 className="max-w-xl text-4xl font-semibold leading-tight text-[#c7d0d8] sm:text-5xl">{title}</h1>
+            <h1 className="max-w-xl text-4xl font-semibold leading-tight text-[#c7d0d8] sm:text-5xl">
+              {title}
+            </h1>
             {description ? (
-              <p className="max-w-xl text-base leading-8 text-[color:var(--muted)]">{description}</p>
+              <p className="max-w-xl text-base leading-8 text-[color:var(--muted)]">
+                {description}
+              </p>
             ) : null}
           </div>
         </div>
 
         <Card className="border-[rgba(255,255,255,0.08)] bg-[rgba(6,17,26,0.84)]">
           <CardHeader className="grid gap-3 border-b border-[color:var(--line)]">
-            <p className="text-sm uppercase tracking-[0.22em] text-[color:var(--gold)]">{eyebrow}</p>
+            <p className="text-sm uppercase tracking-[0.22em] text-[color:var(--gold)]">
+              {eyebrow}
+            </p>
             <CardTitle className="text-2xl text-white">{title}</CardTitle>
-            {description ? <CardDescription>{description}</CardDescription> : null}
+            {description ? (
+              <CardDescription>{description}</CardDescription>
+            ) : null}
           </CardHeader>
           <CardContent className="grid gap-5">
             <form
@@ -100,9 +120,16 @@ export function AuthScreen({
                 <AuthFieldInput key={field.id} field={field} />
               ))}
 
-              <div className={cx('min-h-16', errorMessage ? 'opacity-100' : 'opacity-0')}>
+              <div
+                className={cx(
+                  'min-h-16',
+                  errorMessage ? 'opacity-100' : 'opacity-0',
+                )}
+              >
                 <Alert variant="danger">
-                  <AlertDescription>{errorMessage || 'placeholder'}</AlertDescription>
+                  <AlertDescription>
+                    {errorMessage || 'placeholder'}
+                  </AlertDescription>
                 </Alert>
               </div>
 
@@ -111,11 +138,16 @@ export function AuthScreen({
               </Button>
             </form>
 
-            {extraActions ? <div className="grid gap-3">{extraActions}</div> : null}
+            {extraActions ? (
+              <div className="grid gap-3">{extraActions}</div>
+            ) : null}
 
             <p className="text-sm text-[color:var(--muted)]">
               {footerPrompt}{' '}
-              <Link className="text-[color:var(--teal-strong)] no-underline hover:text-[#b2f4ef]" to={footerLinkTo}>
+              <Link
+                className="text-[color:var(--teal-strong)] no-underline hover:text-[#b2f4ef]"
+                to={footerLinkTo}
+              >
                 {footerLinkLabel}
               </Link>
             </p>

@@ -1,4 +1,8 @@
-import { InfoSummaryCard, InfoSummaryGrid, MetadataCard } from './presentation';
+import {
+  InfoSummaryCard,
+  InfoSummaryGrid,
+  MetadataCard,
+} from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
 import { Separator } from '@/components/ui';
 import { featureModules } from '@/config/modules';
@@ -32,8 +36,12 @@ export function BlueprintArchitectureSection() {
             details={
               <>
                 <Separator />
-                <p><strong>Key entities</strong> {module.entities.join(' / ')}</p>
-                <p><strong>Main entry points</strong> {module.routes.join(' | ')}</p>
+                <p>
+                  <strong>Key entities</strong> {module.entities.join(' / ')}
+                </p>
+                <p>
+                  <strong>Main entry points</strong> {module.routes.join(' | ')}
+                </p>
               </>
             }
           />

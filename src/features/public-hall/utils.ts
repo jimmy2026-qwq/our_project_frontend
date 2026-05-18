@@ -44,7 +44,9 @@ export function getRelationLabel(relation: ClubSummary['relations'][number]) {
   return relation === 'Alliance' ? '联盟' : '对抗';
 }
 
-export function getLeaderboardStatusLabel(status: PlayerLeaderboardEntry['status'] | '') {
+export function getLeaderboardStatusLabel(
+  status: PlayerLeaderboardEntry['status'] | '',
+) {
   return (
     {
       '': '全部玩家',

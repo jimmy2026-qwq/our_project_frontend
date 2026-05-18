@@ -35,8 +35,14 @@ export function useHomeClubApplication() {
       const clubs = await loadJoinableClubs();
       const initialOperatorId = session.user.operatorId ?? session.user.userId;
       const initialClubId = clubs.items[0]?.id ?? 'club-1';
-      const playerContext = await loadPlayerContext(initialOperatorId, session.user.displayName);
-      const application = await loadTrackedApplication(initialOperatorId, initialClubId);
+      const playerContext = await loadPlayerContext(
+        initialOperatorId,
+        session.user.displayName,
+      );
+      const application = await loadTrackedApplication(
+        initialOperatorId,
+        initialClubId,
+      );
 
       if (!cancelled) {
         setState({
@@ -140,7 +146,10 @@ export function useHomeClubApplication() {
         fallbackMessage: 'The request could not be fully confirmed.',
       });
     } catch (error) {
-      notifyWarning('Club application failed', error instanceof Error ? error.message : '提交申请失败，请稍后再试。');
+      notifyWarning(
+        'Club application failed',
+        error instanceof Error ? error.message : '提交申请失败，请稍后再试。',
+      );
     }
   }
 
@@ -151,7 +160,8 @@ export function useHomeClubApplication() {
 
     const confirmed = await confirmDanger({
       title: 'Withdraw current application?',
-      message: 'This will mark the current club application as withdrawn and sync the result back into the local flow.',
+      message:
+        'This will mark the current club application as withdrawn and sync the result back into the local flow.',
       confirmText: 'Withdraw',
     });
 
@@ -180,7 +190,10 @@ export function useHomeClubApplication() {
         fallbackMessage: 'The withdraw request could not be fully confirmed.',
       });
     } catch (error) {
-      notifyWarning('Withdraw failed', error instanceof Error ? error.message : '撤回申请失败，请稍后再试。');
+      notifyWarning(
+        'Withdraw failed',
+        error instanceof Error ? error.message : '撤回申请失败，请稍后再试。',
+      );
     }
   }
 

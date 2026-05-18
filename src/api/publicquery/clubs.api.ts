@@ -2,7 +2,7 @@ import type { ListEnvelope } from '@/objects';
 import type {
   PublicClubDetailContract,
   PublicClubDirectoryEntryContract,
-} from './responses/publicquery.responses';
+} from '@/objects/publicquery';
 import {
   mapPublicClub,
   mapPublicClubDetail,

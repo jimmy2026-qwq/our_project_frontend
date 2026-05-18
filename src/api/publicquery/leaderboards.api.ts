@@ -1,8 +1,7 @@
 import type { ListEnvelope } from '@/objects';
+import type { PlayerLeaderboardEntryContract, PlayerLeaderboardFilters } from '@/objects/publicquery';
 import { toQueryString } from '@/lib/query';
-import type { PlayerLeaderboardEntryContract } from './responses/publicquery.responses';
 import { request } from '../shared/http';
-import type { PlayerLeaderboardFilters } from './requests/publicquery.requests';
 
 export const publicLeaderboardsApi = {
   getPublicPlayerLeaderboard(filters: PlayerLeaderboardFilters) {

@@ -64,8 +64,22 @@ describe('member-hub data.shared', () => {
         },
       ],
       clubsById: {
-        'club-1': { id: 'club-1', name: 'Fallback Club', memberCount: 4, powerRating: 1200, treasury: 0, relations: [] },
-        'club-2': { id: 'club-2', name: 'Managed Club', memberCount: 8, powerRating: 1600, treasury: 100, relations: [] },
+        'club-1': {
+          id: 'club-1',
+          name: 'Fallback Club',
+          memberCount: 4,
+          powerRating: 1200,
+          treasury: 0,
+          relations: [],
+        },
+        'club-2': {
+          id: 'club-2',
+          name: 'Managed Club',
+          memberCount: 8,
+          powerRating: 1600,
+          treasury: 100,
+          relations: [],
+        },
       },
     };
 
@@ -89,8 +103,22 @@ describe('member-hub data.shared', () => {
         },
       ],
       clubsById: {
-        'club-10': { id: 'club-10', name: 'Ten', memberCount: 6, powerRating: 1500, treasury: 0, relations: [] },
-        'club-11': { id: 'club-11', name: 'Eleven', memberCount: 5, powerRating: 1400, treasury: 0, relations: [] },
+        'club-10': {
+          id: 'club-10',
+          name: 'Ten',
+          memberCount: 6,
+          powerRating: 1500,
+          treasury: 0,
+          relations: [],
+        },
+        'club-11': {
+          id: 'club-11',
+          name: 'Eleven',
+          memberCount: 5,
+          powerRating: 1400,
+          treasury: 0,
+          relations: [],
+        },
       },
     };
     const state: MemberHubState = {
@@ -132,14 +160,44 @@ describe('member-hub data.shared', () => {
 
   it('uniqueById keeps the first occurrence of each operator id', () => {
     const result = uniqueById([
-      { id: 'player-1', label: 'Alpha', role: 'RegisteredPlayer', playerId: 'player-1', managedClubIds: [] },
-      { id: 'player-1', label: 'Alpha Duplicate', role: 'ClubAdmin', playerId: 'player-1', managedClubIds: ['club-1'] },
-      { id: 'player-2', label: 'Bravo', role: 'ClubAdmin', playerId: 'player-2', managedClubIds: ['club-2'] },
+      {
+        id: 'player-1',
+        label: 'Alpha',
+        role: 'RegisteredPlayer',
+        playerId: 'player-1',
+        managedClubIds: [],
+      },
+      {
+        id: 'player-1',
+        label: 'Alpha Duplicate',
+        role: 'ClubAdmin',
+        playerId: 'player-1',
+        managedClubIds: ['club-1'],
+      },
+      {
+        id: 'player-2',
+        label: 'Bravo',
+        role: 'ClubAdmin',
+        playerId: 'player-2',
+        managedClubIds: ['club-2'],
+      },
     ]);
 
     expect(result).toEqual([
-      { id: 'player-1', label: 'Alpha', role: 'RegisteredPlayer', playerId: 'player-1', managedClubIds: [] },
-      { id: 'player-2', label: 'Bravo', role: 'ClubAdmin', playerId: 'player-2', managedClubIds: ['club-2'] },
+      {
+        id: 'player-1',
+        label: 'Alpha',
+        role: 'RegisteredPlayer',
+        playerId: 'player-1',
+        managedClubIds: [],
+      },
+      {
+        id: 'player-2',
+        label: 'Bravo',
+        role: 'ClubAdmin',
+        playerId: 'player-2',
+        managedClubIds: ['club-2'],
+      },
     ]);
   });
 });

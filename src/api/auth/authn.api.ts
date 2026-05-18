@@ -1,9 +1,10 @@
-import type { LoginPayload, RegisterPayload } from '@/objects';
 import type {
   ApiMessagePayloadContract,
+  LoginPayload,
+  RegisterPayload,
   AuthSessionContract,
   AuthSuccessContract,
-} from './responses/auth.responses';
+} from '@/objects/auth';
 import { request, sendJson } from '../shared/http';
 
 export const authAuthnApi = {

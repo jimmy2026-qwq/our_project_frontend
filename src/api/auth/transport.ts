@@ -1,5 +1,5 @@
 import { emptyBackendOption, encodeBackendOption } from '../shared/backend-option.transport';
-import type { CreateGuestSessionPayload } from './requests/auth.requests';
+import type { CreateGuestSessionPayload } from '@/objects/auth';
 
 export function buildCreateGuestSessionRequest(payload: CreateGuestSessionPayload) {
   return {

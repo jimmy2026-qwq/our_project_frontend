@@ -2,7 +2,11 @@ import { tournamentApi } from '@/api/tournament';
 import { publicApi } from '@/api/publicquery';
 import type { ClubSummary, PublicSchedule } from '@/objects/publicquery';
 
-import type { LoadState, PublicHallState, PublicHallViewerContext } from './types';
+import type {
+  LoadState,
+  PublicHallState,
+  PublicHallViewerContext,
+} from './types';
 import { mapAdminStageStatus } from './data.shared';
 
 function createEmptyLoadState<T>(): LoadState<T> {
@@ -19,7 +23,9 @@ function createEmptyLoadState<T>(): LoadState<T> {
   };
 }
 
-export async function loadSchedules(state: PublicHallState): Promise<LoadState<PublicSchedule>> {
+export async function loadSchedules(
+  state: PublicHallState,
+): Promise<LoadState<PublicSchedule>> {
   try {
     const envelope = await publicApi.getPublicSchedules({
       tournamentStatus: state.scheduleTournamentStatus || undefined,
@@ -29,12 +35,17 @@ export async function loadSchedules(state: PublicHallState): Promise<LoadState<P
   } catch (error) {
     return {
       ...createEmptyLoadState<PublicSchedule>(),
-      warning: error instanceof Error ? error.message : 'Unable to load public schedules.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load public schedules.',
     };
   }
 }
 
-export async function loadManagedDraftSchedules(context: PublicHallViewerContext): Promise<PublicSchedule[]> {
+export async function loadManagedDraftSchedules(
+  context: PublicHallViewerContext,
+): Promise<PublicSchedule[]> {
   const session = context.session;
   const operatorId = session?.user.operatorId ?? session?.user.userId;
   const canManageTournament =
@@ -72,30 +83,43 @@ export async function loadManagedDraftSchedules(context: PublicHallViewerContext
         ];
       }
 
-      return stages.map((stage) => ({
-        tournamentId: detail.tournamentId,
-        tournamentName: detail.name,
-        tournamentStatus: 'Draft',
-        stageId: stage.stageId,
-        stageName: stage.name,
-        stageStatus: mapAdminStageStatus(stage.status),
-        scheduledAt: detail.startsAt,
-        isUnpublished: true,
-      } satisfies PublicSchedule));
+      return stages.map(
+        (stage) =>
+          ({
+            tournamentId: detail.tournamentId,
+            tournamentName: detail.name,
+            tournamentStatus: 'Draft',
+            stageId: stage.stageId,
+            stageName: stage.name,
+            stageStatus: mapAdminStageStatus(stage.status),
+            scheduledAt: detail.startsAt,
+            isUnpublished: true,
+          }) satisfies PublicSchedule,
+      );
     }),
   );
 
-  return stagesByTournament.flat().sort((left, right) => Date.parse(left.scheduledAt) - Date.parse(right.scheduledAt));
+  return stagesByTournament
+    .flat()
+    .sort(
+      (left, right) =>
+        Date.parse(left.scheduledAt) - Date.parse(right.scheduledAt),
+    );
 }
 
-export async function loadClubs(_state: PublicHallState): Promise<LoadState<ClubSummary>> {
+export async function loadClubs(
+  _state: PublicHallState,
+): Promise<LoadState<ClubSummary>> {
   try {
     const envelope = await publicApi.getPublicClubs();
     return { envelope, source: 'api' };
   } catch (error) {
     return {
       ...createEmptyLoadState<ClubSummary>(),
-      warning: error instanceof Error ? error.message : 'Unable to load club directory.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load club directory.',
     };
   }
 }

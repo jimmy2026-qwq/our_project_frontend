@@ -12,7 +12,11 @@ import { useTournamentOpsPanelData } from './useTournamentOpsPanelData';
 export { useTournamentOpsWorkbenchState } from './useTournamentOpsWorkbenchState';
 export { useTournamentTableActions } from './useTournamentTableActions';
 export { useTournamentOpsWorkbenchEffects } from './useTournamentOpsWorkbenchEffects';
-import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/objects/tournament';
+import type {
+  AppealSummary,
+  MatchRecordSummary,
+  TournamentTableSummary,
+} from '@/objects/tournament';
 
 function createEmptyLoadState<T>(): LoadState<T> {
   return {
@@ -29,7 +33,9 @@ function createEmptyLoadState<T>(): LoadState<T> {
 }
 
 export function useTournamentOpsState() {
-  const [state, setState] = useState<TournamentOpsState>(DEFAULT_TOURNAMENT_OPS_STATE);
+  const [state, setState] = useState<TournamentOpsState>(
+    DEFAULT_TOURNAMENT_OPS_STATE,
+  );
   return { state, setState };
 }
 
@@ -40,20 +46,29 @@ export function useTournamentOpsData(
 ) {
   const directoryState = useTournamentOpsDirectoryData(reloadKey);
   const directory = directoryOverride ?? directoryState.directory;
-  const isLoadingDirectory = directoryOverride ? false : directoryState.isLoadingDirectory;
-  const normalizedState = directory ? normalizeTournamentOpsState(directory.items, state) : state;
-  const {
-    tables,
-    records,
-    appeals,
-    isLoadingPanelData,
-  } = useTournamentOpsPanelData(directory?.items ?? [], normalizedState, reloadKey);
+  const isLoadingDirectory = directoryOverride
+    ? false
+    : directoryState.isLoadingDirectory;
+  const normalizedState = directory
+    ? normalizeTournamentOpsState(directory.items, state)
+    : state;
+  const { tables, records, appeals, isLoadingPanelData } =
+    useTournamentOpsPanelData(
+      directory?.items ?? [],
+      normalizedState,
+      reloadKey,
+    );
 
   return {
     directory,
-    tables: tables ?? (directory ? createEmptyLoadState<TournamentTableSummary>() : null),
-    records: records ?? (directory ? createEmptyLoadState<MatchRecordSummary>() : null),
-    appeals: appeals ?? (directory ? createEmptyLoadState<AppealSummary>() : null),
+    tables:
+      tables ??
+      (directory ? createEmptyLoadState<TournamentTableSummary>() : null),
+    records:
+      records ??
+      (directory ? createEmptyLoadState<MatchRecordSummary>() : null),
+    appeals:
+      appeals ?? (directory ? createEmptyLoadState<AppealSummary>() : null),
     isLoading: isLoadingDirectory || isLoadingPanelData,
   };
 }

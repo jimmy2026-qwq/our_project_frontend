@@ -1,22 +1,21 @@
 import type {
   ClubPublicProfile,
   ClubSummary,
-  DashboardSummary,
   PublicSchedule,
   StageStatus,
   TournamentPublicProfile,
 } from '@/objects';
 import type {
-  DashboardContract,
-  DashboardOwnerContract,
   PublicClubDetailContract,
   PublicClubDirectoryEntryContract,
   PublicScheduleContract,
   PublicTournamentDetailContract,
   PublicTournamentStageContract,
-} from './responses/publicquery.responses';
+} from '@/objects/publicquery';
 
-function unwrapSingletonArray<T>(value: T | T[] | null | undefined): T | undefined {
+function unwrapSingletonArray<T>(
+  value: T | T[] | null | undefined,
+): T | undefined {
   if (Array.isArray(value)) {
     return value[0];
   }
@@ -24,17 +23,25 @@ function unwrapSingletonArray<T>(value: T | T[] | null | undefined): T | undefin
   return value ?? undefined;
 }
 
-function normalizeOptionalString(value: string | string[] | null | undefined): string | undefined {
+function normalizeOptionalString(
+  value: string | string[] | null | undefined,
+): string | undefined {
   const normalized = unwrapSingletonArray(value);
-  return typeof normalized === 'string' ? normalized.trim() || undefined : undefined;
+  return typeof normalized === 'string'
+    ? normalized.trim() || undefined
+    : undefined;
 }
 
-function normalizeOptionalNumber(value: number | number[] | null | undefined): number | undefined {
+function normalizeOptionalNumber(
+  value: number | number[] | null | undefined,
+): number | undefined {
   const normalized = unwrapSingletonArray(value);
   return typeof normalized === 'number' ? normalized : undefined;
 }
 
-export function mapPublicSchedule(item: PublicScheduleContract): PublicSchedule {
+export function mapPublicSchedule(
+  item: PublicScheduleContract,
+): PublicSchedule {
   return {
     tournamentId: item.tournamentId,
     tournamentName: item.tournamentName,
@@ -54,7 +61,9 @@ export function mapPublicSchedule(item: PublicScheduleContract): PublicSchedule 
   };
 }
 
-function mapStageStatus(status: PublicTournamentStageContract['status']): StageStatus {
+function mapStageStatus(
+  status: PublicTournamentStageContract['status'],
+): StageStatus {
   return status === 'Ready' ? 'Pending' : status;
 }
 
@@ -75,9 +84,13 @@ function mapTournamentWhitelistType(
   return 'Player';
 }
 
-export function mapPublicTournamentDetail(item: PublicTournamentDetailContract): TournamentPublicProfile {
+export function mapPublicTournamentDetail(
+  item: PublicTournamentDetailContract,
+): TournamentPublicProfile {
   const nextStage =
-    item.stages.find((stage) => stage.status === 'Active' || stage.status === 'Ready') ?? item.stages[0];
+    item.stages.find(
+      (stage) => stage.status === 'Active' || stage.status === 'Ready',
+    ) ?? item.stages[0];
 
   return {
     id: item.tournamentId,
@@ -116,7 +129,9 @@ export function mapPublicTournamentDetail(item: PublicTournamentDetailContract):
   };
 }
 
-export function mapPublicClub(item: PublicClubDirectoryEntryContract): ClubSummary {
+export function mapPublicClub(
+  item: PublicClubDirectoryEntryContract,
+): ClubSummary {
   return {
     id: item.clubId,
     name: item.name,
@@ -138,9 +153,15 @@ export function mapPublicClub(item: PublicClubDirectoryEntryContract): ClubSumma
   };
 }
 
-export function mapPublicClubDetail(item: PublicClubDetailContract): ClubPublicProfile {
-  const requirementsText = normalizeOptionalString(item.applicationPolicy?.requirementsText);
-  const expectedReviewSlaHours = normalizeOptionalNumber(item.applicationPolicy?.expectedReviewSlaHours);
+export function mapPublicClubDetail(
+  item: PublicClubDetailContract,
+): ClubPublicProfile {
+  const requirementsText = normalizeOptionalString(
+    item.applicationPolicy?.requirementsText,
+  );
+  const expectedReviewSlaHours = normalizeOptionalNumber(
+    item.applicationPolicy?.expectedReviewSlaHours,
+  );
   const honors = item.honors ?? [];
   const relations = item.relations ?? [];
   const currentLineup = item.currentLineup ?? [];
@@ -173,7 +194,8 @@ export function mapPublicClubDetail(item: PublicClubDetailContract): ClubPublicP
           applicationsOpen: item.applicationPolicy.applicationsOpen ?? true,
           requirementsText: requirementsText ?? null,
           expectedReviewSlaHours: expectedReviewSlaHours ?? null,
-          pendingApplicationCount: item.applicationPolicy.pendingApplicationCount ?? undefined,
+          pendingApplicationCount:
+            item.applicationPolicy.pendingApplicationCount ?? undefined,
         }
       : undefined,
     featuredPlayers: currentLineup.map((member) => member.nickname),
@@ -189,58 +211,5 @@ export function mapPublicClubDetail(item: PublicClubDetailContract): ClubPublicP
       name: match.tournamentName,
       source: 'recent' as const,
     })),
-  };
-}
-
-function formatPercent(value: number) {
-  return `${(value * 100).toFixed(1)}%`;
-}
-
-function formatDecimal(value: number) {
-  return value.toFixed(2);
-}
-
-export function parseDashboardOwner(owner: DashboardOwnerContract): Pick<DashboardSummary, 'ownerId' | 'ownerType'> {
-  const [kind, value] = owner.split(':', 2);
-
-  if (kind === 'player' && value) {
-    return { ownerId: value, ownerType: 'player' };
-  }
-
-  if (kind === 'club' && value) {
-    return { ownerId: value, ownerType: 'club' };
-  }
-
-  return { ownerId: 'unknown', ownerType: 'player' };
-}
-
-export function mapDashboard(item: DashboardContract): DashboardSummary {
-  const { ownerId, ownerType } = parseDashboardOwner(item.owner);
-  const subjectLabel = ownerType === 'player' ? '个人数据看板' : '俱乐部数据看板';
-
-  return {
-    ownerId,
-    ownerType,
-    headline: `${subjectLabel}已根据后端聚合数据完成同步。`,
-    metrics: [
-      {
-        label: '样本数',
-        value: String(item.sampleSize),
-        accent: 'gold',
-      },
-      {
-        label: '和牌率',
-        value: formatPercent(item.winRate),
-        accent: 'teal',
-      },
-      {
-        label: '平均顺位',
-        value: formatDecimal(item.averagePlacement || 0),
-      },
-      {
-        label: '立直率',
-        value: formatPercent(item.riichiRate),
-      },
-    ],
   };
 }

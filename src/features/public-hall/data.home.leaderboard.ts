@@ -1,5 +1,8 @@
 import { publicApi } from '@/api/publicquery';
-import type { ClubSummary, PlayerLeaderboardEntry } from '@/objects/publicquery';
+import type {
+  ClubSummary,
+  PlayerLeaderboardEntry,
+} from '@/objects/publicquery';
 
 import type { LoadState, PublicHallState } from './types';
 import { formatRankLabel, mapLeaderboardStatus } from './data.shared';
@@ -28,14 +31,18 @@ export async function loadLeaderboard(
       status: state.leaderboardStatus || undefined,
     });
 
-    const clubNamesById = new Map(clubs.envelope.items.map((club) => [club.id, club.name]));
+    const clubNamesById = new Map(
+      clubs.envelope.items.map((club) => [club.id, club.name]),
+    );
     return {
       envelope: {
         ...envelope,
         items: envelope.items.map((item, index) => ({
           playerId: item.playerId,
           nickname: item.nickname,
-          clubName: item.clubIds.map((clubId) => clubNamesById.get(clubId) ?? clubId).join(' / '),
+          clubName: item.clubIds
+            .map((clubId) => clubNamesById.get(clubId) ?? clubId)
+            .join(' / '),
           clubIds: item.clubIds,
           elo: item.elo,
           rank: index + 1 + envelope.offset,
@@ -50,7 +57,10 @@ export async function loadLeaderboard(
   } catch (error) {
     return {
       ...createEmptyLoadState<PlayerLeaderboardEntry>(),
-      warning: error instanceof Error ? error.message : 'Unable to load public leaderboard.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load public leaderboard.',
     };
   }
 }

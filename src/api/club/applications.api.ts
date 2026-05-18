@@ -1,9 +1,13 @@
 import type { ListEnvelope } from '@/objects';
 import { toQueryString } from '@/lib/query';
 import type {
+  ClubApplicationListFilters,
+  ClubApplicationPayload,
   ClubApplicationMutationResponseContract,
   ClubApplicationViewContract,
-} from './responses/club.responses';
+  ReviewClubApplicationPayload,
+  WithdrawClubApplicationPayload,
+} from '@/objects/club';
 import { request, sendJson, mapEnvelope } from '../shared/http';
 import {
   buildReviewClubApplicationRequest,
@@ -11,12 +15,6 @@ import {
   buildWithdrawClubApplicationRequest,
 } from './transport';
 import { mapClubApplicationView } from './mappers';
-import type {
-  ClubApplicationListFilters,
-  ClubApplicationPayload,
-  ReviewClubApplicationPayload,
-  WithdrawClubApplicationPayload,
-} from './requests/applications.requests';
 
 export const clubsApplicationsApi = {
   submitClubApplication(clubId: string, payload: ClubApplicationPayload) {

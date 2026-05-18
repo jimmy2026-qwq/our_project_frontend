@@ -1,6 +1,6 @@
 import type { DemoSummary } from '@/objects';
+import type { DemoSummaryQuery } from '@/objects/auth';
 import { toQueryString } from '@/lib/query';
-import type { DemoSummaryQuery } from './requests/auth.requests';
 import { request } from '../shared/http';
 
 export const authDemoApi = {

@@ -1,4 +1,4 @@
-import { WorkbenchContextPanel } from './presentation';
+import { WorkbenchContextPanel } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { SelectField, TextInputField } from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
@@ -97,7 +97,8 @@ export function TournamentOpsPageSection({
   hideTournamentSelect = false,
 }: TournamentOpsPageSectionProps) {
   const activeTournament = getActiveTournament(tournaments, state.tournamentId);
-  const selectedTable = tables.envelope.items.find((table) => table.id === selectedTableId) ?? null;
+  const selectedTable =
+    tables.envelope.items.find((table) => table.id === selectedTableId) ?? null;
 
   if (!activeTournament) {
     return (
@@ -107,7 +108,9 @@ export function TournamentOpsPageSection({
           title="Tournament Operations"
           description="This workbench now depends entirely on live backend tournament data."
         />
-        <EmptyState>No tournament operations workspace is available right now.</EmptyState>
+        <EmptyState>
+          No tournament operations workspace is available right now.
+        </EmptyState>
       </section>
     );
   }
@@ -131,7 +134,10 @@ export function TournamentOpsPageSection({
             label="赛事"
             value={state.tournamentId}
             onChange={(event) => {
-              const nextTournament = getActiveTournament(tournaments, event.currentTarget.value);
+              const nextTournament = getActiveTournament(
+                tournaments,
+                event.currentTarget.value,
+              );
               onStateChange({
                 tournamentId: nextTournament.id,
                 stageId: nextTournament.stages[0]?.id ?? '',
@@ -145,7 +151,13 @@ export function TournamentOpsPageSection({
             ))}
           </SelectField>
         ) : null}
-        <SelectField label="阶段" value={state.stageId} onChange={(event) => onStateChange({ stageId: event.currentTarget.value })}>
+        <SelectField
+          label="阶段"
+          value={state.stageId}
+          onChange={(event) =>
+            onStateChange({ stageId: event.currentTarget.value })
+          }
+        >
           {activeTournament.stages.map((stage) => (
             <option key={stage.id} value={stage.id}>
               {stage.name}
@@ -155,7 +167,11 @@ export function TournamentOpsPageSection({
         <SelectField
           label="牌桌状态"
           value={state.tableStatus}
-          onChange={(event) => onStateChange({ tableStatus: event.currentTarget.value as TableStatus | '' })}
+          onChange={(event) =>
+            onStateChange({
+              tableStatus: event.currentTarget.value as TableStatus | '',
+            })
+          }
         >
           <option value="">全部</option>
           <option value="WaitingPreparation">等待开始</option>
@@ -168,12 +184,20 @@ export function TournamentOpsPageSection({
           label="玩家编号"
           value={state.playerId}
           placeholder="player-123"
-          onChange={(event) => onStateChange({ playerId: event.currentTarget.value.trim() })}
+          onChange={(event) =>
+            onStateChange({ playerId: event.currentTarget.value.trim() })
+          }
         />
         <SelectField
           label="申诉状态"
           value={state.appealStatus}
-          onChange={(event) => onStateChange({ appealStatus: event.currentTarget.value as AppealSummary['status'] | '' })}
+          onChange={(event) =>
+            onStateChange({
+              appealStatus: event.currentTarget.value as
+                | AppealSummary['status']
+                | '',
+            })
+          }
         >
           <option value="">全部</option>
           <option value="Open">处理中</option>

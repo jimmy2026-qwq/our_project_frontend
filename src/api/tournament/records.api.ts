@@ -1,17 +1,10 @@
 import type {
   ListEnvelope,
   MatchRecordSummary,
+  RecordFilters,
 } from '@/objects';
 import { toQueryString } from '@/lib/query';
 import { request } from '../shared/http';
-
-export interface RecordFilters {
-  tournamentId?: string;
-  stageId?: string;
-  playerId?: string;
-  limit?: number;
-  offset?: number;
-}
 
 export const recordsApi = {
   getRecords(filters: RecordFilters) {

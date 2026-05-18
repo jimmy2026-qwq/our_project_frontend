@@ -1,6 +1,6 @@
 import type { PlayerProfile } from '@/objects/auth';
 import type { ClubPublicProfile } from '@/objects/publicquery';
-import type { TournamentDetailContract } from '@/api/tournament/responses/tournament.responses';
+import type { TournamentDetailContract } from '@/objects/tournament';
 
 export type ClubTournamentItem = ClubPublicProfile['activeTournaments'][number];
 export type MemberStatusFilter = 'all' | 'active' | 'inactive';

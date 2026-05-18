@@ -20,7 +20,9 @@ export function LoginPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const hasRegisteredSession =
-    !!session && session.user.roles.isRegisteredPlayer && !session.user.roles.isGuest;
+    !!session &&
+    session.user.roles.isRegisteredPlayer &&
+    !session.user.roles.isGuest;
 
   if (isReady && hasRegisteredSession) {
     return <Navigate replace to="/public" />;
@@ -46,10 +48,13 @@ export function LoginPage() {
 
       notifySuccess('登录成功', `欢迎回来，${nextSession.user.displayName}。`);
 
-      const from = (location.state as { from?: string } | null)?.from ?? '/public';
+      const from =
+        (location.state as { from?: string } | null)?.from ?? '/public';
       navigate(from, { replace: true });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '登录失败，请稍后重试。');
+      setErrorMessage(
+        error instanceof Error ? error.message : '登录失败，请稍后重试。',
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -61,10 +66,17 @@ export function LoginPage() {
 
     try {
       await enterGuestMode('Guest');
-      notifyInfo('已进入游客模式', '你可以先浏览公共大厅，登录后再进行完整操作。');
+      notifyInfo(
+        '已进入游客模式',
+        '你可以先浏览公共大厅，登录后再进行完整操作。',
+      );
       navigate('/public', { replace: true });
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : '进入游客模式失败，请稍后重试。');
+      setErrorMessage(
+        error instanceof Error
+          ? error.message
+          : '进入游客模式失败，请稍后重试。',
+      );
     } finally {
       setIsSubmitting(false);
     }
@@ -82,7 +94,12 @@ export function LoginPage() {
       isSubmitting={isSubmitting}
       onSubmit={handleSubmit}
       extraActions={
-        <Button variant="outline" size="lg" disabled={isSubmitting} onClick={() => void handleGuestEnter()}>
+        <Button
+          variant="outline"
+          size="lg"
+          disabled={isSubmitting}
+          onClick={() => void handleGuestEnter()}
+        >
           游客进入
         </Button>
       }

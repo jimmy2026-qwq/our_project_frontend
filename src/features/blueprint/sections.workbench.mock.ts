@@ -60,15 +60,30 @@ export const workbenchMockLeaderboard: PlayerLeaderboardEntry[] = [
 ];
 
 export const workbenchMockClubs: ClubSummary[] = [
-  { id: 'club-1', name: 'Tokyo Drift', memberCount: 18, powerRating: 92, treasury: 560000, relations: ['Alliance'] },
-  { id: 'club-2', name: 'Red Dora', memberCount: 14, powerRating: 88, treasury: 438000, relations: ['Hostile'] },
+  {
+    id: 'club-1',
+    name: 'Tokyo Drift',
+    memberCount: 18,
+    powerRating: 92,
+    treasury: 560000,
+    relations: ['Alliance'],
+  },
+  {
+    id: 'club-2',
+    name: 'Red Dora',
+    memberCount: 14,
+    powerRating: 88,
+    treasury: 438000,
+    relations: ['Hostile'],
+  },
 ];
 
 export const workbenchMockDashboards: DashboardSummary[] = [
   {
     ownerId: 'player-a',
     ownerType: 'player',
-    headline: 'Personal dashboard preview with ELO, recent form, and advanced metrics.',
+    headline:
+      'Personal dashboard preview with ELO, recent form, and advanced metrics.',
     metrics: [
       { label: 'Composite ELO', value: '2142', accent: 'gold' },
       { label: 'Last 30 matches', value: '+118', accent: 'teal' },
@@ -78,7 +93,8 @@ export const workbenchMockDashboards: DashboardSummary[] = [
   {
     ownerId: 'player-b',
     ownerType: 'player',
-    headline: 'The member hub can keep growing with recent matches, trends, and appeal links.',
+    headline:
+      'The member hub can keep growing with recent matches, trends, and appeal links.',
     metrics: [
       { label: 'Composite ELO', value: '2087', accent: 'gold' },
       { label: 'Last 30 matches', value: '+63', accent: 'teal' },
@@ -88,7 +104,8 @@ export const workbenchMockDashboards: DashboardSummary[] = [
   {
     ownerId: 'club-1',
     ownerType: 'club',
-    headline: 'Club dashboards combine roster health, power rating, treasury, and public relations.',
+    headline:
+      'Club dashboards combine roster health, power rating, treasury, and public relations.',
     metrics: [
       { label: 'Club power', value: '92', accent: 'gold' },
       { label: 'Treasury', value: '560,000', accent: 'teal' },
@@ -98,7 +115,8 @@ export const workbenchMockDashboards: DashboardSummary[] = [
   {
     ownerId: 'club-2',
     ownerType: 'club',
-    headline: 'This area can later surface lineup readiness and alliance snapshots.',
+    headline:
+      'This area can later surface lineup readiness and alliance snapshots.',
     metrics: [
       { label: 'Club power', value: '88', accent: 'gold' },
       { label: 'Treasury', value: '438,000', accent: 'teal' },

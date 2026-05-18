@@ -50,17 +50,19 @@ export function TournamentOpsWorkbench({
       source: 'api',
     };
   }, [fixedStages, fixedTournamentId, fixedTournamentName]);
-  const { directory, tables, records, appeals, isLoading } = useTournamentOpsData(
-    state,
-    workbench.reloadKey + externalReloadKey,
-    directoryOverride,
-  );
+  const { directory, tables, records, appeals, isLoading } =
+    useTournamentOpsData(
+      state,
+      workbench.reloadKey + externalReloadKey,
+      directoryOverride,
+    );
   const { session } = useAuth();
   const operatorId = session?.user.operatorId ?? session?.user.userId;
   const canManageTournamentActions =
     canManageActions ??
     (!!session?.user.roles.isRegisteredPlayer &&
-      (session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin));
+      (session.user.roles.isSuperAdmin ||
+        session.user.roles.isTournamentAdmin));
   const { selectedTable } = useTournamentOpsWorkbenchEffects({
     fixedTournamentId,
     directory,
@@ -111,15 +113,36 @@ export function TournamentOpsWorkbench({
   }
 
   const safeTables = tables ?? {
-    envelope: { items: [], total: 0, limit: 0, offset: 0, hasMore: false, appliedFilters: {} },
+    envelope: {
+      items: [],
+      total: 0,
+      limit: 0,
+      offset: 0,
+      hasMore: false,
+      appliedFilters: {},
+    },
     source: 'api' as const,
   };
   const safeRecords = records ?? {
-    envelope: { items: [], total: 0, limit: 0, offset: 0, hasMore: false, appliedFilters: {} },
+    envelope: {
+      items: [],
+      total: 0,
+      limit: 0,
+      offset: 0,
+      hasMore: false,
+      appliedFilters: {},
+    },
     source: 'api' as const,
   };
   const safeAppeals = appeals ?? {
-    envelope: { items: [], total: 0, limit: 0, offset: 0, hasMore: false, appliedFilters: {} },
+    envelope: {
+      items: [],
+      total: 0,
+      limit: 0,
+      offset: 0,
+      hasMore: false,
+      appliedFilters: {},
+    },
     source: 'api' as const,
   };
 
@@ -145,7 +168,9 @@ export function TournamentOpsWorkbench({
       seatNote={workbench.seatNote}
       hideTournamentSelect={hideTournamentSelect}
       onReload={handleRefresh}
-      onStateChange={(patch) => setState((current) => ({ ...current, ...patch }))}
+      onStateChange={(patch) =>
+        setState((current) => ({ ...current, ...patch }))
+      }
       onSelectTable={(tableId) => {
         workbench.setSelectedTableId(tableId);
         workbench.setActionError(null);

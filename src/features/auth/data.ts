@@ -1,5 +1,10 @@
 import { authApi } from '@/api/auth';
-import type { AuthSession, LoginPayload, RegisterPayload, SessionInfo } from '@/objects/auth';
+import type {
+  AuthSession,
+  LoginPayload,
+  RegisterPayload,
+  SessionInfo,
+} from '@/objects/auth';
 import { playerApi } from '@/api/player';
 
 const AUTH_SESSION_STORAGE_KEY = 'riichi-nexus.auth.session';
@@ -53,10 +58,13 @@ async function mapBackendAuthSession(
   payload: BackendAuthPayload | BackendSessionPayload,
   tokenOverride?: string,
 ): Promise<AuthSession> {
-  const token = tokenOverride ?? ('token' in payload ? payload.token : undefined);
+  const token =
+    tokenOverride ?? ('token' in payload ? payload.token : undefined);
 
   if (!token) {
-    throw new Error('Authenticated session token is missing from the backend response.');
+    throw new Error(
+      'Authenticated session token is missing from the backend response.',
+    );
   }
 
   const operatorId = await resolveOperatorId(payload);
@@ -117,21 +125,30 @@ export async function restoreSession(token: string) {
     return guestAuthSession;
   }
 
-  const session = await mapBackendAuthSession(await authApi.getAuthSession(token), token);
+  const session = await mapBackendAuthSession(
+    await authApi.getAuthSession(token),
+    token,
+  );
   persistSession(session);
   return session;
 }
 
 export async function loginUser(payload: LoginPayload) {
   const loginResult = await authApi.login(payload);
-  const session = await mapBackendAuthSession(await authApi.getAuthSession(loginResult.token), loginResult.token);
+  const session = await mapBackendAuthSession(
+    await authApi.getAuthSession(loginResult.token),
+    loginResult.token,
+  );
   persistSession(session);
   return session;
 }
 
 export async function registerUser(payload: RegisterPayload) {
   const registerResult = await authApi.register(payload);
-  const session = await mapBackendAuthSession(await authApi.getAuthSession(registerResult.token), registerResult.token);
+  const session = await mapBackendAuthSession(
+    await authApi.getAuthSession(registerResult.token),
+    registerResult.token,
+  );
   persistSession(session);
   return session;
 }

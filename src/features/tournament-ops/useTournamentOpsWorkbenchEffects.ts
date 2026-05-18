@@ -66,7 +66,9 @@ export function useTournamentOpsWorkbenchEffects({
   const { notifyRefreshResult } = useRefreshNotice();
 
   const selectedTable = useMemo(
-    () => tables?.envelope.items.find((table) => table.id === selectedTableId) ?? null,
+    () =>
+      tables?.envelope.items.find((table) => table.id === selectedTableId) ??
+      null,
     [selectedTableId, tables],
   );
 
@@ -77,7 +79,8 @@ export function useTournamentOpsWorkbenchEffects({
 
     setState((current) => {
       const preferredTournamentId =
-        fixedTournamentId && directory.items.some((item) => item.id === fixedTournamentId)
+        fixedTournamentId &&
+        directory.items.some((item) => item.id === fixedTournamentId)
           ? fixedTournamentId
           : current.tournamentId;
       const next = normalizeTournamentOpsState(directory.items, {
@@ -85,7 +88,10 @@ export function useTournamentOpsWorkbenchEffects({
         tournamentId: preferredTournamentId,
       });
 
-      return next.tournamentId === current.tournamentId && next.stageId === current.stageId ? current : next;
+      return next.tournamentId === current.tournamentId &&
+        next.stageId === current.stageId
+        ? current
+        : next;
     });
   }, [directory, fixedTournamentId, setState]);
 
@@ -94,14 +100,20 @@ export function useTournamentOpsWorkbenchEffects({
       return;
     }
 
-    const selectedTableStillExists = tables.envelope.items.some((table) => table.id === selectedTableId);
+    const selectedTableStillExists = tables.envelope.items.some(
+      (table) => table.id === selectedTableId,
+    );
 
     if (selectedTableStillExists) {
       return;
     }
 
     const preferredTable =
-      tables.envelope.items.find((table) => table.status === 'WaitingPreparation') ?? tables.envelope.items[0] ?? null;
+      tables.envelope.items.find(
+        (table) => table.status === 'WaitingPreparation',
+      ) ??
+      tables.envelope.items[0] ??
+      null;
 
     setSelectedTableId(preferredTable?.id ?? '');
   }, [selectedTableId, setSelectedTableId, tables]);
@@ -136,7 +148,10 @@ export function useTournamentOpsWorkbenchEffects({
   }, [reloadKey, selectedTableId, setTableDetail]);
 
   useEffect(() => {
-    const seat = tableDetail?.seats.find((item) => item.seat === seatWind) ?? tableDetail?.seats[0] ?? null;
+    const seat =
+      tableDetail?.seats.find((item) => item.seat === seatWind) ??
+      tableDetail?.seats[0] ??
+      null;
 
     if (!seat) {
       setSeatReady(false);
@@ -162,7 +177,9 @@ export function useTournamentOpsWorkbenchEffects({
 
       const missingPlayerIds = Array.from(
         new Set(
-          tables.envelope.items.flatMap((table) => table.playerIds).filter((playerId) => !(playerId in playerNames)),
+          tables.envelope.items
+            .flatMap((table) => table.playerIds)
+            .filter((playerId) => !(playerId in playerNames)),
         ),
       );
 
@@ -197,23 +214,36 @@ export function useTournamentOpsWorkbenchEffects({
   }, [playerNames, setPlayerNames, tables]);
 
   useEffect(() => {
-    if (!pendingRefresh || isLoading || !directory || !tables || !records || !appeals) {
+    if (
+      !pendingRefresh ||
+      isLoading ||
+      !directory ||
+      !tables ||
+      !records ||
+      !appeals
+    ) {
       return;
     }
 
-    notifyRefreshResult(
-      [directory, tables, records, appeals],
-      {
-        failureTitle: 'Tournament ops refresh failed',
-        successTitle: 'Tournament ops refreshed',
-        successMessage: 'Tables, records, and appeals were reloaded.',
-        fallbackTitle: 'Tournament ops refreshed with warnings',
-        fallbackMessage: 'Some tournament ops panels could not be confirmed.',
-      },
-    );
+    notifyRefreshResult([directory, tables, records, appeals], {
+      failureTitle: 'Tournament ops refresh failed',
+      successTitle: 'Tournament ops refreshed',
+      successMessage: 'Tables, records, and appeals were reloaded.',
+      fallbackTitle: 'Tournament ops refreshed with warnings',
+      fallbackMessage: 'Some tournament ops panels could not be confirmed.',
+    });
 
     setPendingRefresh(false);
-  }, [appeals, directory, isLoading, notifyRefreshResult, pendingRefresh, records, setPendingRefresh, tables]);
+  }, [
+    appeals,
+    directory,
+    isLoading,
+    notifyRefreshResult,
+    pendingRefresh,
+    records,
+    setPendingRefresh,
+    tables,
+  ]);
 
   return { selectedTable };
 }

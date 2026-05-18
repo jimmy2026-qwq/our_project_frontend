@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
+import { opsAnalyticsApi } from '@/api/opsanalytics';
 import { tournamentApi } from '@/api/tournament';
 import { publicApi } from '@/api/publicquery';
 import {
@@ -9,10 +10,14 @@ import {
   DetailListItem,
   MetricCard,
   MetricGrid,
-} from './player-dashboard.presentation';
+} from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
-import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/objects';
+import type {
+  AppealSummary,
+  MatchRecordSummary,
+  TournamentTableSummary,
+} from '@/objects';
 import { PublicHallLoading } from '@/features/public-hall/components';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { useAuth } from '@/hooks/useAuth';
@@ -114,7 +119,7 @@ function PlayerHomePanel({
   dashboard,
 }: {
   player: Awaited<ReturnType<typeof playerApi.getCurrentPlayer>>;
-  dashboard: Awaited<ReturnType<typeof publicApi.getPlayerDashboard>>;
+  dashboard: Awaited<ReturnType<typeof opsAnalyticsApi.getPlayerDashboard>>;
 }) {
   return (
     <div className="player-detail-home-grid">
@@ -122,24 +127,42 @@ function PlayerHomePanel({
         <DetailList>
           <DetailListItem label="昵称" value={player.displayName} />
           <DetailListItem label="玩家 ID" value={player.playerId} />
-          <DetailListItem label="状态" value={getPlayerStatusLabel(player.playerStatus)} />
-          <DetailListItem label="ELO" value={typeof player.elo === 'number' ? String(player.elo) : '--'} />
-          <DetailListItem label="所属俱乐部" value={formatClubList(player.clubIds ?? [])} />
+          <DetailListItem
+            label="状态"
+            value={getPlayerStatusLabel(player.playerStatus)}
+          />
+          <DetailListItem
+            label="ELO"
+            value={typeof player.elo === 'number' ? String(player.elo) : '--'}
+          />
+          <DetailListItem
+            label="所属俱乐部"
+            value={formatClubList(player.clubIds ?? [])}
+          />
         </DetailList>
       </DetailCard>
 
       <DetailCard title="个人数据看板">
         {dashboard.metrics.length > 0 ? (
           <div className="grid gap-5">
-            <p className="m-0 text-[color:var(--muted-strong)]">{dashboard.headline}</p>
+            <p className="m-0 text-[color:var(--muted-strong)]">
+              {dashboard.headline}
+            </p>
             <MetricGrid>
               {dashboard.metrics.map((metric) => (
-                <MetricCard key={metric.label} label={metric.label} value={metric.value} accent={metric.accent} />
+                <MetricCard
+                  key={metric.label}
+                  label={metric.label}
+                  value={metric.value}
+                  accent={metric.accent}
+                />
               ))}
             </MetricGrid>
           </div>
         ) : (
-          <EmptyState asListItem={false}>当前还没有可展示的个人数据。</EmptyState>
+          <EmptyState asListItem={false}>
+            当前还没有可展示的个人数据。
+          </EmptyState>
         )}
       </DetailCard>
     </div>
@@ -161,7 +184,10 @@ function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
               <div className="tournament-detail-list__row-side">
                 <span>{`赛段 ID：${table.stageId}`}</span>
                 <div className="tournament-detail-list__action-row">
-                  <Link className="detail-link tournament-detail-list__action" to={`/public/tournaments/${table.tournamentId}`}>
+                  <Link
+                    className="detail-link tournament-detail-list__action"
+                    to={`/public/tournaments/${table.tournamentId}`}
+                  >
                     查看赛事
                   </Link>
                   {table.status === 'WaitingPreparation' ? (
@@ -169,7 +195,10 @@ function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
                       等待开桌
                     </span>
                   ) : (
-                    <Link className="detail-link tournament-detail-list__action" to={`/tables/${table.id}`}>
+                    <Link
+                      className="detail-link tournament-detail-list__action"
+                      to={`/tables/${table.id}`}
+                    >
                       进入牌桌
                     </Link>
                   )}
@@ -199,7 +228,10 @@ function HistoryPaifuPanel({ items }: { items: MatchRecordSummary[] }) {
               </div>
               <div className="tournament-detail-list__row-side">
                 <span>{formatDateTime(record.recordedAt)}</span>
-                <Link className="detail-link tournament-detail-list__action" to={`/tables/${record.tableId}/paifu`}>
+                <Link
+                  className="detail-link tournament-detail-list__action"
+                  to={`/tables/${record.tableId}/paifu`}
+                >
                   查看牌谱
                 </Link>
               </div>
@@ -226,7 +258,9 @@ function AppealTicketsPanel({ items }: { items: AppealSummary[] }) {
                 <span>{appeal.description || '未填写申诉说明。'}</span>
               </div>
               <div className="tournament-detail-list__row-side">
-                <StatusPill tone={getAppealStatusTone(appeal.status)}>{getAppealStatusLabel(appeal.status)}</StatusPill>
+                <StatusPill tone={getAppealStatusTone(appeal.status)}>
+                  {getAppealStatusLabel(appeal.status)}
+                </StatusPill>
                 <span>{`提交时间：${formatDateTime(appeal.createdAt)}`}</span>
                 <span>{`最近更新：${formatDateTime(appeal.updatedAt ?? appeal.createdAt)}`}</span>
                 <span>{`处理结果：${appeal.resolution || '待处理'}`}</span>
@@ -234,7 +268,9 @@ function AppealTicketsPanel({ items }: { items: AppealSummary[] }) {
             </article>
           ))
         ) : (
-          <EmptyState asListItem={false}>你还没有提交过赛事申诉工单。</EmptyState>
+          <EmptyState asListItem={false}>
+            你还没有提交过赛事申诉工单。
+          </EmptyState>
         )}
       </div>
     </section>
@@ -253,12 +289,22 @@ export function PlayerDashboardPage() {
     }
 
     try {
-      const [player, dashboard, tablesEnvelope, recordsEnvelope, appealsEnvelope] = await Promise.all([
+      const [
+        player,
+        dashboard,
+        tablesEnvelope,
+        recordsEnvelope,
+        appealsEnvelope,
+      ] = await Promise.all([
         playerApi.getCurrentPlayer(operatorId),
-        publicApi.getPlayerDashboard(operatorId, operatorId),
+        opsAnalyticsApi.getPlayerDashboard(operatorId, operatorId),
         tournamentApi.getTables({ playerId: operatorId, limit: 8 }),
         tournamentApi.getRecords({ playerId: operatorId, limit: 8 }),
-        tournamentApi.getAppeals({ openedBy: operatorId, limit: 20, offset: 0 }),
+        tournamentApi.getAppeals({
+          openedBy: operatorId,
+          limit: 20,
+          offset: 0,
+        }),
       ]);
 
       const rawRecentTables = tablesEnvelope.items
@@ -278,9 +324,14 @@ export function PlayerDashboardPage() {
 
       const tournamentNames = new Map<string, string>();
       await Promise.all(
-        [...new Set(rawRecentTables.map((table) => table.tournamentId).filter(Boolean))].map(async (tournamentId) => {
+        [
+          ...new Set(
+            rawRecentTables.map((table) => table.tournamentId).filter(Boolean),
+          ),
+        ].map(async (tournamentId) => {
           try {
-            const tournament = await publicApi.getPublicTournamentProfile(tournamentId);
+            const tournament =
+              await publicApi.getPublicTournamentProfile(tournamentId);
             tournamentNames.set(tournamentId, tournament.name);
           } catch {
             tournamentNames.set(tournamentId, tournamentId);
@@ -290,7 +341,8 @@ export function PlayerDashboardPage() {
 
       const recentTables: RecentTableItem[] = rawRecentTables.map((table) => ({
         ...table,
-        tournamentName: tournamentNames.get(table.tournamentId) ?? table.tournamentId,
+        tournamentName:
+          tournamentNames.get(table.tournamentId) ?? table.tournamentId,
       }));
 
       const archivedRecords = [...recordsEnvelope.items]
@@ -298,7 +350,9 @@ export function PlayerDashboardPage() {
         .slice(0, 8);
 
       const appeals = [...appealsEnvelope.items].sort((left, right) =>
-        (right.updatedAt ?? right.createdAt).localeCompare(left.updatedAt ?? left.createdAt),
+        (right.updatedAt ?? right.createdAt).localeCompare(
+          left.updatedAt ?? left.createdAt,
+        ),
       );
 
       return { player, dashboard, recentTables, archivedRecords, appeals };
@@ -339,7 +393,9 @@ export function PlayerDashboardPage() {
           <div className="tournament-detail-shell__frame">
             <div className="tournament-detail-shell__content">
               <div className="tournament-detail-shell__panel tournament-detail-shell__panel--full">
-                <EmptyState asListItem={false}>当前无法加载玩家主页，请稍后重试。</EmptyState>
+                <EmptyState asListItem={false}>
+                  当前无法加载玩家主页，请稍后重试。
+                </EmptyState>
               </div>
             </div>
           </div>
@@ -378,7 +434,9 @@ export function PlayerDashboardPage() {
                 key={tab.id}
                 type="button"
                 className={`tournament-detail-shell__nav-item ${
-                  activeTab === tab.id ? 'tournament-detail-shell__nav-item--active' : ''
+                  activeTab === tab.id
+                    ? 'tournament-detail-shell__nav-item--active'
+                    : ''
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >

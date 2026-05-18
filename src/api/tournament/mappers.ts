@@ -1,5 +1,4 @@
-import type { TableDetail, TournamentTableSummary } from '@/objects';
-import type { TournamentTableContract } from './responses/tournament.responses';
+import type { TableDetail, TournamentTableContract, TournamentTableSummary } from '@/objects';
 
 export function mapTournamentTable(item: TournamentTableContract): TournamentTableSummary {
   const playerIds = item.seats?.map((seat) => seat.playerId) ?? [];

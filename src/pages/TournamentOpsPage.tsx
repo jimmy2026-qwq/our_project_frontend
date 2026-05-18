@@ -6,7 +6,10 @@ import { useAuth } from '@/hooks';
 export function TournamentOpsPage() {
   const { session } = useAuth();
 
-  if (!session?.user.roles.isSuperAdmin && !session?.user.roles.isTournamentAdmin) {
+  if (
+    !session?.user.roles.isSuperAdmin &&
+    !session?.user.roles.isTournamentAdmin
+  ) {
     return <Navigate replace to="/public" />;
   }
 

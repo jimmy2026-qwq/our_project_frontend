@@ -2,7 +2,11 @@ import { ApiError } from '@/api/shared/http';
 import { tournamentApi } from '@/api/tournament';
 import { useDialog, useMutationNotice, useNotice } from '@/hooks';
 
-import type { SeatWind, TableDetail, TournamentTableSummary } from '@/objects/tournament';
+import type {
+  SeatWind,
+  TableDetail,
+  TournamentTableSummary,
+} from '@/objects/tournament';
 
 interface TableActionNoticeOptions {
   successTitle: string;
@@ -60,7 +64,8 @@ export function useTournamentTableActions({
       onRefresh();
       return true;
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Tournament operation failed.';
+      const message =
+        error instanceof Error ? error.message : 'Tournament operation failed.';
       setActionError(message);
 
       if (!(error instanceof ApiError)) {
@@ -153,7 +158,11 @@ export function useTournamentTableActions({
     }
 
     const succeeded = await runTableAction(
-      () => tournamentApi.fileAppeal(selectedTable.id, { playerId: operatorId, description }),
+      () =>
+        tournamentApi.fileAppeal(selectedTable.id, {
+          playerId: operatorId,
+          description,
+        }),
       {
         successTitle: 'Appeal filed',
         successMessage: `${selectedTable.tableCode} appeal was submitted.`,
@@ -178,7 +187,9 @@ export function useTournamentTableActions({
       return;
     }
 
-    const currentSeat = tableDetail?.seats.find((seat) => seat.seat === seatWind);
+    const currentSeat = tableDetail?.seats.find(
+      (seat) => seat.seat === seatWind,
+    );
     const readyChanged = currentSeat?.ready !== seatReady;
     const disconnectedChanged = currentSeat?.disconnected !== seatDisconnected;
 

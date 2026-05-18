@@ -1,6 +1,6 @@
 import type { ListEnvelope } from '@/objects';
 import { toQueryString } from '@/lib/query';
-import type { ClubTournamentParticipationContract } from './responses/club.responses';
+import type { ClubTournamentParticipationContract } from '@/objects/club';
 import { request } from '../shared/http';
 
 export const clubsTournamentsApi = {

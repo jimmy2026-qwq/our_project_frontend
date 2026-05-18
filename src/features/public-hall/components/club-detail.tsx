@@ -82,7 +82,9 @@ export const PublicClubDetailSection = ({
           >
             返回公共大厅
           </button>
-          <div className="tournament-detail-shell__title-card">俱乐部详情 / {workbench.profile.name}</div>
+          <div className="tournament-detail-shell__title-card">
+            俱乐部详情 / {workbench.profile.name}
+          </div>
           <div className="tournament-detail-shell__header-actions">
             <ClubHeroActions
               isClubMember={workbench.isClubMember}
@@ -100,7 +102,9 @@ export const PublicClubDetailSection = ({
                 key={tab.id}
                 type="button"
                 className={`tournament-detail-shell__nav-item ${
-                  activeTab === tab.id ? 'tournament-detail-shell__nav-item--active' : ''
+                  activeTab === tab.id
+                    ? 'tournament-detail-shell__nav-item--active'
+                    : ''
                 }`}
                 onClick={() => setActiveTab(tab.id)}
               >
@@ -138,10 +142,14 @@ export const PublicClubDetailSection = ({
                   <ClubInboxPanel
                     isInboxLoading={workbench.isInboxLoading}
                     applicationInbox={workbench.applicationInbox}
-                    onReview={(applicationId, decision) => void handleReview(applicationId, decision)}
+                    onReview={(applicationId, decision) =>
+                      void handleReview(applicationId, decision)
+                    }
                   />
                 ) : (
-                  <EmptyState asListItem={false}>你当前没有处理这家俱乐部申请的权限。</EmptyState>
+                  <EmptyState asListItem={false}>
+                    你当前没有处理这家俱乐部申请的权限。
+                  </EmptyState>
                 )}
               </div>
             ) : null}
@@ -156,12 +164,16 @@ export const PublicClubDetailSection = ({
                     onRemoveMember={(member) => void handleRemoveMember(member)}
                   />
                 ) : (
-                  <EmptyState asListItem={false}>你当前没有管理这家俱乐部成员的权限。</EmptyState>
+                  <EmptyState asListItem={false}>
+                    你当前没有管理这家俱乐部成员的权限。
+                  </EmptyState>
                 )}
               </div>
             ) : null}
 
-            {state.warning ? <Alert variant="warning">{state.warning}</Alert> : null}
+            {state.warning ? (
+              <Alert variant="warning">{state.warning}</Alert>
+            ) : null}
           </div>
         </div>
       </section>

@@ -1,7 +1,10 @@
-import { InfoSummaryCard, InfoSummaryGrid } from '../presentation';
+import { InfoSummaryCard, InfoSummaryGrid } from '@/components/ui';
 import { Badge } from '@/components/ui';
 
-import type { PublicHallHeroProps, PublicHallOverviewStripProps } from './shared.types';
+import type {
+  PublicHallHeroProps,
+  PublicHallOverviewStripProps,
+} from './shared.types';
 
 export const PublicHallHero = ({
   schedules,
@@ -15,7 +18,9 @@ export const PublicHallHero = ({
   const quickFacts = [
     {
       label: 'Featured Tournament',
-      value: nextSchedule ? nextSchedule.tournamentName : 'Waiting for rotation',
+      value: nextSchedule
+        ? nextSchedule.tournamentName
+        : 'Waiting for rotation',
     },
     {
       label: 'Hall Clubs',
@@ -37,16 +42,19 @@ export const PublicHallHero = ({
         <div className="portal-hero__frame" aria-hidden="true" />
         <div className="portal-hero__badge-row flex items-center gap-[14px]">
           <p className="portal-hero__eyebrow">Public Hall</p>
-          <Badge className="portal-inline-badge" variant={schedules.source === 'api' ? 'success' : 'warning'}>
+          <Badge
+            className="portal-inline-badge"
+            variant={schedules.source === 'api' ? 'success' : 'warning'}
+          >
             {schedules.source === 'api' ? 'Public API' : 'Mock'}
           </Badge>
         </div>
         <p className="portal-hero__kicker">Riichi Nexus Lobby</p>
         <h1>Step into the tournament hall.</h1>
         <p className="portal-hero__summary">
-          A Mahjong Soul inspired front door for public events, club discovery, and live ladder
-          tracking. The data flow stays the same, but the scene now behaves like a destination
-          rather than a dashboard.
+          A Mahjong Soul inspired front door for public events, club discovery,
+          and live ladder tracking. The data flow stays the same, but the scene
+          now behaves like a destination rather than a dashboard.
         </p>
         <div className="portal-hero__facts">
           {quickFacts.map((fact) => (
@@ -61,25 +69,42 @@ export const PublicHallHero = ({
             className="portal-highlight"
             label="Next Featured Stage"
             title={nextSchedule ? nextSchedule.stageName : 'No schedule yet'}
-            detail={nextSchedule ? nextSchedule.scheduledAt : 'Waiting for schedule data'}
+            detail={
+              nextSchedule
+                ? nextSchedule.scheduledAt
+                : 'Waiting for schedule data'
+            }
             detailAs="small"
           />
           <InfoSummaryCard
             className="portal-highlight"
             label="Current Top Player"
             title={topPlayer ? topPlayer.nickname : '--'}
-            detail={topPlayer ? `${topPlayer.clubName} / ELO ${topPlayer.elo}` : 'Waiting for leaderboard data'}
+            detail={
+              topPlayer
+                ? `${topPlayer.clubName} / ELO ${topPlayer.elo}`
+                : 'Waiting for leaderboard data'
+            }
             detailAs="small"
           />
         </InfoSummaryGrid>
         <div className="portal-hero__quicklinks">
-          <button className="portal-chip portal-chip--schedules" onClick={() => onSelectView('schedules')}>
+          <button
+            className="portal-chip portal-chip--schedules"
+            onClick={() => onSelectView('schedules')}
+          >
             Enter schedules
           </button>
-          <button className="portal-chip portal-chip--clubs" onClick={() => onSelectView('clubs')}>
+          <button
+            className="portal-chip portal-chip--clubs"
+            onClick={() => onSelectView('clubs')}
+          >
             Explore clubs
           </button>
-          <button className="portal-chip portal-chip--leaderboard" onClick={() => onSelectView('leaderboard')}>
+          <button
+            className="portal-chip portal-chip--leaderboard"
+            onClick={() => onSelectView('leaderboard')}
+          >
             View ladder
           </button>
         </div>
@@ -89,14 +114,22 @@ export const PublicHallHero = ({
           className="portal-stat portal-stat--accent"
           label="Featured Tournament"
           title={nextSchedule ? nextSchedule.tournamentName : '--'}
-          detail={nextSchedule ? `${nextSchedule.stageName} / ${nextSchedule.scheduledAt}` : 'No upcoming schedule'}
+          detail={
+            nextSchedule
+              ? `${nextSchedule.stageName} / ${nextSchedule.scheduledAt}`
+              : 'No upcoming schedule'
+          }
           detailAs="small"
         />
         <InfoSummaryCard
           className="portal-stat"
           label="Visible Clubs"
           title={clubs.envelope.total}
-          detail={featuredClub ? `${featuredClub.name} / Power ${featuredClub.powerRating}` : 'Waiting for club data'}
+          detail={
+            featuredClub
+              ? `${featuredClub.name} / Power ${featuredClub.powerRating}`
+              : 'Waiting for club data'
+          }
           detailAs="small"
         />
         <InfoSummaryCard

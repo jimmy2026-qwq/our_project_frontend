@@ -1,12 +1,20 @@
 import { useReducer } from 'react';
 
-import { MemberHubLoading, MemberHubPageSection } from '@/features/member-hub/components';
-import { useMemberHubActions, useMemberHubData, useMemberHubState } from '@/features/member-hub/hooks';
+import {
+  MemberHubLoading,
+  MemberHubPageSection,
+} from '@/features/member-hub/components';
+import {
+  useMemberHubActions,
+  useMemberHubData,
+  useMemberHubState,
+} from '@/features/member-hub/hooks';
 
 export function MemberHubPage() {
   const { state, setState, directory } = useMemberHubState();
   const [reloadKey, forceReload] = useReducer((value: number) => value + 1, 0);
-  const { playerPayload, clubPayload, inboxPayload, isLoading } = useMemberHubData(directory, state, reloadKey);
+  const { playerPayload, clubPayload, inboxPayload, isLoading } =
+    useMemberHubData(directory, state, reloadKey);
 
   const actions = useMemberHubActions(
     directory ?? { items: [], clubsById: {}, source: 'api' },
@@ -15,7 +23,13 @@ export function MemberHubPage() {
     forceReload,
   );
 
-  if (!directory || isLoading || !playerPayload || !clubPayload || !inboxPayload) {
+  if (
+    !directory ||
+    isLoading ||
+    !playerPayload ||
+    !clubPayload ||
+    !inboxPayload
+  ) {
     return <MemberHubLoading />;
   }
 

@@ -1,16 +1,25 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { PortalSection } from '../presentation';
-import { EmptyState } from '@/components/ui';
-import { CheckboxField, SelectField } from '@/components/ui';
-import { ActionButton, FilterActionRow } from '@/components/ui';
-import { StatusPill } from '@/components/ui';
-import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/objects/publicquery';
+import {
+  ActionButton,
+  CheckboxField,
+  EmptyState,
+  FilterActionRow,
+  PortalSection,
+  SelectField,
+  StatusPill,
+} from '@/components/ui';
 import { useAuth } from '@/hooks/useAuth';
+import type {
+  ClubSummary,
+  PlayerLeaderboardEntry,
+  PublicSchedule,
+} from '@/objects/publicquery';
 
 import { CreateClubDialog } from '../CreateClubDialog';
 import { CreateTournamentDialog } from '../CreateTournamentDialog';
+import { ManagePlayerDialog } from '../ManagePlayerDialog';
 import type { LoadState, PublicHallState } from '../types';
 import {
   formatDateTime,
@@ -60,13 +69,17 @@ export const PublicSchedulesSection = ({
         source={payload.source}
         warning={payload.warning}
       >
-        <FilterActionRow className="public-schedules__filters" onRefresh={onRefresh}>
+        <FilterActionRow
+          className="public-schedules__filters"
+          onRefresh={onRefresh}
+        >
           <SelectField
             label="赛事状态"
             value={state.scheduleTournamentStatus}
             onChange={(event) =>
               onStateChange({
-                scheduleTournamentStatus: event.currentTarget.value as PublicHallState['scheduleTournamentStatus'],
+                scheduleTournamentStatus: event.currentTarget
+                  .value as PublicHallState['scheduleTournamentStatus'],
               })
             }
           >
@@ -81,7 +94,8 @@ export const PublicSchedulesSection = ({
             value={state.scheduleStageStatus}
             onChange={(event) =>
               onStateChange({
-                scheduleStageStatus: event.currentTarget.value as PublicHallState['scheduleStageStatus'],
+                scheduleStageStatus: event.currentTarget
+                  .value as PublicHallState['scheduleStageStatus'],
               })
             }
           >
@@ -95,11 +109,16 @@ export const PublicSchedulesSection = ({
           <div className="tournament-detail-list__body tournament-detail-list__body--cards public-schedules__grid">
             {payload.envelope.items.length > 0 ? (
               payload.envelope.items.map((item) => (
-                <article key={`${item.tournamentId}-${item.stageId}`} className="tournament-detail-list__row public-directory-card">
+                <article
+                  key={`${item.tournamentId}-${item.stageId}`}
+                  className="tournament-detail-list__row public-directory-card"
+                >
                   <div className="tournament-detail-list__row-main public-directory-card__main">
                     <div className="flex flex-wrap items-center gap-2">
                       <strong>{item.tournamentName}</strong>
-                      {item.isUnpublished ? <StatusPill tone="warning">未发布</StatusPill> : null}
+                      {item.isUnpublished ? (
+                        <StatusPill tone="warning">未发布</StatusPill>
+                      ) : null}
                     </div>
                     <span>{item.stageName}</span>
                     <span>{`开始时间：${formatDateTime(item.scheduledAt)}`}</span>
@@ -111,7 +130,10 @@ export const PublicSchedulesSection = ({
                     >
                       {getTournamentStatusLabel(item.tournamentStatus)}
                     </StatusPill>
-                    <Link className="detail-link tournament-detail-list__action" to={`/public/tournaments/${item.tournamentId}`}>
+                    <Link
+                      className="detail-link tournament-detail-list__action"
+                      to={`/public/tournaments/${item.tournamentId}`}
+                    >
                       查看赛事详情
                     </Link>
                   </div>
@@ -124,7 +146,10 @@ export const PublicSchedulesSection = ({
         </section>
       </PortalSection>
       {canCreateTournament ? (
-        <CreateTournamentDialog open={isCreateTournamentOpen} onOpenChange={setIsCreateTournamentOpen} />
+        <CreateTournamentDialog
+          open={isCreateTournamentOpen}
+          onOpenChange={setIsCreateTournamentOpen}
+        />
       ) : null}
     </>
   );
@@ -169,18 +194,26 @@ export const PublicClubsSection = ({
         source={payload.source}
         warning={payload.warning}
       >
-        <FilterActionRow className="public-schedules__filters" onRefresh={onRefresh}>
+        <FilterActionRow
+          className="public-schedules__filters"
+          onRefresh={onRefresh}
+        >
           <CheckboxField
             label="只显示可加入俱乐部"
             checked={state.clubActiveOnly}
-            onChange={(event) => onStateChange({ clubActiveOnly: event.currentTarget.checked })}
+            onChange={(event) =>
+              onStateChange({ clubActiveOnly: event.currentTarget.checked })
+            }
           />
         </FilterActionRow>
         <section className="tournament-detail-list">
           <div className="tournament-detail-list__body tournament-detail-list__body--cards public-directory__grid">
             {payload.envelope.items.length > 0 ? (
               payload.envelope.items.map((club) => (
-                <article key={club.id} className="tournament-detail-list__row public-directory-card">
+                <article
+                  key={club.id}
+                  className="tournament-detail-list__row public-directory-card"
+                >
                   <div className="tournament-detail-list__row-main public-directory-card__main">
                     <strong>{club.name}</strong>
                     <span>{`战力值：${club.powerRating}`}</span>
@@ -188,7 +221,10 @@ export const PublicClubsSection = ({
                   </div>
                   <div className="tournament-detail-list__row-side">
                     <span>{`成员数：${club.memberCount}`}</span>
-                    <Link className="detail-link tournament-detail-list__action" to={`/public/clubs/${club.id}`}>
+                    <Link
+                      className="detail-link tournament-detail-list__action"
+                      to={`/public/clubs/${club.id}`}
+                    >
                       查看详情
                     </Link>
                   </div>
@@ -200,7 +236,12 @@ export const PublicClubsSection = ({
           </div>
         </section>
       </PortalSection>
-      {canCreateClub ? <CreateClubDialog open={isCreateClubOpen} onOpenChange={setIsCreateClubOpen} /> : null}
+      {canCreateClub ? (
+        <CreateClubDialog
+          open={isCreateClubOpen}
+          onOpenChange={setIsCreateClubOpen}
+        />
+      ) : null}
     </>
   );
 };
@@ -211,84 +252,132 @@ export const PublicLeaderboardSection = ({
   clubs,
   onStateChange,
   onRefresh,
+  onPlayerManaged,
 }: {
   payload: LoadState<PlayerLeaderboardEntry>;
   state: PublicHallState;
   clubs: ClubSummary[];
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
+  onPlayerManaged?: () => void;
 }) => {
-  return (
-    <PortalSection
-      className="public-leaderboard-section"
-      eyebrow="排行"
-      title={
-        <div className="public-schedules__title-row">
-          <span>选手排名</span>
-        </div>
-      }
-      description="查看当前公共大厅中的选手 Elo 排名、所属俱乐部和当前状态。"
-      source={payload.source}
-      warning={payload.warning}
-    >
-      <FilterActionRow className="public-schedules__filters" onRefresh={onRefresh}>
-        <SelectField
-          label="俱乐部"
-          value={state.leaderboardClubId}
-          onChange={(event) => onStateChange({ leaderboardClubId: event.currentTarget.value })}
-        >
-          <option value="">全部俱乐部</option>
-          {clubs.map((club) => (
-            <option key={club.id} value={club.id}>
-              {club.name}
-            </option>
-          ))}
-        </SelectField>
-        <SelectField
-          label="状态"
-          value={state.leaderboardStatus}
-          onChange={(event) =>
-            onStateChange({ leaderboardStatus: event.currentTarget.value as PublicHallState['leaderboardStatus'] })
-          }
-        >
-          <option value="">全部状态</option>
-          <option value="Active">活跃</option>
-          <option value="Inactive">停用</option>
-          <option value="Banned">封禁</option>
-        </SelectField>
-      </FilterActionRow>
-      <section className="tournament-detail-list">
-        <div className="tournament-detail-list__body tournament-detail-list__body--cards public-leaderboard__list">
-          {payload.envelope.items.length > 0 ? (
-            payload.envelope.items.map((item, index) => {
-              const linkedClub =
-                clubs.find((club) => item.clubIds?.includes(club.id)) ??
-                clubs.find((club) => club.name === item.clubName);
+  const { session } = useAuth();
+  const [managedPlayer, setManagedPlayer] =
+    useState<PlayerLeaderboardEntry | null>(null);
+  const canManagePlayers = !!session?.user.roles.isSuperAdmin;
 
-              return (
-                <article key={item.playerId} className="tournament-detail-list__row public-leaderboard__row">
-                  <div className="tournament-detail-list__row-main">
-                    <strong>{item.nickname}</strong>
-                    <span>{`俱乐部：${item.clubName || '--'}`}</span>
-                    <span>{`状态：${getLeaderboardStatusLabel(item.status)}`}</span>
-                  </div>
-                  <div className="tournament-detail-list__row-side">
-                    <strong>{`ELO ${item.elo}`}</strong>
-                    <span>{`排名：${item.rank || index + 1}`}</span>
-                    {linkedClub ? (
-                      <Link className="detail-link tournament-detail-list__action" to={`/public/clubs/${linkedClub.id}`}>
-                        查看俱乐部
-                      </Link>
-                    ) : null}
-                  </div>
-                </article>
-              );
-            })
-          ) : (
-            <EmptyState>当前没有可展示的选手排名。</EmptyState>
-          )}
-        </div>
-      </section>
-    </PortalSection>
+  return (
+    <>
+      <PortalSection
+        className="public-leaderboard-section"
+        eyebrow="排行"
+        title={
+          <div className="public-schedules__title-row">
+            <span>选手排名</span>
+          </div>
+        }
+        description="查看当前公共大厅中的选手 Elo 排名、所属俱乐部和当前状态。"
+        source={payload.source}
+        warning={payload.warning}
+      >
+        <FilterActionRow
+          className="public-schedules__filters"
+          onRefresh={onRefresh}
+        >
+          <SelectField
+            label="俱乐部"
+            value={state.leaderboardClubId}
+            onChange={(event) =>
+              onStateChange({ leaderboardClubId: event.currentTarget.value })
+            }
+          >
+            <option value="">全部俱乐部</option>
+            {clubs.map((club) => (
+              <option key={club.id} value={club.id}>
+                {club.name}
+              </option>
+            ))}
+          </SelectField>
+          <SelectField
+            label="状态"
+            value={state.leaderboardStatus}
+            onChange={(event) =>
+              onStateChange({
+                leaderboardStatus: event.currentTarget
+                  .value as PublicHallState['leaderboardStatus'],
+              })
+            }
+          >
+            <option value="">全部状态</option>
+            <option value="Active">活跃</option>
+            <option value="Inactive">停用</option>
+            <option value="Banned">封禁</option>
+          </SelectField>
+        </FilterActionRow>
+        <section className="tournament-detail-list">
+          <div className="tournament-detail-list__body tournament-detail-list__body--cards public-leaderboard__list">
+            {payload.envelope.items.length > 0 ? (
+              payload.envelope.items.map((item, index) => {
+                const linkedClub =
+                  clubs.find((club) => item.clubIds?.includes(club.id)) ??
+                  clubs.find((club) => club.name === item.clubName);
+
+                return (
+                  <article
+                    key={item.playerId}
+                    className="tournament-detail-list__row public-leaderboard__row"
+                  >
+                    <div className="tournament-detail-list__row-main">
+                      <strong>{item.nickname}</strong>
+                      <span>{`俱乐部：${item.clubName || '--'}`}</span>
+                      <span>{`状态：${getLeaderboardStatusLabel(item.status)}`}</span>
+                    </div>
+                    <div className="tournament-detail-list__row-side">
+                      <strong>{`ELO ${item.elo}`}</strong>
+                      <span>{`排名：${item.rank || index + 1}`}</span>
+                      {canManagePlayers || linkedClub ? (
+                        <div className="tournament-detail-list__action-row">
+                          {canManagePlayers ? (
+                            <button
+                              type="button"
+                              className="detail-link tournament-detail-list__action"
+                              onClick={() => setManagedPlayer(item)}
+                            >
+                              管理玩家
+                            </button>
+                          ) : null}
+                          {linkedClub ? (
+                            <Link
+                              className="detail-link tournament-detail-list__action"
+                              to={`/public/clubs/${linkedClub.id}`}
+                            >
+                              查看俱乐部
+                            </Link>
+                          ) : null}
+                        </div>
+                      ) : null}
+                    </div>
+                  </article>
+                );
+              })
+            ) : (
+              <EmptyState>当前没有可展示的选手排名。</EmptyState>
+            )}
+          </div>
+        </section>
+      </PortalSection>
+      {canManagePlayers ? (
+        <ManagePlayerDialog
+          open={!!managedPlayer}
+          player={managedPlayer}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) {
+              setManagedPlayer(null);
+            }
+          }}
+          onCompleted={onPlayerManaged}
+        />
+      ) : null}
+    </>
   );
 };

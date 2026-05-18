@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { DetailCard, MetricCard, MetricGrid } from '../presentation';
+import { DetailCard, MetricCard, MetricGrid } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
 import type { PlayerProfile } from '@/objects/auth';
@@ -43,16 +43,28 @@ export function ClubPublicInfoPanel({
         <MetricGrid>
           <MetricCard
             label="成员数"
-            value={<span className="text-[color:var(--gold)]">{profile.memberCount}</span>}
+            value={
+              <span className="text-[color:var(--gold)]">
+                {profile.memberCount}
+              </span>
+            }
           />
           <MetricCard
             label="战力评分"
-            value={<span className="text-[color:var(--gold)]">{profile.powerRating}</span>}
+            value={
+              <span className="text-[color:var(--gold)]">
+                {profile.powerRating}
+              </span>
+            }
             accent="warning"
           />
           <MetricCard
             label="俱乐部资金"
-            value={<span className="text-[color:var(--gold)]">{formatNumber(profile.treasury)}</span>}
+            value={
+              <span className="text-[color:var(--gold)]">
+                {formatNumber(profile.treasury)}
+              </span>
+            }
           />
           <MetricCard
             label="关系"
@@ -64,7 +76,9 @@ export function ClubPublicInfoPanel({
           />
         </MetricGrid>
         <div className="rounded-[22px] border border-[color:rgba(134,151,176,0.28)] bg-[rgba(255,255,255,0.03)] px-6 py-5">
-          <p className="m-0 text-[0.95rem] text-[color:var(--muted-strong)]">核心成员</p>
+          <p className="m-0 text-[0.95rem] text-[color:var(--muted-strong)]">
+            核心成员
+          </p>
           <strong className="mt-3 block text-[1.02rem] leading-8 text-[color:var(--text)]">
             {featuredPlayerNames.join(' / ') || '--'}
           </strong>
@@ -81,7 +95,9 @@ export function ClubRecentTournamentsPanel({
 }: {
   tournaments: ClubPublicProfile['activeTournaments'];
   canManageLineup: boolean;
-  onOpenLineup: (tournament: ClubPublicProfile['activeTournaments'][number]) => void;
+  onOpenLineup: (
+    tournament: ClubPublicProfile['activeTournaments'][number],
+  ) => void;
 }) {
   return (
     <section className="tournament-detail-list">
@@ -91,8 +107,12 @@ export function ClubRecentTournamentsPanel({
             <article key={item.id} className="tournament-detail-list__row">
               <div className="tournament-detail-list__row-main">
                 <strong>{item.name}</strong>
-                <span>{item.source === 'invited' ? '受邀赛事' : '相关赛事'}</span>
-                <span>{item.status ? getTournamentStatusLabel(item.status) : '--'}</span>
+                <span>
+                  {item.source === 'invited' ? '受邀赛事' : '相关赛事'}
+                </span>
+                <span>
+                  {item.status ? getTournamentStatusLabel(item.status) : '--'}
+                </span>
               </div>
               <div className="tournament-detail-list__row-side">
                 {canManageLineup && item.canSubmitLineup ? (
@@ -115,7 +135,9 @@ export function ClubRecentTournamentsPanel({
             </article>
           ))
         ) : (
-          <EmptyState asListItem={false}>当前还没有可展示的相关赛事。</EmptyState>
+          <EmptyState asListItem={false}>
+            当前还没有可展示的相关赛事。
+          </EmptyState>
         )}
       </div>
     </section>
@@ -132,7 +154,9 @@ export function ClubInboxPanel({
   onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
 }) {
   if (isInboxLoading) {
-    return <p className="m-0 text-[color:var(--muted)]">正在加载申请处理列表...</p>;
+    return (
+      <p className="m-0 text-[color:var(--muted)]">正在加载申请处理列表...</p>
+    );
   }
 
   return (
@@ -140,17 +164,27 @@ export function ClubInboxPanel({
       <div className="tournament-detail-list__body tournament-detail-list__body--cards">
         {applicationInbox.length > 0 ? (
           applicationInbox.map((item) => (
-            <article key={item.applicationId} className="tournament-detail-list__row">
+            <article
+              key={item.applicationId}
+              className="tournament-detail-list__row"
+            >
               <div className="tournament-detail-list__row-main">
                 <strong>{item.applicant.displayName}</strong>
                 <span>{item.message || '未填写申请说明'}</span>
                 <span>
-                  {item.applicant.playerId || '--'} / {formatDateTime(item.submittedAt)}
+                  {item.applicant.playerId || '--'} /{' '}
+                  {formatDateTime(item.submittedAt)}
                 </span>
               </div>
               <div className="tournament-detail-list__row-side">
                 <StatusPill
-                  tone={item.status === 'Pending' ? 'warning' : item.status === 'Approved' ? 'success' : 'danger'}
+                  tone={
+                    item.status === 'Pending'
+                      ? 'warning'
+                      : item.status === 'Approved'
+                        ? 'success'
+                        : 'danger'
+                  }
                 >
                   {getApplicationStatusLabel(item.status)}
                 </StatusPill>
@@ -195,7 +229,9 @@ export function ClubAdminMembersPanel({
   onRemoveMember: (member: ClubAdminMemberEntry) => void;
 }) {
   if (isLoading) {
-    return <p className="m-0 text-[color:var(--muted)]">正在加载成员管理列表...</p>;
+    return (
+      <p className="m-0 text-[color:var(--muted)]">正在加载成员管理列表...</p>
+    );
   }
 
   return (
@@ -203,19 +239,30 @@ export function ClubAdminMembersPanel({
       <div className="tournament-detail-list__body tournament-detail-list__body--cards">
         {members.length > 0 ? (
           members.map((member) => (
-            <article key={member.playerId} className="tournament-detail-list__row">
+            <article
+              key={member.playerId}
+              className="tournament-detail-list__row"
+            >
               <div className="tournament-detail-list__row-main">
                 <div className="flex flex-wrap items-center gap-2">
                   <strong>{member.displayName}</strong>
                   <StatusPill tone={member.isAdmin ? 'success' : 'warning'}>
-                    {member.isCurrentUser ? '你' : member.isAdmin ? '管理员' : '成员'}
+                    {member.isCurrentUser
+                      ? '你'
+                      : member.isAdmin
+                        ? '管理员'
+                        : '成员'}
                   </StatusPill>
                 </div>
-                {typeof member.elo === 'number' ? <span>ELO {member.elo}</span> : null}
+                {typeof member.elo === 'number' ? (
+                  <span>ELO {member.elo}</span>
+                ) : null}
                 {member.currentRank ? (
                   <span>
                     {member.currentRank.platform} {member.currentRank.tier}
-                    {typeof member.currentRank.stars === 'number' ? ` ${member.currentRank.stars}` : ''}
+                    {typeof member.currentRank.stars === 'number'
+                      ? ` ${member.currentRank.stars}`
+                      : ''}
                   </span>
                 ) : null}
               </div>
@@ -264,7 +311,9 @@ export function ClubHeroActions({
 }) {
   return (
     <div className="flex flex-wrap items-center gap-3">
-      {isClubMember ? <StatusPill tone="success">你已经是俱乐部成员</StatusPill> : null}
+      {isClubMember ? (
+        <StatusPill tone="success">你已经是俱乐部成员</StatusPill>
+      ) : null}
       {!isClubMember && currentApplicationStatus === 'Pending' ? (
         <Button
           className="border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.16)] text-[color:var(--gold)]"

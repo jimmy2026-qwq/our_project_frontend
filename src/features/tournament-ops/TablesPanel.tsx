@@ -1,4 +1,4 @@
-import { DataPanel, ListRow } from './presentation';
+import { DataPanel, ListRow } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { Badge, Button } from '@/components/ui';
 import type { TournamentTableSummary } from '@/objects/tournament';
@@ -36,20 +36,27 @@ export function TablesPanel({
                   <strong>{table.tableCode}</strong>
                   <span>
                     {table.playerIds.length > 0
-                      ? table.playerIds.map((playerId) => playerNames[playerId] ?? playerId).join(', ')
+                      ? table.playerIds
+                          .map((playerId) => playerNames[playerId] ?? playerId)
+                          .join(', ')
                       : table.id}
                   </span>
                 </>
               }
               aside={
                 <>
-                  <Badge variant="outline" className={getTableStatusBadgeClassName(table.status)}>
+                  <Badge
+                    variant="outline"
+                    className={getTableStatusBadgeClassName(table.status)}
+                  >
                     {getTableStatusLabel(table.status)}
                   </Badge>
                   <span>{table.seatCount} 个座位</span>
                   <Button
                     size="sm"
-                    variant={selectedTableId === table.id ? 'secondary' : 'outline'}
+                    variant={
+                      selectedTableId === table.id ? 'secondary' : 'outline'
+                    }
                     onClick={() => onSelectTable(table.id)}
                   >
                     {selectedTableId === table.id ? '已选中' : '查看'}

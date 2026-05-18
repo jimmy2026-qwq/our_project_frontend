@@ -87,7 +87,10 @@ export function ClubApplicationDialog({
     void (async () => {
       setIsLoading(true);
       const operatorId = session.user.operatorId ?? session.user.userId;
-      const playerContext = await loadPlayerContext(operatorId, session.user.displayName);
+      const playerContext = await loadPlayerContext(
+        operatorId,
+        session.user.displayName,
+      );
       const application = await loadTrackedApplication(operatorId, club.id);
 
       if (!cancelled) {
@@ -114,10 +117,17 @@ export function ClubApplicationDialog({
     };
   }, [club, onApplicationUpdated, session]);
 
-  const selectedPlayerName = state?.playerContext.player?.displayName ?? (state ? getFallbackPlayerName(state) : '');
+  const selectedPlayerName =
+    state?.playerContext.player?.displayName ??
+    (state ? getFallbackPlayerName(state) : '');
   const application = state?.application.application ?? null;
-  const isMember = state?.playerContext.player?.clubIds?.includes(club.id) ?? false;
-  const canSubmit = !!state && !isMember && application?.status !== 'Pending' && application?.status !== 'Approved';
+  const isMember =
+    state?.playerContext.player?.clubIds?.includes(club.id) ?? false;
+  const canSubmit =
+    !!state &&
+    !isMember &&
+    application?.status !== 'Pending' &&
+    application?.status !== 'Approved';
   const canWithdraw = !!application && application.status === 'Pending';
 
   useEffect(() => {
@@ -130,7 +140,10 @@ export function ClubApplicationDialog({
     () =>
       application
         ? [
-            { label: '状态', value: getApplicationStatusLabel(application.status) },
+            {
+              label: '状态',
+              value: getApplicationStatusLabel(application.status),
+            },
             { label: '申请编号', value: application.id },
             { label: '提交时间', value: formatDateTime(application.createdAt) },
             { label: '备注', value: application.message || '--' },
@@ -148,7 +161,11 @@ export function ClubApplicationDialog({
 
     const [playerContext, applicationState] = await Promise.all([
       loadPlayerContext(state.operatorId, state.operatorDisplayName),
-      loadTrackedApplication(state.operatorId, club.id, state.application.application?.id),
+      loadTrackedApplication(
+        state.operatorId,
+        club.id,
+        state.application.application?.id,
+      ),
     ]);
 
     setState((current) =>
@@ -247,18 +264,28 @@ export function ClubApplicationDialog({
 
           <DialogBody className="px-6 py-5">
             {isLoading || !state ? (
-              <p className="m-0 text-[color:var(--muted)]">正在加载申请状态...</p>
+              <p className="m-0 text-[color:var(--muted)]">
+                正在加载申请状态...
+              </p>
             ) : (
               <div className="grid gap-5">
                 <FieldGroup className="guest-flow__form">
-                  <TextInputField label="申请人" value={selectedPlayerName} readOnly />
+                  <TextInputField
+                    label="申请人"
+                    value={selectedPlayerName}
+                    readOnly
+                  />
                   <TextareaField
                     label="申请备注"
                     rows={4}
                     value={state.message}
                     onChange={(event) => {
                       const nextMessage = event.currentTarget.value;
-                      setState((current) => (current ? { ...current, message: nextMessage } : current));
+                      setState((current) =>
+                        current
+                          ? { ...current, message: nextMessage }
+                          : current,
+                      );
                     }}
                   />
                 </FieldGroup>
@@ -280,8 +307,12 @@ export function ClubApplicationDialog({
                     <dl className="m-0 grid gap-2">
                       {summaryItems.map((item) => (
                         <div key={item.label} className="grid gap-1">
-                          <dt className="text-[0.82rem] text-[color:var(--muted)]">{item.label}</dt>
-                          <dd className="m-0 text-[color:var(--text)]">{item.value}</dd>
+                          <dt className="text-[0.82rem] text-[color:var(--muted)]">
+                            {item.label}
+                          </dt>
+                          <dd className="m-0 text-[color:var(--text)]">
+                            {item.value}
+                          </dd>
                         </div>
                       ))}
                     </dl>
@@ -300,13 +331,22 @@ export function ClubApplicationDialog({
               <ActionButton onClick={() => void refreshCurrentState()}>
                 {isRefreshing ? '刷新中...' : '刷新状态'}
               </ActionButton>
-              <ActionButton onClick={() => void handleSubmit()} disabled={!canSubmit}>
+              <ActionButton
+                onClick={() => void handleSubmit()}
+                disabled={!canSubmit}
+              >
                 提交申请
               </ActionButton>
-              <ActionButton onClick={() => void handleWithdraw()} disabled={!canWithdraw}>
+              <ActionButton
+                onClick={() => void handleWithdraw()}
+                disabled={!canWithdraw}
+              >
                 撤回申请
               </ActionButton>
-              <ActionButton variant="secondary" onClick={() => onOpenChange(false)}>
+              <ActionButton
+                variant="secondary"
+                onClick={() => onOpenChange(false)}
+              >
                 关闭
               </ActionButton>
             </div>

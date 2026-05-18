@@ -30,23 +30,19 @@ export const heroCards = [
 export const foundationLayers = [
   {
     title: 'React App Shell',
-    body:
-      'The runtime architecture is no longer prototype-only. The app now mounts from src/main.tsx, uses createBrowserRouter, and renders route pages inside AppShell.',
+    body: 'The runtime architecture is no longer prototype-only. The app now mounts from src/main.tsx, uses createBrowserRouter, and renders route pages inside AppShell.',
   },
   {
     title: 'Route-Oriented Pages',
-    body:
-      'Blueprint home, public hall, member hub, tournament operations, and public detail views now exist as routed pages instead of being stitched together by manual mount logic.',
+    body: 'Blueprint home, public hall, member hub, tournament operations, and public detail views now exist as routed pages instead of being stitched together by manual mount logic.',
   },
   {
     title: 'Feature-Level Organization',
-    body:
-      'Business logic is split into features/blueprint, features/public-hall, features/member-hub, and features/tournament-ops rather than concentrating everything in a few giant modules.',
+    body: 'Business logic is split into features/blueprint, features/public-hall, features/member-hub, and features/tournament-ops rather than concentrating everything in a few giant modules.',
   },
   {
     title: 'Shared Business Layer',
-    body:
-      'The typed domain models, modular API layer, query helpers, and club-application logic remain one of the strongest migration assets and still anchor the current frontend.',
+    body: 'The typed domain models, modular API layer, query helpers, and club-application logic remain one of the strongest migration assets and still anchor the current frontend.',
   },
 ];
 
@@ -76,55 +72,69 @@ export const migrationTracks = [
 export const workbenchSteps = [
   {
     title: 'Blueprint Home',
-    detail: 'Explains the migrated architecture, keeps contract touchpoints visible, and hosts the current home application workbench.',
+    detail:
+      'Explains the migrated architecture, keeps contract touchpoints visible, and hosts the current home application workbench.',
   },
   {
     title: 'Public Hall',
-    detail: 'Reads public schedules, club data, and leaderboard data from routed pages with public detail views behind them.',
+    detail:
+      'Reads public schedules, club data, and leaderboard data from routed pages with public detail views behind them.',
   },
   {
     title: 'Member Hub',
-    detail: 'Keeps operator switching, player and club dashboards, and the club-application inbox inside a feature-owned workspace.',
+    detail:
+      'Keeps operator switching, player and club dashboards, and the club-application inbox inside a feature-owned workspace.',
   },
   {
     title: 'Tournament Ops',
-    detail: 'Covers tables, records, and appeals while preserving the same backend-first plus mock-fallback operating pattern.',
+    detail:
+      'Covers tables, records, and appeals while preserving the same backend-first plus mock-fallback operating pattern.',
   },
 ];
 
 export const sampleRequests = [
   {
     title: 'Session bootstrap',
-    description: 'Session state is expected to come from a stable frontend-facing session contract rather than ad hoc local assumptions.',
+    description:
+      'Session state is expected to come from a stable frontend-facing session contract rather than ad hoc local assumptions.',
     path: '/session?operatorId=player-123',
   },
   {
     title: 'Current player context',
-    description: 'The home application and member-facing flows still depend on loading the canonical player aggregate for the active operator.',
+    description:
+      'The home application and member-facing flows still depend on loading the canonical player aggregate for the active operator.',
     path: '/players/me?operatorId=player-123',
   },
   {
     title: 'Club application inbox',
-    description: 'Member hub and review flows depend on the stable club application inbox shape with operator scope and pending-state filters.',
+    description:
+      'Member hub and review flows depend on the stable club application inbox shape with operator scope and pending-state filters.',
     path: 'GET /clubs/:clubId/applications?operatorId=:clubAdminId&status=Pending&limit=20',
   },
   {
     title: 'Public club detail',
-    description: 'Public club detail is contract-backed and includes lineup, treasury, relation, and application-policy information for public display.',
+    description:
+      'Public club detail is contract-backed and includes lineup, treasury, relation, and application-policy information for public display.',
     path: '/public/clubs/:clubId',
   },
   {
     title: 'Tournament stage directory',
-    description: 'Tournament operations still needs this shape to replace hard-coded stage selectors with a backend-driven directory.',
+    description:
+      'Tournament operations still needs this shape to replace hard-coded stage selectors with a backend-driven directory.',
     path: '/tournaments/:id/stages',
   },
   {
     title: 'Tournament table queue',
-    description: 'Tables remain one of the most valuable operational entry points in the current tournament workbench.',
-    path: tournamentApi.buildTournamentTablesPath('tournament-123', 'stage-demo-swiss', {
-      status: 'WaitingPreparation',
-      limit: 8,
-    }),
+    description:
+      'Tables remain one of the most valuable operational entry points in the current tournament workbench.',
+    path: tournamentApi.buildTournamentTablesPath(
+      'tournament-123',
+      'stage-demo-swiss',
+      {
+        status: 'WaitingPreparation',
+        limit: 8,
+      },
+    ),
   },
 ];
 
@@ -155,16 +165,19 @@ export const routeDependencyBacklog = [
   {
     id: 'ops-tournament-directory',
     title: 'Tournament directory contract',
-    detail: 'Tournament operations still needs GET /tournaments so the workbench can stop relying on hard-coded top-level context.',
+    detail:
+      'Tournament operations still needs GET /tournaments so the workbench can stop relying on hard-coded top-level context.',
   },
   {
     id: 'ops-stage-directory',
     title: 'Stage directory contract',
-    detail: 'GET /tournaments/:id/stages is still the main missing dependency for replacing static stage selectors with backend-driven context.',
+    detail:
+      'GET /tournaments/:id/stages is still the main missing dependency for replacing static stage selectors with backend-driven context.',
   },
   {
     id: 'operator-permissions',
     title: 'Operator permission scope',
-    detail: 'A stable operator-permissions contract would let the routed workbenches express capability scope without treating every route as globally writable.',
+    detail:
+      'A stable operator-permissions contract would let the routed workbenches express capability scope without treating every route as globally writable.',
   },
 ];

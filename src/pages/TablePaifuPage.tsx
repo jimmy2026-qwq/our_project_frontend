@@ -93,7 +93,9 @@ export function TablePaifuPage() {
 
   const rounds = useMemo(() => paifu?.rounds ?? [], [paifu]);
   const standings = useMemo(() => paifu?.finalStandings ?? [], [paifu]);
-  const backLink = paifu?.metadata.tournamentId ? `/public/tournaments/${paifu.metadata.tournamentId}` : '/public';
+  const backLink = paifu?.metadata.tournamentId
+    ? `/public/tournaments/${paifu.metadata.tournamentId}`
+    : '/public';
 
   if (isLoading) {
     return (
@@ -115,8 +117,12 @@ export function TablePaifuPage() {
             {paifu ? <Badge>Archived match</Badge> : null}
           </div>
           <div>
-            <h1 className="text-[clamp(2rem,3vw,2.5rem)] font-semibold text-[color:var(--text)]">Table Paifu</h1>
-            <p className="text-[color:var(--muted-strong)]">Table id {tableId}</p>
+            <h1 className="text-[clamp(2rem,3vw,2.5rem)] font-semibold text-[color:var(--text)]">
+              Table Paifu
+            </h1>
+            <p className="text-[color:var(--muted-strong)]">
+              Table id {tableId}
+            </p>
           </div>
         </div>
         <div className="flex flex-wrap gap-3">
@@ -144,7 +150,10 @@ export function TablePaifuPage() {
           <Card>
             <CardHeader>
               <CardTitle>Final Standings</CardTitle>
-              <CardDescription>Review the archived finishing order and final points for the table.</CardDescription>
+              <CardDescription>
+                Review the archived finishing order and final points for the
+                table.
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <Table>
@@ -175,7 +184,10 @@ export function TablePaifuPage() {
           <Card>
             <CardHeader>
               <CardTitle>Round Timeline</CardTitle>
-              <CardDescription>Each block summarizes the round descriptor, outcome, and key scoring details.</CardDescription>
+              <CardDescription>
+                Each block summarizes the round descriptor, outcome, and key
+                scoring details.
+              </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-4">
               {rounds.map((round, index) => (
@@ -196,7 +208,8 @@ export function TablePaifuPage() {
                     <span>Winner: {round.result.winner ?? 'N/A'}</span>
                     <span>Target: {round.result.target ?? 'N/A'}</span>
                     <span>
-                      Han/Fu: {round.result.han ?? '-'} / {round.result.fu ?? '-'}
+                      Han/Fu: {round.result.han ?? '-'} /{' '}
+                      {round.result.fu ?? '-'}
                     </span>
                     <span>Points: {round.result.points}</span>
                     <span>Honba: {round.descriptor.honba}</span>

@@ -1,8 +1,12 @@
 import { SectionCallout } from '@/components/ui';
-import { WorkbenchBacklogPanel } from './presentation';
+import { WorkbenchBacklogPanel } from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
 
-import { contractChecklist, routeDependencyBacklog, sampleRequests } from './sections.content';
+import {
+  contractChecklist,
+  routeDependencyBacklog,
+  sampleRequests,
+} from './sections.content';
 
 export function BlueprintApiReferenceSection() {
   return (
@@ -23,7 +27,12 @@ export function BlueprintApiReferenceSection() {
       </div>
       <div className="api-list">
         {contractChecklist.map((item) => (
-          <SectionCallout key={item.title} className="api-card api-card--note" title={item.title} description={item.detail} />
+          <SectionCallout
+            key={item.title}
+            className="api-card api-card--note"
+            title={item.title}
+            description={item.detail}
+          />
         ))}
       </div>
       <WorkbenchBacklogPanel

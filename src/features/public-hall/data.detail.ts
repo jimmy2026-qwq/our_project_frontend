@@ -1,12 +1,17 @@
 import { publicApi } from '@/api/publicquery';
 import { clubsApi } from '@/api/club';
 import { tournamentApi } from '@/api/tournament';
-import type { ClubPublicProfile, TournamentPublicProfile } from '@/objects/publicquery';
+import type {
+  ClubPublicProfile,
+  TournamentPublicProfile,
+} from '@/objects/publicquery';
 
 import type { ClubDetailState, TournamentDetailState } from './types';
 import { mapTournamentDetailFromAdminView } from './data.shared';
 
-export async function loadTournamentDetail(tournamentId: string): Promise<TournamentDetailState> {
+export async function loadTournamentDetail(
+  tournamentId: string,
+): Promise<TournamentDetailState> {
   try {
     const item = await publicApi.getPublicTournamentProfile(tournamentId);
     return { item, source: 'api' };
@@ -16,7 +21,8 @@ export async function loadTournamentDetail(tournamentId: string): Promise<Tourna
       return {
         item: mapTournamentDetailFromAdminView(draftItem),
         source: 'api',
-        warning: 'This tournament is still in draft mode and is shown through the admin endpoint.',
+        warning:
+          'This tournament is still in draft mode and is shown through the admin endpoint.',
       };
     } catch {
       // fall through
@@ -25,7 +31,10 @@ export async function loadTournamentDetail(tournamentId: string): Promise<Tourna
     return {
       item: null,
       source: 'api',
-      warning: error instanceof Error ? error.message : 'Unable to load tournament detail.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load tournament detail.',
     };
   }
 }
@@ -59,7 +68,10 @@ async function loadClubTournaments(
   }
 }
 
-export async function loadClubDetail(clubId: string, viewerId?: string): Promise<ClubDetailState> {
+export async function loadClubDetail(
+  clubId: string,
+  viewerId?: string,
+): Promise<ClubDetailState> {
   try {
     const [item, activeTournaments] = await Promise.all([
       publicApi.getPublicClubProfile(clubId),
@@ -76,7 +88,8 @@ export async function loadClubDetail(clubId: string, viewerId?: string): Promise
     return {
       item: null,
       source: 'api',
-      warning: error instanceof Error ? error.message : 'Unable to load club detail.',
+      warning:
+        error instanceof Error ? error.message : 'Unable to load club detail.',
     };
   }
 }

@@ -5,11 +5,17 @@ import { clubsApi } from '@/api/club';
 import { tournamentApi } from '@/api/tournament';
 import { publicApi } from '@/api/publicquery';
 import type { AuthSession } from '@/objects/auth';
-import type { ClubSummary, TournamentPublicProfile } from '@/objects/publicquery';
+import type {
+  ClubSummary,
+  TournamentPublicProfile,
+} from '@/objects/publicquery';
 
 import { mapTournamentDetailFromAdminView } from '../data.shared';
 import type { DetailState } from '../types';
-import type { TournamentDetailTableItem, TournamentDetailWorkbenchState } from './tournament-detail.types';
+import type {
+  TournamentDetailTableItem,
+  TournamentDetailWorkbenchState,
+} from './tournament-detail.types';
 import { playerApi } from '@/api/player';
 
 export function getTableStatusLabel(status: string) {
@@ -64,9 +70,14 @@ export function getTableStatusTone(status: string) {
   }
 }
 
-function getNextStageMissingLineupClubNames(profile: TournamentPublicProfile, availableClubs: ClubSummary[]) {
+function getNextStageMissingLineupClubNames(
+  profile: TournamentPublicProfile,
+  availableClubs: ClubSummary[],
+) {
   const invitedClubIds = profile.clubIds ?? [];
-  const nextStage = profile.stages?.find((stage) => stage.stageId === profile.nextStageId);
+  const nextStage = profile.stages?.find(
+    (stage) => stage.stageId === profile.nextStageId,
+  );
 
   if (!nextStage || invitedClubIds.length === 0) {
     return [];
@@ -80,11 +91,16 @@ function getNextStageMissingLineupClubNames(profile: TournamentPublicProfile, av
 
   return invitedClubIds
     .filter((clubId) => !submittedClubIds.has(clubId))
-    .map((clubId) => availableClubs.find((club) => club.id === clubId)?.name ?? clubId);
+    .map(
+      (clubId) =>
+        availableClubs.find((club) => club.id === clubId)?.name ?? clubId,
+    );
 }
 
 function getNextStageLineupSubmissionCounts(profile: TournamentPublicProfile) {
-  const nextStage = profile.stages?.find((stage) => stage.stageId === profile.nextStageId);
+  const nextStage = profile.stages?.find(
+    (stage) => stage.stageId === profile.nextStageId,
+  );
 
   if (!nextStage) {
     return {} as Record<string, number>;
@@ -93,7 +109,10 @@ function getNextStageLineupSubmissionCounts(profile: TournamentPublicProfile) {
   return Object.fromEntries(
     (nextStage.lineupSubmissions ?? [])
       .filter((submission) => submission.activePlayerIds.length > 0)
-      .map((submission) => [submission.clubId, submission.activePlayerIds.length]),
+      .map((submission) => [
+        submission.clubId,
+        submission.activePlayerIds.length,
+      ]),
   );
 }
 
@@ -121,10 +140,12 @@ export function useTournamentDetailWorkbench({
 }: UseTournamentDetailWorkbenchParams) {
   const [availableClubs, setAvailableClubs] = useState<ClubSummary[]>([]);
   const [selectedClubId, setSelectedClubId] = useState('');
-  const [isSubmittingTournamentAction, setIsSubmittingTournamentAction] = useState(false);
+  const [isSubmittingTournamentAction, setIsSubmittingTournamentAction] =
+    useState(false);
   const [tournamentActionError, setTournamentActionError] = useState('');
   const [publishBlockedOpen, setPublishBlockedOpen] = useState(false);
-  const [localProfile, setLocalProfile] = useState<TournamentPublicProfile | null>(state.item);
+  const [localProfile, setLocalProfile] =
+    useState<TournamentPublicProfile | null>(state.item);
   const [tables, setTables] = useState<TournamentDetailTableItem[]>([]);
   const [playerNames, setPlayerNames] = useState<Record<string, string>>({});
   const [showMoreInfo, setShowMoreInfo] = useState(false);
@@ -176,7 +197,9 @@ export function useTournamentDetailWorkbench({
         if (!cancelled) {
           setAvailableClubs(envelope.items);
           if (canManageTournament) {
-            setSelectedClubId((current) => current || envelope.items[0]?.id || '');
+            setSelectedClubId(
+              (current) => current || envelope.items[0]?.id || '',
+            );
           }
         }
       })
@@ -208,10 +231,14 @@ export function useTournamentDetailWorkbench({
       try {
         const payloads = await Promise.all(
           stageEntries.map(async (stage) => {
-            const envelope = await tournamentApi.getTournamentTables(currentProfile.id, stage.stageId, {
-              limit: 100,
-              offset: 0,
-            });
+            const envelope = await tournamentApi.getTournamentTables(
+              currentProfile.id,
+              stage.stageId,
+              {
+                limit: 100,
+                offset: 0,
+              },
+            );
 
             return envelope.items.map((table) => ({
               id: table.id,
@@ -246,7 +273,11 @@ export function useTournamentDetailWorkbench({
 
     async function loadPlayerNames() {
       const missingIds = Array.from(
-        new Set(tables.flatMap((table) => table.playerIds).filter((playerId) => !(playerId in playerNames))),
+        new Set(
+          tables
+            .flatMap((table) => table.playerIds)
+            .filter((playerId) => !(playerId in playerNames)),
+        ),
       );
 
       if (missingIds.length === 0) {
@@ -290,35 +321,48 @@ export function useTournamentDetailWorkbench({
     const canManageTournament =
       !!session?.user.roles.isRegisteredPlayer &&
       (session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin);
-    const canPublishTournament = canManageTournament && profile.status === 'Draft';
-    const missingLineupClubNames = getNextStageMissingLineupClubNames(profile, availableClubs);
+    const canPublishTournament =
+      canManageTournament && profile.status === 'Draft';
+    const missingLineupClubNames = getNextStageMissingLineupClubNames(
+      profile,
+      availableClubs,
+    );
     const lineupSubmissionCounts = getNextStageLineupSubmissionCounts(profile);
     const submittedLineupClubIds = Object.keys(lineupSubmissionCounts);
     const isWaitingForLineups =
       canManageTournament &&
       !!profile.nextStageId &&
-      (profile.status === 'RegistrationOpen' || profile.status === 'InProgress') &&
+      (profile.status === 'RegistrationOpen' ||
+        profile.status === 'InProgress') &&
       missingLineupClubNames.length > 0;
     const canScheduleStage =
       canManageTournament &&
       !!profile.nextStageId &&
-      (profile.status === 'RegistrationOpen' || profile.status === 'InProgress') &&
+      (profile.status === 'RegistrationOpen' ||
+        profile.status === 'InProgress') &&
       missingLineupClubNames.length === 0;
     const invitedClubIds = profile.clubIds ?? [];
-    const invitedClubs = availableClubs.filter((club) => invitedClubIds.includes(club.id));
-    const selectableClubs = availableClubs.filter((club) => !invitedClubIds.includes(club.id));
-    const visibleTables = [...(
-      canManageTournament
+    const invitedClubs = availableClubs.filter((club) =>
+      invitedClubIds.includes(club.id),
+    );
+    const selectableClubs = availableClubs.filter(
+      (club) => !invitedClubIds.includes(club.id),
+    );
+    const visibleTables = [
+      ...(canManageTournament
         ? tables
-        : tables.filter((table) =>
-            (table.status === 'WaitingPreparation' && !!operatorId && table.playerIds.includes(operatorId)) ||
-            table.status === 'InProgress' ||
-            table.status === 'Scoring' ||
-            table.status === 'AppealPending' ||
-            table.status === 'AppealInProgress' ||
-            table.status === 'Archived',
-          )
-    )].sort((left, right) => {
+        : tables.filter(
+            (table) =>
+              (table.status === 'WaitingPreparation' &&
+                !!operatorId &&
+                table.playerIds.includes(operatorId)) ||
+              table.status === 'InProgress' ||
+              table.status === 'Scoring' ||
+              table.status === 'AppealPending' ||
+              table.status === 'AppealInProgress' ||
+              table.status === 'Archived',
+          )),
+    ].sort((left, right) => {
       const leftIsOwnWaitingTable =
         !canManageTournament &&
         !!operatorId &&
@@ -334,7 +378,8 @@ export function useTournamentDetailWorkbench({
         return leftIsOwnWaitingTable ? -1 : 1;
       }
 
-      const weightDelta = getTableSortWeight(left.status) - getTableSortWeight(right.status);
+      const weightDelta =
+        getTableSortWeight(left.status) - getTableSortWeight(right.status);
 
       if (weightDelta !== 0) {
         return weightDelta;
@@ -392,31 +437,50 @@ export function useTournamentDetailWorkbench({
     try {
       setIsSubmittingTournamentAction(true);
       setTournamentActionError('');
-      await tournamentApi.registerTournamentClub(workbench.profile.id, invitedClubId, operatorId);
+      await tournamentApi.registerTournamentClub(
+        workbench.profile.id,
+        invitedClubId,
+        operatorId,
+      );
 
-      let remainingSelectable = availableClubs.filter((club) => club.id !== invitedClubId);
+      let remainingSelectable = availableClubs.filter(
+        (club) => club.id !== invitedClubId,
+      );
 
       try {
         const refreshed = await refreshTournamentProfile(workbench.profile.id);
-        remainingSelectable = availableClubs.filter((club) => !(refreshed.clubIds ?? []).includes(club.id));
+        remainingSelectable = availableClubs.filter(
+          (club) => !(refreshed.clubIds ?? []).includes(club.id),
+        );
       } catch {
         setLocalProfile((current) =>
           current
             ? {
                 ...current,
-                clubIds: Array.from(new Set([...(current.clubIds ?? []), invitedClubId])),
+                clubIds: Array.from(
+                  new Set([...(current.clubIds ?? []), invitedClubId]),
+                ),
                 clubCount:
                   typeof current.clubCount === 'number'
-                    ? Math.max(current.clubCount, (current.clubIds?.length ?? 0) + 1)
+                    ? Math.max(
+                        current.clubCount,
+                        (current.clubIds?.length ?? 0) + 1,
+                      )
                     : current.clubCount,
               }
             : current,
         );
       }
 
-      setSelectedClubId((current) => (current === invitedClubId ? remainingSelectable[0]?.id ?? '' : current));
+      setSelectedClubId((current) =>
+        current === invitedClubId
+          ? (remainingSelectable[0]?.id ?? '')
+          : current,
+      );
     } catch (error) {
-      setTournamentActionError(error instanceof Error ? error.message : '邀请俱乐部失败，请稍后重试。');
+      setTournamentActionError(
+        error instanceof Error ? error.message : '邀请俱乐部失败，请稍后重试。',
+      );
     } finally {
       setIsSubmittingTournamentAction(false);
     }
@@ -452,31 +516,48 @@ export function useTournamentDetailWorkbench({
 
       navigate('/public');
     } catch (error) {
-      setTournamentActionError(error instanceof Error ? error.message : '发布赛事失败，请稍后重试。');
+      setTournamentActionError(
+        error instanceof Error ? error.message : '发布赛事失败，请稍后重试。',
+      );
     } finally {
       setIsSubmittingTournamentAction(false);
     }
   }
 
   async function handleScheduleStage() {
-    if (!operatorId || !workbench?.profile.id || !workbench.profile.nextStageId) {
+    if (
+      !operatorId ||
+      !workbench?.profile.id ||
+      !workbench.profile.nextStageId
+    ) {
       return;
     }
 
-    const missingLineupClubNames = getNextStageMissingLineupClubNames(workbench.profile, availableClubs);
+    const missingLineupClubNames = getNextStageMissingLineupClubNames(
+      workbench.profile,
+      availableClubs,
+    );
 
     if (missingLineupClubNames.length > 0) {
-      setTournamentActionError(`还有俱乐部未提交参赛名单，暂时不能排期：${missingLineupClubNames.join('、')}`);
+      setTournamentActionError(
+        `还有俱乐部未提交参赛名单，暂时不能排期：${missingLineupClubNames.join('、')}`,
+      );
       return;
     }
 
     try {
       setIsSubmittingTournamentAction(true);
       setTournamentActionError('');
-      await tournamentApi.scheduleTournamentStage(workbench.profile.id, workbench.profile.nextStageId, operatorId);
+      await tournamentApi.scheduleTournamentStage(
+        workbench.profile.id,
+        workbench.profile.nextStageId,
+        operatorId,
+      );
       onScheduleSuccess?.();
     } catch (error) {
-      setTournamentActionError(error instanceof Error ? error.message : '编排牌桌失败，请稍后重试。');
+      setTournamentActionError(
+        error instanceof Error ? error.message : '编排牌桌失败，请稍后重试。',
+      );
     } finally {
       setIsSubmittingTournamentAction(false);
     }

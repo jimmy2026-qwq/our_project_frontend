@@ -1,11 +1,15 @@
 import type {
+  FileAppealPayload,
   ListEnvelope,
-  SeatWind,
+  ResetTablePayload,
+  StartTablePayload,
+  TableFilters,
   TablePaifuDetail,
-  TableStatus,
+  TournamentTableContract,
+  UpdateOwnReadyStatePayload,
+  UpdateSeatStatePayload,
 } from '@/objects';
 import { toQueryString } from '@/lib/query';
-import type { TournamentTableContract } from './responses/tournament.responses';
 import { request, sendJson } from '../shared/http';
 import { mapTableDetail, mapTournamentTable } from './mappers';
 import {
@@ -14,41 +18,6 @@ import {
   buildUpdateOwnReadyStateRequest,
   buildUpdateSeatStateRequest,
 } from './tables.transport';
-
-export interface TableFilters {
-  status?: TableStatus;
-  playerId?: string;
-  limit?: number;
-  offset?: number;
-}
-
-export interface StartTablePayload {
-  operatorId?: string;
-}
-
-export interface ResetTablePayload {
-  operatorId: string;
-  note: string;
-}
-
-export interface FileAppealPayload {
-  playerId: string;
-  description: string;
-}
-
-export interface UpdateSeatStatePayload {
-  operatorId: string;
-  seat: SeatWind;
-  ready?: boolean;
-  disconnected?: boolean;
-  note?: string;
-}
-
-export interface UpdateOwnReadyStatePayload {
-  operatorId: string;
-  ready?: boolean;
-  note?: string;
-}
 
 export const tablesApi = {
   getTables(filters: TableFilters) {

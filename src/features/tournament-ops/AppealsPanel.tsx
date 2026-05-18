@@ -1,4 +1,4 @@
-import { DataTablePanel } from './presentation';
+import { DataTablePanel } from '@/components/ui';
 import { TableCell, TableRow } from '@/components/ui';
 import type { AppealSummary } from '@/objects/tournament';
 
@@ -21,7 +21,11 @@ function getAppealStatusLabel(status: AppealSummary['status']) {
   }
 }
 
-export function AppealsPanel({ payload }: { payload: LoadState<AppealSummary> }) {
+export function AppealsPanel({
+  payload,
+}: {
+  payload: LoadState<AppealSummary>;
+}) {
   return (
     <DataTablePanel
       title="赛事申诉"

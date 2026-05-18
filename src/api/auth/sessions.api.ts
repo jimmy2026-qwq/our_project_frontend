@@ -1,9 +1,5 @@
-import type { GuestSession, SessionInfo } from '@/objects';
+import type { CreateGuestSessionPayload, GuestSession, SessionInfo, SessionQuery } from '@/objects/auth';
 import { toQueryString } from '@/lib/query';
-import type {
-  CreateGuestSessionPayload,
-  SessionQuery,
-} from './requests/auth.requests';
 import { request, sendJson } from '../shared/http';
 import {
   buildCreateGuestSessionRequest,

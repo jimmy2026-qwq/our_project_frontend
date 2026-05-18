@@ -1,4 +1,4 @@
-import { WorkbenchBacklogPanel } from './presentation';
+import { WorkbenchBacklogPanel } from '@/components/ui';
 
 export function MissingApiNotes() {
   return (
@@ -10,7 +10,8 @@ export function MissingApiNotes() {
         {
           id: 'permissions',
           title: 'GET /operators/:id/permissions',
-          detail: '如果后端提供专门的权限快照，前端就能更准确地隐藏或展示赛事工具。',
+          detail:
+            '如果后端提供专门的权限快照，前端就能更准确地隐藏或展示赛事工具。',
         },
       ]}
     />

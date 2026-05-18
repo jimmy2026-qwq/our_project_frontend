@@ -62,8 +62,15 @@ function createEmptyLoadState<T>(): LoadState<T> {
   };
 }
 
-export function getActiveTournament(tournaments: TournamentContext[], tournamentId: string) {
-  return tournaments.find((tournament) => tournament.id === tournamentId) ?? tournaments[0] ?? null;
+export function getActiveTournament(
+  tournaments: TournamentContext[],
+  tournamentId: string,
+) {
+  return (
+    tournaments.find((tournament) => tournament.id === tournamentId) ??
+    tournaments[0] ??
+    null
+  );
 }
 
 export function normalizeTournamentOpsState(
@@ -83,13 +90,17 @@ export function normalizeTournamentOpsState(
     return state;
   }
 
-  const hasTournament = tournaments.some((tournament) => tournament.id === state.tournamentId);
-  const hasStage = activeTournament.stages.some((stage) => stage.id === state.stageId);
+  const hasTournament = tournaments.some(
+    (tournament) => tournament.id === state.tournamentId,
+  );
+  const hasStage = activeTournament.stages.some(
+    (stage) => stage.id === state.stageId,
+  );
 
   return {
     ...state,
     tournamentId: hasTournament ? state.tournamentId : activeTournament.id,
-    stageId: hasStage ? state.stageId : activeTournament.stages[0]?.id ?? '',
+    stageId: hasStage ? state.stageId : (activeTournament.stages[0]?.id ?? ''),
   };
 }
 
@@ -118,7 +129,10 @@ export async function loadTournamentDirectory(): Promise<TournamentDirectoryStat
     return {
       items: [],
       source: 'api',
-      warning: error instanceof Error ? error.message : 'Unable to load tournament directory.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load tournament directory.',
     };
   }
 }
@@ -136,25 +150,36 @@ export function formatDateTime(value: string) {
   }).format(new Date(timestamp));
 }
 
-export async function loadTables(state: TournamentOpsState): Promise<LoadState<TournamentTableSummary>> {
+export async function loadTables(
+  state: TournamentOpsState,
+): Promise<LoadState<TournamentTableSummary>> {
   try {
-    const envelope = await tournamentApi.getTournamentTables(state.tournamentId, state.stageId, {
-      status: state.tableStatus || undefined,
-      playerId: state.playerId || undefined,
-      limit: 10,
-      offset: 0,
-    });
+    const envelope = await tournamentApi.getTournamentTables(
+      state.tournamentId,
+      state.stageId,
+      {
+        status: state.tableStatus || undefined,
+        playerId: state.playerId || undefined,
+        limit: 10,
+        offset: 0,
+      },
+    );
 
     return { envelope, source: 'api' };
   } catch (error) {
     return {
       ...createEmptyLoadState<TournamentTableSummary>(),
-      warning: error instanceof Error ? error.message : 'Unable to load tournament tables.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load tournament tables.',
     };
   }
 }
 
-export async function loadRecords(state: TournamentOpsState): Promise<LoadState<MatchRecordSummary>> {
+export async function loadRecords(
+  state: TournamentOpsState,
+): Promise<LoadState<MatchRecordSummary>> {
   try {
     const envelope = await tournamentApi.getRecords({
       tournamentId: state.tournamentId,
@@ -168,12 +193,17 @@ export async function loadRecords(state: TournamentOpsState): Promise<LoadState<
   } catch (error) {
     return {
       ...createEmptyLoadState<MatchRecordSummary>(),
-      warning: error instanceof Error ? error.message : 'Unable to load match records.',
+      warning:
+        error instanceof Error
+          ? error.message
+          : 'Unable to load match records.',
     };
   }
 }
 
-export async function loadAppeals(state: TournamentOpsState): Promise<LoadState<AppealSummary>> {
+export async function loadAppeals(
+  state: TournamentOpsState,
+): Promise<LoadState<AppealSummary>> {
   try {
     const envelope = await tournamentApi.getAppeals({
       tournamentId: state.tournamentId,
@@ -186,7 +216,8 @@ export async function loadAppeals(state: TournamentOpsState): Promise<LoadState<
   } catch (error) {
     return {
       ...createEmptyLoadState<AppealSummary>(),
-      warning: error instanceof Error ? error.message : 'Unable to load appeals.',
+      warning:
+        error instanceof Error ? error.message : 'Unable to load appeals.',
     };
   }
 }

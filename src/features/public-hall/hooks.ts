@@ -20,7 +20,9 @@ import type {
 import { playerApi } from '@/api/player';
 
 export function usePublicHallState() {
-  const [state, setState] = useState<PublicHallState>(DEFAULT_PUBLIC_HALL_STATE);
+  const [state, setState] = useState<PublicHallState>(
+    DEFAULT_PUBLIC_HALL_STATE,
+  );
   return { state, setState };
 }
 
@@ -29,8 +31,12 @@ export function usePublicHallHomeData(
   context: PublicHallViewerContext,
   reloadKey = 0,
 ) {
-  const [data, setData] = useState<HomeDataPayload | null>(() => peekPublicHallHomeData(state, context));
-  const [isLoading, setIsLoading] = useState(() => !peekPublicHallHomeData(state, context));
+  const [data, setData] = useState<HomeDataPayload | null>(() =>
+    peekPublicHallHomeData(state, context),
+  );
+  const [isLoading, setIsLoading] = useState(
+    () => !peekPublicHallHomeData(state, context),
+  );
   const [error, setError] = useState<string | null>(null);
   const session = context.session;
   const requestState = useMemo<PublicHallState>(
@@ -74,7 +80,11 @@ export function usePublicHallHomeData(
       })
       .catch((loadError) => {
         if (!cancelled) {
-          setError(loadError instanceof Error ? loadError.message : 'Public hall failed to render.');
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : 'Public hall failed to render.',
+          );
         }
       })
       .finally(() => {
@@ -86,11 +96,7 @@ export function usePublicHallHomeData(
     return () => {
       cancelled = true;
     };
-  }, [
-    reloadKey,
-    requestContext,
-    requestState,
-  ]);
+  }, [reloadKey, requestContext, requestState]);
 
   return { data, isLoading, error };
 }
@@ -100,13 +106,16 @@ export function usePublicHallLeaderboardData(
   homeData: HomeDataPayload | null,
   reloadKey = 0,
 ) {
-  const [data, setData] = useState<LeaderboardDataPayload | null>(() => peekPublicHallLeaderboardData(state));
+  const [data, setData] = useState<LeaderboardDataPayload | null>(() =>
+    peekPublicHallLeaderboardData(state),
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const requestState = useMemo<PublicHallState>(
     () => ({
       activeView: DEFAULT_PUBLIC_HALL_STATE.activeView,
-      scheduleTournamentStatus: DEFAULT_PUBLIC_HALL_STATE.scheduleTournamentStatus,
+      scheduleTournamentStatus:
+        DEFAULT_PUBLIC_HALL_STATE.scheduleTournamentStatus,
       scheduleStageStatus: DEFAULT_PUBLIC_HALL_STATE.scheduleStageStatus,
       leaderboardClubId: state.leaderboardClubId,
       leaderboardStatus: state.leaderboardStatus,
@@ -138,7 +147,11 @@ export function usePublicHallLeaderboardData(
       })
       .catch((loadError) => {
         if (!cancelled) {
-          setError(loadError instanceof Error ? loadError.message : 'Leaderboard failed to render.');
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : 'Leaderboard failed to render.',
+          );
         }
       })
       .finally(() => {
@@ -150,11 +163,7 @@ export function usePublicHallLeaderboardData(
     return () => {
       cancelled = true;
     };
-  }, [
-    homeData,
-    reloadKey,
-    requestState,
-  ]);
+  }, [homeData, reloadKey, requestState]);
 
   return { data, isLoading, error };
 }
@@ -166,7 +175,11 @@ export function useTournamentDetail(tournamentId: string | undefined) {
 
   useEffect(() => {
     if (!tournamentId) {
-      setState({ item: null, source: 'api', warning: 'Tournament id is missing.' });
+      setState({
+        item: null,
+        source: 'api',
+        warning: 'Tournament id is missing.',
+      });
       setIsLoading(false);
       return;
     }
@@ -215,12 +228,17 @@ async function resolveClubViewerId(
   }
 }
 
-export function useClubDetail(clubId: string | undefined, context?: PublicHallViewerContext) {
+export function useClubDetail(
+  clubId: string | undefined,
+  context?: PublicHallViewerContext,
+) {
   const [state, setState] = useState<ClubDetailState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [reloadKey, setReloadKey] = useState(0);
-  const operatorId = context?.session?.user.operatorId ?? context?.session?.user.userId;
-  const isRegisteredPlayer = context?.session?.user.roles.isRegisteredPlayer ?? false;
+  const operatorId =
+    context?.session?.user.operatorId ?? context?.session?.user.userId;
+  const isRegisteredPlayer =
+    context?.session?.user.roles.isRegisteredPlayer ?? false;
 
   useEffect(() => {
     if (!clubId) {

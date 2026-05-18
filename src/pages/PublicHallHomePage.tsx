@@ -9,7 +9,11 @@ import {
   PublicLeaderboardSection,
   PublicSchedulesSection,
 } from '@/features/public-hall/components';
-import { usePublicHallHomeData, usePublicHallLeaderboardData, usePublicHallState } from '@/features/public-hall/hooks';
+import {
+  usePublicHallHomeData,
+  usePublicHallLeaderboardData,
+  usePublicHallState,
+} from '@/features/public-hall/hooks';
 import type { PublicHallState } from '@/features/public-hall/types';
 import { useAuth, useRefreshNotice } from '@/hooks';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
@@ -21,23 +25,24 @@ export function PublicHallHomePage() {
   const operatorId = session?.user.operatorId ?? '';
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
   const [pendingRefresh, setPendingRefresh] = useState(false);
-  const { data, isLoading, error } = usePublicHallHomeData(state, { session }, reloadKey);
+  const { data, isLoading, error } = usePublicHallHomeData(
+    state,
+    { session },
+    reloadKey,
+  );
   const {
     data: leaderboardData,
     isLoading: isLeaderboardLoading,
     error: leaderboardError,
   } = usePublicHallLeaderboardData(state, data, reloadKey);
   const { notifyRefreshResult } = useRefreshNotice();
-  const { data: currentPlayer } = useAsyncResource(
-    async () => {
-      if (!session?.user.roles.isRegisteredPlayer || !operatorId) {
-        return null;
-      }
+  const { data: currentPlayer } = useAsyncResource(async () => {
+    if (!session?.user.roles.isRegisteredPlayer || !operatorId) {
+      return null;
+    }
 
-      return playerApi.getCurrentPlayer(operatorId);
-    },
-    [operatorId, session?.user.roles.isRegisteredPlayer],
-  );
+    return playerApi.getCurrentPlayer(operatorId);
+  }, [operatorId, session?.user.roles.isRegisteredPlayer]);
 
   const handleStateChange = (patch: Partial<PublicHallState>) => {
     setState((current) => ({ ...current, ...patch }));
@@ -69,7 +74,11 @@ export function PublicHallHomePage() {
     }
 
     notifyRefreshResult(
-      [data.schedules, data.clubs, ...(leaderboardData ? [leaderboardData.leaderboard] : [])],
+      [
+        data.schedules,
+        data.clubs,
+        ...(leaderboardData ? [leaderboardData.leaderboard] : []),
+      ],
       {
         failureTitle: 'Public hall refresh failed',
         successTitle: 'Public hall refreshed',
@@ -81,7 +90,14 @@ export function PublicHallHomePage() {
     );
 
     setPendingRefresh(false);
-  }, [data, error, isLoading, leaderboardData, notifyRefreshResult, pendingRefresh]);
+  }, [
+    data,
+    error,
+    isLoading,
+    leaderboardData,
+    notifyRefreshResult,
+    pendingRefresh,
+  ]);
 
   const handleRefresh = () => {
     setPendingRefresh(true);
@@ -124,6 +140,7 @@ export function PublicHallHomePage() {
           clubs={data.clubs.envelope.items}
           onStateChange={handleStateChange}
           onRefresh={handleRefresh}
+          onPlayerManaged={forceReload}
         />
       );
     } else {
@@ -157,14 +174,22 @@ export function PublicHallHomePage() {
       id: 'leaderboard' as const,
       label: '强者之路',
       heading: '选手排名',
-      detail: leaderboardData ? `${leaderboardData.leaderboard.envelope.total} players` : 'Leaderboard standby',
+      detail: leaderboardData
+        ? `${leaderboardData.leaderboard.envelope.total} players`
+        : 'Leaderboard standby',
     },
   ];
 
   const displayName =
-    currentPlayer?.displayName ?? session?.user.displayName ?? session?.user.username ?? 'Guest Player';
+    currentPlayer?.displayName ??
+    session?.user.displayName ??
+    session?.user.username ??
+    'Guest Player';
   const eloText = currentPlayer?.elo ? `${currentPlayer.elo}` : 'Guest';
-  const showLoginEntry = !session || session.user.roles.isGuest || !session.user.roles.isRegisteredPlayer;
+  const showLoginEntry =
+    !session ||
+    session.user.roles.isGuest ||
+    !session.user.roles.isRegisteredPlayer;
 
   return (
     <section className="public-portal public-portal--mahjong public-portal--lobby">
@@ -179,11 +204,22 @@ export function PublicHallHomePage() {
         </div>
         <Link
           to={showLoginEntry ? '/login' : '/me'}
-          className={showLoginEntry ? 'public-lobby__player-login' : 'public-lobby__player-avatar'}
+          className={
+            showLoginEntry
+              ? 'public-lobby__player-login'
+              : 'public-lobby__player-avatar'
+          }
           aria-label="进入个人主页"
           title="进入个人主页"
         >
-          {showLoginEntry ? '登录' : <span className="public-lobby__player-avatar-icon" aria-hidden="true" />}
+          {showLoginEntry ? (
+            '登录'
+          ) : (
+            <span
+              className="public-lobby__player-avatar-icon"
+              aria-hidden="true"
+            />
+          )}
         </Link>
       </section>
 
@@ -201,20 +237,35 @@ export function PublicHallHomePage() {
                 key={entry.id}
                 type="button"
                 className={`public-lobby__menu-button ${
-                  state.activeView === entry.id ? 'public-lobby__menu-button--active' : ''
+                  state.activeView === entry.id
+                    ? 'public-lobby__menu-button--active'
+                    : ''
                 }`}
                 onClick={() => handleStateChange({ activeView: entry.id })}
               >
                 <span className="public-lobby__menu-frame" aria-hidden="true" />
-                <span className="public-lobby__menu-surface" aria-hidden="true" />
-                <span className="public-lobby__menu-flower public-lobby__menu-flower--left" aria-hidden="true" />
-                <span className="public-lobby__menu-flower public-lobby__menu-flower--right" aria-hidden="true" />
+                <span
+                  className="public-lobby__menu-surface"
+                  aria-hidden="true"
+                />
+                <span
+                  className="public-lobby__menu-flower public-lobby__menu-flower--left"
+                  aria-hidden="true"
+                />
+                <span
+                  className="public-lobby__menu-flower public-lobby__menu-flower--right"
+                  aria-hidden="true"
+                />
                 <span className="public-lobby__menu-alert" aria-hidden="true">
                   !
                 </span>
                 <span className="public-lobby__menu-copy">
-                  <span className="public-lobby__menu-eyebrow">{entry.label}</span>
-                  <strong className="public-lobby__menu-title">{entry.heading}</strong>
+                  <span className="public-lobby__menu-eyebrow">
+                    {entry.label}
+                  </span>
+                  <strong className="public-lobby__menu-title">
+                    {entry.heading}
+                  </strong>
                 </span>
                 <small className="public-lobby__menu-tag">{entry.detail}</small>
               </button>

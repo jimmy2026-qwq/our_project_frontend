@@ -12,7 +12,9 @@ export interface ClubDetailWorkbenchState {
   operatorId: string;
   isApplicationDialogOpen: boolean;
   isLineupDialogOpen: boolean;
-  selectedLineupTournament: ClubPublicProfile['activeTournaments'][number] | null;
+  selectedLineupTournament:
+    | ClubPublicProfile['activeTournaments'][number]
+    | null;
   isCurrentMember: boolean;
   isCurrentClubAdmin: boolean;
   clubMemberNames: string[];

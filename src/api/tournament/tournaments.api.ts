@@ -1,30 +1,21 @@
 import type {
   CreateTournamentPayload,
+  CreatedTournamentContract,
   ListEnvelope,
   SubmitStageLineupPayload,
-} from '@/objects';
-import { toQueryString } from '@/lib/query';
-import type {
-  CreatedTournamentContract,
   TournamentDetailContract,
   TournamentDirectoryEntryContract,
+  TournamentFilters,
   TournamentMutationContract,
   TournamentStageDirectoryEntryContract,
-} from './responses/tournament.responses';
+} from '@/objects';
+import { toQueryString } from '@/lib/query';
 import { request, sendJson } from '../shared/http';
 import {
   buildCreateTournamentRequest,
   buildSubmitStageLineupRequest,
   postWithOperatorCompat,
 } from './transport';
-
-export interface TournamentFilters {
-  status?: string;
-  adminId?: string;
-  organizer?: string;
-  limit?: number;
-  offset?: number;
-}
 
 export const tournamentsApi = {
   getTournaments(filters: TournamentFilters = {}) {

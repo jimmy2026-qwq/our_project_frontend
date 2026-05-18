@@ -1,4 +1,4 @@
-import type { PublicTournamentDetailContract } from './responses/publicquery.responses';
+import type { PublicTournamentDetailContract } from '@/objects/publicquery';
 import { mapPublicTournamentDetail } from './mappers';
 import { request } from '../shared/http';
 

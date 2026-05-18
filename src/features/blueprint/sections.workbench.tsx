@@ -5,7 +5,7 @@ import {
   ListRow,
   MetricCard,
   MetricGrid,
-} from './presentation';
+} from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
 
 import { workbenchSteps } from './sections.content';
@@ -51,7 +51,9 @@ export function BlueprintWorkbenchSection() {
                 }
                 aside={
                   <>
-                    <span>{item.tournamentStatus} / {item.stageStatus}</span>
+                    <span>
+                      {item.tournamentStatus} / {item.stageStatus}
+                    </span>
                     <span>{formatLocalTime(item.scheduledAt)}</span>
                   </>
                 }
@@ -104,11 +106,20 @@ export function BlueprintWorkbenchSection() {
         <DataPanel title="Dashboard preview">
           {workbenchMockDashboards.map((board) => (
             <article key={board.ownerId} className="card dashboard-card">
-              <h3>{board.ownerType === 'player' ? 'Player Dashboard' : 'Club Dashboard'}</h3>
+              <h3>
+                {board.ownerType === 'player'
+                  ? 'Player Dashboard'
+                  : 'Club Dashboard'}
+              </h3>
               <p>{board.headline}</p>
               <MetricGrid>
                 {board.metrics.map((metric) => (
-                  <MetricCard key={metric.label} label={metric.label} value={metric.value} accent={metric.accent ?? 'default'} />
+                  <MetricCard
+                    key={metric.label}
+                    label={metric.label}
+                    value={metric.value}
+                    accent={metric.accent ?? 'default'}
+                  />
                 ))}
               </MetricGrid>
             </article>

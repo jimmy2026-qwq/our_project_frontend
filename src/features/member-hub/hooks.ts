@@ -21,7 +21,9 @@ import {
 
 export function useMemberHubState() {
   const { session } = useAuth();
-  const [directory, setDirectory] = useState<MemberHubOperatorDirectory | null>(null);
+  const [directory, setDirectory] = useState<MemberHubOperatorDirectory | null>(
+    null,
+  );
   const [state, setState] = useState<MemberHubState>(DEFAULT_MEMBER_HUB_STATE);
 
   useEffect(() => {
@@ -33,7 +35,12 @@ export function useMemberHubState() {
       if (!cancelled) {
         setDirectory(nextDirectory);
         setState((current) =>
-          createMemberHubState(nextDirectory, current.operatorId || session?.user.operatorId || session?.user.userId),
+          createMemberHubState(
+            nextDirectory,
+            current.operatorId ||
+              session?.user.operatorId ||
+              session?.user.userId,
+          ),
         );
       }
     })();
@@ -46,10 +53,19 @@ export function useMemberHubState() {
   return { state, setState, directory };
 }
 
-export function useMemberHubData(directory: MemberHubOperatorDirectory | null, state: MemberHubState, reloadKey = 0) {
-  const [playerPayload, setPlayerPayload] = useState<DashboardLoadState | null>(null);
-  const [clubPayload, setClubPayload] = useState<DashboardLoadState | null>(null);
-  const [inboxPayload, setInboxPayload] = useState<ApplicationInboxState | null>(null);
+export function useMemberHubData(
+  directory: MemberHubOperatorDirectory | null,
+  state: MemberHubState,
+  reloadKey = 0,
+) {
+  const [playerPayload, setPlayerPayload] = useState<DashboardLoadState | null>(
+    null,
+  );
+  const [clubPayload, setClubPayload] = useState<DashboardLoadState | null>(
+    null,
+  );
+  const [inboxPayload, setInboxPayload] =
+    useState<ApplicationInboxState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
@@ -64,11 +80,16 @@ export function useMemberHubData(directory: MemberHubOperatorDirectory | null, s
       const activeOperator = getActiveOperator(directory, state.operatorId);
       const clubId = normalizeClubIdForOperator(directory, state);
 
-      const [nextPlayerPayload, nextClubPayload, nextInboxPayload] = await Promise.all([
-        loadPlayerDashboard(state.playerId, state.operatorId),
-        loadClubDashboard(clubId, state.operatorId),
-        loadClubApplicationInbox(clubId, state.operatorId, activeOperator.role),
-      ]);
+      const [nextPlayerPayload, nextClubPayload, nextInboxPayload] =
+        await Promise.all([
+          loadPlayerDashboard(state.playerId, state.operatorId),
+          loadClubDashboard(clubId, state.operatorId),
+          loadClubApplicationInbox(
+            clubId,
+            state.operatorId,
+            activeOperator.role,
+          ),
+        ]);
 
       if (!cancelled) {
         setPlayerPayload(nextPlayerPayload);
@@ -114,9 +135,15 @@ export function useMemberHubActions(
     setState((current) => ({ ...current, clubId }));
   }
 
-  async function handleReview(applicationId: string, decision: 'approve' | 'reject') {
+  async function handleReview(
+    applicationId: string,
+    decision: 'approve' | 'reject',
+  ) {
     const confirmed = await confirmDanger({
-      title: decision === 'approve' ? 'Approve this application?' : 'Reject this application?',
+      title:
+        decision === 'approve'
+          ? 'Approve this application?'
+          : 'Reject this application?',
       message:
         decision === 'approve'
           ? 'This will update the membership review result and refresh the inbox.'
@@ -129,19 +156,33 @@ export function useMemberHubActions(
     }
 
     try {
-      const result = await reviewApplication(state.clubId, applicationId, state.operatorId, decision);
+      const result = await reviewApplication(
+        state.clubId,
+        applicationId,
+        state.operatorId,
+        decision,
+      );
       notifyMutationResult(result, {
-        successTitle: decision === 'approve' ? 'Application approved' : 'Application rejected',
+        successTitle:
+          decision === 'approve'
+            ? 'Application approved'
+            : 'Application rejected',
         successMessage: 'The member hub queue was updated and reloaded.',
         fallbackTitle:
-          decision === 'approve' ? 'Application approval requires attention' : 'Application rejection requires attention',
+          decision === 'approve'
+            ? 'Application approval requires attention'
+            : 'Application rejection requires attention',
         fallbackMessage: 'The review result could not be confirmed.',
       });
       reload();
     } catch (error) {
       notifyWarning(
-        decision === 'approve' ? 'Unable to approve application' : 'Unable to reject application',
-        error instanceof Error ? error.message : 'The review request did not complete.',
+        decision === 'approve'
+          ? 'Unable to approve application'
+          : 'Unable to reject application',
+        error instanceof Error
+          ? error.message
+          : 'The review request did not complete.',
       );
     }
   }

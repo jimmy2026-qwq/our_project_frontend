@@ -2,7 +2,7 @@ import type {
   PlayerLeaderboardEntry,
   TournamentPublicProfile,
 } from '@/objects/publicquery';
-import type { TournamentDetailContract } from '@/api/tournament/responses/tournament.responses';
+import type { TournamentDetailContract } from '@/objects/tournament';
 import type {
   PublicHallLeaderboardStatus,
   PublicHallRankSnapshot,
@@ -31,10 +31,14 @@ export function formatRankLabel(rank?: PublicHallRankSnapshot | null) {
     return null;
   }
 
-  return rank.stars ? `${rank.platform} ${rank.tier} ${rank.stars}` : `${rank.platform} ${rank.tier}`;
+  return rank.stars
+    ? `${rank.platform} ${rank.tier} ${rank.stars}`
+    : `${rank.platform} ${rank.tier}`;
 }
 
-export function mapAdminStageStatus(status?: string): TournamentPublicProfile['nextStageStatus'] {
+export function mapAdminStageStatus(
+  status?: string,
+): TournamentPublicProfile['nextStageStatus'] {
   if (status === 'Active') {
     return 'Active';
   }
@@ -46,10 +50,13 @@ export function mapAdminStageStatus(status?: string): TournamentPublicProfile['n
   return 'Pending';
 }
 
-export function mapTournamentDetailFromAdminView(item: TournamentDetailContract): TournamentPublicProfile {
+export function mapTournamentDetailFromAdminView(
+  item: TournamentDetailContract,
+): TournamentPublicProfile {
   const stages = item.stages ?? [];
   const nextStage = stages[0];
-  const participatingClubIds = item.participatingClubs?.map((club) => club.clubId) ?? [];
+  const participatingClubIds =
+    item.participatingClubs?.map((club) => club.clubId) ?? [];
   const participatingPlayerCount = item.participatingPlayers?.length ?? 0;
   const whitelistSummary = item.whitelistSummary;
 

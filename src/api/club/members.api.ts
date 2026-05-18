@@ -1,13 +1,14 @@
 import type { ListEnvelope } from '@/objects';
 import { toQueryString } from '@/lib/query';
 import type {
+  AssignClubAdminPayload,
   ClubContract,
   ClubMemberContract,
-} from './responses/club.responses';
+  RemoveClubMemberPayload,
+} from '@/objects/club';
 import { mapEnvelope, request, sendJson } from '../shared/http';
 import { buildRemoveClubMemberRequest } from './transport';
 import { mapClub, mapClubMember } from './mappers';
-import type { AssignClubAdminPayload, RemoveClubMemberPayload } from './requests/members.requests';
 
 export const clubsMembersApi = {
   assignClubAdmin(clubId: string, payload: AssignClubAdminPayload) {

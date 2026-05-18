@@ -45,9 +45,14 @@ export function ClubTournamentLineupDialog({
   });
 
   async function handleSubmit() {
-    const effectiveStageId = workbench.selectedStageId || workbench.stageOptions[0]?.stageId || '';
+    const effectiveStageId =
+      workbench.selectedStageId || workbench.stageOptions[0]?.stageId || '';
 
-    if (!tournament?.id || !effectiveStageId || workbench.selectedPlayerIds.length === 0) {
+    if (
+      !tournament?.id ||
+      !effectiveStageId ||
+      workbench.selectedPlayerIds.length === 0
+    ) {
       notifyWorkbenchWarning(
         '参赛名单不完整',
         '请先选择一个阶段，并至少勾选一名成员后再提交名单。',
@@ -62,10 +67,7 @@ export function ClubTournamentLineupDialog({
         operatorId,
         playerIds: workbench.selectedPlayerIds,
       });
-      notifySuccess(
-        '名单提交成功',
-        '已将所选成员提交到当前赛事阶段。',
-      );
+      notifySuccess('名单提交成功', '已将所选成员提交到当前赛事阶段。');
       onOpenChange(false);
     } catch (error) {
       notifyWarning(
