@@ -1,7 +1,6 @@
 import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 
-import { authApi } from '@/api/auth';
-import { operationsApi } from '@/api/operations';
+import { tournamentApi } from '@/api/tournament';
 import { useRefreshNotice } from '@/hooks';
 
 import {
@@ -16,7 +15,8 @@ import type {
   SeatWind,
   TableDetail,
   TournamentTableSummary,
-} from '@/domain/operations';
+} from '@/objects/tournament';
+import { playerApi } from '@/api/player';
 
 interface TournamentOpsEffectsParams {
   fixedTournamentId?: string;
@@ -118,7 +118,7 @@ export function useTournamentOpsWorkbenchEffects({
 
     void (async () => {
       try {
-        const detail = await operationsApi.getTable(selectedTableId);
+        const detail = await tournamentApi.getTable(selectedTableId);
 
         if (!cancelled) {
           setTableDetail(detail);
@@ -173,7 +173,7 @@ export function useTournamentOpsWorkbenchEffects({
       const entries = await Promise.all(
         missingPlayerIds.map(async (playerId) => {
           try {
-            const profile = await authApi.getPlayer(playerId);
+            const profile = await playerApi.getPlayer(playerId);
             return [playerId, profile.displayName] as const;
           } catch {
             return [playerId, playerId] as const;

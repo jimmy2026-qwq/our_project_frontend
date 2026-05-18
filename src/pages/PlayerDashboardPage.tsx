@@ -1,22 +1,22 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { authApi } from '@/api/auth';
-import { operationsApi } from '@/api/operations';
-import { publicApi } from '@/api/public';
+import { tournamentApi } from '@/api/tournament';
+import { publicApi } from '@/api/publicquery';
 import {
   DetailCard,
   DetailList,
   DetailListItem,
   MetricCard,
   MetricGrid,
-} from '@/components/shared/data-display';
-import { EmptyState } from '@/components/shared/feedback';
+} from './player-dashboard.presentation';
+import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
-import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/domain';
+import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/objects';
 import { PublicHallLoading } from '@/features/public-hall/components';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { useAuth } from '@/hooks/useAuth';
+import { playerApi } from '@/api/player';
 
 interface RecentTableItem extends TournamentTableSummary {
   tournamentName: string;
@@ -113,7 +113,7 @@ function PlayerHomePanel({
   player,
   dashboard,
 }: {
-  player: Awaited<ReturnType<typeof authApi.getCurrentPlayer>>;
+  player: Awaited<ReturnType<typeof playerApi.getCurrentPlayer>>;
   dashboard: Awaited<ReturnType<typeof publicApi.getPlayerDashboard>>;
 }) {
   return (
@@ -254,11 +254,11 @@ export function PlayerDashboardPage() {
 
     try {
       const [player, dashboard, tablesEnvelope, recordsEnvelope, appealsEnvelope] = await Promise.all([
-        authApi.getCurrentPlayer(operatorId),
+        playerApi.getCurrentPlayer(operatorId),
         publicApi.getPlayerDashboard(operatorId, operatorId),
-        operationsApi.getTables({ playerId: operatorId, limit: 8 }),
-        operationsApi.getRecords({ playerId: operatorId, limit: 8 }),
-        operationsApi.getAppeals({ openedBy: operatorId, limit: 20, offset: 0 }),
+        tournamentApi.getTables({ playerId: operatorId, limit: 8 }),
+        tournamentApi.getRecords({ playerId: operatorId, limit: 8 }),
+        tournamentApi.getAppeals({ openedBy: operatorId, limit: 20, offset: 0 }),
       ]);
 
       const rawRecentTables = tablesEnvelope.items

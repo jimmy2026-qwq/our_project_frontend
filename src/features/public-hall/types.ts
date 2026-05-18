@@ -8,7 +8,7 @@ import type {
   StageStatus,
   TournamentPublicProfile,
   TournamentStatus,
-} from '@/domain';
+} from '@/objects';
 
 export type DataSource = 'api' | 'mock';
 export type PublicView = 'schedules' | 'clubs' | 'leaderboard';

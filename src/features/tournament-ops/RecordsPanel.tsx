@@ -1,6 +1,6 @@
-import { DataTablePanel } from '@/components/shared/data-display';
+import { DataTablePanel } from './presentation';
 import { TableCell, TableRow } from '@/components/ui';
-import type { MatchRecordSummary } from '@/domain/operations';
+import type { MatchRecordSummary } from '@/objects/tournament';
 
 import { formatDateTime, type LoadState } from './data';
 

@@ -1,11 +1,11 @@
-import { operationsApi } from '@/api/operations';
+import { tournamentApi } from '@/api/tournament';
 import type {
   AppealSummary,
   ListEnvelope,
   MatchRecordSummary,
   TableStatus,
   TournamentTableSummary,
-} from '@/domain';
+} from '@/objects';
 
 export type DataSource = 'api' | 'mock';
 
@@ -95,10 +95,10 @@ export function normalizeTournamentOpsState(
 
 export async function loadTournamentDirectory(): Promise<TournamentDirectoryState> {
   try {
-    const tournaments = await operationsApi.getTournaments();
+    const tournaments = await tournamentApi.getTournaments();
     const items = await Promise.all(
       tournaments.items.map(async (tournament) => {
-        const stages = await operationsApi.getTournamentStages(tournament.id);
+        const stages = await tournamentApi.getTournamentStages(tournament.id);
         return {
           id: tournament.id,
           name: tournament.name,
@@ -138,7 +138,7 @@ export function formatDateTime(value: string) {
 
 export async function loadTables(state: TournamentOpsState): Promise<LoadState<TournamentTableSummary>> {
   try {
-    const envelope = await operationsApi.getTournamentTables(state.tournamentId, state.stageId, {
+    const envelope = await tournamentApi.getTournamentTables(state.tournamentId, state.stageId, {
       status: state.tableStatus || undefined,
       playerId: state.playerId || undefined,
       limit: 10,
@@ -156,7 +156,7 @@ export async function loadTables(state: TournamentOpsState): Promise<LoadState<T
 
 export async function loadRecords(state: TournamentOpsState): Promise<LoadState<MatchRecordSummary>> {
   try {
-    const envelope = await operationsApi.getRecords({
+    const envelope = await tournamentApi.getRecords({
       tournamentId: state.tournamentId,
       stageId: state.stageId,
       playerId: state.playerId || undefined,
@@ -175,7 +175,7 @@ export async function loadRecords(state: TournamentOpsState): Promise<LoadState<
 
 export async function loadAppeals(state: TournamentOpsState): Promise<LoadState<AppealSummary>> {
   try {
-    const envelope = await operationsApi.getAppeals({
+    const envelope = await tournamentApi.getAppeals({
       tournamentId: state.tournamentId,
       status: state.appealStatus || undefined,
       limit: 10,

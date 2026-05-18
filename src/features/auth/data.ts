@@ -1,5 +1,6 @@
 import { authApi } from '@/api/auth';
-import type { AuthSession, LoginPayload, RegisterPayload, SessionInfo } from '@/domain/auth';
+import type { AuthSession, LoginPayload, RegisterPayload, SessionInfo } from '@/objects/auth';
+import { playerApi } from '@/api/player';
 
 const AUTH_SESSION_STORAGE_KEY = 'riichi-nexus.auth.session';
 
@@ -41,7 +42,7 @@ async function resolveOperatorId(
   }
 
   try {
-    const player = await authApi.getCurrentPlayer(payload.userId);
+    const player = await playerApi.getCurrentPlayer(payload.userId);
     return player.playerId || payload.userId;
   } catch {
     return payload.userId;

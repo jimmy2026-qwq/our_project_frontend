@@ -1,4 +1,4 @@
-import { InfoSummaryCard, InfoSummaryGrid } from '@/components/shared/data-display';
+import { InfoSummaryCard, InfoSummaryGrid } from '../presentation';
 import { Badge } from '@/components/ui';
 
 import type { PublicHallHeroProps, PublicHallOverviewStripProps } from './shared.types';

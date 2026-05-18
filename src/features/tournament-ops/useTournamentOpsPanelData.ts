@@ -9,7 +9,7 @@ import {
   type TournamentContext,
   type TournamentOpsState,
 } from './data';
-import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/domain/operations';
+import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/objects/tournament';
 
 export function useTournamentOpsPanelData(
   tournaments: TournamentContext[],

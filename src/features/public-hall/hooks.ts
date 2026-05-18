@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { authApi } from '@/api/auth';
 import {
   DEFAULT_PUBLIC_HALL_STATE,
   loadClubDetail,
@@ -18,6 +17,7 @@ import type {
   PublicHallViewerContext,
   TournamentDetailState,
 } from './types';
+import { playerApi } from '@/api/player';
 
 export function usePublicHallState() {
   const [state, setState] = useState<PublicHallState>(DEFAULT_PUBLIC_HALL_STATE);
@@ -208,7 +208,7 @@ async function resolveClubViewerId(
   }
 
   try {
-    const player = await authApi.getCurrentPlayer(fallbackViewerId);
+    const player = await playerApi.getCurrentPlayer(fallbackViewerId);
     return player.playerId || fallbackViewerId;
   } catch {
     return fallbackViewerId;

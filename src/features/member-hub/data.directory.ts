@@ -1,6 +1,6 @@
-import { clubsApi } from '@/api/clubs';
-import type { AuthSession } from '@/domain/auth';
-import type { ClubSummary } from '@/domain/public';
+import { clubsApi } from '@/api/club';
+import type { AuthSession } from '@/objects/auth';
+import type { ClubSummary } from '@/objects/publicquery';
 
 import {
   buildFallbackDirectory,

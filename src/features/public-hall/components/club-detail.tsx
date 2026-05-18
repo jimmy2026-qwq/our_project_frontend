@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { EmptyState } from '@/components/shared/feedback';
+import { EmptyState } from '@/components/ui';
 import { Alert } from '@/components/ui';
-import type { ClubPublicProfile } from '@/domain/public';
+import type { ClubPublicProfile } from '@/objects/publicquery';
 import { useAuth } from '@/hooks/useAuth';
 
 import { ClubApplicationDialog } from '../ClubApplicationDialog';

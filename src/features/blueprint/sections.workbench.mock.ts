@@ -3,7 +3,7 @@ import type {
   DashboardSummary,
   PlayerLeaderboardEntry,
   PublicSchedule,
-} from '@/domain';
+} from '@/objects';
 
 export const workbenchMockSchedules: PublicSchedule[] = [
   {

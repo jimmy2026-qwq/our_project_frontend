@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import type { AuthSession, LoginPayload, RegisterPayload } from '@/domain/auth';
+import type { AuthSession, LoginPayload, RegisterPayload } from '@/objects/auth';
 import { enterGuestMode, loginUser, logoutUser, readPersistedSession, registerUser, restoreSession } from '@/features/auth/data';
 import { AuthContext } from '@/providers/auth-context';
 

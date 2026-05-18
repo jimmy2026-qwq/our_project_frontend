@@ -6,9 +6,9 @@ import {
   DetailListItem,
   DetailRow,
   DetailRows,
-} from '@/components/shared/data-display';
-import { EmptyState } from '@/components/shared/feedback';
-import { SelectField } from '@/components/shared/forms';
+} from '../presentation';
+import { EmptyState } from '@/components/ui';
+import { SelectField } from '@/components/ui';
 import {
   Button,
   Dialog,
@@ -22,7 +22,7 @@ import {
   DialogTitle,
   StatusPill,
 } from '@/components/ui';
-import type { ClubSummary, TournamentPublicProfile } from '@/domain/public';
+import type { ClubSummary, TournamentPublicProfile } from '@/objects/publicquery';
 
 import { formatDateTime, getStageStatusLabel, getTournamentStatusLabel } from '../utils';
 import { getStatusTone } from './shared.status';

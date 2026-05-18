@@ -1,5 +1,5 @@
-import { publicApi } from '@/api/public';
-import type { ClubSummary, PlayerLeaderboardEntry } from '@/domain/public';
+import { publicApi } from '@/api/publicquery';
+import type { ClubSummary, PlayerLeaderboardEntry } from '@/objects/publicquery';
 
 import type { LoadState, PublicHallState } from './types';
 import { formatRankLabel, mapLeaderboardStatus } from './data.shared';

@@ -1,7 +1,7 @@
-import { DataPanel } from '@/components/shared/data-display';
-import { ClubApplicationList, WorkbenchGuidePanel, WorkbenchResultSummary } from '@/components/shared/domain';
-import { FieldGroup, SelectField, TextInputField, TextareaField } from '@/components/shared/forms';
-import { ActionButton, SectionIntro } from '@/components/shared/layout';
+import { DataPanel } from './presentation';
+import { ClubApplicationList, WorkbenchGuidePanel, WorkbenchResultSummary } from './presentation';
+import { FieldGroup, SelectField, TextInputField, TextareaField } from '@/components/ui';
+import { ActionButton, SectionIntro } from '@/components/ui';
 import { Card, CardContent, Skeleton, StatusPill } from '@/components/ui';
 
 import { formatDateTime, getFallbackPlayerName } from './application-data';

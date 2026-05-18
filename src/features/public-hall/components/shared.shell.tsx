@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import { DetailHero, DetailPageShell, PortalSection } from '@/components/shared/data-display';
+import { DetailHero, DetailPageShell, PortalSection } from '../presentation';
 import { LoadingProgress } from '@/components/ui';
 
 interface PublicHallLoadingProps {

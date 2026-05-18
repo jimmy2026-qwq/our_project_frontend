@@ -12,7 +12,7 @@ import { useTournamentOpsPanelData } from './useTournamentOpsPanelData';
 export { useTournamentOpsWorkbenchState } from './useTournamentOpsWorkbenchState';
 export { useTournamentTableActions } from './useTournamentTableActions';
 export { useTournamentOpsWorkbenchEffects } from './useTournamentOpsWorkbenchEffects';
-import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/domain/operations';
+import type { AppealSummary, MatchRecordSummary, TournamentTableSummary } from '@/objects/tournament';
 
 function createEmptyLoadState<T>(): LoadState<T> {
   return {

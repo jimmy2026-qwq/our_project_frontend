@@ -1,5 +1,5 @@
-import { MetadataCard } from '@/components/shared/data-display';
-import { SectionIntro } from '@/components/shared/layout';
+import { MetadataCard } from './presentation';
+import { SectionIntro } from '@/components/ui';
 import { Separator } from '@/components/ui';
 import { roleCapabilities } from '@/config/roles';
 

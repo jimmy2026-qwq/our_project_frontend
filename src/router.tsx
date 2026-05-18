@@ -1,8 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppShell } from '@/app/AppShell';
-import { RequireAuth } from '@/components/shared/auth/RequireAuth';
-import { RequireRegisteredUser } from '@/components/shared/auth/RequireRegisteredUser';
+import { RequireAuth } from '@/app/guards/RequireAuth';
+import { RequireRegisteredUser } from '@/app/guards/RequireRegisteredUser';
 
 export const router = createBrowserRouter([
   {

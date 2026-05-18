@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { FieldGroup, TextInputField, TextareaField } from '@/components/shared/forms';
-import { ActionButton } from '@/components/shared/layout';
+import { FieldGroup, TextInputField, TextareaField } from '@/components/ui';
+import { ActionButton } from '@/components/ui';
 import {
   Dialog,
   DialogBody,
@@ -14,8 +14,8 @@ import {
   DialogTitle,
   StatusPill,
 } from '@/components/ui';
-import type { ClubApplication } from '@/domain/clubs';
-import type { ClubSummary } from '@/domain/public';
+import type { ClubApplication } from '@/objects/club';
+import type { ClubSummary } from '@/objects/publicquery';
 import {
   type HomeClubApplicationState,
   formatDateTime,

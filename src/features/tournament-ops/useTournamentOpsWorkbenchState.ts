@@ -1,6 +1,6 @@
 import { useReducer, useState } from 'react';
 
-import type { SeatWind, TableDetail } from '@/domain/operations';
+import type { SeatWind, TableDetail } from '@/objects/tournament';
 
 export function useTournamentOpsWorkbenchState() {
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);

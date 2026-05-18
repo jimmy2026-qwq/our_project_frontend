@@ -1,4 +1,4 @@
-import type { TableStatus } from '@/domain/common';
+import type { TableStatus } from '@/objects/shared/common';
 
 export function getTableStatusLabel(status: TableStatus) {
   switch (status) {

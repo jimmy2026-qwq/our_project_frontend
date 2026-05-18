@@ -1,8 +1,8 @@
 import type {
   PlayerLeaderboardEntry,
   TournamentPublicProfile,
-} from '@/domain/public';
-import type { TournamentDetailContract } from '@/api/contracts/operations';
+} from '@/objects/publicquery';
+import type { TournamentDetailContract } from '@/api/tournament/responses/tournament.responses';
 import type {
   PublicHallLeaderboardStatus,
   PublicHallRankSnapshot,

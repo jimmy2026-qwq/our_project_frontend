@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useEffect, useReducer, useState } from 'react';
 
-import { authApi } from '@/api/auth';
 import {
   PublicClubsSection,
   PublicHallError,
@@ -14,6 +13,7 @@ import { usePublicHallHomeData, usePublicHallLeaderboardData, usePublicHallState
 import type { PublicHallState } from '@/features/public-hall/types';
 import { useAuth, useRefreshNotice } from '@/hooks';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
+import { playerApi } from '@/api/player';
 
 export function PublicHallHomePage() {
   const { state, setState } = usePublicHallState();
@@ -34,7 +34,7 @@ export function PublicHallHomePage() {
         return null;
       }
 
-      return authApi.getCurrentPlayer(operatorId);
+      return playerApi.getCurrentPlayer(operatorId);
     },
     [operatorId, session?.user.roles.isRegisteredPlayer],
   );

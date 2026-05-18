@@ -1,4 +1,4 @@
-import type { ClubSummary, PublicSchedule } from '@/domain/public';
+import type { ClubSummary, PublicSchedule } from '@/objects/publicquery';
 
 import type {
   HomeDataPayload,

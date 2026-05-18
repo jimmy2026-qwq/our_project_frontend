@@ -1,4 +1,4 @@
-import type { ClubSummary, TournamentPublicProfile } from '@/domain/public';
+import type { ClubSummary, TournamentPublicProfile } from '@/objects/publicquery';
 
 export interface TournamentDetailTableItem {
   id: string;

@@ -1,5 +1,5 @@
-import { clubsApi } from '@/api/clubs';
-import type { Role } from '@/domain/common';
+import { clubsApi } from '@/api/club';
+import type { Role } from '@/objects/shared/common';
 import { readClubApplicationInbox, upsertClubApplicationInboxItem } from '@/lib/club-applications';
 
 import { toApplicationView, type ApplicationInboxState } from './data.shared';

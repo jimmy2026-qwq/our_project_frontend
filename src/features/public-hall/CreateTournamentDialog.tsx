@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { operationsApi } from '@/api/operations';
-import { FieldGroup, SelectField, TextInputField } from '@/components/shared/forms';
-import { ActionButton } from '@/components/shared/layout';
+import { tournamentApi } from '@/api/tournament';
+import { FieldGroup, SelectField, TextInputField } from '@/components/ui';
+import { ActionButton } from '@/components/ui';
 import {
   Dialog,
   DialogBody,
@@ -15,7 +15,7 @@ import {
   DialogSurface,
   DialogTitle,
 } from '@/components/ui';
-import type { TournamentFormat } from '@/domain/operations';
+import type { TournamentFormat } from '@/objects/tournament';
 import { useAuth, useNotice } from '@/hooks';
 
 const LABEL_CREATE = '\u65b0\u5efa\u6bd4\u8d5b';
@@ -86,7 +86,7 @@ export function CreateTournamentDialog({
 
     try {
       setIsSubmitting(true);
-      const created = await operationsApi.createTournament({
+      const created = await tournamentApi.createTournament({
         name: trimmedName,
         organizer: session.user.displayName || 'RiichiNexus',
         startsAt: startsAt.toISOString(),

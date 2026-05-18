@@ -1,16 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { authApi } from '@/api/auth';
-import { clubsApi } from '@/api/clubs';
+import { clubsApi } from '@/api/club';
 import type {
   TournamentDetailContract,
   TournamentDetailStageContract,
   TournamentStageDirectoryEntryContract,
-} from '@/api/contracts/operations';
-import { operationsApi } from '@/api/operations';
-import { publicApi } from '@/api/public';
-import type { PlayerProfile } from '@/domain/auth';
-import type { TournamentPublicProfile } from '@/domain/public';
+} from '@/api/tournament/responses/tournament.responses';
+import { tournamentApi } from '@/api/tournament';
+import { publicApi } from '@/api/publicquery';
+import type { PlayerProfile } from '@/objects/auth';
+import type { TournamentPublicProfile } from '@/objects/publicquery';
 import { useNotice } from '@/hooks';
 
 import type {
@@ -20,6 +19,7 @@ import type {
   MemberListItem,
   MemberStatusFilter,
 } from './ClubTournamentLineupDialog.types';
+import { playerApi } from '@/api/player';
 
 type PublicTournamentStage = NonNullable<TournamentPublicProfile['stages']>[number];
 
@@ -31,7 +31,7 @@ function getSelectedPlayerIds(detail: TournamentDetailContract | null, clubId: s
 
 async function loadTournamentStageDirectory(tournamentId: string) {
   try {
-    return await operationsApi.getTournamentStages(tournamentId);
+    return await tournamentApi.getTournamentStages(tournamentId);
   } catch {
     return [];
   }
@@ -107,7 +107,7 @@ function mergeTournamentStages(
 
 async function loadTournamentDetailForLineup(tournament: ClubTournamentItem): Promise<TournamentDetailContract> {
   const [detailResult, stageDirectory, publicStages] = await Promise.all([
-    operationsApi.getTournament(tournament.id).catch(() => null),
+    tournamentApi.getTournament(tournament.id).catch(() => null),
     loadTournamentStageDirectory(tournament.id),
     loadPublicStagesForLineup(tournament.id),
   ]);
@@ -189,7 +189,7 @@ export function useClubTournamentLineupWorkbench({
 
           if (operatorId) {
             try {
-              const currentPlayer = await authApi.getCurrentPlayer(operatorId);
+              const currentPlayer = await playerApi.getCurrentPlayer(operatorId);
 
               if (
                 !items.some(

@@ -1,15 +1,15 @@
-import { WorkbenchContextPanel } from '@/components/shared/domain';
-import { EmptyState } from '@/components/shared/feedback';
-import { SelectField, TextInputField } from '@/components/shared/forms';
-import { SectionIntro } from '@/components/shared/layout';
-import type { TableStatus } from '@/domain/common';
+import { WorkbenchContextPanel } from './presentation';
+import { EmptyState } from '@/components/ui';
+import { SelectField, TextInputField } from '@/components/ui';
+import { SectionIntro } from '@/components/ui';
+import type { TableStatus } from '@/objects/shared/common';
 import type {
   AppealSummary,
   MatchRecordSummary,
   SeatWind,
   TableDetail,
   TournamentTableSummary,
-} from '@/domain/operations';
+} from '@/objects/tournament';
 
 import {
   getActiveTournament,

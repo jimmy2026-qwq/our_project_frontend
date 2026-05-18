@@ -1,6 +1,6 @@
-import { DataTablePanel } from '@/components/shared/data-display';
+import { DataTablePanel } from './presentation';
 import { TableCell, TableRow } from '@/components/ui';
-import type { AppealSummary } from '@/domain/operations';
+import type { AppealSummary } from '@/objects/tournament';
 
 import type { LoadState } from './data';
 

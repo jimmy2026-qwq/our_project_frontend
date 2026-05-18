@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { PortalSection } from '@/components/shared/data-display';
-import { EmptyState } from '@/components/shared/feedback';
-import { CheckboxField, SelectField } from '@/components/shared/forms';
-import { ActionButton, FilterActionRow } from '@/components/shared/layout';
+import { PortalSection } from '../presentation';
+import { EmptyState } from '@/components/ui';
+import { CheckboxField, SelectField } from '@/components/ui';
+import { ActionButton, FilterActionRow } from '@/components/ui';
 import { StatusPill } from '@/components/ui';
-import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/domain/public';
+import type { ClubSummary, PlayerLeaderboardEntry, PublicSchedule } from '@/objects/publicquery';
 import { useAuth } from '@/hooks/useAuth';
 
 import { CreateClubDialog } from '../CreateClubDialog';

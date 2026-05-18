@@ -1,5 +1,5 @@
-import { InfoSummaryCard, InfoSummaryGrid, MetadataCard } from '@/components/shared/data-display';
-import { SectionIntro } from '@/components/shared/layout';
+import { InfoSummaryCard, InfoSummaryGrid, MetadataCard } from './presentation';
+import { SectionIntro } from '@/components/ui';
 import { Separator } from '@/components/ui';
 import { featureModules } from '@/config/modules';
 

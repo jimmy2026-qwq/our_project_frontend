@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { ApiError } from '@/api/http';
-import { operationsApi } from '@/api/operations';
+import { ApiError } from '@/api/shared/http';
+import { tournamentApi } from '@/api/tournament';
 import {
   Alert,
   AlertDescription,
@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import type { TablePaifuDetail } from '@/domain/operations';
+import type { TablePaifuDetail } from '@/objects/tournament';
 
 function getOutcomeLabel(outcome: string) {
   switch (outcome) {
@@ -53,7 +53,7 @@ export function TablePaifuPage() {
       try {
         setIsLoading(true);
         setError(null);
-        const payload = await operationsApi.getTablePaifus(tableId);
+        const payload = await tournamentApi.getTablePaifus(tableId);
 
         if (!cancelled) {
           setPaifu(payload.items[0] ?? null);

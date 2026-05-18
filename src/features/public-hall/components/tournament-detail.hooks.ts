@@ -1,16 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
-import { authApi } from '@/api/auth';
-import { clubsApi } from '@/api/clubs';
-import { operationsApi } from '@/api/operations';
-import { publicApi } from '@/api/public';
-import type { AuthSession } from '@/domain/auth';
-import type { ClubSummary, TournamentPublicProfile } from '@/domain/public';
+import { clubsApi } from '@/api/club';
+import { tournamentApi } from '@/api/tournament';
+import { publicApi } from '@/api/publicquery';
+import type { AuthSession } from '@/objects/auth';
+import type { ClubSummary, TournamentPublicProfile } from '@/objects/publicquery';
 
 import { mapTournamentDetailFromAdminView } from '../data.shared';
 import type { DetailState } from '../types';
 import type { TournamentDetailTableItem, TournamentDetailWorkbenchState } from './tournament-detail.types';
+import { playerApi } from '@/api/player';
 
 export function getTableStatusLabel(status: string) {
   switch (status) {
@@ -108,7 +108,7 @@ async function loadTournamentProfileForWorkbench(tournamentId: string) {
   try {
     return await publicApi.getPublicTournamentProfile(tournamentId);
   } catch {
-    const adminView = await operationsApi.getTournament(tournamentId);
+    const adminView = await tournamentApi.getTournament(tournamentId);
     return mapTournamentDetailFromAdminView(adminView);
   }
 }
@@ -145,7 +145,7 @@ export function useTournamentDetailWorkbench({
 
     let cancelled = false;
 
-    void operationsApi
+    void tournamentApi
       .getTournament(currentProfile.id)
       .then((detail) => {
         if (!cancelled) {
@@ -208,7 +208,7 @@ export function useTournamentDetailWorkbench({
       try {
         const payloads = await Promise.all(
           stageEntries.map(async (stage) => {
-            const envelope = await operationsApi.getTournamentTables(currentProfile.id, stage.stageId, {
+            const envelope = await tournamentApi.getTournamentTables(currentProfile.id, stage.stageId, {
               limit: 100,
               offset: 0,
             });
@@ -256,7 +256,7 @@ export function useTournamentDetailWorkbench({
       const entries = await Promise.all(
         missingIds.map(async (playerId) => {
           try {
-            const player = await authApi.getPlayer(playerId);
+            const player = await playerApi.getPlayer(playerId);
             return [playerId, player.displayName] as const;
           } catch {
             return [playerId, playerId] as const;
@@ -392,7 +392,7 @@ export function useTournamentDetailWorkbench({
     try {
       setIsSubmittingTournamentAction(true);
       setTournamentActionError('');
-      await operationsApi.registerTournamentClub(workbench.profile.id, invitedClubId, operatorId);
+      await tournamentApi.registerTournamentClub(workbench.profile.id, invitedClubId, operatorId);
 
       let remainingSelectable = availableClubs.filter((club) => club.id !== invitedClubId);
 
@@ -435,7 +435,7 @@ export function useTournamentDetailWorkbench({
     try {
       setIsSubmittingTournamentAction(true);
       setTournamentActionError('');
-      await operationsApi.publishTournament(workbench.profile.id, operatorId);
+      await tournamentApi.publishTournament(workbench.profile.id, operatorId);
 
       try {
         await refreshTournamentProfile(workbench.profile.id);
@@ -473,7 +473,7 @@ export function useTournamentDetailWorkbench({
     try {
       setIsSubmittingTournamentAction(true);
       setTournamentActionError('');
-      await operationsApi.scheduleTournamentStage(workbench.profile.id, workbench.profile.nextStageId, operatorId);
+      await tournamentApi.scheduleTournamentStage(workbench.profile.id, workbench.profile.nextStageId, operatorId);
       onScheduleSuccess?.();
     } catch (error) {
       setTournamentActionError(error instanceof Error ? error.message : '编排牌桌失败，请稍后重试。');

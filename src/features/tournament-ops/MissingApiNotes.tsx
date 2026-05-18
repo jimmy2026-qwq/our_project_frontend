@@ -1,4 +1,4 @@
-import { WorkbenchBacklogPanel } from '@/components/shared/domain';
+import { WorkbenchBacklogPanel } from './presentation';
 
 export function MissingApiNotes() {
   return (

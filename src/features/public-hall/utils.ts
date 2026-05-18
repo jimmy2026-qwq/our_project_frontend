@@ -3,7 +3,7 @@ import type {
   PlayerLeaderboardEntry,
   StageStatus,
   TournamentStatus,
-} from '@/domain';
+} from '@/objects';
 
 export function formatDateTime(value: string) {
   return new Intl.DateTimeFormat('zh-CN', {

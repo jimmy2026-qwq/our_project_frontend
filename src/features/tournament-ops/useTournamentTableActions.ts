@@ -1,8 +1,8 @@
-import { ApiError } from '@/api/http';
-import { operationsApi } from '@/api/operations';
+import { ApiError } from '@/api/shared/http';
+import { tournamentApi } from '@/api/tournament';
 import { useDialog, useMutationNotice, useNotice } from '@/hooks';
 
-import type { SeatWind, TableDetail, TournamentTableSummary } from '@/domain/operations';
+import type { SeatWind, TableDetail, TournamentTableSummary } from '@/objects/tournament';
 
 interface TableActionNoticeOptions {
   successTitle: string;
@@ -80,7 +80,7 @@ export function useTournamentTableActions({
     }
 
     const succeeded = await runTableAction(
-      () => operationsApi.startTable(selectedTable.id, { operatorId }),
+      () => tournamentApi.startTable(selectedTable.id, { operatorId }),
       {
         successTitle: 'Table started',
         successMessage: `${selectedTable.tableCode} has entered the match flow.`,
@@ -124,7 +124,7 @@ export function useTournamentTableActions({
     }
 
     await runTableAction(
-      () => operationsApi.resetTable(selectedTable.id, { operatorId, note }),
+      () => tournamentApi.resetTable(selectedTable.id, { operatorId, note }),
       {
         successTitle: 'Table reset',
         successMessage: `${selectedTable.tableCode} was reset successfully.`,
@@ -153,7 +153,7 @@ export function useTournamentTableActions({
     }
 
     const succeeded = await runTableAction(
-      () => operationsApi.fileAppeal(selectedTable.id, { playerId: operatorId, description }),
+      () => tournamentApi.fileAppeal(selectedTable.id, { playerId: operatorId, description }),
       {
         successTitle: 'Appeal filed',
         successMessage: `${selectedTable.tableCode} appeal was submitted.`,
@@ -189,7 +189,7 @@ export function useTournamentTableActions({
 
     await runTableAction(
       () =>
-        operationsApi.updateSeatState(selectedTable.id, {
+        tournamentApi.updateSeatState(selectedTable.id, {
           operatorId,
           seat: seatWind,
           ready: readyChanged ? seatReady : undefined,

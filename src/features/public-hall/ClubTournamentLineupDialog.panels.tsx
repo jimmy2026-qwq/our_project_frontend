@@ -1,5 +1,5 @@
-import { FieldGroup, SelectField } from '@/components/shared/forms';
-import { ActionButton } from '@/components/shared/layout';
+import { FieldGroup, SelectField } from '@/components/ui';
+import { ActionButton } from '@/components/ui';
 import {
   DialogBody,
   DialogDescription,

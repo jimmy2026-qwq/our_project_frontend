@@ -1,6 +1,6 @@
-import { operationsApi } from '@/api/operations';
-import { publicApi } from '@/api/public';
-import type { ClubSummary, PublicSchedule } from '@/domain/public';
+import { tournamentApi } from '@/api/tournament';
+import { publicApi } from '@/api/publicquery';
+import type { ClubSummary, PublicSchedule } from '@/objects/publicquery';
 
 import type { LoadState, PublicHallState, PublicHallViewerContext } from './types';
 import { mapAdminStageStatus } from './data.shared';
@@ -45,7 +45,7 @@ export async function loadManagedDraftSchedules(context: PublicHallViewerContext
     return [];
   }
 
-  const tournaments = await operationsApi.getTournaments({
+  const tournaments = await tournamentApi.getTournaments({
     adminId: operatorId,
     status: 'Draft',
     limit: 50,
@@ -54,7 +54,7 @@ export async function loadManagedDraftSchedules(context: PublicHallViewerContext
 
   const stagesByTournament = await Promise.all(
     tournaments.items.map(async (tournament) => {
-      const detail = await operationsApi.getTournament(tournament.id);
+      const detail = await tournamentApi.getTournament(tournament.id);
       const stages = detail.stages ?? [];
 
       if (stages.length === 0) {

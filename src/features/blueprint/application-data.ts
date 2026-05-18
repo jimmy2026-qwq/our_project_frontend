@@ -1,9 +1,8 @@
-import { authApi } from '@/api/auth';
-import { clubsApi } from '@/api/clubs';
-import { ApiError } from '@/api/http';
-import type { PlayerProfile } from '@/domain/auth';
-import type { ClubApplication } from '@/domain/clubs';
-import type { ClubSummary } from '@/domain/public';
+import { clubsApi } from '@/api/club';
+import { ApiError } from '@/api/shared/http';
+import type { PlayerProfile } from '@/objects/auth';
+import type { ClubApplication } from '@/objects/club';
+import type { ClubSummary } from '@/objects/publicquery';
 import {
   createProvisionalClubApplicationId,
   isProvisionalClubApplicationId,
@@ -12,6 +11,7 @@ import {
   updateClubApplicationInboxStatus,
   upsertClubApplicationInboxItem,
 } from '@/lib/club-applications';
+import { playerApi } from '@/api/player';
 
 export type DataSource = 'api' | 'mock';
 
@@ -93,7 +93,7 @@ export async function loadPlayerContext(
   _fallbackDisplayName: string,
 ): Promise<PlayerContextState> {
   try {
-    const player = await authApi.getCurrentPlayer(operatorId);
+    const player = await playerApi.getCurrentPlayer(operatorId);
     return {
       player,
       source: 'api',

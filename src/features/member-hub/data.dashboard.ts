@@ -1,4 +1,4 @@
-import { publicApi } from '@/api/public';
+import { publicApi } from '@/api/publicquery';
 import type { DashboardLoadState } from './data.shared';
 
 export async function loadPlayerDashboard(playerId: string, operatorId: string): Promise<DashboardLoadState> {

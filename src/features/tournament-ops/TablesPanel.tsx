@@ -1,7 +1,7 @@
-import { DataPanel, ListRow } from '@/components/shared/data-display';
-import { EmptyState } from '@/components/shared/feedback';
+import { DataPanel, ListRow } from './presentation';
+import { EmptyState } from '@/components/ui';
 import { Badge, Button } from '@/components/ui';
-import type { TournamentTableSummary } from '@/domain/operations';
+import type { TournamentTableSummary } from '@/objects/tournament';
 
 import type { LoadState } from './data';
 import { getTableStatusBadgeClassName, getTableStatusLabel } from './status';

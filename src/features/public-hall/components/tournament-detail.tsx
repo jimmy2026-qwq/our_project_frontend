@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { operationsApi } from '@/api/operations';
-import { EmptyState } from '@/components/shared/feedback';
+import { tournamentApi } from '@/api/tournament';
+import { EmptyState } from '@/components/ui';
 import {
   Alert,
   Button,
@@ -18,8 +18,8 @@ import {
   StatusPill,
   Textarea,
 } from '@/components/ui';
-import type { AppealSummary, TableDetail, TableSeatState } from '@/domain/operations';
-import type { TournamentPublicProfile } from '@/domain/public';
+import type { AppealSummary, TableDetail, TableSeatState } from '@/objects/tournament';
+import type { TournamentPublicProfile } from '@/objects/publicquery';
 import { useAuth } from '@/hooks/useAuth';
 
 import type { DetailState } from '../types';
@@ -233,7 +233,7 @@ export const PublicTournamentDetailSection = ({
 
     let cancelled = false;
 
-    void operationsApi
+    void tournamentApi
       .getAppeals({ tournamentId: workbench.profile.id, limit: 50, offset: 0 })
       .then((envelope) => {
         if (!cancelled) {
@@ -263,7 +263,7 @@ export const PublicTournamentDetailSection = ({
     let cancelled = false;
     setIsLoadingTableDetail(true);
 
-    void operationsApi
+    void tournamentApi
       .getTable(selectedManageTable.id)
       .then((detail) => {
         if (!cancelled) {
@@ -311,7 +311,7 @@ export const PublicTournamentDetailSection = ({
     void Promise.all(
       participantWaitingTables.map(async (table) => {
         try {
-          const detail = await operationsApi.getTable(table.id);
+          const detail = await tournamentApi.getTable(table.id);
           return [table.id, detail] as const;
         } catch {
           return [table.id, null] as const;
@@ -359,7 +359,7 @@ export const PublicTournamentDetailSection = ({
     try {
       setIsSubmittingTableAction(true);
       setTableDetailError('');
-      await operationsApi.startTable(tableId, { operatorId });
+      await tournamentApi.startTable(tableId, { operatorId });
       onScheduleSuccess?.();
       if (selectedManageTable?.id === tableId) {
         setSelectedManageTable(null);
@@ -382,7 +382,7 @@ export const PublicTournamentDetailSection = ({
     try {
       setIsSubmittingTableAction(true);
       setTableDetailError('');
-      const detail = knownDetail ?? (await operationsApi.getTable(table.id));
+      const detail = knownDetail ?? (await tournamentApi.getTable(table.id));
       const unreadyPlayerNames = detail.seats
         .filter((seat) => !seat.ready)
         .map((seat) => playerNameMap[seat.playerId] ?? seat.playerId);
@@ -424,7 +424,7 @@ export const PublicTournamentDetailSection = ({
     try {
       setUpdatingReadyTableId(tableId);
       setTableDetailError('');
-      const nextDetail = await operationsApi.updateOwnReadyState(tableId, {
+      const nextDetail = await tournamentApi.updateOwnReadyState(tableId, {
         operatorId,
         ready: !isReady,
       });
@@ -465,7 +465,7 @@ export const PublicTournamentDetailSection = ({
     try {
       setSubmittingAppealId(appeal.id);
       setAppealsError('');
-      const nextAppeal = await operationsApi.updateAppealWorkflow(appeal.id, {
+      const nextAppeal = await tournamentApi.updateAppealWorkflow(appeal.id, {
         operatorId,
         assigneeId: operatorId,
         note: '赛事管理员已认领此工单。',
@@ -497,7 +497,7 @@ export const PublicTournamentDetailSection = ({
       setSubmittingAppealId(selectedAppealAction.appeal.id);
       setAppealsError('');
       setAppealActionError('');
-      const nextAppeal = await operationsApi.adjudicateAppeal(selectedAppealAction.appeal.id, {
+      const nextAppeal = await tournamentApi.adjudicateAppeal(selectedAppealAction.appeal.id, {
         operatorId,
         decision: selectedAppealAction.decision,
         verdict,

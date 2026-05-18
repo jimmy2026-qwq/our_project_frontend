@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 
-import { DetailCard, MetricCard, MetricGrid } from '@/components/shared/data-display';
-import { EmptyState } from '@/components/shared/feedback';
+import { DetailCard, MetricCard, MetricGrid } from '../presentation';
+import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
-import type { PlayerProfile } from '@/domain/auth';
-import type { ClubApplicationView } from '@/domain/clubs';
-import type { ClubPublicProfile } from '@/domain/public';
+import type { PlayerProfile } from '@/objects/auth';
+import type { ClubApplicationView } from '@/objects/club';
+import type { ClubPublicProfile } from '@/objects/publicquery';
 
 import {
   formatDateTime,

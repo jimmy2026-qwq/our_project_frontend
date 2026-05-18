@@ -1,4 +1,4 @@
-import { operationsApi } from '@/api/operations';
+import { tournamentApi } from '@/api/tournament';
 
 export const heroCards = [
   {
@@ -121,7 +121,7 @@ export const sampleRequests = [
   {
     title: 'Tournament table queue',
     description: 'Tables remain one of the most valuable operational entry points in the current tournament workbench.',
-    path: operationsApi.buildTournamentTablesPath('tournament-123', 'stage-demo-swiss', {
+    path: tournamentApi.buildTournamentTablesPath('tournament-123', 'stage-demo-swiss', {
       status: 'WaitingPreparation',
       limit: 8,
     }),

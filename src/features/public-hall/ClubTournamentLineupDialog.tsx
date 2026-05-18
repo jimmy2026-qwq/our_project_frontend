@@ -1,4 +1,4 @@
-import { operationsApi } from '@/api/operations';
+import { tournamentApi } from '@/api/tournament';
 import { useNotice } from '@/hooks';
 import {
   Dialog,
@@ -57,7 +57,7 @@ export function ClubTournamentLineupDialog({
 
     try {
       setIsSubmitting(true);
-      await operationsApi.submitStageLineup(tournament.id, effectiveStageId, {
+      await tournamentApi.submitStageLineup(tournament.id, effectiveStageId, {
         clubId,
         operatorId,
         playerIds: workbench.selectedPlayerIds,

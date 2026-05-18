@@ -1,4 +1,4 @@
-import type { RoleCapability } from '@/domain';
+import type { RoleCapability } from '@/objects';
 
 export const roleCapabilities: RoleCapability[] = [
   {

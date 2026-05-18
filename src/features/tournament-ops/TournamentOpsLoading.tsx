@@ -1,4 +1,4 @@
-import { LoadingSection } from '@/components/shared/feedback';
+import { LoadingSection } from '@/components/ui';
 
 export function TournamentOpsLoading() {
   return (

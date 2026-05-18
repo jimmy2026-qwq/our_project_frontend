@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { ApiError } from '@/api/http';
-import { operationsApi } from '@/api/operations';
+import { ApiError } from '@/api/shared/http';
+import { tournamentApi } from '@/api/tournament';
 import {
   Alert,
   AlertDescription,
@@ -27,7 +27,7 @@ import {
   StatusPill,
   Textarea,
 } from '@/components/ui';
-import type { TableDetail } from '@/domain/operations';
+import type { TableDetail } from '@/objects/tournament';
 import { useAuth, useMutationNotice, useNotice } from '@/hooks';
 
 function getTableStatusLabel(status: TableDetail['status']) {
@@ -149,7 +149,7 @@ export function TableMatchPage() {
         }
 
         setError(null);
-        const payload = await operationsApi.getTable(tableId);
+        const payload = await tournamentApi.getTable(tableId);
 
         if (!cancelled) {
           setTable(payload);
@@ -245,7 +245,7 @@ export function TableMatchPage() {
     try {
       setIsSubmittingAppeal(true);
       setAppealError(null);
-      await operationsApi.fileAppeal(table.id, {
+      await tournamentApi.fileAppeal(table.id, {
         playerId: operatorId,
         description: trimmedDescription,
       });
@@ -279,7 +279,7 @@ export function TableMatchPage() {
     try {
       setIsUpdatingOwnReady(true);
       setError(null);
-      const nextTable = await operationsApi.updateOwnReadyState(table.id, {
+      const nextTable = await tournamentApi.updateOwnReadyState(table.id, {
         operatorId,
         ready: !ownSeat.ready,
       });

@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { clubsApi } from '@/api/clubs';
-import type { AuthSession, PlayerProfile } from '@/domain/auth';
-import type { ClubApplication, ClubApplicationView } from '@/domain/clubs';
-import type { ClubPublicProfile } from '@/domain/public';
+import { clubsApi } from '@/api/club';
+import type { AuthSession, PlayerProfile } from '@/objects/auth';
+import type { ClubApplication, ClubApplicationView } from '@/objects/club';
+import type { ClubPublicProfile } from '@/objects/publicquery';
 import { loadPlayerContext, loadTrackedApplication } from '@/features/blueprint/application-data';
 import { useDialog, useMutationNotice } from '@/hooks';
 import { hasClubAdminOverride, upsertClubAdminOverride } from '@/lib/club-admin-overrides';

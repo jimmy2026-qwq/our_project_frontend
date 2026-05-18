@@ -1,5 +1,12 @@
-import { DataPanel, InfoSummaryCard, InfoSummaryGrid, ListRow, MetricCard, MetricGrid } from '@/components/shared/data-display';
-import { SectionIntro } from '@/components/shared/layout';
+import {
+  DataPanel,
+  InfoSummaryCard,
+  InfoSummaryGrid,
+  ListRow,
+  MetricCard,
+  MetricGrid,
+} from './presentation';
+import { SectionIntro } from '@/components/ui';
 
 import { workbenchSteps } from './sections.content';
 import { formatLocalTime } from './sections.shared';

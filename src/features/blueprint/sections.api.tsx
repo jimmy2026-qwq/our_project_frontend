@@ -1,6 +1,6 @@
 import { SectionCallout } from '@/components/ui';
-import { WorkbenchBacklogPanel } from '@/components/shared/domain';
-import { SectionIntro } from '@/components/shared/layout';
+import { WorkbenchBacklogPanel } from './presentation';
+import { SectionIntro } from '@/components/ui';
 
 import { contractChecklist, routeDependencyBacklog, sampleRequests } from './sections.content';
 

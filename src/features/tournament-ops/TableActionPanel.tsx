@@ -1,5 +1,5 @@
-import { EmptyState } from '@/components/shared/feedback';
-import { CheckboxField, FieldGroup, SelectField, TextareaField } from '@/components/shared/forms';
+import { EmptyState } from '@/components/ui';
+import { CheckboxField, FieldGroup, SelectField, TextareaField } from '@/components/ui';
 import {
   Alert,
   AlertDescription,
@@ -11,7 +11,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui';
-import type { SeatWind, TableDetail, TournamentTableSummary } from '@/domain/operations';
+import type { SeatWind, TableDetail, TournamentTableSummary } from '@/objects/tournament';
 
 import { getTableStatusLabel } from './status';
 

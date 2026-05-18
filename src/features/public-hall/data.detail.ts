@@ -1,7 +1,7 @@
-import { publicApi } from '@/api/public';
-import { clubsApi } from '@/api/clubs';
-import { operationsApi } from '@/api/operations';
-import type { ClubPublicProfile, TournamentPublicProfile } from '@/domain/public';
+import { publicApi } from '@/api/publicquery';
+import { clubsApi } from '@/api/club';
+import { tournamentApi } from '@/api/tournament';
+import type { ClubPublicProfile, TournamentPublicProfile } from '@/objects/publicquery';
 
 import type { ClubDetailState, TournamentDetailState } from './types';
 import { mapTournamentDetailFromAdminView } from './data.shared';
@@ -12,7 +12,7 @@ export async function loadTournamentDetail(tournamentId: string): Promise<Tourna
     return { item, source: 'api' };
   } catch (error) {
     try {
-      const draftItem = await operationsApi.getTournament(tournamentId);
+      const draftItem = await tournamentApi.getTournament(tournamentId);
       return {
         item: mapTournamentDetailFromAdminView(draftItem),
         source: 'api',

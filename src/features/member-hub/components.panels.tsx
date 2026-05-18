@@ -1,7 +1,7 @@
-import { DataPanel, MetricCard, MetricGrid } from '@/components/shared/data-display';
-import { ClubApplicationList, DashboardFallbackNotice, DashboardPanelShell } from '@/components/shared/domain';
-import { EmptyState } from '@/components/shared/feedback';
-import { ActionButton } from '@/components/shared/layout';
+import { DataPanel, MetricCard, MetricGrid } from './presentation';
+import { ClubApplicationList, DashboardFallbackNotice, DashboardPanelShell } from './presentation';
+import { EmptyState } from '@/components/ui';
+import { ActionButton } from '@/components/ui';
 
 import { formatDateTime, getActiveOperator } from './data';
 import type { ApplicationInboxPanelProps, DashboardPanelProps, DashboardPlaceholderProps } from './components.types';

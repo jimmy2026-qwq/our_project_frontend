@@ -1,4 +1,4 @@
-import { InfoSummaryCard, InfoSummaryGrid } from '@/components/shared/data-display';
+import { InfoSummaryCard, InfoSummaryGrid } from './presentation';
 import { InfoCard } from '@/components/ui';
 
 import { heroCards } from './sections.content';

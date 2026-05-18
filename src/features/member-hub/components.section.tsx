@@ -1,7 +1,7 @@
-import { WorkbenchContextPanel } from '@/components/shared/domain';
-import { EmptyState } from '@/components/shared/feedback';
-import { SelectField } from '@/components/shared/forms';
-import { SectionIntro } from '@/components/shared/layout';
+import { WorkbenchContextPanel } from './presentation';
+import { EmptyState } from '@/components/ui';
+import { SelectField } from '@/components/ui';
+import { SectionIntro } from '@/components/ui';
 
 import { getActiveOperator } from './data';
 import { ApplicationInboxPanel, DashboardPanel, DashboardPlaceholder } from './components.panels';

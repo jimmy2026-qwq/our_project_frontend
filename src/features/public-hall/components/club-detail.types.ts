@@ -1,6 +1,6 @@
-import type { ClubApplication, ClubApplicationView } from '@/domain/clubs';
-import type { PlayerProfile } from '@/domain/auth';
-import type { ClubPublicProfile } from '@/domain/public';
+import type { ClubApplication, ClubApplicationView } from '@/objects/club';
+import type { PlayerProfile } from '@/objects/auth';
+import type { ClubPublicProfile } from '@/objects/publicquery';
 
 export interface ClubAdminMemberEntry extends PlayerProfile {
   isAdmin: boolean;
