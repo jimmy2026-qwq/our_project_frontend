@@ -118,7 +118,7 @@ export async function callApiMessage<Input extends object, Output>(
 
 当前 `API_BASE_URL` 默认是 `/api`，所以 `sendJson('/authLoginApiMessage', ...)` 在浏览器里就是 `/api/authLoginApiMessage`。
 
-为了让“编译通过就基本没问题”更接近真实，需要进一步引入 message registry：
+为了让“编译通过就基本没问题”落到前后端真实契约上，必须引入 message registry：
 
 ```ts
 interface ApiMessageRegistry {
@@ -140,7 +140,14 @@ export async function callRegisteredApiMessage<Name extends keyof ApiMessageRegi
 }
 ```
 
-第一阶段可以手写 registry；稳定后建议从后端 message registry 生成，避免前后端名字漂移。
+前端 registry 必须从后端导出的 message registry 生成，或在构建/测试中校验本地 registry 与后端导出清单一致。手写 registry 只允许作为临时开发草稿，不能作为迁移完成或合并验收依据。
+
+最低必做校验：
+
+- message name 必须来自后端导出的 registry。
+- 每个 message 的 input/output 类型必须能映射到前端 `src/objects/<service>` 类型。
+- 前端构建或测试必须失败于缺失、重名、拼写漂移、input/output 对不上的 message。
+- 没有后端 registry 导出或校验结果时，对应服务不能标记为迁移完成。
 
 ## API Module 迁移步骤
 
@@ -210,11 +217,12 @@ rg "request<|sendJson<" src/api/<service>
 - 业务类型仍从 `src/objects/<service>` 引用。
 - feature 不直接 import transport。
 - `callRegisteredApiMessage` 的 message name 可以被 TypeScript 检查。
+- `ApiMessageRegistry` 来自后端导出，或前端构建/测试会校验它与后端导出清单一致。
+- 缺失后端 message、message 名称漂移、input/output 类型不一致时，前端验收必须失败。
 
 ## 过渡期规则
 
 - 旧 REST 路由在后端保留到整组服务迁移完成。
 - 新前端代码只写 message API，不再新增 REST API。
 - 同一接口不在 feature 层同时调用 REST 和 message。
-- 若后端暂时没有 message endpoint，前端不要先合并对应迁移，否则编译通过但运行时会 404。
-
+- 若后端暂时没有 message endpoint 或没有导出 registry，前端不要先合并对应迁移；这种情况必须在生成/校验阶段失败，而不是等到运行时 404。
