@@ -910,7 +910,7 @@ export const PublicTournamentDetailSection = ({
         <DialogPortal>
           <DialogOverlay />
           <DialogSurface>
-            <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
+            <DialogHeader className="border-b border-(--line) px-6 py-5">
               <DialogTitle>
                 {selectedManageTable
                   ? `${selectedManageTable.tableCode} 牌桌详情`
@@ -919,7 +919,7 @@ export const PublicTournamentDetailSection = ({
             </DialogHeader>
             <DialogBody className="grid gap-4 px-6 py-5">
               {isLoadingTableDetail ? (
-                <p className="m-0 text-[color:var(--muted)]">
+                <p className="m-0 text-(--muted)">
                   正在加载牌桌详情...
                 </p>
               ) : null}
@@ -943,7 +943,7 @@ export const PublicTournamentDetailSection = ({
                 </div>
               ))}
             </DialogBody>
-            <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
+            <DialogFooter className="border-t border-(--line) px-6 py-5">
               <Button
                 variant="secondary"
                 onClick={() => setSelectedManageTable(null)}
@@ -976,7 +976,7 @@ export const PublicTournamentDetailSection = ({
         <DialogPortal>
           <DialogOverlay />
           <DialogSurface>
-            <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
+            <DialogHeader className="border-b border-(--line) px-6 py-5">
               <DialogTitle>
                 {pendingStartConfirmation
                   ? `${pendingStartConfirmation.tableCode} \u8fd8\u6709\u73a9\u5bb6\u672a\u51c6\u5907`
@@ -994,7 +994,7 @@ export const PublicTournamentDetailSection = ({
                   (playerName) => (
                     <span
                       key={playerName}
-                      className="text-sm text-[color:var(--muted-strong)]"
+                      className="text-sm text-(--muted-strong)"
                     >
                       {playerName}
                     </span>
@@ -1002,7 +1002,7 @@ export const PublicTournamentDetailSection = ({
                 )}
               </div>
             </DialogBody>
-            <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5">
+            <DialogFooter className="border-t border-(--line) px-6 py-5">
               <Button
                 variant="secondary"
                 onClick={() => setPendingStartConfirmation(null)}
@@ -1036,7 +1036,7 @@ export const PublicTournamentDetailSection = ({
         <DialogPortal>
           <DialogOverlay />
           <DialogSurface>
-            <DialogHeader className="border-b border-[color:var(--line)] px-6 py-5">
+            <DialogHeader className="border-b border-(--line) px-6 py-5">
               <DialogTitle>
                 {selectedAppealAction
                   ? `${getAppealDecisionLabel(selectedAppealAction.decision)}申诉工单`
@@ -1053,8 +1053,8 @@ export const PublicTournamentDetailSection = ({
                 <Alert variant="danger">{appealActionError}</Alert>
               ) : null}
               {selectedAppealAction ? (
-                <div className="grid gap-2 rounded-[20px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] p-4 text-sm text-[color:var(--muted-strong)]">
-                  <strong className="text-[color:var(--text)]">
+                <div className="grid gap-2 rounded-[20px] border border-(--line) bg-[rgba(255,255,255,0.03)] p-4 text-sm text-(--muted-strong)">
+                  <strong className="text-(--text)">
                     {selectedAppealAction.appeal.id}
                   </strong>
                   <span>{`牌桌：${selectedAppealAction.appeal.tableId}`}</span>
@@ -1064,8 +1064,8 @@ export const PublicTournamentDetailSection = ({
                   </span>
                 </div>
               ) : null}
-              <label className="grid gap-3 text-sm text-[color:var(--muted-strong)]">
-                <span className="font-medium text-[color:var(--text)]">
+              <label className="grid gap-3 text-sm text-(--muted-strong)">
+                <span className="font-medium text-(--text)">
                   处理结论
                 </span>
                 <Textarea
@@ -1076,8 +1076,8 @@ export const PublicTournamentDetailSection = ({
                 />
               </label>
             </DialogBody>
-            <DialogFooter className="border-t border-[color:var(--line)] px-6 py-5 sm:grid-cols-[1fr_auto_auto] sm:items-center">
-              <p className="m-0 text-sm text-[color:var(--muted)]">
+            <DialogFooter className="border-t border-(--line) px-6 py-5 sm:grid-cols-[1fr_auto_auto] sm:items-center">
+              <p className="m-0 text-sm text-(--muted)">
                 {selectedAppealAction
                   ? `当前操作：${getAppealDecisionLabel(selectedAppealAction.decision)}`
                   : ''}
