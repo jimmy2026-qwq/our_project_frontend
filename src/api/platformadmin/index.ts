@@ -1,5 +1,3 @@
-import { platformAdminPlayersApi } from './players.api';
-
-export const platformAdminApi = {
-  ...platformAdminPlayersApi,
-};
+export { PlatformAdminBanPlayerAPI } from './PlatformAdminBanPlayerAPI';
+export { PlatformAdminDissolveClubAPI } from './PlatformAdminDissolveClubAPI';
+export { PlatformAdminGrantSuperAdminAPI } from './PlatformAdminGrantSuperAdminAPI';

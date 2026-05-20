@@ -1,2 +1,13 @@
-// 字典微服务前端边界未来可能需要，当前先保留占位。
-export {};
+export { DictionaryGetEntryAPI } from './DictionaryGetEntryAPI';
+export { DictionaryListEntriesAPI } from './DictionaryListEntriesAPI';
+export { DictionaryListNamespacesAPI } from './DictionaryListNamespacesAPI';
+export { DictionaryNamespaceBacklogAPI } from './DictionaryNamespaceBacklogAPI';
+export { DictionaryProcessNamespaceRemindersAPI } from './DictionaryProcessNamespaceRemindersAPI';
+export { DictionaryRequestNamespaceAPI } from './DictionaryRequestNamespaceAPI';
+export { DictionaryReviewNamespaceAPI } from './DictionaryReviewNamespaceAPI';
+export { DictionaryRevokeNamespaceAPI } from './DictionaryRevokeNamespaceAPI';
+export { DictionarySchemaAPI } from './DictionarySchemaAPI';
+export { DictionaryTransferNamespaceAPI } from './DictionaryTransferNamespaceAPI';
+export { DictionaryUpdateNamespaceCollaboratorsAPI } from './DictionaryUpdateNamespaceCollaboratorsAPI';
+export { DictionaryUpdateNamespaceContextAPI } from './DictionaryUpdateNamespaceContextAPI';
+export { DictionaryUpsertEntryAPI } from './DictionaryUpsertEntryAPI';

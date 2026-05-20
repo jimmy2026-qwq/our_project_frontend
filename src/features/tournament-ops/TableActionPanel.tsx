@@ -17,10 +17,10 @@ import {
   CardTitle,
 } from '@/components/ui';
 import type {
-  SeatWind,
   TableDetail,
   TournamentTableSummary,
-} from '@/objects/tournament';
+} from '@/pages/objects/TournamentViews';
+import type { SeatWind } from '@/objects/tournament';
 
 import { getTableStatusLabel } from './status';
 

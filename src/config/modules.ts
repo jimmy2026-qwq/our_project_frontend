@@ -17,7 +17,7 @@ export const featureModules: FeatureModule[] = [
       'Homepage application workbench that connects joinable club list, current player context, submit flow, withdraw flow, and local fallback bridge.',
     entities: ['Club', 'Registered Player', 'Club Application'],
     primaryRoles: ['RegisteredPlayer', 'ClubAdmin'],
-    routes: ['GET /clubs', 'GET /players/me', 'POST /clubs/:clubId/applications'],
+    routes: ['GET /clubs', 'POST /api/getcurrentplayerapi', 'POST /clubs/:clubId/applications'],
   },
   {
     id: 'member-hub',
@@ -35,7 +35,7 @@ export const featureModules: FeatureModule[] = [
       'Operations-facing surface for tables, records, and appeals, mounted as a registered route and gated to tournament operators.',
     entities: ['Tournament', 'Stage', 'Table', 'Appeal Ticket'],
     primaryRoles: ['TournamentAdmin'],
-    routes: ['/tournament-ops', 'GET /tournaments', 'GET /tournaments/:id/stages/:stageId/tables', 'GET /appeals'],
+    routes: ['/tournament-ops', 'POST /api/tournamentlistapi', 'POST /api/tournamentstagetablesapi', 'POST /api/appeallistapi'],
   },
   {
     id: 'api-client',
@@ -44,6 +44,6 @@ export const featureModules: FeatureModule[] = [
       'Shared API layer that is split by domain, handles fetch/json behavior, and normalizes backend payloads into frontend domain models.',
     entities: ['ListEnvelope', 'PublicSchedule', 'ClubSummary', 'TournamentPublicProfile'],
     primaryRoles: ['Guest', 'RegisteredPlayer', 'ClubAdmin', 'TournamentAdmin', 'SuperAdmin'],
-    routes: ['src/api/auth.ts', 'src/api/public.ts', 'src/api/clubs.ts'],
+    routes: ['src/api/auth/*API.ts', 'src/api/player/*API.ts', 'src/api/club/*API.ts'],
   },
 ];

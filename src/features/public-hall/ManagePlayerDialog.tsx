@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { platformAdminApi } from '@/api/platformadmin';
+import { platformAdminApi } from '@/features/backend-api/platformadmin';
 import {
   ActionButton,
   FieldGroup,
@@ -20,7 +20,7 @@ import {
   DialogTitle,
 } from '@/components/ui';
 import { useAuth, useNotice } from '@/hooks';
-import type { PlayerLeaderboardEntry } from '@/objects/publicquery';
+import type { PlayerLeaderboardEntry } from '@/features/public-hall/objects';
 
 type PlayerAdminAction = 'ban' | 'grantSuperAdmin';
 

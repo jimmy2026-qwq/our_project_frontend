@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 import { Alert } from '@/components/ui';
-import type { ClubPublicProfile } from '@/objects/publicquery';
+import type { ClubPublicProfile } from '@/features/public-hall/objects';
 import { useAuth } from '@/hooks/useAuth';
 
 import { ClubApplicationDialog } from '../ClubApplicationDialog';

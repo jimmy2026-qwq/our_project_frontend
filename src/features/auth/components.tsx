@@ -12,7 +12,7 @@ import {
   CardTitle,
   Input,
 } from '@/components/ui';
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 interface AuthField {
   id: string;
@@ -134,7 +134,7 @@ export function AuthScreen({
               </div>
 
               <Button type="submit" size="lg" disabled={isSubmitting}>
-                {isSubmitting ? '提交中...' : submitLabel}
+                {isSubmitting ? '鎻愪氦涓?..' : submitLabel}
               </Button>
             </form>
 

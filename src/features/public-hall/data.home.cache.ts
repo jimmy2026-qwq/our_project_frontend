@@ -1,6 +1,6 @@
 import type {
-  HomeDataPayload,
-  LeaderboardDataPayload,
+  HomeDataState,
+  LeaderboardDataState,
   PublicHallState,
   PublicHallViewerContext,
 } from './types';
@@ -8,14 +8,14 @@ import { PUBLIC_HALL_CACHE_TTL_MS } from './data.shared';
 
 const homeDataCache = new Map<
   string,
-  { payload: HomeDataPayload; cachedAt: number }
+  { payload: HomeDataState; cachedAt: number }
 >();
-const homeDataRequests = new Map<string, Promise<HomeDataPayload>>();
+const homeDataRequests = new Map<string, Promise<HomeDataState>>();
 const leaderboardCache = new Map<
   string,
-  { payload: LeaderboardDataPayload; cachedAt: number }
+  { payload: LeaderboardDataState; cachedAt: number }
 >();
-const leaderboardRequests = new Map<string, Promise<LeaderboardDataPayload>>();
+const leaderboardRequests = new Map<string, Promise<LeaderboardDataState>>();
 
 export function buildHomeDataKey(
   state: PublicHallState,
@@ -83,7 +83,7 @@ export function getInFlightHomeDataRequest(cacheKey: string) {
 
 export function setInFlightHomeDataRequest(
   cacheKey: string,
-  request: Promise<HomeDataPayload>,
+  request: Promise<HomeDataState>,
 ) {
   homeDataRequests.set(cacheKey, request);
 }
@@ -94,7 +94,7 @@ export function clearInFlightHomeDataRequest(cacheKey: string) {
 
 export function setCachedPublicHallHomeData(
   cacheKey: string,
-  payload: HomeDataPayload,
+  payload: HomeDataState,
 ) {
   homeDataCache.set(cacheKey, { payload, cachedAt: Date.now() });
 }
@@ -105,7 +105,7 @@ export function getInFlightLeaderboardRequest(cacheKey: string) {
 
 export function setInFlightLeaderboardRequest(
   cacheKey: string,
-  request: Promise<LeaderboardDataPayload>,
+  request: Promise<LeaderboardDataState>,
 ) {
   leaderboardRequests.set(cacheKey, request);
 }
@@ -116,7 +116,7 @@ export function clearInFlightLeaderboardRequest(cacheKey: string) {
 
 export function setCachedPublicHallLeaderboardData(
   cacheKey: string,
-  payload: LeaderboardDataPayload,
+  payload: LeaderboardDataState,
 ) {
   leaderboardCache.set(cacheKey, { payload, cachedAt: Date.now() });
 }

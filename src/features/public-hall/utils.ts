@@ -1,9 +1,11 @@
 import type {
-  ClubSummary,
-  PlayerLeaderboardEntry,
   StageStatus,
   TournamentStatus,
 } from '@/objects';
+import type {
+  ClubSummary,
+  PlayerLeaderboardEntry,
+} from '@/features/public-hall/objects';
 
 export function formatDateTime(value: string) {
   return new Intl.DateTimeFormat('zh-CN', {

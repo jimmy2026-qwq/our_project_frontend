@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { ApiError } from '@/api/shared/http';
-import { tournamentApi } from '@/api/tournament';
+import { ApiError } from '@/system/api/http';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import {
   Alert,
   AlertDescription,
@@ -22,7 +22,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui';
-import type { TablePaifuDetail } from '@/objects/tournament';
+import type { TablePaifuDetail } from '@/pages/objects/TournamentViews';
 
 function getOutcomeLabel(outcome: string) {
   switch (outcome) {

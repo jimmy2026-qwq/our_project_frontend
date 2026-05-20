@@ -13,7 +13,7 @@ import type {
   AppealSummary,
   MatchRecordSummary,
   TournamentTableSummary,
-} from '@/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 
 export function useTournamentOpsPanelData(
   tournaments: TournamentContext[],

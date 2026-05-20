@@ -1,11 +1,32 @@
-import { clubsApplicationsApi } from './applications.api';
-import { clubsCoreApi } from './core.api';
-import { clubsMembersApi } from './members.api';
-import { clubsTournamentsApi } from './tournaments.api';
-
-export const clubsApi = {
-  ...clubsCoreApi,
-  ...clubsMembersApi,
-  ...clubsTournamentsApi,
-  ...clubsApplicationsApi,
-};
+export { AcceptClubTournamentAPI } from './AcceptClubTournamentAPI';
+export { AddClubMemberAPI } from './AddClubMemberAPI';
+export { AdjustClubMemberContributionAPI } from './AdjustClubMemberContributionAPI';
+export { AdjustClubPointPoolAPI } from './AdjustClubPointPoolAPI';
+export { AdjustClubTreasuryAPI } from './AdjustClubTreasuryAPI';
+export { ApproveClubApplicationAPI } from './ApproveClubApplicationAPI';
+export { AssignClubAdminAPI } from './AssignClubAdminAPI';
+export { AssignClubTitleAPI } from './AssignClubTitleAPI';
+export { AwardClubHonorAPI } from './AwardClubHonorAPI';
+export { ClearClubTitleAPI } from './ClearClubTitleAPI';
+export { ClubPrivilegeDefinitionsAPI } from './ClubPrivilegeDefinitionsAPI';
+export { CreateClubAPI } from './CreateClubAPI';
+export { DeclineClubTournamentAPI } from './DeclineClubTournamentAPI';
+export { GetClubAPI } from './GetClubAPI';
+export { GetClubApplicationAPI } from './GetClubApplicationAPI';
+export { GetClubMemberPrivilegeAPI } from './GetClubMemberPrivilegeAPI';
+export { GetCurrentClubApplicationAPI } from './GetCurrentClubApplicationAPI';
+export { ListClubApplicationsAPI } from './ListClubApplicationsAPI';
+export { ListClubMemberPrivilegesAPI } from './ListClubMemberPrivilegesAPI';
+export { ListClubMembersAPI } from './ListClubMembersAPI';
+export { ListClubTournamentsAPI } from './ListClubTournamentsAPI';
+export { ListClubsAPI } from './ListClubsAPI';
+export { RejectClubApplicationAPI } from './RejectClubApplicationAPI';
+export { RemoveClubMemberAPI } from './RemoveClubMemberAPI';
+export { ReviewClubApplicationAPI } from './ReviewClubApplicationAPI';
+export { RevokeClubAdminAPI } from './RevokeClubAdminAPI';
+export { RevokeClubHonorAPI } from './RevokeClubHonorAPI';
+export { SubmitClubApplicationAPI } from './SubmitClubApplicationAPI';
+export { UpdateClubRankTreeAPI } from './UpdateClubRankTreeAPI';
+export { UpdateClubRecruitmentPolicyAPI } from './UpdateClubRecruitmentPolicyAPI';
+export { UpdateClubRelationAPI } from './UpdateClubRelationAPI';
+export { WithdrawClubApplicationAPI } from './WithdrawClubApplicationAPI';

@@ -1,14 +1,16 @@
 import type {
-  AuthSession,
-  ClubPublicProfile,
-  ClubSummary,
   ListEnvelope,
-  PlayerLeaderboardEntry,
-  PublicSchedule,
   StageStatus,
-  TournamentPublicProfile,
   TournamentStatus,
 } from '@/objects';
+import type { AuthSession } from '@/features/auth/objects/AuthSession';
+import type {
+  ClubPublicProfile,
+  ClubSummary,
+  PlayerLeaderboardEntry,
+  PublicSchedule,
+  TournamentPublicProfile,
+} from '@/features/public-hall/objects';
 
 export type DataSource = 'api' | 'mock';
 export type PublicView = 'schedules' | 'clubs' | 'leaderboard';
@@ -25,7 +27,7 @@ export interface DetailState<T> {
   warning?: string;
 }
 
-export interface HomeDataPayload {
+export interface HomeDataState {
   schedules: LoadState<PublicSchedule>;
   clubs: LoadState<ClubSummary>;
 }
@@ -34,7 +36,7 @@ export interface PublicHallViewerContext {
   session: AuthSession | null;
 }
 
-export interface LeaderboardDataPayload {
+export interface LeaderboardDataState {
   leaderboard: LoadState<PlayerLeaderboardEntry>;
 }
 

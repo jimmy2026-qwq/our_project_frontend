@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react';
 
-import { cva, cx, type VariantProps } from '@/lib/cx';
+import { cva, cx, type VariantProps } from '@/components/ui/cx';
 
 const badgeVariants = cva(
   [

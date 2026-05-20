@@ -13,7 +13,7 @@ import {
 export function MemberHubPage() {
   const { state, setState, directory } = useMemberHubState();
   const [reloadKey, forceReload] = useReducer((value: number) => value + 1, 0);
-  const { playerPayload, clubPayload, inboxPayload, isLoading } =
+  const { playerDashboardState, clubDashboardState, applicationInboxState, isLoading } =
     useMemberHubData(directory, state, reloadKey);
 
   const actions = useMemberHubActions(
@@ -26,9 +26,9 @@ export function MemberHubPage() {
   if (
     !directory ||
     isLoading ||
-    !playerPayload ||
-    !clubPayload ||
-    !inboxPayload
+    !playerDashboardState ||
+    !clubDashboardState ||
+    !applicationInboxState
   ) {
     return <MemberHubLoading />;
   }
@@ -37,9 +37,9 @@ export function MemberHubPage() {
     <MemberHubPageSection
       directory={directory}
       state={state}
-      playerPayload={playerPayload}
-      clubPayload={clubPayload}
-      inboxPayload={inboxPayload}
+      playerDashboardState={playerDashboardState}
+      clubDashboardState={clubDashboardState}
+      applicationInboxState={applicationInboxState}
       onReload={forceReload}
       onChangeOperator={actions.changeOperator}
       onChangePlayer={actions.changePlayer}

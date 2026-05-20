@@ -1,6 +1,6 @@
 import { useEffect, useMemo, type Dispatch, type SetStateAction } from 'react';
 
-import { tournamentApi } from '@/api/tournament';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import { useRefreshNotice } from '@/hooks';
 
 import {
@@ -12,11 +12,11 @@ import {
 import type {
   AppealSummary,
   MatchRecordSummary,
-  SeatWind,
   TableDetail,
   TournamentTableSummary,
-} from '@/objects/tournament';
-import { playerApi } from '@/api/player';
+} from '@/pages/objects/TournamentViews';
+import type { SeatWind } from '@/objects/tournament';
+import { playerApi } from '@/features/backend-api/player';
 
 interface TournamentOpsEffectsParams {
   fixedTournamentId?: string;

@@ -1,4 +1,4 @@
-import { tournamentApi } from '@/api/tournament';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import { useNotice } from '@/hooks';
 import {
   Dialog,
@@ -54,8 +54,8 @@ export function ClubTournamentLineupDialog({
       workbench.selectedPlayerIds.length === 0
     ) {
       notifyWorkbenchWarning(
-        '参赛名单不完整',
-        '请先选择一个阶段，并至少勾选一名成员后再提交名单。',
+        'Lineup is incomplete',
+        'Select a stage and at least one player before submitting the lineup.',
       );
       return;
     }
@@ -65,22 +65,21 @@ export function ClubTournamentLineupDialog({
       await tournamentApi.submitStageLineup(tournament.id, effectiveStageId, {
         clubId,
         operatorId,
-        playerIds: workbench.selectedPlayerIds,
+        seats: workbench.selectedPlayerIds.map((playerId) => ({ playerId })),
       });
-      notifySuccess('名单提交成功', '已将所选成员提交到当前赛事阶段。');
+      notifySuccess('Lineup submitted', 'The tournament lineup has been submitted.');
       onOpenChange(false);
     } catch (error) {
       notifyWarning(
-        '无法提交参赛名单',
+        'Unable to submit lineup',
         error instanceof Error
           ? error.message
-          : '参赛名单提交失败，请确认当前赛事状态后重试。',
+          : 'The lineup submission did not complete.',
       );
     } finally {
       setIsSubmitting(false);
     }
   }
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>

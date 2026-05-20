@@ -1,7 +1,7 @@
 import { forwardRef, type ComponentPropsWithoutRef, type ElementRef, type HTMLAttributes } from 'react';
 import * as DialogPrimitive from '@radix-ui/react-dialog';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 export const Dialog = DialogPrimitive.Root;
 export const DialogPortal = DialogPrimitive.Portal;

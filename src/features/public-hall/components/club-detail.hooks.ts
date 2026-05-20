@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { clubsApi } from '@/api/club';
-import type { AuthSession, PlayerProfile } from '@/objects/auth';
-import type { ClubApplication, ClubApplicationView } from '@/objects/club';
-import type { ClubPublicProfile } from '@/objects/publicquery';
+import { clubsApi } from '@/features/backend-api/club';
+import type { AuthSession } from '@/features/auth/objects/AuthSession';
+import type { ClubApplication, ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubPublicProfile } from '@/features/public-hall/objects';
 import {
   loadPlayerContext,
   loadTrackedApplication,
@@ -12,8 +13,8 @@ import { useDialog, useMutationNotice } from '@/hooks';
 import {
   hasClubAdminOverride,
   upsertClubAdminOverride,
-} from '@/lib/club-admin-overrides';
-import { upsertClubApplicationInboxItem } from '@/lib/club-applications';
+} from '@/pages/objects/ClubAdminOverrides';
+import { upsertClubApplicationInboxItem } from '@/pages/objects/ClubApplicationInbox';
 
 import type { DetailState } from '../types';
 import type {

@@ -9,7 +9,7 @@ export function RequireAuth() {
   if (!isReady) {
     return (
       <div className="grid min-h-screen place-items-center bg-[color:var(--bg)] px-6 text-[color:var(--muted)]">
-        正在恢复登录状态...
+        姝ｅ湪鎭㈠鐧诲綍鐘舵€?..
       </div>
     );
   }

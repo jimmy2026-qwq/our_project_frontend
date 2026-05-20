@@ -1,5 +1,5 @@
 import type { InputHTMLAttributes, ReactNode, SelectHTMLAttributes, TextareaHTMLAttributes } from 'react';
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 import { Input } from './input';
 import { Select } from './select';
 import { Textarea } from './textarea';

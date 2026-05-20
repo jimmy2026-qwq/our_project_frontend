@@ -8,9 +8,9 @@ import type {
 export interface MemberHubPageSectionProps {
   directory: MemberHubOperatorDirectory;
   state: MemberHubState;
-  playerPayload: DashboardLoadState;
-  clubPayload: DashboardLoadState;
-  inboxPayload: ApplicationInboxState;
+  playerDashboardState: DashboardLoadState;
+  clubDashboardState: DashboardLoadState;
+  applicationInboxState: ApplicationInboxState;
   onReload: () => void;
   onChangeOperator: (operatorId: string) => void;
   onChangePlayer: (playerId: string) => void;
@@ -21,7 +21,7 @@ export interface MemberHubPageSectionProps {
 export interface DashboardPanelProps {
   title: string;
   path: string;
-  payload: DashboardLoadState;
+  loadState: DashboardLoadState;
 }
 
 export interface DashboardPlaceholderProps extends DashboardPanelProps {
@@ -31,6 +31,6 @@ export interface DashboardPlaceholderProps extends DashboardPanelProps {
 export interface ApplicationInboxPanelProps {
   directory: MemberHubOperatorDirectory;
   state: MemberHubState;
-  payload: ApplicationInboxState;
+  inboxState: ApplicationInboxState;
   onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
 }

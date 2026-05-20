@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 import { Separator } from '@/components/ui/separator';
 
 export function DescriptionList({ className, ...props }: HTMLAttributes<HTMLDListElement>) {

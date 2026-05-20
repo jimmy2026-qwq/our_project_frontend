@@ -1,6 +1,6 @@
-import { tournamentApi } from '@/api/tournament';
-import { publicApi } from '@/api/publicquery';
-import type { ClubSummary, PublicSchedule } from '@/objects/publicquery';
+import { tournamentApi } from '@/features/backend-api/tournament';
+import { publicApi } from '@/features/backend-api/publicquery';
+import type { ClubSummary, PublicSchedule } from '@/features/public-hall/objects';
 
 import type {
   LoadState,

@@ -1,6 +1,6 @@
 import { DataTablePanel } from '@/components/ui';
 import { TableCell, TableRow } from '@/components/ui';
-import type { AppealSummary } from '@/objects/tournament';
+import type { AppealSummary } from '@/pages/objects/TournamentViews';
 
 import type { LoadState } from './data';
 

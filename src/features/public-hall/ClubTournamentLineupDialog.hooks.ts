@@ -1,15 +1,15 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
-import { clubsApi } from '@/api/club';
+import { clubsApi } from '@/features/backend-api/club';
 import type {
-  TournamentDetailContract,
-  TournamentDetailStageContract,
-  TournamentStageDirectoryEntryContract,
+  TournamentDetailView,
+  TournamentOperationsStageView,
+  TournamentStageDirectoryEntry,
 } from '@/objects/tournament';
-import { tournamentApi } from '@/api/tournament';
-import { publicApi } from '@/api/publicquery';
-import type { PlayerProfile } from '@/objects/auth';
-import type { TournamentPublicProfile } from '@/objects/publicquery';
+import { tournamentApi } from '@/features/backend-api/tournament';
+import { publicApi } from '@/features/backend-api/publicquery';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { TournamentPublicProfile } from '@/features/public-hall/objects';
 import { useNotice } from '@/hooks';
 
 import type {
@@ -19,14 +19,14 @@ import type {
   MemberListItem,
   MemberStatusFilter,
 } from './ClubTournamentLineupDialog.types';
-import { playerApi } from '@/api/player';
+import { playerApi } from '@/features/backend-api/player';
 
 type PublicTournamentStage = NonNullable<
   TournamentPublicProfile['stages']
 >[number];
 
 function getSelectedPlayerIds(
-  detail: TournamentDetailContract | null,
+  detail: TournamentDetailView | null,
   clubId: string,
   stageId: string,
 ) {
@@ -59,8 +59,8 @@ async function loadPublicStagesForLineup(tournamentId: string) {
 }
 
 function mapStageDirectoryEntryToDetailStage(
-  stage: TournamentStageDirectoryEntryContract,
-): TournamentDetailStageContract {
+  stage: TournamentStageDirectoryEntry,
+): TournamentOperationsStageView {
   return {
     stageId: stage.stageId,
     name: stage.name,
@@ -77,7 +77,7 @@ function mapStageDirectoryEntryToDetailStage(
 
 function mapPublicStageToDetailStage(
   stage: PublicTournamentStage,
-): TournamentDetailStageContract {
+): TournamentOperationsStageView {
   return {
     stageId: stage.stageId,
     name: stage.name,
@@ -92,8 +92,8 @@ function mapPublicStageToDetailStage(
 }
 
 function mergeTournamentStages(
-  stageDirectory: TournamentDetailStageContract[],
-  detailStages: TournamentDetailStageContract[],
+  stageDirectory: TournamentOperationsStageView[],
+  detailStages: TournamentOperationsStageView[],
 ) {
   const detailById = new Map(
     detailStages.map((stage) => [stage.stageId, stage]),
@@ -126,7 +126,7 @@ function mergeTournamentStages(
 
 async function loadTournamentDetailForLineup(
   tournament: ClubTournamentItem,
-): Promise<TournamentDetailContract> {
+): Promise<TournamentDetailView> {
   const [detailResult, stageDirectory, publicStages] = await Promise.all([
     tournamentApi.getTournament(tournament.id).catch(() => null),
     loadTournamentStageDirectory(tournament.id),
@@ -187,7 +187,7 @@ export function useClubTournamentLineupWorkbench({
   const [eloSort, setEloSort] = useState<EloSort>('desc');
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const [tournamentDetail, setTournamentDetail] =
-    useState<TournamentDetailContract | null>(null);
+    useState<TournamentDetailView | null>(null);
   const [initializedStageId, setInitializedStageId] = useState('');
 
   useEffect(() => {
@@ -240,10 +240,10 @@ export function useClubTournamentLineupWorkbench({
       .catch((error) => {
         if (!cancelled) {
           notifyWarning(
-            'éŽ´æ„¬æ†³é’æ¥„ã€ƒé”çŠºæµ‡æ¾¶è¾«è§¦',
+            'Unable to load club members.',
             error instanceof Error
               ? error.message
-              : 'éƒçŠ³ç¡¶ç’‡è¯²å½‡æ·‡å˜ç®°é–®ã„¦åžšé›æ¨ºåžªç›ã„£â‚¬?',
+              : 'Please try again.',
           );
         }
       })
@@ -282,10 +282,10 @@ export function useClubTournamentLineupWorkbench({
       .catch((error) => {
         if (!cancelled) {
           notifyWarning(
-            'ç’§æ¶—ç°¨ç’‡ï¸½å„é”çŠºæµ‡æ¾¶è¾«è§¦',
+            'Unable to load tournament detail.',
             error instanceof Error
               ? error.message
-              : 'éƒçŠ³ç¡¶ç’‡è¯²å½‡ç’§æ¶—ç°¨ç’‡ï¸½å„éŠ†?',
+              : 'Please try again.',
           );
           setTournamentDetail(null);
           setSelectedStageId('');

@@ -1,11 +1,11 @@
-import { authApi } from '@/api/auth';
+import { authApi } from '@/features/backend-api/auth';
+import type { AuthSession } from '@/features/auth/objects/AuthSession';
 import type {
-  AuthSession,
-  LoginPayload,
-  RegisterPayload,
-  SessionInfo,
+  LoginRequest,
+  RegisterAccountRequest,
+  CurrentSessionView,
 } from '@/objects/auth';
-import { playerApi } from '@/api/player';
+import { playerApi } from '@/features/backend-api/player';
 
 const AUTH_SESSION_STORAGE_KEY = 'riichi-nexus.auth.session';
 
@@ -14,8 +14,8 @@ interface StoredSessionRecord {
   user: AuthSession['user'];
 }
 
-type BackendAuthPayload = Awaited<ReturnType<typeof authApi.login>>;
-type BackendSessionPayload = Awaited<ReturnType<typeof authApi.getAuthSession>>;
+type BackendAuthResponse = Awaited<ReturnType<typeof authApi.login>>;
+type BackendSessionResponse = Awaited<ReturnType<typeof authApi.getAuthSession>>;
 
 function createGuestToken(guestSessionId: string) {
   return `guest:${guestSessionId}`;
@@ -40,26 +40,26 @@ function persistSession(session: AuthSession | null) {
 }
 
 async function resolveOperatorId(
-  payload: BackendAuthPayload | BackendSessionPayload,
+  response: BackendAuthResponse | BackendSessionResponse,
 ) {
-  if (!payload.roles.isRegisteredPlayer) {
-    return payload.userId;
+  if (!response.roles.isRegisteredPlayer) {
+    return response.userId;
   }
 
   try {
-    const player = await playerApi.getCurrentPlayer(payload.userId);
-    return player.playerId || payload.userId;
+    const player = await playerApi.getCurrentPlayer(response.userId);
+    return player.playerId || response.userId;
   } catch {
-    return payload.userId;
+    return response.userId;
   }
 }
 
 async function mapBackendAuthSession(
-  payload: BackendAuthPayload | BackendSessionPayload,
+  response: BackendAuthResponse | BackendSessionResponse,
   tokenOverride?: string,
 ): Promise<AuthSession> {
   const token =
-    tokenOverride ?? ('token' in payload ? payload.token : undefined);
+    tokenOverride ?? ('token' in response ? response.token : undefined);
 
   if (!token) {
     throw new Error(
@@ -67,21 +67,21 @@ async function mapBackendAuthSession(
     );
   }
 
-  const operatorId = await resolveOperatorId(payload);
+  const operatorId = await resolveOperatorId(response);
 
   return {
     token,
     user: {
-      userId: payload.userId,
-      username: payload.username,
-      displayName: payload.displayName,
+      userId: response.userId,
+      username: response.username,
+      displayName: response.displayName,
       operatorId,
-      roles: payload.roles,
+      roles: response.roles,
     },
   };
 }
 
-function mapGuestSession(session: SessionInfo): AuthSession {
+function mapGuestSession(session: CurrentSessionView): AuthSession {
   const guestSessionId = session.guestSession?.id ?? session.principalId;
 
   return {
@@ -133,7 +133,7 @@ export async function restoreSession(token: string) {
   return session;
 }
 
-export async function loginUser(payload: LoginPayload) {
+export async function loginUser(payload: LoginRequest) {
   const loginResult = await authApi.login(payload);
   const session = await mapBackendAuthSession(
     await authApi.getAuthSession(loginResult.token),
@@ -143,7 +143,7 @@ export async function loginUser(payload: LoginPayload) {
   return session;
 }
 
-export async function registerUser(payload: RegisterPayload) {
+export async function registerUser(payload: RegisterAccountRequest) {
   const registerResult = await authApi.register(payload);
   const session = await mapBackendAuthSession(
     await authApi.getAuthSession(registerResult.token),

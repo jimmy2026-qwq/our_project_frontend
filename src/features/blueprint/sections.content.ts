@@ -1,5 +1,3 @@
-import { tournamentApi } from '@/api/tournament';
-
 export const heroCards = [
   {
     label: 'Migration State',
@@ -97,13 +95,13 @@ export const sampleRequests = [
     title: 'Session bootstrap',
     description:
       'Session state is expected to come from a stable frontend-facing session contract rather than ad hoc local assumptions.',
-    path: '/session?operatorId=player-123',
+    path: 'POST /api/currentsessionauthapi',
   },
   {
     title: 'Current player context',
     description:
       'The home application and member-facing flows still depend on loading the canonical player aggregate for the active operator.',
-    path: '/players/me?operatorId=player-123',
+    path: 'POST /api/getcurrentplayerapi',
   },
   {
     title: 'Club application inbox',
@@ -121,20 +119,13 @@ export const sampleRequests = [
     title: 'Tournament stage directory',
     description:
       'Tournament operations still needs this shape to replace hard-coded stage selectors with a backend-driven directory.',
-    path: '/tournaments/:id/stages',
+    path: 'POST /api/tournamentstagedirectoryapi',
   },
   {
     title: 'Tournament table queue',
     description:
       'Tables remain one of the most valuable operational entry points in the current tournament workbench.',
-    path: tournamentApi.buildTournamentTablesPath(
-      'tournament-123',
-      'stage-demo-swiss',
-      {
-        status: 'WaitingPreparation',
-        limit: 8,
-      },
-    ),
+    path: 'POST /api/tournamentstagetablesapi',
   },
 ];
 
@@ -166,13 +157,13 @@ export const routeDependencyBacklog = [
     id: 'ops-tournament-directory',
     title: 'Tournament directory contract',
     detail:
-      'Tournament operations still needs GET /tournaments so the workbench can stop relying on hard-coded top-level context.',
+      'Tournament operations reads POST /api/tournamentlistapi so the workbench can stop relying on hard-coded top-level context.',
   },
   {
     id: 'ops-stage-directory',
     title: 'Stage directory contract',
     detail:
-      'GET /tournaments/:id/stages is still the main missing dependency for replacing static stage selectors with backend-driven context.',
+      'POST /api/tournamentstagedirectoryapi is the dependency for replacing static stage selectors with backend-driven context.',
   },
   {
     id: 'operator-permissions',

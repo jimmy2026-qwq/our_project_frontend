@@ -1,6 +1,6 @@
 import type { SelectHTMLAttributes } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (

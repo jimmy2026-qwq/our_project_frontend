@@ -1,6 +1,6 @@
 import type { FieldsetHTMLAttributes, HTMLAttributes } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 export function Fieldset({ className, ...props }: FieldsetHTMLAttributes<HTMLFieldSetElement>) {
   return (

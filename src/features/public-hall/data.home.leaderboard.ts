@@ -1,8 +1,8 @@
-import { publicApi } from '@/api/publicquery';
+import { publicApi } from '@/features/backend-api/publicquery';
 import type {
   ClubSummary,
   PlayerLeaderboardEntry,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 import type { LoadState, PublicHallState } from './types';
 import { formatRankLabel, mapLeaderboardStatus } from './data.shared';

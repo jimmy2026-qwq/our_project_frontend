@@ -25,7 +25,7 @@ import {
 import type {
   ClubSummary,
   TournamentPublicProfile,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 import {
   formatDateTime,

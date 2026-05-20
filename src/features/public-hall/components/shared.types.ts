@@ -2,7 +2,7 @@ import type {
   ClubSummary,
   PlayerLeaderboardEntry,
   PublicSchedule,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 import type { LoadState, PublicView } from '../types';
 

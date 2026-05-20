@@ -1,6 +1,6 @@
 import type { HTMLAttributes, TableHTMLAttributes, TdHTMLAttributes, ThHTMLAttributes } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 export function Table({ className, ...props }: TableHTMLAttributes<HTMLTableElement>) {
   return (

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 import { Alert, AlertDescription, AlertTitle } from './alert';
 import { Button } from './button';
 import { DataPanel } from './data-panel';

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 import { Card, CardContent, CardHeader } from './card';
 import { EmptyState, SourceBadge } from './feedback';
 import { PanelHead } from './layout';

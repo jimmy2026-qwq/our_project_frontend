@@ -14,9 +14,9 @@ import type { MemberHubPageSectionProps } from './components.types';
 export function MemberHubPageSection({
   directory,
   state,
-  playerPayload,
-  clubPayload,
-  inboxPayload,
+  playerDashboardState,
+  clubDashboardState,
+  applicationInboxState,
   onReload,
   onChangeOperator,
   onChangePlayer,
@@ -104,40 +104,40 @@ export function MemberHubPageSection({
         <ApplicationInboxPanel
           directory={directory}
           state={state}
-          payload={inboxPayload}
+          inboxState={applicationInboxState}
           onReview={onReview}
         />
       </div>
 
       <div className="member-hub__grid grid gap-[18px] md:grid-cols-2">
-        {playerPayload.source === 'api' && playerPayload.dashboard ? (
+        {playerDashboardState.source === 'api' && playerDashboardState.dashboard ? (
           <DashboardPanel
             title="Player Dashboard"
             path={`/dashboards/players/${state.playerId}?operatorId=${state.operatorId}`}
-            payload={playerPayload}
+            loadState={playerDashboardState}
           />
         ) : (
           <DashboardPlaceholder
             title="Player Dashboard"
             path={`/dashboards/players/${state.playerId}?operatorId=${state.operatorId}`}
-            payload={playerPayload}
+            loadState={playerDashboardState}
             roleNote="The player dashboard is still using a placeholder path whenever the API does not return a live dashboard yet."
           />
         )}
 
         {activeOperator.role === 'ClubAdmin' &&
-        clubPayload.source === 'api' &&
-        clubPayload.dashboard ? (
+        clubDashboardState.source === 'api' &&
+        clubDashboardState.dashboard ? (
           <DashboardPanel
             title="Club Dashboard"
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}
-            payload={clubPayload}
+            loadState={clubDashboardState}
           />
         ) : (
           <DashboardPlaceholder
             title="Club Dashboard"
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}
-            payload={clubPayload}
+            loadState={clubDashboardState}
             roleNote={
               activeOperator.role === 'ClubAdmin'
                 ? 'The club dashboard remains in placeholder mode until the API returns a live admin dashboard.'

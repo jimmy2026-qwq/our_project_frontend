@@ -17,7 +17,7 @@ import {
 import type { PublicHallState } from '@/features/public-hall/types';
 import { useAuth, useRefreshNotice } from '@/hooks';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
-import { playerApi } from '@/api/player';
+import { playerApi } from '@/features/backend-api/player';
 
 export function PublicHallHomePage() {
   const { state, setState } = usePublicHallState();

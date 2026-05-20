@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 export function KeyValueList({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="key-value-list" className={cx('ui-key-value-list grid gap-3', className)} {...props} />;

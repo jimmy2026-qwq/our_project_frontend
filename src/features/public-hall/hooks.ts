@@ -11,13 +11,13 @@ import {
 } from './data';
 import type {
   ClubDetailState,
-  HomeDataPayload,
-  LeaderboardDataPayload,
+  HomeDataState,
+  LeaderboardDataState,
   PublicHallState,
   PublicHallViewerContext,
   TournamentDetailState,
 } from './types';
-import { playerApi } from '@/api/player';
+import { playerApi } from '@/features/backend-api/player';
 
 export function usePublicHallState() {
   const [state, setState] = useState<PublicHallState>(
@@ -31,7 +31,7 @@ export function usePublicHallHomeData(
   context: PublicHallViewerContext,
   reloadKey = 0,
 ) {
-  const [data, setData] = useState<HomeDataPayload | null>(() =>
+  const [data, setData] = useState<HomeDataState | null>(() =>
     peekPublicHallHomeData(state, context),
   );
   const [isLoading, setIsLoading] = useState(
@@ -103,10 +103,10 @@ export function usePublicHallHomeData(
 
 export function usePublicHallLeaderboardData(
   state: PublicHallState,
-  homeData: HomeDataPayload | null,
+  homeData: HomeDataState | null,
   reloadKey = 0,
 ) {
-  const [data, setData] = useState<LeaderboardDataPayload | null>(() =>
+  const [data, setData] = useState<LeaderboardDataState | null>(() =>
     peekPublicHallLeaderboardData(state),
   );
   const [isLoading, setIsLoading] = useState(false);

@@ -1,8 +1,8 @@
-import { clubsApi } from '@/api/club';
-import { ApiError } from '@/api/shared/http';
-import type { PlayerProfile } from '@/objects/auth';
-import type { ClubApplication } from '@/objects/club';
-import type { ClubSummary } from '@/objects/publicquery';
+import { clubsApi } from '@/features/backend-api/club';
+import { ApiError } from '@/system/api/http';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubSummary } from '@/features/public-hall/objects';
 import {
   createProvisionalClubApplicationId,
   isProvisionalClubApplicationId,
@@ -10,8 +10,8 @@ import {
   readClubApplicationsByOperator,
   updateClubApplicationInboxStatus,
   upsertClubApplicationInboxItem,
-} from '@/lib/club-applications';
-import { playerApi } from '@/api/player';
+} from '@/pages/objects/ClubApplicationInbox';
+import { playerApi } from '@/features/backend-api/player';
 
 export type DataSource = 'api' | 'mock';
 

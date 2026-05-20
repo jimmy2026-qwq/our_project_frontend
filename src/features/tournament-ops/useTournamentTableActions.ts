@@ -1,12 +1,12 @@
-import { ApiError } from '@/api/shared/http';
-import { tournamentApi } from '@/api/tournament';
+import { ApiError } from '@/system/api/http';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import { useDialog, useMutationNotice, useNotice } from '@/hooks';
 
 import type {
-  SeatWind,
   TableDetail,
   TournamentTableSummary,
-} from '@/objects/tournament';
+} from '@/pages/objects/TournamentViews';
+import type { SeatWind } from '@/objects/tournament';
 
 interface TableActionNoticeOptions {
   successTitle: string;

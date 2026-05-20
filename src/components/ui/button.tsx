@@ -1,6 +1,6 @@
 import { forwardRef, type ButtonHTMLAttributes } from 'react';
 
-import { cva, cx, type VariantProps } from '@/lib/cx';
+import { cva, cx, type VariantProps } from '@/components/ui/cx';
 
 const buttonVariants = cva(
   [

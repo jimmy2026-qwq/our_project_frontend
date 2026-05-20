@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Button, type ButtonProps } from './button';
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 
 export function SectionIntro({
   eyebrow,
@@ -76,7 +76,7 @@ export function PortalFilters({
 export function FilterActionRow({
   children,
   onRefresh,
-  refreshLabel = '刷新',
+  refreshLabel = 'Refresh',
   className,
 }: {
   children: ReactNode;

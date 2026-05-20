@@ -1,4 +1,4 @@
-import { opsAnalyticsApi } from '@/api/opsanalytics';
+import { opsAnalyticsApi } from '@/features/backend-api/opsanalytics';
 import type { DashboardLoadState } from './data.shared';
 
 export async function loadPlayerDashboard(

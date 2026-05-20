@@ -4,4 +4,8 @@
 4 区分类和 api declaration
 5 每个 api 单独放在一个文件
 6 输入输出和类型系统分开
-7 前端 xxxApiMessage(input) -> Promise<output> 访问 /api/xxxApiMessage 而不是用 /api/auth/log-in；后端必须导出 message registry，前端必须基于该 registry 生成或校验 message 名称和 input/output 类型，做到前后端编译通过就基本没有问题
+7 ssd 处理系统通知（聊天功能，...）
+8 event sourcing
+9 每个 API 单独一个类和文件：前端 `LoginAuthAPI extends APIMessage<AuthResponse>`，后端 `LoginAuthAPIMessage extends APIMessage[AuthResponse]` 并实现 `plan(...): IO[AuthResponse]`；路径由类名推导为 `/api/loginauthapi`，不再手写 `/api/auth/log-in` 或 `xxxApiMessage` 字符串
+10 微服务隔离 private [user]
+11 完全模块化，不要有 support 文件，每个 api 做自己的事情

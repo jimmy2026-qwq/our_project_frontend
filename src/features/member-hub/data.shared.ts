@@ -1,9 +1,9 @@
-import type { AuthSession } from '@/objects/auth';
-import type { Role } from '@/objects/shared/common';
-import type { ClubApplicationView } from '@/objects/club';
-import type { DashboardSummary } from '@/objects/opsanalytics';
-import type { ClubSummary } from '@/objects/publicquery';
-import type { ClubApplicationInboxItem } from '@/lib/club-applications';
+import type { AuthSession } from '@/features/auth/objects/AuthSession';
+import type { Role } from '@/system/objects/apiTypes/common';
+import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { DashboardSummary } from '@/pages/objects/OpsAnalyticsDashboard';
+import type { ClubSummary } from '@/features/public-hall/objects';
+import type { ClubApplicationInboxItem } from '@/pages/objects/ClubApplicationInbox';
 
 export type DataSource = 'api' | 'mock';
 

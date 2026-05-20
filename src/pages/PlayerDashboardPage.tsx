@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { opsAnalyticsApi } from '@/api/opsanalytics';
-import { tournamentApi } from '@/api/tournament';
-import { publicApi } from '@/api/publicquery';
+import { opsAnalyticsApi } from '@/features/backend-api/opsanalytics';
+import { tournamentApi } from '@/features/backend-api/tournament';
+import { publicApi } from '@/features/backend-api/publicquery';
 import {
   DetailCard,
   DetailList,
@@ -17,11 +17,11 @@ import type {
   AppealSummary,
   MatchRecordSummary,
   TournamentTableSummary,
-} from '@/objects';
+} from '@/pages/objects/TournamentViews';
 import { PublicHallLoading } from '@/features/public-hall/components';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { useAuth } from '@/hooks/useAuth';
-import { playerApi } from '@/api/player';
+import { playerApi } from '@/features/backend-api/player';
 
 interface RecentTableItem extends TournamentTableSummary {
   tournamentName: string;

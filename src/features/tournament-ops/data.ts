@@ -1,11 +1,13 @@
-import { tournamentApi } from '@/api/tournament';
+import { tournamentApi } from '@/features/backend-api/tournament';
+import type {
+  ListEnvelope,
+  TableStatus,
+} from '@/objects';
 import type {
   AppealSummary,
-  ListEnvelope,
   MatchRecordSummary,
-  TableStatus,
   TournamentTableSummary,
-} from '@/objects';
+} from '@/pages/objects/TournamentViews';
 
 export type DataSource = 'api' | 'mock';
 

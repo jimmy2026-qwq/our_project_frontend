@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useReducer, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { ApiError } from '@/api/shared/http';
-import { tournamentApi } from '@/api/tournament';
+import { ApiError } from '@/system/api/http';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import {
   Alert,
   AlertDescription,
@@ -27,7 +27,7 @@ import {
   StatusPill,
   Textarea,
 } from '@/components/ui';
-import type { TableDetail } from '@/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { useAuth, useMutationNotice, useNotice } from '@/hooks';
 
 function getTableStatusLabel(status: TableDetail['status']) {

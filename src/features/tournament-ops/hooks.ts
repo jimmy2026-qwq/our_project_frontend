@@ -16,7 +16,7 @@ import type {
   AppealSummary,
   MatchRecordSummary,
   TournamentTableSummary,
-} from '@/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 
 function createEmptyLoadState<T>(): LoadState<T> {
   return {

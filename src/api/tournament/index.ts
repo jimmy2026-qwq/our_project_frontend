@@ -1,11 +1,47 @@
-import { appealsApi } from './appeal';
-import { recordsApi } from './records.api';
-import { tablesApi } from './tables.api';
-import { tournamentsApi } from './tournaments.api';
-
-export const tournamentApi = {
-  ...tournamentsApi,
-  ...tablesApi,
-  ...recordsApi,
-  ...appealsApi,
-};
+export { AppealAdjudicateAPI } from './appeal/AppealAdjudicateAPI';
+export { AppealFileAPI } from './appeal/AppealFileAPI';
+export { AppealGetAPI } from './appeal/AppealGetAPI';
+export { AppealListAPI } from './appeal/AppealListAPI';
+export { AppealReopenAPI } from './appeal/AppealReopenAPI';
+export { AppealResolveAPI } from './appeal/AppealResolveAPI';
+export { AppealUpdateWorkflowAPI } from './appeal/AppealUpdateWorkflowAPI';
+export { TournamentAssignAdminAPI } from './TournamentAssignAdminAPI';
+export { TournamentCreateAPI } from './TournamentCreateAPI';
+export { TournamentGetAPI } from './TournamentGetAPI';
+export { TournamentListAPI } from './TournamentListAPI';
+export { TournamentPaifuGetAPI } from './TournamentPaifuGetAPI';
+export { TournamentPaifuListAPI } from './TournamentPaifuListAPI';
+export { TournamentPublishAPI } from './TournamentPublishAPI';
+export { TournamentRecordGetAPI } from './TournamentRecordGetAPI';
+export { TournamentRecordGetByTableAPI } from './TournamentRecordGetByTableAPI';
+export { TournamentRecordListAPI } from './TournamentRecordListAPI';
+export { TournamentRegisterClubAPI } from './TournamentRegisterClubAPI';
+export { TournamentRegisterPlayerAPI } from './TournamentRegisterPlayerAPI';
+export { TournamentRemoveClubParticipationAPI } from './TournamentRemoveClubParticipationAPI';
+export { TournamentRevokeAdminAPI } from './TournamentRevokeAdminAPI';
+export { TournamentSettleAPI } from './TournamentSettleAPI';
+export { TournamentSettlementFinalizeAPI } from './TournamentSettlementFinalizeAPI';
+export { TournamentSettlementGetAPI } from './TournamentSettlementGetAPI';
+export { TournamentSettlementListAPI } from './TournamentSettlementListAPI';
+export { TournamentStageAdvanceAPI } from './TournamentStageAdvanceAPI';
+export { TournamentStageAdvancementPreviewAPI } from './TournamentStageAdvancementPreviewAPI';
+export { TournamentStageCompleteAPI } from './TournamentStageCompleteAPI';
+export { TournamentStageConfigureRulesAPI } from './TournamentStageConfigureRulesAPI';
+export { TournamentStageCreateAPI } from './TournamentStageCreateAPI';
+export { TournamentStageDirectoryAPI } from './TournamentStageDirectoryAPI';
+export { TournamentStageKnockoutBracketAPI } from './TournamentStageKnockoutBracketAPI';
+export { TournamentStageScheduleTablesAPI } from './TournamentStageScheduleTablesAPI';
+export { TournamentStageStandingsAPI } from './TournamentStageStandingsAPI';
+export { TournamentStageSubmitLineupAPI } from './TournamentStageSubmitLineupAPI';
+export { TournamentStageTablesAPI } from './TournamentStageTablesAPI';
+export { TournamentStartAPI } from './TournamentStartAPI';
+export { TournamentTableGetAPI } from './TournamentTableGetAPI';
+export { TournamentTableListAPI } from './TournamentTableListAPI';
+export { TournamentTableResetAPI } from './TournamentTableResetAPI';
+export { TournamentTableStartAPI } from './TournamentTableStartAPI';
+export { TournamentTableUpdateOwnReadyAPI } from './TournamentTableUpdateOwnReadyAPI';
+export { TournamentTableUpdateSeatStateAPI } from './TournamentTableUpdateSeatStateAPI';
+export { TournamentTableUploadPaifuAPI } from './TournamentTableUploadPaifuAPI';
+export { TournamentWhitelistClubAPI } from './TournamentWhitelistClubAPI';
+export { TournamentWhitelistListAPI } from './TournamentWhitelistListAPI';
+export { TournamentWhitelistPlayerAPI } from './TournamentWhitelistPlayerAPI';

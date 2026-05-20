@@ -1,8 +1,8 @@
-import type { ClubSummary, PublicSchedule } from '@/objects/publicquery';
+import type { ClubSummary, PublicSchedule } from '@/features/public-hall/objects';
 
 import type {
-  HomeDataPayload,
-  LeaderboardDataPayload,
+  HomeDataState,
+  LeaderboardDataState,
   LoadState,
   PublicHallState,
   PublicHallViewerContext,
@@ -43,7 +43,7 @@ export {
 export async function loadPublicHallHomeData(
   state: PublicHallState,
   context: PublicHallViewerContext = { session: null },
-): Promise<HomeDataPayload> {
+): Promise<HomeDataState> {
   const cacheKey = buildHomeDataKey(state, context);
   const cached = getCachedPublicHallHomeData(state, context);
 
@@ -101,7 +101,7 @@ export async function loadPublicHallHomeData(
 export async function loadPublicHallLeaderboardData(
   state: PublicHallState,
   clubs: LoadState<ClubSummary>,
-): Promise<LeaderboardDataPayload> {
+): Promise<LeaderboardDataState> {
   const cacheKey = buildLeaderboardKey(state);
   const cached = getCachedPublicHallLeaderboardData(state);
 

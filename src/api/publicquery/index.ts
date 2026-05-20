@@ -1,11 +1,7 @@
-import { publicClubsApi } from './clubs.api';
-import { publicLeaderboardsApi } from './leaderboards.api';
-import { publicSchedulesApi } from './schedules.api';
-import { publicTournamentsApi } from './tournaments.api';
-
-export const publicApi = {
-  ...publicSchedulesApi,
-  ...publicLeaderboardsApi,
-  ...publicClubsApi,
-  ...publicTournamentsApi,
-};
+export { GetPublicClubAPI } from './GetPublicClubAPI';
+export { GetPublicTournamentAPI } from './GetPublicTournamentAPI';
+export { ListPublicClubsAPI } from './ListPublicClubsAPI';
+export { ListPublicSchedulesAPI } from './ListPublicSchedulesAPI';
+export { ListPublicTournamentsAPI } from './ListPublicTournamentsAPI';
+export { PublicClubLeaderboardAPI } from './PublicClubLeaderboardAPI';
+export { PublicPlayerLeaderboardAPI } from './PublicPlayerLeaderboardAPI';

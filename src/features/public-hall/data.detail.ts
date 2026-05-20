@@ -1,10 +1,10 @@
-import { publicApi } from '@/api/publicquery';
-import { clubsApi } from '@/api/club';
-import { tournamentApi } from '@/api/tournament';
+import { publicApi } from '@/features/backend-api/publicquery';
+import { clubsApi } from '@/features/backend-api/club';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import type {
   ClubPublicProfile,
   TournamentPublicProfile,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 import type { ClubDetailState, TournamentDetailState } from './types';
 import { mapTournamentDetailFromAdminView } from './data.shared';

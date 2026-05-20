@@ -58,13 +58,13 @@ export function useMemberHubData(
   state: MemberHubState,
   reloadKey = 0,
 ) {
-  const [playerPayload, setPlayerPayload] = useState<DashboardLoadState | null>(
+  const [playerDashboardState, setPlayerDashboardState] = useState<DashboardLoadState | null>(
     null,
   );
-  const [clubPayload, setClubPayload] = useState<DashboardLoadState | null>(
+  const [clubDashboardState, setClubDashboardState] = useState<DashboardLoadState | null>(
     null,
   );
-  const [inboxPayload, setInboxPayload] =
+  const [applicationInboxState, setApplicationInboxState] =
     useState<ApplicationInboxState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -80,7 +80,7 @@ export function useMemberHubData(
       const activeOperator = getActiveOperator(directory, state.operatorId);
       const clubId = normalizeClubIdForOperator(directory, state);
 
-      const [nextPlayerPayload, nextClubPayload, nextInboxPayload] =
+      const [nextPlayerDashboardState, nextClubDashboardState, nextApplicationInboxState] =
         await Promise.all([
           loadPlayerDashboard(state.playerId, state.operatorId),
           loadClubDashboard(clubId, state.operatorId),
@@ -92,9 +92,9 @@ export function useMemberHubData(
         ]);
 
       if (!cancelled) {
-        setPlayerPayload(nextPlayerPayload);
-        setClubPayload(nextClubPayload);
-        setInboxPayload(nextInboxPayload);
+        setPlayerDashboardState(nextPlayerDashboardState);
+        setClubDashboardState(nextClubDashboardState);
+        setApplicationInboxState(nextApplicationInboxState);
         setIsLoading(false);
       }
     })();
@@ -104,7 +104,7 @@ export function useMemberHubData(
     };
   }, [directory, reloadKey, state]);
 
-  return { playerPayload, clubPayload, inboxPayload, isLoading };
+  return { playerDashboardState, clubDashboardState, applicationInboxState, isLoading };
 }
 
 export function useMemberHubActions(

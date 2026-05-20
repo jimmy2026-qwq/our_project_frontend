@@ -1,2 +1,1 @@
-// 字典微服务类型边界未来可能需要，当前先保留占位。
-export {};
+export * from './apiTypes';

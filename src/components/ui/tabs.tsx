@@ -1,6 +1,6 @@
 import { createContext, useContext, type HTMLAttributes, type ReactNode } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 import { Button } from '@/components/ui/button';
 
 interface TabsContextValue {

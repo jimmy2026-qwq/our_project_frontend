@@ -1,8 +1,8 @@
 import type {
   PlayerLeaderboardEntry,
   TournamentPublicProfile,
-} from '@/objects/publicquery';
-import type { TournamentDetailContract } from '@/objects/tournament';
+} from '@/features/public-hall/objects';
+import type { TournamentDetailView } from '@/objects/tournament';
 import type {
   PublicHallLeaderboardStatus,
   PublicHallRankSnapshot,
@@ -51,7 +51,7 @@ export function mapAdminStageStatus(
 }
 
 export function mapTournamentDetailFromAdminView(
-  item: TournamentDetailContract,
+  item: TournamentDetailView,
 ): TournamentPublicProfile {
   const stages = item.stages ?? [];
   const nextStage = stages[0];
@@ -92,9 +92,7 @@ export function mapTournamentDetailFromAdminView(
       lineupSubmissions: stage.lineupSubmissions?.map((submission) => ({
         submissionId: submission.submissionId,
         clubId: submission.clubId,
-        clubName: submission.clubName,
         submittedBy: submission.submittedBy,
-        submittedByDisplayName: submission.submittedByDisplayName ?? null,
         submittedAt: submission.submittedAt,
         activePlayerIds: submission.activePlayerIds ?? [],
         reservePlayerIds: submission.reservePlayerIds ?? [],

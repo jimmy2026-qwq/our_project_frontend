@@ -1,4 +1,4 @@
-import type { TableStatus } from '@/objects/shared/common';
+import type { TableStatus } from '@/system/objects/apiTypes/common';
 
 export function getTableStatusLabel(status: TableStatus) {
   switch (status) {

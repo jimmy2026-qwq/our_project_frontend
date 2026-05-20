@@ -1,6 +1,6 @@
 import type { HTMLAttributes } from 'react';
 
-import { cva, cx, type VariantProps } from '@/lib/cx';
+import { cva, cx, type VariantProps } from '@/components/ui/cx';
 
 const statusPillVariants = cva(
   'ui-status-pill inline-flex w-fit items-center justify-center rounded-full border px-3 py-1 text-xs font-medium whitespace-nowrap',

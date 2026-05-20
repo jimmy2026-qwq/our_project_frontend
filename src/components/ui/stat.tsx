@@ -1,6 +1,6 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 
-import { cva, cx, type VariantProps } from '@/lib/cx';
+import { cva, cx, type VariantProps } from '@/components/ui/cx';
 
 export function StatGrid({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (

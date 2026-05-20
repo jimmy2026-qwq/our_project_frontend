@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
-import { clubsApi } from '@/api/club';
-import { tournamentApi } from '@/api/tournament';
-import { publicApi } from '@/api/publicquery';
-import type { AuthSession } from '@/objects/auth';
+import { clubsApi } from '@/features/backend-api/club';
+import { tournamentApi } from '@/features/backend-api/tournament';
+import { publicApi } from '@/features/backend-api/publicquery';
+import type { AuthSession } from '@/features/auth/objects/AuthSession';
 import type {
   ClubSummary,
   TournamentPublicProfile,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 import { mapTournamentDetailFromAdminView } from '../data.shared';
 import type { DetailState } from '../types';
@@ -16,7 +16,7 @@ import type {
   TournamentDetailTableItem,
   TournamentDetailWorkbenchState,
 } from './tournament-detail.types';
-import { playerApi } from '@/api/player';
+import { playerApi } from '@/features/backend-api/player';
 
 export function getTableStatusLabel(status: string) {
   switch (status) {

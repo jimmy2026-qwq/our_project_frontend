@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { cx } from '@/lib/cx';
+import { cx } from '@/components/ui/cx';
 import { Card, CardContent, CardHeader, CardTitle } from './card';
 import { DescriptionItem, DescriptionList } from './description-list';
 import { SourceBadge } from './feedback';

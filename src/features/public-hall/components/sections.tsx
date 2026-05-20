@@ -15,7 +15,7 @@ import type {
   ClubSummary,
   PlayerLeaderboardEntry,
   PublicSchedule,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 import { CreateClubDialog } from '../CreateClubDialog';
 import { CreateTournamentDialog } from '../CreateTournamentDialog';

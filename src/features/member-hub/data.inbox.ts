@@ -1,9 +1,9 @@
-import { clubsApi } from '@/api/club';
-import type { Role } from '@/objects/shared/common';
+import { clubsApi } from '@/features/backend-api/club';
+import type { Role } from '@/system/objects/apiTypes/common';
 import {
   readClubApplicationInbox,
   upsertClubApplicationInboxItem,
-} from '@/lib/club-applications';
+} from '@/pages/objects/ClubApplicationInbox';
 
 import { toApplicationView, type ApplicationInboxState } from './data.shared';
 

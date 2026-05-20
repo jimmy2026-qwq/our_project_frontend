@@ -1,7 +1,7 @@
 import type {
   ClubSummary,
   TournamentPublicProfile,
-} from '@/objects/publicquery';
+} from '@/features/public-hall/objects';
 
 export interface TournamentDetailTableItem {
   id: string;

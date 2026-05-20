@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import type { AuthSession, LoginPayload, RegisterPayload } from '@/objects/auth';
+import type { AuthSession } from '@/features/auth/objects/AuthSession';
+import type { LoginRequest, RegisterAccountRequest } from '@/objects/auth';
 import { enterGuestMode, loginUser, logoutUser, readPersistedSession, registerUser, restoreSession } from '@/features/auth/data';
 import { AuthContext } from '@/providers/auth-context';
 
@@ -45,13 +46,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  async function login(payload: LoginPayload) {
+  async function login(payload: LoginRequest) {
     const nextSession = await loginUser(payload);
     setSession(nextSession);
     return nextSession;
   }
 
-  async function register(payload: RegisterPayload) {
+  async function register(payload: RegisterAccountRequest) {
     const nextSession = await registerUser(payload);
     setSession(nextSession);
     return nextSession;

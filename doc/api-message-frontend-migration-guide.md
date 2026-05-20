@@ -1,75 +1,101 @@
-# API Message 前端迁移指南
+# API Class 前端迁移指南
 
 ## 目标
 
-前端 API 调用逐步从资源路径改成消息路径：
+前端 API 调用从 REST path 和函数式 message 改成 API class：
 
 ```ts
-authLoginApiMessage(input)
+sendAPI(new LoginAuthAPI(username, password))
 ```
 
 浏览器实际访问：
 
 ```text
-/api/authLoginApiMessage
+/api/loginauthapi
 ```
 
-不再在前端业务 API 模块里写 `/api/auth/login`、`/api/players/me`、`/api/tournaments/:id` 这类资源路径。路径由 message 名字统一推导，request/response 类型继续放在 `src/objects/<service>`。
+路径由前端 API class 名推导，不再在业务 API 模块里写 `/api/auth/login`、`/api/players/me`、`/api/tournaments/:id`，也不再维护 `authLoginApiMessage` 这类字符串 message name。
 
 ## 目标形态
 
-API module 对 feature 暴露领域化函数：
+每个 API 单独一个文件、一个 class：
 
 ```ts
-export async function authLoginApiMessage(input: AuthLoginInput) {
-  return callApiMessage<AuthLoginInput, AuthLoginOutput>('authLoginApiMessage', input);
+// src/apis/auth/LoginAuthAPI.ts
+import { APIMessage } from '@/system/api/APIMessage';
+import type { AuthResponse } from '@/objects/auth/responses';
+
+export class LoginAuthAPI extends APIMessage<AuthResponse> {
+  readonly username: string;
+  readonly password: string;
+
+  constructor(username: string, password: string) {
+    super();
+    this.username = username;
+    this.password = password;
+  }
 }
 ```
 
-feature 只调用 API 能力：
+feature 直接构造 API class 并交给统一 transport：
 
 ```ts
-const session = await authApi.authLoginApiMessage({
-  username,
-  password,
-});
+import { sendAPI } from '@/system/api/sendAPI';
+import { LoginAuthAPI } from '@/apis/auth/LoginAuthAPI';
+
+const session = await sendAPI(new LoginAuthAPI(username, password));
 ```
 
-底层 transport 负责把 message 名字转成路径：
+后端对应类：
 
-```ts
-callApiMessage<Input, Output>('authLoginApiMessage', input)
-// POST /api/authLoginApiMessage
+```scala
+final case class LoginAuthAPIMessage(...) extends APIMessage[AuthResponse]
 ```
+
+前后端类共享同一个 API 概念：
+
+```text
+frontend: LoginAuthAPI
+backend:  LoginAuthAPIMessage
+path:     /api/loginauthapi
+```
+
+服务级 `src/apis/<service>` 必须保持样板形态：
+
+- 目录下只放 `XxxAPI.ts` 文件。
+- 不放 `index.ts`、transport、request/response 类型、API registry 或聚合 service 文件。
+- 每个文件只导出同名 API class，不做 barrel export。
+- request/response/API contract 类型继续放在 `src/objects/<service>`；后续统一迁移时可以收敛到 `src/objects/<service>/apiTypes`，但不能回到 `src/apis/<service>`。
 
 ## 命名规则
 
-- message 名称使用 lowerCamelCase，并以 `ApiMessage` 结尾。
-- 前端函数名、message 名称、后端 message 路由名保持一致。
-- 名称表达业务动作，不表达 HTTP 动词和资源层级。
-- 同一个动作只允许一个 message 名称，不再同时维护 REST 名称和 message 名称。
+- 前端 API class 使用 PascalCase，并以 `API` 结尾，例如 `LoginAuthAPI`。
+- 后端 API class 使用同一业务名，并以 `APIMessage` 结尾，例如 `LoginAuthAPIMessage`。
+- 路径由前端 class 名 lower-case 得到：`LoginAuthAPI` -> `/api/loginauthapi`。
+- 后端注册时从 `LoginAuthAPIMessage` 去掉 `APIMessage` 后缀，再补 `API` 并 lower-case，必须得到同一路径名。
+- 名称表达业务动作，不表达 HTTP 动词和 REST 资源层级。
 
 推荐示例：
 
 ```text
-authLoginApiMessage
-authRegisterApiMessage
-authRestoreSessionApiMessage
-playerCreateApiMessage
-playerGetProfileApiMessage
-clubCreateApiMessage
-clubListApiMessage
-tournamentCreateApiMessage
-tournamentGetDetailApiMessage
-tableStartApiMessage
-appealResolveApiMessage
-platformAdminBanPlayerApiMessage
-platformAdminGrantSuperAdminApiMessage
+LoginAuthAPI / LoginAuthAPIMessage
+RegisterAuthAPI / RegisterAuthAPIMessage
+RestoreAuthSessionAPI / RestoreAuthSessionAPIMessage
+CreatePlayerAPI / CreatePlayerAPIMessage
+GetPlayerProfileAPI / GetPlayerProfileAPIMessage
+CreateClubAPI / CreateClubAPIMessage
+ListClubsAPI / ListClubsAPIMessage
+CreateTournamentAPI / CreateTournamentAPIMessage
+GetTournamentDetailAPI / GetTournamentDetailAPIMessage
+StartTableAPI / StartTableAPIMessage
+ResolveAppealAPI / ResolveAppealAPIMessage
+BanPlayerPlatformAdminAPI / BanPlayerPlatformAdminAPIMessage
+GrantSuperAdminPlatformAdminAPI / GrantSuperAdminPlatformAdminAPIMessage
 ```
 
 ## 输入输出类型
 
-前端类型仍放在 `src/objects/<service>`，不要回到 `src/api/**/requests` 或 `src/api/**/responses`。
+类型位置先不迁移，继续和当前后端/前端版本对齐：前端 input/output 类型仍放在 `src/objects/<service>`，不要回到 `src/apis/**/requests` 或 `src/apis/**/responses`。
 
 ```text
 src/objects/auth/requests.ts
@@ -78,88 +104,86 @@ src/objects/player/requests.ts
 src/objects/player/responses.ts
 ```
 
-路径参数、query 参数、body 参数全部收敛到 input 对象：
+API class 的 constructor 字段就是请求输入。路径参数、query 参数、body 参数全部收敛为 class 字段：
 
 ```ts
-export interface PlayerGetProfileInput {
-  playerId: string;
+export class GetPlayerProfileAPI extends APIMessage<PlayerProfileOutput> {
+  constructor(readonly playerId: string) {
+    super();
+  }
 }
 
-export interface ClubListInput {
-  keyword?: string;
-  limit?: number;
-  offset?: number;
+export class ListClubsAPI extends APIMessage<ClubListOutput> {
+  constructor(
+    readonly keyword: string = '',
+    readonly limit?: number,
+    readonly offset?: number,
+  ) {
+    super();
+  }
 }
 ```
 
-没有输入的接口也使用空对象：
+没有输入的接口使用无字段 class：
 
 ```ts
-authLogoutApiMessage({})
+export class LogoutAuthAPI extends APIWithTokenMessage<LogoutOutput> {}
 ```
-
-这样可以让所有 message 都是统一的 `Input -> Output` 模型，后续做契约生成和测试会更简单。
 
 ## Transport 设计
 
-在 `src/api/shared/http.ts` 或新的 `src/api/shared/message.ts` 增加统一 helper：
+在 `src/system/api` 建立统一 API class transport：
 
 ```ts
-export type ApiMessageName = `${string}ApiMessage`;
+export abstract class APIMessage<Response> {
+  declare readonly responseType: Response;
 
-export async function callApiMessage<Input extends object, Output>(
-  name: ApiMessageName,
-  input: Input,
-  options: RequestOptions = {},
-) {
-  return sendJson<Output>(`/${name}`, 'POST', input, options);
+  get needsUserToken() {
+    return false;
+  }
+}
+
+export abstract class APIWithTokenMessage<Response> extends APIMessage<Response> {
+  override get needsUserToken() {
+    return true;
+  }
+}
+
+export function apiNameOf(message: APIMessage<unknown>) {
+  return message.constructor.name.toLowerCase();
+}
+
+export async function sendAPI<Response>(message: APIMessage<Response>) {
+  const body = message.needsUserToken ? withUserToken(message) : message;
+  return apiRequest<Response>(`/api/${apiNameOf(message)}`, body);
 }
 ```
 
-当前 `API_BASE_URL` 默认是 `/api`，所以 `sendJson('/authLoginApiMessage', ...)` 在浏览器里就是 `/api/authLoginApiMessage`。
+`sendAPI(new LoginAuthAPI(...))` 必须只依赖 class 名推导路径，业务 API 文件不得手写 path。
 
-为了让“编译通过就基本没问题”落到前后端真实契约上，必须引入 message registry：
+## 迁移步骤
 
-```ts
-interface ApiMessageRegistry {
-  authLoginApiMessage: {
-    input: AuthLoginInput;
-    output: AuthLoginOutput;
-  };
-  authRestoreSessionApiMessage: {
-    input: AuthRestoreSessionInput;
-    output: AuthSessionOutput;
-  };
-}
-
-export async function callRegisteredApiMessage<Name extends keyof ApiMessageRegistry>(
-  name: Name,
-  input: ApiMessageRegistry[Name]['input'],
-): Promise<ApiMessageRegistry[Name]['output']> {
-  return callApiMessage(name, input);
-}
-```
-
-前端 registry 必须从后端导出的 message registry 生成，或在构建/测试中校验本地 registry 与后端导出清单一致。手写 registry 只允许作为临时开发草稿，不能作为迁移完成或合并验收依据。
-
-最低必做校验：
-
-- message name 必须来自后端导出的 registry。
-- 每个 message 的 input/output 类型必须能映射到前端 `src/objects/<service>` 类型。
-- 前端构建或测试必须失败于缺失、重名、拼写漂移、input/output 对不上的 message。
-- 没有后端 registry 导出或校验结果时，对应服务不能标记为迁移完成。
-
-## API Module 迁移步骤
-
-1. 先为一个服务建立 message 类型。
+1. 先为一个服务确认 API class 清单和 input/output 类型。
    - 从 `auth` 开始最合适，因为接口少、闭环短。
-   - 把现有 payload/response 命名为 `AuthLoginInput`、`AuthLoginOutput` 这类前端对象类型。
+   - 类型仍复用 `src/objects/auth` 里的 request/response/domain 类型。
 
-2. 增加 `callApiMessage`。
-   - 保留 `request`、`sendJson` 给旧 REST 调用过渡使用。
-   - 新增 message API 时不再直接调用 `request('/xxx')` 或 `sendJson('/xxx')`。
+2. 增加 `APIMessage`、`APIWithTokenMessage`、`sendAPI`、`apiNameOf`。
+   - 保留旧 `request`、`sendJson` 给 REST 调用过渡使用。
+   - 新 API class 不直接调用 `request('/xxx')` 或 `sendJson('/xxx')`。
 
-3. 逐个替换 `src/api/<service>/*.api.ts`。
+3. 为每个 API 建立独立文件。
+   - 文件名和 class 名保持一致，例如：
+
+     ```text
+     src/apis/auth/LoginAuthAPI.ts
+     src/apis/auth/RegisterAuthAPI.ts
+     src/apis/auth/RestoreAuthSessionAPI.ts
+     ```
+
+   - 每个文件只导出一个同名 API class。
+   - `src/apis/<service>/index.ts` 不再保留；调用方直接从 `@/apis/<service>/XxxAPI` 引入。
+
+4. 逐个替换旧 REST 调用。
    - 旧写法：
 
      ```ts
@@ -169,16 +193,18 @@ export async function callRegisteredApiMessage<Name extends keyof ApiMessageRegi
    - 新写法：
 
      ```ts
-     callRegisteredApiMessage('authLoginApiMessage', payload)
+     sendAPI(new LoginAuthAPI(username, password))
      ```
 
-4. 保持 feature import 不变。
-   - feature 继续从 `@/api/auth`、`@/api/player`、`@/api/club` 引入 API service。
-   - 不让 feature 关心 message transport。
+5. 调整 feature import。
+   - feature 从 `@/apis/auth/LoginAuthAPI` 引入具体 API class。
+   - feature 不通过 `authApi.login(...)` 这类 API service 聚合对象调用。
+   - feature 不关心 path、method、JSON transport。
 
-5. 每迁完一个服务，删除该服务 API 模块中的 REST 字符串。
-   - 用 `rg "\"/" src/api/<service>` 检查。
-   - 允许 shared transport 里存在 `/${name}`。
+6. 每迁完一个服务，删除该服务 API class 文件中的 REST 字符串。
+   - 用 `rg "\"/" src/apis/<service>` 检查。
+   - 允许 `src/system/api` transport 里存在 `/api/${apiNameOf(message)}`。
+   - 旧的 `*.api.ts` 聚合文件和 `src/apis/<service>/index.ts` 只能在过渡期保留；迁移完成后应删除。
 
 ## 推荐迁移顺序
 
@@ -207,22 +233,25 @@ npm.cmd run lint
 结构检查：
 
 ```powershell
-rg "\"/(auth|players|clubs|public|tournaments|tables|records|paifus|appeals|dashboards|admin)" src/api/<service>
-rg "request<|sendJson<" src/api/<service>
+rg "\"/(auth|players|clubs|public|tournaments|tables|records|paifus|appeals|dashboards|admin)" src/apis/<service>
+rg "request<|sendJson<|callApiMessage|ApiMessageRegistry|xxxApiMessage" src/apis/<service>
 ```
 
 期望结果：
 
-- API module 不再手写 REST path。
+- 每个 API 单独一个 class 文件，文件名、class 名、后端 `*APIMessage` 名保持一一对应。
+- `src/apis/<service>` 目录下只包含 `XxxAPI.ts`，没有 `index.ts`、transport、类型文件或聚合 service 文件。
+- API class 文件不手写 REST path。
 - 业务类型仍从 `src/objects/<service>` 引用。
-- feature 不直接 import transport。
-- `callRegisteredApiMessage` 的 message name 可以被 TypeScript 检查。
-- `ApiMessageRegistry` 来自后端导出，或前端构建/测试会校验它与后端导出清单一致。
-- 缺失后端 message、message 名称漂移、input/output 类型不一致时，前端验收必须失败。
+- feature 不直接 import transport 以外的低层 HTTP helper。
+- feature 不再通过 API service 聚合对象调用 API。
+- `sendAPI(new XxxAPI(...))` 的返回类型由 `XxxAPI extends APIMessage<Response>` 决定。
+- 前后端 class 命名不一致、字段不一致时，构建/测试或联调必须失败。
 
 ## 过渡期规则
 
 - 旧 REST 路由在后端保留到整组服务迁移完成。
-- 新前端代码只写 message API，不再新增 REST API。
-- 同一接口不在 feature 层同时调用 REST 和 message。
-- 若后端暂时没有 message endpoint 或没有导出 registry，前端不要先合并对应迁移；这种情况必须在生成/校验阶段失败，而不是等到运行时 404。
+- 新前端代码只写 API class，不再新增 REST API 或 `xxxApiMessage` 函数。
+- 同一接口不在 feature 层同时调用 REST 和 API class。
+- 迁移后的 API 不再把实现放在旧的 `*.api.ts` service 聚合文件中；`src/apis/<service>/index.ts` 这类 re-export 文件也应在模块完成迁移后删除。
+- 若后端暂时没有对应 `XxxAPIMessage` 或没有在后端 API 列表注册，前端不要先合并对应迁移，否则运行时会出现不支持的 API。

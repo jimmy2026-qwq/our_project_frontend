@@ -14,8 +14,8 @@ import {
   DialogTitle,
   StatusPill,
 } from '@/components/ui';
-import type { ClubApplication } from '@/objects/club';
-import type { ClubSummary } from '@/objects/publicquery';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubSummary } from '@/features/public-hall/objects';
 import {
   type HomeClubApplicationState,
   formatDateTime,

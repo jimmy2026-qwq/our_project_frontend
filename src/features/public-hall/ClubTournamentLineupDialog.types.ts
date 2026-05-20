@@ -1,6 +1,6 @@
-import type { PlayerProfile } from '@/objects/auth';
-import type { ClubPublicProfile } from '@/objects/publicquery';
-import type { TournamentDetailContract } from '@/objects/tournament';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubPublicProfile } from '@/features/public-hall/objects';
+import type { TournamentDetailView } from '@/objects/tournament';
 
 export type ClubTournamentItem = ClubPublicProfile['activeTournaments'][number];
 export type MemberStatusFilter = 'all' | 'active' | 'inactive';
@@ -19,7 +19,7 @@ export interface ClubTournamentLineupWorkbench {
   statusFilter: MemberStatusFilter;
   eloSort: EloSort;
   selectedPlayerIds: string[];
-  tournamentDetail: TournamentDetailContract | null;
-  stageOptions: NonNullable<TournamentDetailContract['stages']>;
+  tournamentDetail: TournamentDetailView | null;
+  stageOptions: NonNullable<TournamentDetailView['stages']>;
   visibleMembers: MemberListItem[];
 }

@@ -1,9 +1,10 @@
-import { authAuthnApi } from './authn.api';
-import { authDemoApi } from './demo.api';
-import { authSessionsApi } from './sessions.api';
-
-export const authApi = {
-  ...authAuthnApi,
-  ...authSessionsApi,
-  ...authDemoApi,
-};
+export { CreateGuestSessionAuthAPI } from './CreateGuestSessionAuthAPI';
+export { CurrentSessionAuthAPI } from './CurrentSessionAuthAPI';
+export { GetGuestSessionAuthAPI } from './GetGuestSessionAuthAPI';
+export { ListGuestSessionsAuthAPI } from './ListGuestSessionsAuthAPI';
+export { LoginAuthAPI } from './LoginAuthAPI';
+export { LogoutAuthAPI } from './LogoutAuthAPI';
+export { RegisterAuthAPI } from './RegisterAuthAPI';
+export { RestoreAuthSessionAPI } from './RestoreAuthSessionAPI';
+export { RevokeGuestSessionAuthAPI } from './RevokeGuestSessionAuthAPI';
+export { UpgradeGuestSessionAuthAPI } from './UpgradeGuestSessionAuthAPI';

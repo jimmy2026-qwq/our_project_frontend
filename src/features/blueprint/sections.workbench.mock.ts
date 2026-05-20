@@ -1,9 +1,9 @@
+import type { DashboardSummary } from '@/pages/objects/OpsAnalyticsDashboard';
 import type {
   ClubSummary,
-  DashboardSummary,
   PlayerLeaderboardEntry,
   PublicSchedule,
-} from '@/objects';
+} from '@/features/public-hall/objects';
 
 export const workbenchMockSchedules: PublicSchedule[] = [
   {

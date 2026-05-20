@@ -14,16 +14,16 @@ import type {
   DashboardPlaceholderProps,
 } from './components.types';
 
-function DashboardMetrics({ payload }: Pick<DashboardPanelProps, 'payload'>) {
-  if (!payload.dashboard) {
+function DashboardMetrics({ loadState }: Pick<DashboardPanelProps, 'loadState'>) {
+  if (!loadState.dashboard) {
     return <EmptyState>No dashboard data is currently available.</EmptyState>;
   }
 
   return (
     <>
-      <p>{payload.dashboard.headline}</p>
+      <p>{loadState.dashboard.headline}</p>
       <MetricGrid>
-        {payload.dashboard.metrics.map((metric) => (
+        {loadState.dashboard.metrics.map((metric) => (
           <MetricCard
             key={metric.label}
             label={metric.label}
@@ -39,14 +39,14 @@ function DashboardMetrics({ payload }: Pick<DashboardPanelProps, 'payload'>) {
 export function DashboardPlaceholder({
   title,
   path,
-  payload,
+  loadState,
   roleNote,
 }: DashboardPlaceholderProps) {
   return (
     <DashboardPanelShell
       title={title}
-      source={payload.source}
-      warning={payload.warning}
+      source={loadState.source}
+      warning={loadState.warning}
       path={path}
       className="dashboard-card border-dashed"
       fallback={
@@ -68,7 +68,7 @@ export function DashboardPlaceholder({
 export function ApplicationInboxPanel({
   directory,
   state,
-  payload,
+  inboxState,
   onReview,
 }: ApplicationInboxPanelProps) {
   const activeOperator = getActiveOperator(directory, state.operatorId);
@@ -87,7 +87,7 @@ export function ApplicationInboxPanel({
     );
   }
 
-  const pendingCount = payload.items.filter(
+  const pendingCount = inboxState.items.filter(
     (item) => item.status === 'Pending',
   ).length;
 
@@ -95,12 +95,12 @@ export function ApplicationInboxPanel({
     <DataPanel
       title="Club Application Inbox"
       description="Prefer the backend queue first, then fall back to the local inbox bridge if the API is unavailable."
-      source={payload.source}
-      warning={payload.warning}
+      source={inboxState.source}
+      warning={inboxState.warning}
       badgeLabel={`Pending ${pendingCount}`}
     >
       <ClubApplicationList
-        items={payload.items.map((item) => ({
+        items={inboxState.items.map((item) => ({
           id: item.applicationId,
           title: item.applicant.displayName,
           message: item.message,
@@ -129,16 +129,16 @@ export function ApplicationInboxPanel({
   );
 }
 
-export function DashboardPanel({ title, path, payload }: DashboardPanelProps) {
+export function DashboardPanel({ title, path, loadState }: DashboardPanelProps) {
   return (
     <DashboardPanelShell
       title={title}
       path={path}
-      source={payload.source}
-      warning={payload.warning}
+      source={loadState.source}
+      warning={loadState.warning}
       className="dashboard-card"
     >
-      <DashboardMetrics payload={payload} />
+      <DashboardMetrics loadState={loadState} />
     </DashboardPanelShell>
   );
 }

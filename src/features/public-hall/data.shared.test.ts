@@ -41,9 +41,7 @@ describe('public-hall data.shared', () => {
       participatingClubs: [
         {
           clubId: 'club-1',
-          clubName: 'Club One',
           memberCount: 4,
-          activeMemberCount: 4,
         },
       ],
       participatingPlayers: [{ playerId: 'player-1' }],
@@ -66,9 +64,7 @@ describe('public-hall data.shared', () => {
             {
               submissionId: 'submission-1',
               clubId: 'club-1',
-              clubName: 'Club One',
               submittedBy: 'player-1',
-              submittedByDisplayName: 'Alpha',
               submittedAt: '2026-05-11T09:00:00Z',
               activePlayerIds: ['player-1', 'player-2', 'player-3', 'player-4'],
               reservePlayerIds: ['player-5'],
@@ -95,8 +91,6 @@ describe('public-hall data.shared', () => {
     expect(profile.stages?.[0]?.lineupSubmissions?.[0]).toMatchObject({
       submissionId: 'submission-1',
       clubId: 'club-1',
-      clubName: 'Club One',
-      submittedByDisplayName: 'Alpha',
       note: 'ready',
     });
   });

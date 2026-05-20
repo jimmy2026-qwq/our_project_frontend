@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { clubsApi } from '@/api/club';
+import { clubsApi } from '@/features/backend-api/club';
 import { FieldGroup, TextInputField } from '@/components/ui';
 import { ActionButton } from '@/components/ui';
 import {

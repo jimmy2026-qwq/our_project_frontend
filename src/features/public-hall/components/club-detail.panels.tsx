@@ -3,9 +3,9 @@ import { Link } from 'react-router-dom';
 import { DetailCard, MetricCard, MetricGrid } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
-import type { PlayerProfile } from '@/objects/auth';
-import type { ClubApplicationView } from '@/objects/club';
-import type { ClubPublicProfile } from '@/objects/publicquery';
+import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubPublicProfile } from '@/features/public-hall/objects';
 
 import {
   formatDateTime,

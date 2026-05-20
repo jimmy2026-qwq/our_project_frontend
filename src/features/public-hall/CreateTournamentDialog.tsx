@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { tournamentApi } from '@/api/tournament';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import { FieldGroup, SelectField, TextInputField } from '@/components/ui';
 import { ActionButton } from '@/components/ui';
 import {
@@ -102,12 +102,15 @@ export function CreateTournamentDialog({
         startsAt: startsAt.toISOString(),
         endsAt: endsAt.toISOString(),
         adminId: operatorId,
-        stage: {
-          name: getDefaultStageName(trimmedName, format),
-          format,
-          roundCount: getDefaultRoundCount(format),
-          schedulingPoolSize: 4,
-        },
+        stages: [
+          {
+            name: getDefaultStageName(trimmedName, format),
+            format,
+            order: 1,
+            roundCount: getDefaultRoundCount(format),
+            schedulingPoolSize: 4,
+          },
+        ],
       });
 
       notifySuccess(

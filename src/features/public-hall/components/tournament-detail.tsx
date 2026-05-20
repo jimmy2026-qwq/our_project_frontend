@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 
-import { tournamentApi } from '@/api/tournament';
+import { tournamentApi } from '@/features/backend-api/tournament';
 import { EmptyState } from '@/components/ui';
 import {
   Alert,
@@ -22,8 +22,8 @@ import type {
   AppealSummary,
   TableDetail,
   TableSeatState,
-} from '@/objects/tournament';
-import type { TournamentPublicProfile } from '@/objects/publicquery';
+} from '@/pages/objects/TournamentViews';
+import type { TournamentPublicProfile } from '@/features/public-hall/objects';
 import { useAuth } from '@/hooks/useAuth';
 
 import type { DetailState } from '../types';

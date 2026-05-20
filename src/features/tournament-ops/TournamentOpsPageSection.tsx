@@ -2,14 +2,14 @@ import { WorkbenchContextPanel } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { SelectField, TextInputField } from '@/components/ui';
 import { SectionIntro } from '@/components/ui';
-import type { TableStatus } from '@/objects/shared/common';
+import type { TableStatus } from '@/system/objects/apiTypes/common';
+import type { SeatWind } from '@/objects/tournament';
 import type {
   AppealSummary,
   MatchRecordSummary,
-  SeatWind,
   TableDetail,
   TournamentTableSummary,
-} from '@/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 
 import {
   getActiveTournament,
