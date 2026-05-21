@@ -1,4 +1,4 @@
-import type { StageStatus, TournamentStatus } from '@/system/objects/apiTypes/common';
+import type { StageStatus, TournamentStatus } from '@/objects/tournament';
 
 export interface ScheduleQuery {
   tournamentStatus?: TournamentStatus;

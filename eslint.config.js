@@ -9,7 +9,7 @@ export default tseslint.config(
     ignores: ['dist'],
   },
   {
-    files: ['src/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}', 'test/**/*.{ts,tsx}'],
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
     languageOptions: {
       ecmaVersion: 2020,
@@ -42,19 +42,19 @@ export default tseslint.config(
     },
   },
   {
-    files: ['src/features/member-hub/**/*.{ts,tsx}'],
+    files: ['src/pages/MemberHubPage/**/*.{ts,tsx}'],
     rules: {
       'react-hooks/exhaustive-deps': 'error',
     },
   },
   {
-    files: ['src/features/tournament-ops/**/*.{ts,tsx}'],
+    files: ['src/pages/TournamentOpsPage/**/*.{ts,tsx}'],
     rules: {
       'react-hooks/exhaustive-deps': 'error',
     },
   },
   {
-    files: ['src/features/public-hall/**/*.{ts,tsx}'],
+    files: ['src/pages/PublicHall/**/*.{ts,tsx}'],
     rules: {
       'react-hooks/exhaustive-deps': 'error',
     },

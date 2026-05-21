@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import type { AuthSession } from '@/features/auth/objects/AuthSession';
 import type { LoginRequest, RegisterAccountRequest } from '@/objects/auth';
-import { enterGuestMode, loginUser, logoutUser, readPersistedSession, registerUser, restoreSession } from '@/features/auth/data';
+import type { AuthSession } from '@/providers/auth/AuthSession';
+import { enterGuestMode, loginUser, logoutUser, readPersistedSession, registerUser, restoreSession } from '@/providers/auth/data';
 import { AuthContext } from '@/providers/auth-context';
 
 export function AuthProvider({ children }: { children: ReactNode }) {

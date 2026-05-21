@@ -1,0 +1,198 @@
+import { useEffect, useState } from 'react';
+
+import { useDialog } from '@/app/dialog/useDialog';
+import { useMutationNotice } from '@/app/feedback/useMutationNotice';
+import { useNotice } from '@/app/feedback/useNotice';
+import { useAuth } from '@/app/auth/useAuth';
+
+import {
+  createMemberHubState,
+  DEFAULT_MEMBER_HUB_STATE,
+  getActiveOperator,
+  loadClubApplicationInbox,
+  loadClubDashboard,
+  loadMemberHubOperatorDirectory,
+  loadPlayerDashboard,
+  normalizeClubIdForOperator,
+  reviewApplication,
+  type ApplicationInboxState,
+  type DashboardLoadState,
+  type MemberHubOperatorDirectory,
+  type MemberHubState,
+} from '../objects/data';
+
+export function useMemberHubState() {
+  const { session } = useAuth();
+  const [directory, setDirectory] = useState<MemberHubOperatorDirectory | null>(
+    null,
+  );
+  const [state, setState] = useState<MemberHubState>(DEFAULT_MEMBER_HUB_STATE);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    void (async () => {
+      const nextDirectory = await loadMemberHubOperatorDirectory(session);
+
+      if (!cancelled) {
+        setDirectory(nextDirectory);
+        setState((current) =>
+          createMemberHubState(
+            nextDirectory,
+            current.operatorId ||
+              session?.user.operatorId ||
+              session?.user.userId,
+          ),
+        );
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [session]);
+
+  return { state, setState, directory };
+}
+
+export function useMemberHubData(
+  directory: MemberHubOperatorDirectory | null,
+  state: MemberHubState,
+  reloadKey = 0,
+) {
+  const [playerDashboardState, setPlayerDashboardState] = useState<DashboardLoadState | null>(
+    null,
+  );
+  const [clubDashboardState, setClubDashboardState] = useState<DashboardLoadState | null>(
+    null,
+  );
+  const [applicationInboxState, setApplicationInboxState] =
+    useState<ApplicationInboxState | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (!directory) {
+      return;
+    }
+
+    let cancelled = false;
+
+    void (async () => {
+      setIsLoading(true);
+      const activeOperator = getActiveOperator(directory, state.operatorId);
+      const clubId = normalizeClubIdForOperator(directory, state);
+
+      const [nextPlayerDashboardState, nextClubDashboardState, nextApplicationInboxState] =
+        await Promise.all([
+          loadPlayerDashboard(state.playerId, state.operatorId),
+          loadClubDashboard(clubId, state.operatorId),
+          loadClubApplicationInbox(
+            clubId,
+            state.operatorId,
+            activeOperator.role,
+          ),
+        ]);
+
+      if (!cancelled) {
+        setPlayerDashboardState(nextPlayerDashboardState);
+        setClubDashboardState(nextClubDashboardState);
+        setApplicationInboxState(nextApplicationInboxState);
+        setIsLoading(false);
+      }
+    })();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [directory, reloadKey, state]);
+
+  return { playerDashboardState, clubDashboardState, applicationInboxState, isLoading };
+}
+
+export function useMemberHubActions(
+  directory: MemberHubOperatorDirectory,
+  state: MemberHubState,
+  setState: React.Dispatch<React.SetStateAction<MemberHubState>>,
+  reload: () => void,
+) {
+  const { confirmDanger } = useDialog();
+  const { notifyMutationResult } = useMutationNotice();
+  const { notifyWarning } = useNotice();
+
+  async function changeOperator(operatorId: string) {
+    const activeOperator = getActiveOperator(directory, operatorId);
+    setState((current) => ({
+      ...current,
+      operatorId,
+      playerId: activeOperator.playerId,
+      clubId: activeOperator.managedClubIds[0] ?? current.clubId,
+    }));
+  }
+
+  function changePlayer(playerId: string) {
+    setState((current) => ({ ...current, playerId }));
+  }
+
+  function changeClub(clubId: string) {
+    setState((current) => ({ ...current, clubId }));
+  }
+
+  async function handleReview(
+    applicationId: string,
+    decision: 'approve' | 'reject',
+  ) {
+    const confirmed = await confirmDanger({
+      title:
+        decision === 'approve'
+          ? 'Approve this application?'
+          : 'Reject this application?',
+      message:
+        decision === 'approve'
+          ? 'This will update the membership review result and refresh the inbox.'
+          : 'This will reject the request and refresh the inbox.',
+      confirmText: decision === 'approve' ? 'Approve' : 'Reject',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      const result = await reviewApplication(
+        state.clubId,
+        applicationId,
+        state.operatorId,
+        decision,
+      );
+      notifyMutationResult(result, {
+        successTitle:
+          decision === 'approve'
+            ? 'Application approved'
+            : 'Application rejected',
+        successMessage: 'The member hub queue was updated and reloaded.',
+        fallbackTitle:
+          decision === 'approve'
+            ? 'Application approval requires attention'
+            : 'Application rejection requires attention',
+        fallbackMessage: 'The review result could not be confirmed.',
+      });
+      reload();
+    } catch (error) {
+      notifyWarning(
+        decision === 'approve'
+          ? 'Unable to approve application'
+          : 'Unable to reject application',
+        error instanceof Error
+          ? error.message
+          : 'The review request did not complete.',
+      );
+    }
+  }
+
+  return {
+    changeOperator,
+    changePlayer,
+    changeClub,
+    handleReview,
+  };
+}

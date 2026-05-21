@@ -37,7 +37,7 @@ function NoticeStack({
         <Alert
           key={notice.id}
           variant={getNoticeVariant(notice.tone)}
-          className="app-notice grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 border-[color:var(--line)] bg-[rgba(7,18,28,0.94)] shadow-[var(--shadow-md)] backdrop-blur-[18px]"
+          className="app-notice grid grid-cols-[minmax(0,1fr)_auto] items-start gap-4 border-[rgba(176,223,229,0.14)] bg-[rgba(7,18,28,0.94)] shadow-[0_18px_48px_rgba(0,0,0,0.22)] backdrop-blur-[18px]"
         >
           <div className="app-notice__body grid gap-[6px]">
             <AlertTitle>{notice.title}</AlertTitle>

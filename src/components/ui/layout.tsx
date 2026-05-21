@@ -8,7 +8,7 @@ export function SectionIntro({
   title,
   description,
   actions,
-  className = 'section__header',
+  className,
 }: {
   eyebrow?: ReactNode;
   title: ReactNode;
@@ -17,11 +17,21 @@ export function SectionIntro({
   className?: string;
 }) {
   return (
-    <div className={cx('section__header', className)}>
+    <div className={cx('flex items-start justify-between gap-4', className)}>
       <div>
-        {eyebrow ? <p className="eyebrow">{eyebrow}</p> : null}
-        <h2 className="my-2 text-[clamp(1.7rem,3vw,2.8rem)] text-[color:var(--text)]">{title}</h2>
-        {description ? <p className="max-w-[72ch]">{description}</p> : null}
+        {eyebrow ? (
+          <p className="text-[0.78rem] font-semibold uppercase tracking-[0.16em] text-[#ecc57a]">
+            {eyebrow}
+          </p>
+        ) : null}
+        <h2 className="my-2 text-[clamp(1.7rem,3vw,2.8rem)] text-[#f2f7fb]">
+          {title}
+        </h2>
+        {description ? (
+          <p className="max-w-[72ch] leading-7 text-[#9ab0c1]">
+            {description}
+          </p>
+        ) : null}
       </div>
       {actions}
     </div>
@@ -30,7 +40,7 @@ export function SectionIntro({
 
 export function ControlToolbar({
   children,
-  className = 'shared-control-toolbar',
+  className,
 }: {
   children: ReactNode;
   className?: string;
@@ -38,10 +48,8 @@ export function ControlToolbar({
   return (
     <div
       className={cx(
-        'shared-control-toolbar grid gap-[14px] md:grid-cols-2',
+        'grid gap-[14px] md:grid-cols-2',
         '[&_label]:grid [&_label]:gap-2',
-        '[&_input]:w-full [&_input]:rounded-[14px] [&_input]:border [&_input]:border-[color:var(--line)] [&_input]:bg-[rgba(5,14,23,0.88)] [&_input]:px-[14px] [&_input]:py-[11px] [&_input]:text-[color:var(--text)]',
-        '[&_select]:w-full [&_select]:rounded-[14px] [&_select]:border [&_select]:border-[color:var(--line)] [&_select]:bg-[rgba(5,14,23,0.88)] [&_select]:px-[14px] [&_select]:py-[11px] [&_select]:text-[color:var(--text)]',
         className,
       )}
     >
@@ -52,7 +60,7 @@ export function ControlToolbar({
 
 export function PortalFilters({
   children,
-  className = 'shared-filter-row',
+  className,
 }: {
   children: ReactNode;
   className?: string;
@@ -60,7 +68,7 @@ export function PortalFilters({
   return (
     <div
       className={cx(
-        'shared-filter-row flex flex-wrap gap-4',
+        'flex flex-wrap gap-4',
         '[&_label]:grid [&_label]:min-w-[190px] [&_label]:gap-2',
         '[&_span]:leading-7',
         '[&_select]:rounded-[14px] [&_select]:px-[14px] [&_select]:py-[11px]',
@@ -99,7 +107,7 @@ export function ActionButton({
   ...props
 }: ButtonProps) {
   return (
-    <Button className={className ?? 'shared-action-button'} variant={variant} size={size} {...props} />
+    <Button className={className} variant={variant} size={size} {...props} />
   );
 }
 
@@ -113,10 +121,10 @@ export function PanelHead({
   aside?: ReactNode;
 }) {
   return (
-    <div className="shared-panel-head flex items-start justify-between gap-4">
+    <div className="flex items-start justify-between gap-4">
       <div>
-        <h3 className="mb-[10px] text-[color:var(--text)]">{title}</h3>
-        {description ? <p className="text-[color:var(--muted)] leading-7">{description}</p> : null}
+        <h3 className="mb-[10px] text-[#f2f7fb]">{title}</h3>
+        {description ? <p className="leading-7 text-[#9ab0c1]">{description}</p> : null}
       </div>
       {aside}
     </div>
@@ -124,5 +132,5 @@ export function PanelHead({
 }
 
 export function InlineActions({ children }: { children: ReactNode }) {
-  return <div className="inline-actions flex gap-2">{children}</div>;
+  return <div className="flex gap-2">{children}</div>;
 }

@@ -98,22 +98,23 @@ export function DialogProvider({ children }: { children: ReactNode }) {
       >
         {activeDialog ? (
           <DialogPortal>
-            <DialogOverlay className="app-dialog-backdrop" />
+            <DialogOverlay />
             <DialogSurface
-              className="app-dialog"
               onOpenAutoFocus={(event) => {
                 event.preventDefault();
                 cancelButtonRef.current?.focus();
               }}
             >
-              <DialogBody className="app-dialog__body p-[22px] pb-0 md:p-6 md:pb-0">
-                <p className="eyebrow">Confirm action</p>
+              <DialogBody className="p-[22px] pb-0 md:p-6 md:pb-0">
+                <p className="m-0 text-[0.82rem] uppercase tracking-[0.16em] text-[#ecc57a]">
+                  Confirm action
+                </p>
                 <DialogHeader>
                   <DialogTitle>{activeDialog.title}</DialogTitle>
                   {activeDialog.message ? <DialogDescription>{activeDialog.message}</DialogDescription> : null}
                 </DialogHeader>
               </DialogBody>
-              <DialogFooter className="app-dialog__actions flex justify-end gap-3 border-t border-[color:var(--line)] p-[22px] pt-4 md:p-6 md:pt-4">
+              <DialogFooter className="flex justify-end gap-3 border-t border-[rgba(176,223,229,0.14)] p-[22px] pt-4 md:p-6 md:pt-4">
                 <Button
                   ref={cancelButtonRef}
                   variant="outline"

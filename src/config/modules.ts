@@ -1,4 +1,4 @@
-import type { FeatureModule } from '@/objects';
+import type { FeatureModule } from './types';
 
 export const featureModules: FeatureModule[] = [
   {

@@ -6,16 +6,16 @@ export function Fieldset({ className, ...props }: FieldsetHTMLAttributes<HTMLFie
   return (
     <fieldset
       data-slot="fieldset"
-      className={cx('ui-fieldset grid gap-2 rounded-2xl border border-[color:var(--line)] p-4', className)}
+      className={cx('m-0 grid gap-2 rounded-[18px] border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] px-[18px] py-4', className)}
       {...props}
     />
   );
 }
 
 export function FieldsetLegend({ className, ...props }: HTMLAttributes<HTMLLegendElement>) {
-  return <legend data-slot="fieldset-legend" className={cx('ui-fieldset__legend px-2 text-sm font-medium text-[color:var(--gold)]', className)} {...props} />;
+  return <legend data-slot="fieldset-legend" className={cx('px-2 text-[0.84rem] font-medium tracking-[0.06em] text-[#ecc57a]', className)} {...props} />;
 }
 
 export function FieldsetBody({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div data-slot="fieldset-body" className={cx('ui-fieldset__body grid gap-2 text-[color:var(--muted)]', className)} {...props} />;
+  return <div data-slot="fieldset-body" className={cx('grid gap-2 leading-[1.7] text-[#9ab0c1]', className)} {...props} />;
 }

@@ -5,5 +5,5 @@ export * from './opsanalytics';
 export * from './platformadmin';
 export * from './player';
 export * from './publicquery';
-export * from '@/system/objects/apiTypes';
+export type { ListEnvelope } from '@/system/api';
 export * from './tournament';

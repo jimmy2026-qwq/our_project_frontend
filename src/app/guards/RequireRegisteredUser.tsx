@@ -1,6 +1,6 @@
 import { Navigate, Outlet } from 'react-router-dom';
 
-import { useAuth } from '@/hooks';
+import { useAuth } from '@/app/auth/useAuth';
 
 export function RequireRegisteredUser() {
   const { session } = useAuth();

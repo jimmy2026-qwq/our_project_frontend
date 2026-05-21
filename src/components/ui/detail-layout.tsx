@@ -27,23 +27,29 @@ export function DetailHero({
   return (
     <section
       className={cx(
-        'detail-hero grid gap-4 rounded-[var(--radius-xl)] p-[30px]',
-        'grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)]',
+        'grid gap-4 rounded-[32px] border border-[rgba(176,223,229,0.14)] p-[30px] shadow-[0_18px_48px_rgba(0,0,0,0.22)] backdrop-blur-[18px]',
+        'grid-cols-[minmax(0,1.25fr)_minmax(280px,0.75fr)] max-[980px]:grid-cols-1 max-[980px]:p-6',
         'bg-[radial-gradient(circle_at_top_right,rgba(114,216,209,0.1),transparent_30%),linear-gradient(180deg,rgba(17,34,49,0.94),rgba(9,20,30,0.9))]',
       )}
     >
       <div>
-        <p className="eyebrow">{eyebrow}</p>
+        <p className="m-0 text-[0.78rem] uppercase tracking-[0.16em] text-[#ecc57a]">
+          {eyebrow}
+        </p>
         <div className="flex flex-wrap items-center gap-3">
-          <h1 className="text-[clamp(2.2rem,4vw,4.4rem)]">{title}</h1>
+          <h1 className="my-3 mb-4 text-[clamp(2.2rem,4vw,4.4rem)] leading-none text-[#f2f7fb]">
+            {title}
+          </h1>
           {actions}
         </div>
         {tagline ? (
-          <p className="detail-hero__tagline mb-3 text-[1.04rem] text-[color:var(--gold)]">
+          <p className="mb-3 text-[1.04rem] text-[#ecc57a]">
             {tagline}
           </p>
         ) : null}
-        <p className="detail-hero__summary max-w-[62ch] leading-8">{summary}</p>
+        <p className="m-0 max-w-[62ch] leading-8 text-[#c7d6e2] [text-shadow:0_1px_14px_rgba(3,8,14,0.24)]">
+          {summary}
+        </p>
       </div>
       <SourceBadge source={source} warning={warning} />
     </section>
@@ -58,13 +64,11 @@ export function DetailCard({
   children: ReactNode;
 }) {
   return (
-    <Card className="detail-card">
-      <CardHeader className="detail-card__header pb-0">
-        <CardTitle className="detail-card__title">{title}</CardTitle>
+    <Card className="border-[rgba(176,223,229,0.14)] bg-[rgba(14,31,46,0.78)] p-[22px] shadow-[0_18px_48px_rgba(0,0,0,0.22)] backdrop-blur-[18px]">
+      <CardHeader className="pb-0">
+        <CardTitle className="text-[#f2f7fb]">{title}</CardTitle>
       </CardHeader>
-      <CardContent className="detail-card__content pt-4">
-        {children}
-      </CardContent>
+      <CardContent className="pt-4">{children}</CardContent>
     </Card>
   );
 }
@@ -79,7 +83,7 @@ export function DetailPageShell({
   children?: ReactNode;
 }) {
   return (
-    <section className="detail-page grid gap-6">
+    <section className="grid gap-6 text-[#f2f7fb]">
       {backLink}
       {hero}
       {children}
@@ -107,19 +111,19 @@ export function DirectoryCard({
   return (
     <article
       className={cx(
-        'grid gap-4 rounded-3xl bg-[color:var(--panel)] p-[22px]',
+        'grid gap-4 rounded-3xl bg-[rgba(14,31,46,0.78)] p-[22px]',
         className,
       )}
     >
       {top ? <div className="grid gap-4">{top}</div> : null}
-      <h3 className="m-0 text-[color:var(--text)]">{title}</h3>
+      <h3 className="m-0 text-[#f2f7fb]">{title}</h3>
       {subtitle ? (
-        <p className="m-0 leading-8 text-[color:var(--muted-strong)]">
+        <p className="m-0 leading-8 text-[#c7d6e2]">
           {subtitle}
         </p>
       ) : null}
       {summary ? (
-        <p className="m-0 leading-8 text-[color:var(--muted-strong)]">
+        <p className="m-0 leading-8 text-[#c7d6e2]">
           {summary}
         </p>
       ) : null}
@@ -141,7 +145,8 @@ export function ListRow({
   return (
     <li
       className={cx(
-        'list-row grid gap-4 border-t border-[color:var(--line)] pt-4 first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_auto] md:items-start',
+        'grid gap-4 border-t border-[rgba(176,223,229,0.14)] pt-4 text-[#c7d6e2] first:border-t-0 first:pt-0 md:grid-cols-[minmax(0,1fr)_auto] md:items-start',
+        '[&_strong]:block [&_strong]:text-[#f2f7fb] [&_span]:leading-7 [&_span]:text-[#9ab0c1]',
         className,
       )}
     >
@@ -153,7 +158,7 @@ export function ListRow({
 
 export function MetricGrid({ children }: { children: ReactNode }) {
   return (
-    <StatGrid className="metric-grid mt-[18px] grid gap-3 md:grid-cols-3">
+    <StatGrid className="mt-[18px] grid gap-3 md:grid-cols-3">
       {children}
     </StatGrid>
   );
@@ -170,7 +175,7 @@ export function MetricCard({
 }) {
   return (
     <StatCard
-      className="metric min-h-full"
+      className="min-h-full"
       label={label}
       value={value}
       accent={accent}
@@ -180,7 +185,7 @@ export function MetricCard({
 
 export function DetailList({ children }: { children: ReactNode }) {
   return (
-    <DescriptionList className="detail-list m-0 grid gap-3 p-0">
+    <DescriptionList className="m-0 grid gap-3 p-0 [&_dd]:m-0 [&_dd]:font-semibold [&_dt]:text-[#c7d6e2]">
       {children}
     </DescriptionList>
   );
@@ -195,7 +200,6 @@ export function DetailListItem({
 }) {
   return (
     <DescriptionItem
-      className="detail-list__item [&_.ui-description-item__separator]:mt-2 last:[&_.ui-description-item__separator]:hidden"
       label={label}
       value={value}
     />
@@ -204,7 +208,7 @@ export function DetailListItem({
 
 export function DetailRows({ children }: { children: ReactNode }) {
   return (
-    <ul className="detail-rows m-0 grid list-none gap-3 p-0">{children}</ul>
+    <ul className="m-0 grid list-none gap-3 p-0">{children}</ul>
   );
 }
 
@@ -216,10 +220,12 @@ export function DetailRow({
   detail: ReactNode;
 }) {
   return (
-    <li className="grid gap-1 border-t border-[color:var(--line)] pt-3 first:border-t-0 first:pt-0 last:[&_.detail-rows__separator]:hidden">
-      <strong className="text-[color:var(--text)]">{title}</strong>
-      <span className="text-[color:var(--muted)]">{detail}</span>
-      <Separator className="detail-rows__separator mt-2" />
+    <li className="grid gap-1 border-t border-[rgba(176,223,229,0.14)] pt-3 first:border-t-0 first:pt-0 last:[&_[data-slot=separator]]:hidden">
+      <strong className="text-[#f2f7fb]">{title}</strong>
+      <span className="text-[#c7d6e2] [text-shadow:0_1px_12px_rgba(3,8,14,0.18)]">
+        {detail}
+      </span>
+      <Separator className="mt-2" />
     </li>
   );
 }

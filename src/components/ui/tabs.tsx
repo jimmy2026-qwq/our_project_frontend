@@ -23,7 +23,7 @@ export function Tabs({
 }) {
   return (
     <TabsContext.Provider value={{ value, onValueChange }}>
-      <div data-slot="tabs" className={cx('ui-tabs', className)}>{children}</div>
+      <div data-slot="tabs" className={cx('grid gap-[14px]', className)}>{children}</div>
     </TabsContext.Provider>
   );
 }
@@ -33,8 +33,8 @@ export function TabsList({ className, ...props }: HTMLAttributes<HTMLDivElement>
     <div
       data-slot="tabs-list"
       className={cx(
-        'ui-tabs__list inline-flex items-center justify-center rounded-2xl border border-[color:var(--line)]',
-        'bg-[rgba(255,255,255,0.03)] p-1 text-[color:var(--muted)]',
+        'grid items-center justify-center gap-[14px] rounded-2xl border border-[rgba(176,223,229,0.14)]',
+        'bg-[rgba(255,255,255,0.03)] p-1 text-[#9ab0c1]',
         className,
       )}
       role="tablist"
@@ -66,8 +66,9 @@ export function TabsTrigger({
       data-slot="tabs-trigger"
       data-state={isActive ? 'active' : 'inactive'}
       className={cx(
-        'ui-tabs__trigger rounded-xl transition',
-        isActive && 'ui-tabs__trigger--active bg-[rgba(255,255,255,0.06)] shadow-sm',
+        'rounded-xl transition',
+        isActive &&
+          'border-[rgba(236,197,122,0.32)] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.12),transparent_40%),linear-gradient(180deg,rgba(23,42,61,0.96),rgba(9,23,36,0.88))] shadow-sm',
         className,
       )}
       onClick={(event) => {
@@ -104,7 +105,7 @@ export function TabsContent({
   return (
     <div
       data-slot="tabs-content"
-      className={cx('ui-tabs__content', className)}
+      className={cx('grid gap-4', className)}
       role="tabpanel"
       hidden={!isActive}
       data-state={isActive ? 'active' : 'inactive'}

@@ -1,6 +1,6 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import { useAuth } from '@/hooks';
+import { useAuth } from '@/app/auth/useAuth';
 
 export function RequireAuth() {
   const { isReady, session } = useAuth();
@@ -8,7 +8,7 @@ export function RequireAuth() {
 
   if (!isReady) {
     return (
-      <div className="grid min-h-screen place-items-center bg-[color:var(--bg)] px-6 text-[color:var(--muted)]">
+      <div className="grid min-h-screen place-items-center bg-[#081018] px-6 text-[#9ab0c1]">
         姝ｅ湪鎭㈠鐧诲綍鐘舵€?..
       </div>
     );

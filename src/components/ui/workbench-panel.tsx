@@ -60,7 +60,7 @@ export function DashboardFallbackNotice({
   return (
     <Alert
       className={cx(
-        'dashboard-placeholder mt-2 text-[color:var(--muted-strong)]',
+        'mt-2 text-[#c7d6e2]',
         className,
       )}
       variant="warning"
@@ -163,7 +163,7 @@ export function ClubApplicationList({
   }
 
   return (
-    <ul className="list">
+    <ul className="m-0 grid list-none gap-0 p-0">
       {items.map((item) => (
         <ListRow
           key={item.id}
@@ -212,13 +212,13 @@ export function WorkbenchGuidePanel({
 }) {
   return (
     <InfoCard
-      className={cx('shared-workbench-guide', className)}
+      className={className}
       title={title}
       description={description}
       aside={<SourceBadge source={source} warning={warning} />}
     >
       {noteTitle || noteBody ? (
-        <Fieldset className="shared-workbench-guide__note">
+        <Fieldset>
           {noteTitle ? <FieldsetLegend>{noteTitle}</FieldsetLegend> : null}
           {noteBody ? <FieldsetBody>{noteBody}</FieldsetBody> : null}
         </Fieldset>
@@ -247,13 +247,14 @@ export function WorkbenchResultSummary({
   return (
     <div
       className={cx(
-        'shared-workbench-result grid gap-1 rounded-[20px] border border-[color:var(--line)] bg-[rgba(255,255,255,0.03)] p-[16px]',
-        muted && 'shared-workbench-result--muted bg-[rgba(255,255,255,0.02)]',
+        'grid gap-1 rounded-[20px] border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] p-[16px]',
+        '[&_strong]:block',
+        muted && 'bg-[rgba(255,255,255,0.02)]',
         className,
       )}
     >
       {headline ? <strong className="block">{headline}</strong> : null}
-      <KeyValueList className="shared-workbench-result__values">
+      <KeyValueList>
         {items.map((item) => (
           <KeyValueItem
             key={String(item.label)}
@@ -285,12 +286,12 @@ export function WorkbenchBacklogPanel({
 }) {
   return (
     <Alert
-      className={cx('shared-workbench-backlog', className)}
+      className={cx('text-[#c7d6e2]', className)}
       variant="warning"
     >
       <AlertTitle>{title}</AlertTitle>
       {description ? <AlertDescription>{description}</AlertDescription> : null}
-      <ul className="list">
+      <ul className="m-0 grid list-none gap-0 p-0">
         {items.map((item) => (
           <ListRow
             key={item.id}

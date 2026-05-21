@@ -39,7 +39,7 @@ export function LoadingProgress({
 
   return (
     <div className={['grid gap-3', className].filter(Boolean).join(' ')} {...props}>
-      <div className="flex items-center justify-between gap-3 text-[0.82rem] uppercase tracking-[0.24em] text-[color:var(--muted)]">
+      <div className="flex items-center justify-between gap-3 text-[0.82rem] uppercase tracking-[0.24em] text-[#9ab0c1]">
         <span>{label}</span>
         <span>{indeterminate ? '...' : `${progress}%`}</span>
       </div>
@@ -59,7 +59,7 @@ export function LoadingProgress({
           style={indeterminate ? undefined : { width: `${progress}%` }}
         />
       </div>
-      {message ? <p className="m-0 text-sm text-[color:var(--muted)]">{message}</p> : null}
+      {message ? <p className="m-0 text-sm text-[#9ab0c1]">{message}</p> : null}
     </div>
   );
 }

@@ -1,5 +1,14 @@
 type QueryValue = string | number | boolean | undefined;
 
+export interface ListEnvelope<T, F = Record<string, unknown>> {
+  items: T[];
+  total: number;
+  limit: number;
+  offset: number;
+  hasMore: boolean;
+  appliedFilters: F;
+}
+
 export function toQueryString<T extends object>(params: T) {
   const search = new URLSearchParams();
 

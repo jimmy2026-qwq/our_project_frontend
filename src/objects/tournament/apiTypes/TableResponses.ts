@@ -1,4 +1,4 @@
-import type { TableStatus } from '@/system/objects/apiTypes/common';
+import type { TableStatus } from './TournamentDomainTypes';
 import type { SeatWind } from './TournamentDomainTypes';
 
 export interface TournamentTableSeatView {

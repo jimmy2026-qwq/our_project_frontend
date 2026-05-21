@@ -1,6 +1,5 @@
 import type { ReactNode } from 'react';
 
-import { cx } from '@/components/ui/cx';
 import { Card, CardContent, CardHeader } from './card';
 import { EmptyState, SourceBadge } from './feedback';
 import { PanelHead } from './layout';
@@ -26,8 +25,8 @@ export function DataPanel({
   className?: string;
 }) {
   return (
-    <Card className={cx('panel-card', className)}>
-      <CardHeader className="panel-card__header pb-0">
+    <Card className={className}>
+      <CardHeader className="pb-0">
         <PanelHead
           title={title}
           description={description}
@@ -36,7 +35,7 @@ export function DataPanel({
           }
         />
       </CardHeader>
-      <CardContent className="panel-card__content pt-4">{children}</CardContent>
+      <CardContent className="pt-4">{children}</CardContent>
     </Card>
   );
 }

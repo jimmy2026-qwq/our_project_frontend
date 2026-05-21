@@ -1,3 +1,10 @@
+export type Role =
+  | 'Guest'
+  | 'RegisteredPlayer'
+  | 'ClubAdmin'
+  | 'TournamentAdmin'
+  | 'SuperAdmin';
+
 export type SessionPrincipalKind = 'Anonymous' | 'Guest' | 'RegisteredPlayer';
 
 export interface CurrentSessionRoleFlags {

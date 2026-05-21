@@ -1,7 +1,7 @@
 import { createContext, useContext } from 'react';
 
-import type { AuthSession } from '@/features/auth/objects/AuthSession';
 import type { LoginRequest, RegisterAccountRequest } from '@/objects/auth';
+import type { AuthSession } from '@/providers/auth/AuthSession';
 
 export interface AuthContextValue {
   isReady: boolean;

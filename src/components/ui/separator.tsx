@@ -14,10 +14,9 @@ export function Separator({
       role={decorative ? 'presentation' : 'separator'}
       aria-orientation={orientation}
       className={cx(
-        'ui-separator',
         orientation === 'vertical'
-          ? 'ui-separator--vertical h-full w-px shrink-0 bg-[color:var(--line)]'
-          : 'ui-separator--horizontal h-px w-full shrink-0 bg-[color:var(--line)]',
+          ? 'h-full w-px shrink-0 bg-[rgba(176,223,229,0.14)]'
+          : 'h-px w-full shrink-0 bg-[rgba(176,223,229,0.14)]',
         className,
       )}
       {...props}

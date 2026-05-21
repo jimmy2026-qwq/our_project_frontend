@@ -1,6 +1,27 @@
 export type SeatWind = 'East' | 'South' | 'West' | 'North';
 export type TournamentFormat = 'Swiss' | 'Knockout';
 
+export type TournamentStatus =
+  | 'Draft'
+  | 'Registration'
+  | 'RegistrationOpen'
+  | 'Scheduled'
+  | 'InProgress'
+  | 'Completed'
+  | 'Cancelled'
+  | 'Archived'
+  | 'Finished';
+
+export type StageStatus = 'Pending' | 'Ready' | 'Active' | 'Completed' | 'Archived';
+
+export type TableStatus =
+  | 'WaitingPreparation'
+  | 'InProgress'
+  | 'Scoring'
+  | 'Archived'
+  | 'AppealPending'
+  | 'AppealInProgress';
+
 export interface TableSeat {
   seat: SeatWind;
   playerId: string;

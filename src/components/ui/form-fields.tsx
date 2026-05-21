@@ -4,7 +4,7 @@ import { Input } from './input';
 import { Select } from './select';
 import { Textarea } from './textarea';
 
-const DEFAULT_FIELD_CLASS = 'shared-field';
+const DEFAULT_FIELD_CLASS = '';
 
 export function FieldGroup({
   children,
@@ -13,7 +13,7 @@ export function FieldGroup({
   children: ReactNode;
   className?: string;
 }) {
-  return <div className={cx('grid gap-[14px]', className === DEFAULT_FIELD_CLASS ? undefined : className)}>{children}</div>;
+  return <div className={cx('grid gap-[14px]', className)}>{children}</div>;
 }
 
 export function SelectField({
@@ -27,8 +27,8 @@ export function SelectField({
   className?: string;
 } & SelectHTMLAttributes<HTMLSelectElement>) {
   return (
-    <label className={cx('grid gap-2', className === DEFAULT_FIELD_CLASS ? undefined : className)}>
-      <span className="leading-7 text-[color:var(--muted)]">{label}</span>
+    <label className={cx('grid gap-2', className)}>
+      <span className="leading-7 text-[#9ab0c1]">{label}</span>
       <Select {...props}>{children}</Select>
     </label>
   );
@@ -43,8 +43,8 @@ export function TextInputField({
   className?: string;
 } & InputHTMLAttributes<HTMLInputElement>) {
   return (
-    <label className={cx('grid gap-2', className === DEFAULT_FIELD_CLASS ? undefined : className)}>
-      <span className="leading-7 text-[color:var(--muted)]">{label}</span>
+    <label className={cx('grid gap-2', className)}>
+      <span className="leading-7 text-[#9ab0c1]">{label}</span>
       <Input {...props} />
     </label>
   );
@@ -59,8 +59,8 @@ export function TextareaField({
   className?: string;
 } & TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
-    <label className={cx('grid gap-2', className === DEFAULT_FIELD_CLASS ? undefined : className)}>
-      <span className="leading-7 text-[color:var(--muted)]">{label}</span>
+    <label className={cx('grid gap-2', className)}>
+      <span className="leading-7 text-[#9ab0c1]">{label}</span>
       <Textarea {...props} />
     </label>
   );
@@ -68,16 +68,16 @@ export function TextareaField({
 
 export function CheckboxField({
   label,
-  className = 'shared-checkbox-field',
+  className,
   ...props
 }: {
   label: ReactNode;
   className?: string;
 } & Omit<InputHTMLAttributes<HTMLInputElement>, 'type'>) {
   return (
-    <label className={cx('shared-checkbox-field inline-flex items-center justify-start gap-2', className)}>
+    <label className={cx('inline-flex items-center justify-start gap-2', className)}>
       <input type="checkbox" {...props} />
-      <span className="text-[color:var(--muted)]">{label}</span>
+      <span className="text-[#9ab0c1]">{label}</span>
     </label>
   );
 }

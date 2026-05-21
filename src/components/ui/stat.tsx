@@ -6,20 +6,20 @@ export function StatGrid({ className, ...props }: HTMLAttributes<HTMLDivElement>
   return (
     <div
       data-slot="stat-grid"
-      className={cx('ui-stat-grid grid gap-3 sm:grid-cols-2 xl:grid-cols-3', className)}
+      className={cx('grid gap-3 sm:grid-cols-2 xl:grid-cols-3', className)}
       {...props}
     />
   );
 }
 
 const statCardVariants = cva(
-  'ui-stat grid gap-2 rounded-3xl border border-[color:var(--line)] bg-[rgba(255,255,255,0.04)] p-5',
+  'grid gap-2 rounded-3xl border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.04)] p-5',
   {
     variants: {
       accent: {
         default: '',
-        gold: 'ui-stat--gold border-[rgba(236,197,122,0.32)]',
-        teal: 'ui-stat--teal border-[rgba(114,216,209,0.32)]',
+        gold: 'border-[rgba(236,197,122,0.32)]',
+        teal: 'border-[rgba(114,216,209,0.32)]',
       },
     },
     defaultVariants: {
@@ -53,8 +53,8 @@ export function StatCard({
 }) {
   return (
     <div data-slot="stat-card" className={cx(statCardVariants({ accent: normalizeAccent(accent) }), className)} {...props}>
-      <span className="ui-stat__label text-sm text-[color:var(--muted)]">{label}</span>
-      <strong className="ui-stat__value text-[1.35rem] text-[color:var(--text)]">{value}</strong>
+      <span className="text-sm text-[#9ab0c1]">{label}</span>
+      <strong className="text-[1.35rem] text-[#f2f7fb]">{value}</strong>
       {children}
     </div>
   );

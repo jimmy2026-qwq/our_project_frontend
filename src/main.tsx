@@ -6,11 +6,6 @@ import { AppFeedbackProvider, AuthProvider, DialogProvider } from '@/providers';
 import { router } from '@/router';
 
 import './index.css';
-import './styles/app.css';
-import './styles/public-hall-home.css';
-import './styles/public-hall-detail.css';
-import './styles/public-hall-lobby.css';
-import './styles/template-shell.css';
 
 const normalizeLegacyHashRoute = () => {
   const hash = window.location.hash;

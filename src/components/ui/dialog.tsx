@@ -15,7 +15,7 @@ export const DialogOverlay = forwardRef<
       ref={ref}
       data-slot="dialog-overlay"
       className={cx(
-        'ui-dialog-overlay fixed inset-0 z-30 bg-[rgba(3,8,14,0.62)] backdrop-blur-[8px]',
+        'fixed inset-0 z-30 bg-[rgba(3,8,14,0.62)] backdrop-blur-[8px]',
         className,
       )}
       {...props}
@@ -32,9 +32,9 @@ export const DialogSurface = forwardRef<
       ref={ref}
       data-slot="dialog-surface"
       className={cx(
-        'ui-dialog-surface fixed left-1/2 top-1/2 z-30 grid w-[calc(100%-40px)] max-w-[460px] -translate-x-1/2 -translate-y-1/2 gap-2 rounded-[28px]',
-        'border border-[color:var(--line)] bg-[rgba(8,18,29,0.96)]',
-        'shadow-[var(--shadow-lg)] backdrop-blur-[18px]',
+        'fixed left-1/2 top-1/2 z-30 grid w-[min(460px,calc(100%-40px))] -translate-x-1/2 -translate-y-1/2 gap-2 rounded-[28px]',
+        'border border-[rgba(176,223,229,0.14)] bg-[rgba(8,18,29,0.96)]',
+        'shadow-[0_32px_90px_rgba(0,0,0,0.34)] backdrop-blur-[18px]',
         className,
       )}
       {...props}
@@ -43,22 +43,22 @@ export const DialogSurface = forwardRef<
 });
 
 export function DialogHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div data-slot="dialog-header" className={cx('ui-dialog-header grid gap-2', className)} {...props} />;
+  return <div data-slot="dialog-header" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
 export function DialogBody({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div data-slot="dialog-body" className={cx('ui-dialog-body grid gap-2', className)} {...props} />;
+  return <div data-slot="dialog-body" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
 export function DialogFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
-  return <div data-slot="dialog-footer" className={cx('ui-dialog-footer grid gap-2', className)} {...props} />;
+  return <div data-slot="dialog-footer" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
 export const DialogTitle = forwardRef<
   ElementRef<typeof DialogPrimitive.Title>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(function DialogTitle({ className, ...props }, ref) {
-  return <DialogPrimitive.Title ref={ref} data-slot="dialog-title" className={cx('ui-dialog-title m-0', className)} {...props} />;
+  return <DialogPrimitive.Title ref={ref} data-slot="dialog-title" className={cx('m-0', className)} {...props} />;
 });
 
 export const DialogDescription = forwardRef<
@@ -69,7 +69,7 @@ export const DialogDescription = forwardRef<
     <DialogPrimitive.Description
       ref={ref}
       data-slot="dialog-description"
-      className={cx('ui-dialog-description m-0 text-[color:var(--muted)] leading-7', className)}
+      className={cx('m-0 leading-[1.75] text-[#9ab0c1]', className)}
       {...props}
     />
   );

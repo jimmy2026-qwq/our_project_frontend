@@ -4,18 +4,31 @@ import { AppShell } from '@/app/AppShell';
 import { RequireAuth } from '@/app/guards/RequireAuth';
 import { RequireRegisteredUser } from '@/app/guards/RequireRegisteredUser';
 
+const demoRoutes = import.meta.env.DEV
+  ? [
+      {
+        path: '/demo/tables/:tableId/paifu',
+        lazy: async () => {
+          const { TablePaifuPage } = await import('@/pages/TablePaifuPage');
+          return { Component: TablePaifuPage };
+        },
+      },
+    ]
+  : [];
+
 export const router = createBrowserRouter([
+  ...demoRoutes,
   {
     path: '/login',
     lazy: async () => {
-      const { LoginPage } = await import('@/pages/LoginPage');
+      const { LoginPage } = await import('@/pages/Auth/LoginPage');
       return { Component: LoginPage };
     },
   },
   {
     path: '/register',
     lazy: async () => {
-      const { RegisterPage } = await import('@/pages/RegisterPage');
+      const { RegisterPage } = await import('@/pages/Auth/RegisterPage');
       return { Component: RegisterPage };
     },
   },
@@ -36,21 +49,21 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 lazy: async () => {
-                  const { PublicHallHomePage } = await import('@/pages/PublicHallHomePage');
+                  const { PublicHallHomePage } = await import('@/pages/PublicHall/HomePage');
                   return { Component: PublicHallHomePage };
                 },
               },
               {
                 path: 'tournaments/:tournamentId',
                 lazy: async () => {
-                  const { PublicTournamentDetailPage } = await import('@/pages/PublicTournamentDetailPage');
+                  const { PublicTournamentDetailPage } = await import('@/pages/PublicHall/TournamentDetailPage');
                   return { Component: PublicTournamentDetailPage };
                 },
               },
               {
                 path: 'clubs/:clubId',
                 lazy: async () => {
-                  const { PublicClubDetailPage } = await import('@/pages/PublicClubDetailPage');
+                  const { PublicClubDetailPage } = await import('@/pages/PublicHall/ClubDetailPage');
                   return { Component: PublicClubDetailPage };
                 },
               },
@@ -59,13 +72,6 @@ export const router = createBrowserRouter([
           {
             element: <RequireRegisteredUser />,
             children: [
-              {
-                path: 'blueprint',
-                lazy: async () => {
-                  const { BlueprintHomePage } = await import('@/pages/BlueprintHomePage');
-                  return { Component: BlueprintHomePage };
-                },
-              },
               {
                 path: 'member-hub',
                 lazy: async () => {

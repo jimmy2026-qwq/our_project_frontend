@@ -1,4 +1,4 @@
-import type { RoleCapability } from '@/objects';
+import type { RoleCapability } from './types';
 
 export const roleCapabilities: RoleCapability[] = [
   {

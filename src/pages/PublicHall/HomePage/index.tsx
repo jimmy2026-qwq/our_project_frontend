@@ -1,0 +1,346 @@
+import { Link } from 'react-router-dom';
+import { useEffect, useReducer, useState } from 'react';
+
+import { cx } from '@/components/ui/cx';
+import {
+  PublicClubsSection,
+  PublicLeaderboardSection,
+  PublicSchedulesSection,
+} from './components/sections';
+import {
+  PublicHallError,
+  PublicHallLeaderboardLoading,
+  PublicHallLoading,
+} from '@/pages/PublicHall/components/shared';
+import {
+  usePublicHallHomeData,
+  usePublicHallLeaderboardData,
+  usePublicHallState,
+} from './hooks';
+import type { PublicHallState } from '@/pages/PublicHall/objects/types';
+import { useAuth } from '@/app/auth/useAuth';
+import { useRefreshNotice } from '@/app/feedback/useRefreshNotice';
+import { useAsyncResource } from '@/hooks/useAsyncResource';
+import { playerApi } from '@/pages/PublicHall/objects/data.transport';
+
+const lobbyClassNames = {
+  portal:
+    'relative z-[1] grid min-h-[calc(100vh-72px)] gap-7 overflow-hidden text-[#f2f7fb]',
+  glow:
+    'pointer-events-none absolute right-[18px] top-2.5 h-[200px] w-[200px] bg-[radial-gradient(circle,rgba(247,214,135,0.24),rgba(247,214,135,0)_68%)] blur-[10px]',
+  playerCard:
+    'fixed left-5 top-5 z-[4] grid min-h-[116px] w-[min(268px,calc(100vw-28px))] grid-cols-[minmax(0,1fr)_auto] items-center overflow-hidden border-0 bg-[rgba(24,32,78,0.94)] bg-[linear-gradient(180deg,rgba(48,87,154,0.18),rgba(48,87,154,0)_24%),linear-gradient(180deg,rgba(25,38,88,0.96),rgba(24,32,78,0.94))] py-[14px] pl-6 pr-4 shadow-[0_16px_30px_rgba(7,12,20,0.18),inset_0_1px_0_rgba(255,240,209,0.16)] [clip-path:polygon(4%_0,96%_0,100%_14%,100%_86%,96%_100%,4%_100%,0_86%,0_14%)] max-[980px]:relative max-[980px]:left-auto max-[980px]:top-auto max-[980px]:w-full',
+  playerCardOuter:
+    'pointer-events-none absolute inset-0 border-2 !border-[rgba(219,175,98,0.9)] [clip-path:inherit]',
+  playerCardInner:
+    'pointer-events-none absolute inset-1.5 border !border-[rgba(219,175,98,0.4)] bg-[linear-gradient(180deg,rgba(255,255,255,0.06),rgba(255,255,255,0)_22%),linear-gradient(135deg,rgba(255,255,255,0.035)_25%,transparent_25%),linear-gradient(225deg,rgba(255,255,255,0.035)_25%,transparent_25%)] bg-[length:auto,24px_24px,24px_24px] opacity-75 [clip-path:inherit]',
+  playerCopy:
+    'relative z-[1] grid w-full justify-items-center gap-2 py-1 pl-1.5 pr-4 text-center',
+  playerMeta:
+    'm-0 grid w-[min(100%,220px)] justify-items-center gap-[3px] border-b !border-[rgba(210,173,99,0.48)] pb-[9px] shadow-[inset_0_-1px_0_rgba(46,57,118,0.72)] [&_span]:text-[0.94rem] [&_span]:font-bold [&_span]:uppercase [&_span]:tracking-[0.06em] [&_span]:text-[rgba(228,232,255,0.82)]',
+  playerLink:
+    'inline-flex w-full justify-center text-[clamp(1.1rem,1.9vw,1.35rem)] font-bold leading-[1.05] tracking-[0.02em] text-[#f7f3ff] no-underline [text-shadow:0_8px_18px_rgba(3,8,14,0.26)]',
+  playerAvatar:
+    'relative z-[1] mr-2 inline-flex h-12 w-12 items-center justify-center rounded-[14px] border-2 !border-[rgba(220,176,100,0.92)] bg-[rgba(230,185,104,0.96)] bg-[linear-gradient(180deg,rgba(255,228,165,0.98),rgba(230,185,104,0.96))] no-underline shadow-[inset_0_1px_0_rgba(255,247,223,0.4),0_8px_14px_rgba(17,20,52,0.18)]',
+  playerLogin:
+    'relative z-[1] mr-2 inline-flex h-12 min-w-[86px] items-center justify-center rounded-[14px] border-2 !border-[rgba(220,176,100,0.92)] bg-[rgba(231,184,88,0.96)] bg-[linear-gradient(180deg,rgba(255,234,183,0.98),rgba(231,184,88,0.96))] px-[18px] text-[0.94rem] font-extrabold tracking-[0.08em] text-[rgba(105,50,35,0.98)] no-underline shadow-[inset_0_1px_0_rgba(255,247,223,0.4),0_8px_14px_rgba(17,20,52,0.18)]',
+  avatarIcon:
+    'relative block h-[22px] w-[22px] text-[rgba(123,74,75,0.96)] before:absolute before:left-1/2 before:top-0 before:h-3 before:w-3 before:-translate-x-1/2 before:rounded-full before:bg-current after:absolute after:bottom-0 after:left-1/2 after:h-3 after:w-5 after:-translate-x-1/2 after:rounded-[12px_12px_7px_7px] after:bg-current',
+  lobby:
+    'relative z-[1] mt-[116px] grid grid-cols-[minmax(0,7fr)_minmax(0,3fr)] items-start gap-6 bg-transparent p-6 shadow-none backdrop-blur-none max-[980px]:mt-24 max-[980px]:grid-cols-1 max-[980px]:p-[18px]',
+  main: 'grid min-h-0 gap-[22px]',
+  sidebar: 'grid min-h-0 gap-[22px]',
+  stage:
+    'relative z-[1] h-[calc(100vh-250px)] max-h-[calc(100vh-250px)] min-h-[calc(100vh-250px)] min-w-0 max-[980px]:h-auto max-[980px]:max-h-none max-[980px]:min-h-0',
+  stageScroll:
+    'h-full max-h-full min-h-full overflow-hidden pr-0 max-[980px]:h-auto max-[980px]:overflow-visible',
+  menu: 'relative top-0 grid gap-6 max-[980px]:static',
+  menuButton:
+    'relative isolate grid min-h-[174px] cursor-pointer content-start gap-3 border-0 bg-transparent p-0 text-left text-[#ffe8cf] shadow-none transition-[transform,filter] duration-200 hover:-translate-y-[3px]',
+  menuButtonActive: '-translate-y-[3px] saturate-[1.04]',
+  menuFrame:
+    'pointer-events-none absolute inset-0 z-0 rounded-[30px] bg-[rgba(177,112,55,0.98)] bg-[linear-gradient(180deg,rgba(255,214,138,0.98),rgba(177,112,55,0.98))] shadow-[0_14px_24px_rgba(45,15,14,0.22),inset_0_-1px_0_rgba(125,64,30,0.8)] [clip-path:polygon(5%_0,95%_0,100%_10%,100%_88%,95%_100%,5%_100%,0_88%,0_10%)] after:absolute after:inset-1 after:rounded-[26px] after:bg-[rgba(72,24,24,0.98)] after:bg-[linear-gradient(180deg,rgba(92,31,28,0.98),rgba(72,24,24,0.98))] after:shadow-[inset_0_1px_0_rgba(255,225,183,0.36),inset_0_-10px_16px_rgba(36,12,12,0.28)] after:[clip-path:inherit]',
+  menuSurface:
+    'pointer-events-none absolute inset-x-4 bottom-[26px] top-[14px] z-[1] overflow-hidden rounded-3xl bg-[rgba(89,28,27,0.98)] bg-[linear-gradient(180deg,rgba(111,36,31,0.98),rgba(89,28,27,0.98))] shadow-[inset_0_1px_0_rgba(255,213,180,0.18),inset_0_-18px_24px_rgba(59,16,16,0.28)] [clip-path:polygon(5%_0,95%_0,100%_11%,100%_88%,95%_100%,5%_100%,0_88%,0_11%)] before:pointer-events-none before:absolute before:inset-0 before:bg-[linear-gradient(180deg,rgba(255,214,188,0.06),rgba(255,214,188,0)_24%),linear-gradient(135deg,rgba(255,184,150,0.045)_25%,transparent_25%),linear-gradient(225deg,rgba(255,184,150,0.045)_25%,transparent_25%),linear-gradient(315deg,rgba(0,0,0,0.04)_25%,transparent_25%),linear-gradient(45deg,rgba(0,0,0,0.04)_25%,transparent_25%)] before:bg-[length:auto,26px_26px,26px_26px,26px_26px,26px_26px] before:opacity-95',
+  menuFlower:
+    'pointer-events-none absolute z-[3] h-10 w-10 bg-[rgba(212,150,76,0.98)] bg-[linear-gradient(180deg,rgba(255,221,146,0.98),rgba(212,150,76,0.98))] [clip-path:polygon(50%_0,63%_21%,86%_8%,79%_32%,100%_50%,79%_68%,86%_92%,63%_79%,50%_100%,37%_79%,14%_92%,21%_68%,0_50%,21%_32%,14%_8%,37%_21%)] [filter:drop-shadow(0_5px_8px_rgba(61,19,16,0.22))]',
+  menuFlowerLeft: '-left-2 -top-2.5 -rotate-[14deg]',
+  menuFlowerRight: '-right-2 bottom-[18px] rotate-[14deg]',
+  menuAlert: 'relative z-[2] hidden',
+  menuCopy:
+    'relative z-[2] grid justify-items-center gap-2 px-[30px] pt-6 text-center',
+  menuEyebrow:
+    'block text-[0.76rem] uppercase tracking-[0.16em] text-[rgba(255,221,197,0.72)]',
+  menuTitle:
+    'mt-0.5 block text-center [font-family:"YouYuan","STSong","SimSun","Noto_Serif_SC",serif] text-[clamp(2.1rem,2.9vw,2.65rem)] font-extrabold leading-[1.02] tracking-[0.12em] text-[#ffd2c8] [text-shadow:0_2px_0_rgba(150,46,57,0.82),0_4px_0_rgba(132,36,46,0.76),0_6px_0_rgba(108,28,37,0.56),0_8px_16px_rgba(57,16,16,0.2)]',
+  menuTag:
+    'absolute -bottom-1.5 left-1/2 z-[3] inline-flex min-h-11 min-w-[186px] -translate-x-1/2 items-center justify-center rounded-2xl border-2 !border-[rgba(212,148,79,0.95)] bg-[rgba(84,28,24,0.98)] px-[26px] py-2 text-[0.86rem] font-bold tracking-[0.08em] text-[rgba(255,240,229,0.96)] shadow-[inset_0_1px_0_rgba(255,220,186,0.2),0_8px_14px_rgba(47,16,15,0.16)]',
+};
+
+export function PublicHallHomePage() {
+  const { state, setState } = usePublicHallState();
+  const { session } = useAuth();
+  const operatorId = session?.user.operatorId ?? '';
+  const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
+  const [pendingRefresh, setPendingRefresh] = useState(false);
+  const { data, isLoading, error } = usePublicHallHomeData(
+    state,
+    { session },
+    reloadKey,
+  );
+  const {
+    data: leaderboardData,
+    isLoading: isLeaderboardLoading,
+    error: leaderboardError,
+  } = usePublicHallLeaderboardData(state, data, reloadKey);
+  const { notifyRefreshResult } = useRefreshNotice();
+  const { data: currentPlayer } = useAsyncResource(async () => {
+    if (!session?.user.roles.isRegisteredPlayer || !operatorId) {
+      return null;
+    }
+
+    return playerApi.getCurrentPlayer(operatorId);
+  }, [operatorId, session?.user.roles.isRegisteredPlayer]);
+
+  const handleStateChange = (patch: Partial<PublicHallState>) => {
+    setState((current) => ({ ...current, ...patch }));
+  };
+
+  useEffect(() => {
+    if (!pendingRefresh || isLoading) {
+      return;
+    }
+
+    if (error && !data) {
+      notifyRefreshResult(
+        [],
+        {
+          failureTitle: 'Public hall refresh failed',
+          successTitle: 'Public hall refreshed',
+          successMessage: 'Live public hall data was reloaded successfully.',
+          fallbackTitle: 'Public hall refreshed with warnings',
+          fallbackMessage: 'Some public hall panels could not be confirmed.',
+        },
+        error,
+      );
+      setPendingRefresh(false);
+      return;
+    }
+
+    if (!data) {
+      return;
+    }
+
+    notifyRefreshResult(
+      [
+        data.schedules,
+        data.clubs,
+        ...(leaderboardData ? [leaderboardData.leaderboard] : []),
+      ],
+      {
+        failureTitle: 'Public hall refresh failed',
+        successTitle: 'Public hall refreshed',
+        successMessage: 'Live public hall data was reloaded successfully.',
+        fallbackTitle: 'Public hall refreshed with warnings',
+        fallbackMessage: 'Some public hall panels could not be confirmed.',
+      },
+      error,
+    );
+
+    setPendingRefresh(false);
+  }, [
+    data,
+    error,
+    isLoading,
+    leaderboardData,
+    notifyRefreshResult,
+    pendingRefresh,
+  ]);
+
+  const handleRefresh = () => {
+    setPendingRefresh(true);
+    forceReload();
+  };
+
+  if (isLoading && !data) {
+    return <PublicHallLoading />;
+  }
+
+  if (error && !data) {
+    return <PublicHallError message={error} />;
+  }
+
+  if (!data) {
+    return <PublicHallError message="当前无法获取公共大厅数据。" />;
+  }
+
+  let activeViewMarkup;
+
+  if (state.activeView === 'clubs') {
+    activeViewMarkup = (
+      <PublicClubsSection
+        payload={data.clubs}
+        state={state}
+        onStateChange={handleStateChange}
+        onRefresh={handleRefresh}
+      />
+    );
+  } else if (state.activeView === 'leaderboard') {
+    if (isLeaderboardLoading && !leaderboardData) {
+      activeViewMarkup = <PublicHallLeaderboardLoading />;
+    } else if (leaderboardError && !leaderboardData) {
+      activeViewMarkup = <PublicHallError message={leaderboardError} />;
+    } else if (leaderboardData) {
+      activeViewMarkup = (
+        <PublicLeaderboardSection
+          payload={leaderboardData.leaderboard}
+          state={state}
+          clubs={data.clubs.envelope.items}
+          onStateChange={handleStateChange}
+          onRefresh={handleRefresh}
+          onPlayerManaged={forceReload}
+        />
+      );
+    } else {
+      activeViewMarkup = <PublicHallLeaderboardLoading />;
+    }
+  } else {
+    activeViewMarkup = (
+      <PublicSchedulesSection
+        payload={data.schedules}
+        state={state}
+        onStateChange={handleStateChange}
+        onRefresh={handleRefresh}
+      />
+    );
+  }
+
+  const lobbyEntries = [
+    {
+      id: 'schedules' as const,
+      label: '赛事大厅',
+      heading: '公开赛程',
+      detail: `${data.schedules.envelope.total} schedules`,
+    },
+    {
+      id: 'clubs' as const,
+      label: '魂之一击',
+      heading: '俱乐部名录',
+      detail: `${data.clubs.envelope.total} clubs`,
+    },
+    {
+      id: 'leaderboard' as const,
+      label: '强者之路',
+      heading: '选手排名',
+      detail: leaderboardData
+        ? `${leaderboardData.leaderboard.envelope.total} players`
+        : 'Leaderboard standby',
+    },
+  ];
+
+  const displayName =
+    currentPlayer?.displayName ??
+    session?.user.displayName ??
+    session?.user.username ??
+    'Guest Player';
+  const eloText = currentPlayer?.elo ? `${currentPlayer.elo}` : 'Guest';
+  const showLoginEntry =
+    !session ||
+    session.user.roles.isGuest ||
+    !session.user.roles.isRegisteredPlayer;
+
+  return (
+    <section className={lobbyClassNames.portal}>
+      <span className={lobbyClassNames.glow} aria-hidden="true" />
+      <section className={lobbyClassNames.playerCard}>
+        <span className={lobbyClassNames.playerCardOuter} aria-hidden="true" />
+        <span className={lobbyClassNames.playerCardInner} aria-hidden="true" />
+        <div className={lobbyClassNames.playerCopy}>
+          <p className={lobbyClassNames.playerMeta}>
+            <span>{`ELO: ${eloText}`}</span>
+          </p>
+          <strong className={lobbyClassNames.playerLink}>
+            {displayName}
+          </strong>
+        </div>
+        <Link
+          to={showLoginEntry ? '/login' : '/me'}
+          className={
+            showLoginEntry
+              ? lobbyClassNames.playerLogin
+              : lobbyClassNames.playerAvatar
+          }
+          aria-label="进入个人主页"
+          title="进入个人主页"
+        >
+          {showLoginEntry ? (
+            '登录'
+          ) : (
+            <span
+              className={lobbyClassNames.avatarIcon}
+              aria-hidden="true"
+            />
+          )}
+        </Link>
+      </section>
+
+      <div className={lobbyClassNames.lobby}>
+        <div className={lobbyClassNames.main}>
+          <div className={lobbyClassNames.stage}>
+            <div className={lobbyClassNames.stageScroll}>{activeViewMarkup}</div>
+          </div>
+        </div>
+
+        <aside className={lobbyClassNames.sidebar}>
+          <div className={lobbyClassNames.menu}>
+            {lobbyEntries.map((entry) => (
+              <button
+                key={entry.id}
+                type="button"
+                className={cx(
+                  lobbyClassNames.menuButton,
+                  state.activeView === entry.id
+                    ? lobbyClassNames.menuButtonActive
+                    : '',
+                )}
+                onClick={() => handleStateChange({ activeView: entry.id })}
+              >
+                <span className={lobbyClassNames.menuFrame} aria-hidden="true" />
+                <span
+                  className={lobbyClassNames.menuSurface}
+                  aria-hidden="true"
+                />
+                <span
+                  className={cx(
+                    lobbyClassNames.menuFlower,
+                    lobbyClassNames.menuFlowerLeft,
+                  )}
+                  aria-hidden="true"
+                />
+                <span
+                  className={cx(
+                    lobbyClassNames.menuFlower,
+                    lobbyClassNames.menuFlowerRight,
+                  )}
+                  aria-hidden="true"
+                />
+                <span className={lobbyClassNames.menuAlert} aria-hidden="true">
+                  !
+                </span>
+                <span className={lobbyClassNames.menuCopy}>
+                  <span className={lobbyClassNames.menuEyebrow}>
+                    {entry.label}
+                  </span>
+                  <strong className={lobbyClassNames.menuTitle}>
+                    {entry.heading}
+                  </strong>
+                </span>
+                <small className={lobbyClassNames.menuTag}>{entry.detail}</small>
+              </button>
+            ))}
+          </div>
+        </aside>
+      </div>
+    </section>
+  );
+}

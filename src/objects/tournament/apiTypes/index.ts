@@ -1,5 +1,6 @@
 export * from './ManagementRequests';
 export * from './MatchRecordResponses';
+export * from './OperatorRequest';
 export * from './PaifuResponses';
 export * from './SettlementRequests';
 export * from './SettlementResponses';
