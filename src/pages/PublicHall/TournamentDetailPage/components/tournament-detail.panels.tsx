@@ -36,7 +36,7 @@ import { getStatusTone } from '@/pages/PublicHall/components/shared.status';
 import {
   getTableStatusLabel,
   getTableStatusTone,
-} from '../hooks/tournament-detail.hooks';
+} from '../objects/tournament-detail.workbench';
 import type { TournamentDetailTableItem } from '../objects/tournament-detail.types';
 
 const tournamentPanelClassNames = {

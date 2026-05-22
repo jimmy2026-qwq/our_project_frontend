@@ -1,7 +1,4 @@
-import { useNavigate } from 'react-router-dom';
 import { useMemo } from 'react';
-
-import { useAuth } from '@/app/auth/useAuth';
 
 import type { StageContext, TournamentDirectoryState } from '../objects/data';
 import {
@@ -20,7 +17,10 @@ interface TournamentOpsWorkbenchProps {
   fixedStages?: StageContext[];
   hideTournamentSelect?: boolean;
   reloadKey?: number;
+  operatorId?: string;
   canManageActions?: boolean;
+  onNavigateToTable?: (tableId: string) => void;
+  onNavigateToPaifu?: (tableId: string) => void;
 }
 
 export function TournamentOpsWorkbench({
@@ -29,9 +29,11 @@ export function TournamentOpsWorkbench({
   fixedStages,
   hideTournamentSelect = false,
   reloadKey: externalReloadKey = 0,
+  operatorId = '',
   canManageActions,
+  onNavigateToTable,
+  onNavigateToPaifu,
 }: TournamentOpsWorkbenchProps) {
-  const navigate = useNavigate();
   const { state, setState } = useTournamentOpsState();
   const workbench = useTournamentOpsWorkbenchState();
   const directoryOverride = useMemo<TournamentDirectoryState | null>(() => {
@@ -56,13 +58,7 @@ export function TournamentOpsWorkbench({
       workbench.reloadKey + externalReloadKey,
       directoryOverride,
     );
-  const { session } = useAuth();
-  const operatorId = session?.user.operatorId ?? session?.user.userId;
-  const canManageTournamentActions =
-    canManageActions ??
-    (!!session?.user.roles.isRegisteredPlayer &&
-      (session.user.roles.isSuperAdmin ||
-        session.user.roles.isTournamentAdmin));
+  const canManageTournamentActions = canManageActions ?? false;
   const { selectedTable } = useTournamentOpsWorkbenchEffects({
     fixedTournamentId,
     directory,
@@ -102,7 +98,7 @@ export function TournamentOpsWorkbench({
     resetNote: workbench.resetNote,
     appealDescription: workbench.appealDescription,
     onRefresh: handleRefresh,
-    onNavigateToTable: (tableId) => navigate(`/tables/${tableId}`),
+    onNavigateToTable: (tableId) => onNavigateToTable?.(tableId),
     clearAppealDescription: () => workbench.setAppealDescription(''),
     setActionError: workbench.setActionError,
     setIsSubmittingAction: workbench.setIsSubmittingAction,
@@ -205,12 +201,12 @@ export function TournamentOpsWorkbench({
       onUpdateSeatState={() => void actions.handleUpdateSeatState()}
       onOpenTablePage={() => {
         if (selectedTable) {
-          navigate(`/tables/${selectedTable.id}`);
+          onNavigateToTable?.(selectedTable.id);
         }
       }}
       onOpenPaifuPage={() => {
         if (selectedTable) {
-          navigate(`/tables/${selectedTable.id}/paifu`);
+          onNavigateToPaifu?.(selectedTable.id);
         }
       }}
     />

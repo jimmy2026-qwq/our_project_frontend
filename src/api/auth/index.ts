@@ -1,4 +1,5 @@
 export { CreateGuestSessionAuthAPI } from './CreateGuestSessionAuthAPI';
+export { AuthCheckPermissionAPI } from './AuthCheckPermissionAPI';
 export { CurrentSessionAuthAPI } from './CurrentSessionAuthAPI';
 export { GetGuestSessionAuthAPI } from './GetGuestSessionAuthAPI';
 export { ListGuestSessionsAuthAPI } from './ListGuestSessionsAuthAPI';

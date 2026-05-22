@@ -58,7 +58,15 @@ export function mapTournamentDetailFromAdminView(
   const participatingClubIds =
     item.participatingClubs?.map((club) => club.clubId) ?? [];
   const participatingPlayerCount = item.participatingPlayers?.length ?? 0;
+  const participatingPlayerIds =
+    item.participatingPlayers?.map((player) => player.playerId) ?? [];
   const whitelistSummary = item.whitelistSummary;
+  const visibleClubIds = Array.from(
+    new Set([
+      ...participatingClubIds,
+      ...(whitelistSummary?.clubIds ?? []),
+    ]),
+  );
 
   return {
     id: item.tournamentId,
@@ -69,13 +77,14 @@ export function mapTournamentDetailFromAdminView(
     venue: item.organizer,
     stageCount: stages.length,
     whitelistType:
-      participatingClubIds.length && participatingPlayerCount
+      visibleClubIds.length && participatingPlayerCount
         ? 'Mixed'
-        : participatingClubIds.length
+        : visibleClubIds.length
           ? 'Club'
           : 'Player',
-    clubIds: participatingClubIds,
-    clubCount: participatingClubIds.length,
+    clubIds: visibleClubIds,
+    playerIds: participatingPlayerIds,
+    clubCount: visibleClubIds.length,
     playerCount: participatingPlayerCount,
     whitelistCount: whitelistSummary?.totalEntries ?? 0,
     nextStageId: nextStage?.stageId ?? '',
@@ -89,6 +98,13 @@ export function mapTournamentDetailFromAdminView(
       roundCount: stage.roundCount ?? 0,
       tableCount: stage.scheduledTableCount ?? 0,
       pendingTablePlanCount: stage.pendingTablePlanCount ?? 0,
+      format: stage.format,
+      order: stage.order,
+      currentRound: stage.currentRound,
+      archivedTableCount: 0,
+      advancementRule: stage.advancementRule,
+      swissRule: stage.swissRule ?? null,
+      knockoutRule: stage.knockoutRule ?? null,
       lineupSubmissions: stage.lineupSubmissions?.map((submission) => ({
         submissionId: submission.submissionId,
         clubId: submission.clubId,

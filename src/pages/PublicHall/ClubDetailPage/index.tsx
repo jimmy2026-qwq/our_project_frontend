@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import {
   PublicDetailPageFrame,
@@ -11,6 +11,7 @@ import { PublicClubDetailSection } from './components/club-detail';
 import { useClubDetail } from './hooks';
 
 export function PublicClubDetailPage() {
+  const navigate = useNavigate();
   const { clubId } = useParams();
   const { session } = useAuth();
   const { state, isLoading, refresh } = useClubDetail(clubId, { session });
@@ -39,7 +40,12 @@ export function PublicClubDetailPage() {
 
   return (
     <PublicDetailPageFrame>
-      <PublicClubDetailSection state={state} onRefreshDetail={refresh} />
+      <PublicClubDetailSection
+        state={state}
+        session={session}
+        onNavigateBack={() => navigate('/public')}
+        onRefreshDetail={refresh}
+      />
     </PublicDetailPageFrame>
   );
 }

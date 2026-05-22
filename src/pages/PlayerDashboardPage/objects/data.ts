@@ -1,6 +1,6 @@
 ﻿import { OpsAnalyticsPlayerDashboardAPI } from '@/api/opsanalytics';
 import { GetCurrentPlayerAPI } from '@/api/player';
-import { GetPublicTournamentAPI } from '@/api/publicquery';
+import { GetPublicClubAPI, GetPublicTournamentAPI } from '@/api/publicquery';
 import {
   AppealListAPI,
   TournamentRecordListAPI,
@@ -11,6 +11,7 @@ import type {
   AppealTicketView,
   ListEnvelope,
   MatchRecordListQuery,
+  PublicClubDetailView,
   PublicTournamentDetailView,
   TableListQuery,
   TournamentMatchRecordView,
@@ -31,6 +32,11 @@ import { sendAPI } from '@/system/api';
 
 export interface RecentTableItem extends TournamentTableSummary {
   tournamentName: string;
+}
+
+export interface PlayerClubLink {
+  id: string;
+  name: string;
 }
 
 function mapAppeal(ticket: AppealTicketView): AppealSummary {
@@ -99,6 +105,30 @@ function getPublicTournamentName(tournamentId: string) {
   ).then((tournament) => tournament.name);
 }
 
+function getPublicClubName(clubId: string) {
+  return sendAPI<PublicClubDetailView>(new GetPublicClubAPI(clubId)).then(
+    (club) => club.name,
+  );
+}
+
+function getPlayerClubLinks(clubIds: string[]) {
+  return Promise.all(
+    clubIds.map(async (clubId) => {
+      try {
+        return {
+          id: clubId,
+          name: await getPublicClubName(clubId),
+        };
+      } catch {
+        return {
+          id: clubId,
+          name: clubId,
+        };
+      }
+    }),
+  );
+}
+
 export async function loadPlayerDashboardData(operatorId: string) {
   const [player, dashboard, tablesEnvelope, recordsEnvelope, appealsEnvelope] =
     await Promise.all([
@@ -112,6 +142,7 @@ export async function loadPlayerDashboardData(operatorId: string) {
         offset: 0,
       }),
     ]);
+  const playerClubs = await getPlayerClubLinks(player.clubIds ?? []);
 
   const rawRecentTables = tablesEnvelope.items
     .filter((table) => table.status !== 'Archived')
@@ -159,7 +190,14 @@ export async function loadPlayerDashboardData(operatorId: string) {
     ),
   );
 
-  return { player, dashboard, recentTables, archivedRecords, appeals };
+  return {
+    player,
+    playerClubs,
+    dashboard,
+    recentTables,
+    archivedRecords,
+    appeals,
+  };
 }
 
 export type PlayerDashboardData = Awaited<

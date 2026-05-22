@@ -1,5 +1,10 @@
 export type SeatWind = 'East' | 'South' | 'West' | 'North';
 export type TournamentFormat = 'Swiss' | 'Knockout';
+export type AdvancementRuleType =
+  | 'SwissCut'
+  | 'KnockoutElimination'
+  | 'ScoreThreshold'
+  | 'Custom';
 
 export type TournamentStatus =
   | 'Draft'
@@ -13,6 +18,28 @@ export type TournamentStatus =
   | 'Finished';
 
 export type StageStatus = 'Pending' | 'Ready' | 'Active' | 'Completed' | 'Archived';
+
+export interface AdvancementRuleView {
+  ruleType: AdvancementRuleType;
+  cutSize?: number | null;
+  thresholdScore?: number | null;
+  targetTableCount?: number | null;
+  templateKey?: string | null;
+  note?: string | null;
+}
+
+export interface SwissRuleConfigView {
+  pairingMethod: string;
+  carryOverPoints: boolean;
+  maxRounds?: number | null;
+}
+
+export interface KnockoutRuleConfigView {
+  bracketSize?: number | null;
+  thirdPlaceMatch: boolean;
+  seedingPolicy: string;
+  repechageEnabled: boolean;
+}
 
 export type TableStatus =
   | 'WaitingPreparation'

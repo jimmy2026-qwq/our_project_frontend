@@ -105,6 +105,7 @@ export function mapPublicTournamentDetail(
     stageCount: item.stages.length,
     whitelistType: mapTournamentWhitelistType(item),
     clubIds: item.clubIds,
+    playerIds: item.playerIds,
     clubCount: item.clubIds.length,
     playerCount: item.playerIds.length,
     whitelistCount: item.whitelistCount,
@@ -117,6 +118,7 @@ export function mapPublicTournamentDetail(
       name: stage.name,
       status: mapStageStatus(stage.status),
       roundCount: stage.roundCount,
+      schedulingPoolSize: stage.schedulingPoolSize,
       tableCount: stage.tableCount,
       pendingTablePlanCount: stage.pendingTablePlanCount,
       format: stage.format,
@@ -125,6 +127,9 @@ export function mapPublicTournamentDetail(
       archivedTableCount: stage.archivedTableCount,
       standings: stage.standings ?? null,
       bracket: stage.bracket ?? null,
+      advancementRule: stage.advancementRule,
+      swissRule: stage.swissRule ?? null,
+      knockoutRule: stage.knockoutRule ?? null,
     })),
   };
 }

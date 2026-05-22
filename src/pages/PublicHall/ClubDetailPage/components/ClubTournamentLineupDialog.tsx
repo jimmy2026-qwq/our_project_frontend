@@ -1,5 +1,3 @@
-import { tournamentApi } from '@/pages/PublicHall/objects/data.transport';
-import { useNotice } from '@/app/feedback/useNotice';
 import {
   Dialog,
   DialogOverlay,
@@ -28,15 +26,13 @@ export function ClubTournamentLineupDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const { notifySuccess, notifyWarning } = useNotice();
   const {
     workbench,
-    setIsSubmitting,
     setSelectedStageId,
     setStatusFilter,
     setEloSort,
     togglePlayer,
-    notifyWarning: notifyWorkbenchWarning,
+    submitLineup,
   } = useClubTournamentLineupWorkbench({
     clubId,
     operatorId,
@@ -45,41 +41,12 @@ export function ClubTournamentLineupDialog({
   });
 
   async function handleSubmit() {
-    const effectiveStageId =
-      workbench.selectedStageId || workbench.stageOptions[0]?.stageId || '';
-
-    if (
-      !tournament?.id ||
-      !effectiveStageId ||
-      workbench.selectedPlayerIds.length === 0
-    ) {
-      notifyWorkbenchWarning(
-        'Lineup is incomplete',
-        'Select a stage and at least one player before submitting the lineup.',
-      );
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      await tournamentApi.submitStageLineup(tournament.id, effectiveStageId, {
-        clubId,
-        operatorId,
-        seats: workbench.selectedPlayerIds.map((playerId) => ({ playerId })),
-      });
-      notifySuccess('Lineup submitted', 'The tournament lineup has been submitted.');
+    const submitted = await submitLineup();
+    if (submitted) {
       onOpenChange(false);
-    } catch (error) {
-      notifyWarning(
-        'Unable to submit lineup',
-        error instanceof Error
-          ? error.message
-          : 'The lineup submission did not complete.',
-      );
-    } finally {
-      setIsSubmitting(false);
     }
   }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>

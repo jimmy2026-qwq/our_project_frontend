@@ -5,6 +5,7 @@ import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { ClubApplicationView } from '@/pages/objects/club';
+import type { AuditEventEntry } from '@/objects';
 import type { PlayerProfile } from '@/pages/objects/player';
 import type { ClubPublicProfile } from '@/pages/PublicHall/objects';
 
@@ -31,6 +32,8 @@ const clubPanelClassNames = {
     'flex flex-nowrap items-center justify-end gap-2.5 max-[980px]:flex-wrap max-[980px]:justify-start',
   action:
     'mt-0 inline-flex min-w-28 cursor-pointer items-center justify-center border !border-[rgba(219,175,98,0.36)] bg-[rgba(56,85,162,0.92)] bg-[linear-gradient(180deg,rgba(83,124,210,0.92),rgba(56,85,162,0.92))] px-[22px] py-2.5 text-center text-[#f5c98e] no-underline',
+  actionGold:
+    '!border-[rgba(239,189,111,0.52)] bg-[rgba(176,121,43,0.92)] bg-[linear-gradient(180deg,rgba(239,189,111,0.96),rgba(176,121,43,0.92))] text-[#24180a]',
   actionSecondary:
     'bg-[linear-gradient(180deg,rgba(111,145,219,0.92),rgba(72,98,176,0.92))]',
   actionDanger:
@@ -113,10 +116,18 @@ export function ClubPublicInfoPanel({
 export function ClubRecentTournamentsPanel({
   tournaments,
   canManageLineup,
+  onAcceptInvitation,
+  onDeclineInvitation,
   onOpenLineup,
 }: {
   tournaments: ClubPublicProfile['activeTournaments'];
   canManageLineup: boolean;
+  onAcceptInvitation: (
+    tournament: ClubPublicProfile['activeTournaments'][number],
+  ) => void;
+  onDeclineInvitation: (
+    tournament: ClubPublicProfile['activeTournaments'][number],
+  ) => void;
   onOpenLineup: (
     tournament: ClubPublicProfile['activeTournaments'][number],
   ) => void;
@@ -125,40 +136,71 @@ export function ClubRecentTournamentsPanel({
     <section className={clubPanelClassNames.list}>
       <div className={clubPanelClassNames.listBody}>
         {tournaments.length > 0 ? (
-          tournaments.map((item) => (
-            <article key={item.id} className={clubPanelClassNames.row}>
-              <div className={clubPanelClassNames.rowMain}>
-                <strong>{item.name}</strong>
-                <span>
-                  {item.source === 'invited' ? '受邀赛事' : '相关赛事'}
-                </span>
-                <span>
-                  {item.status ? getTournamentStatusLabel(item.status) : '--'}
-                </span>
-              </div>
-              <div className={clubPanelClassNames.rowSide}>
-                {canManageLineup && item.canSubmitLineup ? (
-                  <button
-                    type="button"
-                    className={cx(
-                      clubPanelClassNames.action,
-                      clubPanelClassNames.actionSecondary,
-                    )}
-                    onClick={() => onOpenLineup(item)}
-                  >
-                    邀请成员参赛
-                  </button>
-                ) : null}
-                <Link
-                  className={clubPanelClassNames.action}
-                  to={`/public/tournaments/${item.id}`}
-                  reloadDocument
-                >
-                  查看详情
-                </Link>
-              </div>
-            </article>
-          ))
+          tournaments.map((item) => {
+            const isInvited = item.participationStatus === 'Invited';
+            const canRespondToInvitation = isInvited && item.canDecline;
+
+            return (
+              <article key={item.id} className={clubPanelClassNames.row}>
+                <div className={clubPanelClassNames.rowMain}>
+                  <strong>{item.name}</strong>
+                  <span>
+                    {item.source === 'invited' ? '受邀赛事' : '相关赛事'}
+                  </span>
+                  <span>
+                    {item.status ? getTournamentStatusLabel(item.status) : '--'}
+                  </span>
+                </div>
+                <div className={clubPanelClassNames.rowSide}>
+                  <div className={clubPanelClassNames.actionRow}>
+                    {canRespondToInvitation ? (
+                      <>
+                        <button
+                          type="button"
+                          className={cx(
+                            clubPanelClassNames.action,
+                            clubPanelClassNames.actionSecondary,
+                          )}
+                          onClick={() => onAcceptInvitation(item)}
+                        >
+                          通过邀请
+                        </button>
+                        <button
+                          type="button"
+                          className={cx(
+                            clubPanelClassNames.action,
+                            clubPanelClassNames.actionDanger,
+                          )}
+                          onClick={() => onDeclineInvitation(item)}
+                        >
+                          拒绝邀请
+                        </button>
+                      </>
+                    ) : null}
+                    {!isInvited && canManageLineup && item.canSubmitLineup ? (
+                      <button
+                        type="button"
+                        className={cx(
+                          clubPanelClassNames.action,
+                          clubPanelClassNames.actionSecondary,
+                        )}
+                        onClick={() => onOpenLineup(item)}
+                      >
+                        邀请成员参赛
+                      </button>
+                    ) : null}
+                    <Link
+                      className={clubPanelClassNames.action}
+                      to={`/public/tournaments/${item.id}`}
+                      reloadDocument
+                    >
+                      查看详情
+                    </Link>
+                  </div>
+                </div>
+              </article>
+            );
+          })
         ) : (
           <EmptyState asListItem={false}>
             当前还没有可展示的相关赛事。
@@ -245,20 +287,59 @@ export function ClubInboxPanel({
   );
 }
 
-export function ClubAdminMembersPanel({
+function getMemberBadgeText(member: ClubAdminMemberEntry) {
+  const internalTitle = member.internalTitle?.trim();
+
+  if (internalTitle) {
+    return internalTitle;
+  }
+
+  if (member.isAdmin) {
+    return '管理员';
+  }
+
+  return member.rankLabel || member.rankCode || '成员';
+}
+
+function getMemberBadgeClassName(member: ClubAdminMemberEntry) {
+  if (member.isAdmin || !member.internalTitle?.trim()) {
+    return undefined;
+  }
+
+  return 'border-[rgba(178,132,255,0.34)] bg-[rgba(154,112,255,0.16)] text-[#cdb8ff]';
+}
+
+export function ClubMembersPanel({
   isLoading,
   members,
+  canAssignAdmins,
+  canAdjustContributions,
+  canEditTitles,
+  canRemoveMembers,
   onAssignAdmin,
+  onAdjustContribution,
+  onEditTitle,
   onRemoveMember,
 }: {
   isLoading: boolean;
   members: ClubAdminMemberEntry[];
+  canAssignAdmins: boolean;
+  canAdjustContributions: boolean;
+  canEditTitles: boolean;
+  canRemoveMembers: boolean;
   onAssignAdmin: (member: PlayerProfile) => void;
+  onAdjustContribution: (member: ClubAdminMemberEntry) => void;
+  onEditTitle: (member: ClubAdminMemberEntry) => void;
   onRemoveMember: (member: ClubAdminMemberEntry) => void;
 }) {
+  const canShowActions =
+    canAssignAdmins ||
+    canAdjustContributions ||
+    canRemoveMembers;
+
   if (isLoading) {
     return (
-      <p className="m-0 text-[#9ab0c1]">正在加载成员管理列表...</p>
+      <p className="m-0 text-[#9ab0c1]">正在加载成员列表...</p>
     );
   }
 
@@ -267,67 +348,174 @@ export function ClubAdminMembersPanel({
       <div className={clubPanelClassNames.listBody}>
         {members.length > 0 ? (
           members.map((member) => (
-            <article
-              key={member.playerId}
-              className={clubPanelClassNames.row}
-            >
-              <div className={clubPanelClassNames.rowMain}>
-                <div className="flex flex-wrap items-center gap-2">
-                  <strong>{member.displayName}</strong>
-                  <StatusPill tone={member.isAdmin ? 'success' : 'warning'}>
-                    {member.isCurrentUser
-                      ? '你'
-                      : member.isAdmin
-                        ? '管理员'
-                        : '成员'}
-                  </StatusPill>
-                </div>
-                {typeof member.elo === 'number' ? (
-                  <span>ELO {member.elo}</span>
-                ) : null}
-                {member.currentRank ? (
-                  <span>
-                    {member.currentRank.platform} {member.currentRank.tier}
-                    {typeof member.currentRank.stars === 'number'
-                      ? ` ${member.currentRank.stars}`
-                      : ''}
-                  </span>
-                ) : null}
-              </div>
-              <div
-                className={cx(
-                  clubPanelClassNames.rowSide,
-                  clubPanelClassNames.rowSideMemberAdmin,
-                )}
+              <article
+                key={member.playerId}
+                className={clubPanelClassNames.row}
               >
-                {!member.isAdmin ? (
-                  <div className={clubPanelClassNames.actionRow}>
-                    <button
-                      type="button"
-                      className={clubPanelClassNames.action}
-                      onClick={() => onAssignAdmin(member)}
-                    >
-                      设为管理员
-                    </button>
-                    {!member.isCurrentUser ? (
+                <div className={clubPanelClassNames.rowMain}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong>{member.displayName}</strong>
+                    {canEditTitles ? (
                       <button
                         type="button"
-                        className={cx(
-                          clubPanelClassNames.action,
-                          clubPanelClassNames.actionDanger,
-                        )}
-                        onClick={() => onRemoveMember(member)}
+                        className="m-0 cursor-pointer border-0 bg-transparent p-0"
+                        onClick={() => onEditTitle(member)}
+                        title="设置专属头衔"
                       >
-                        移出成员
+                        <StatusPill
+                          tone={member.isAdmin ? 'success' : 'warning'}
+                          className={getMemberBadgeClassName(member)}
+                        >
+                          {getMemberBadgeText(member)}
+                        </StatusPill>
                       </button>
+                    ) : (
+                      <StatusPill
+                        tone={member.isAdmin ? 'success' : 'warning'}
+                        className={getMemberBadgeClassName(member)}
+                      >
+                        {getMemberBadgeText(member)}
+                      </StatusPill>
+                    )}
+                    {typeof member.elo === 'number' ? (
+                      <StatusPill tone="warning">ELO {member.elo}</StatusPill>
                     ) : null}
                   </div>
-                ) : null}
-              </div>
-            </article>
+                  {typeof member.contribution === 'number' ? (
+                    <span>贡献值 {formatNumber(member.contribution)}</span>
+                  ) : null}
+                </div>
+                <div
+                  className={cx(
+                    clubPanelClassNames.rowSide,
+                    clubPanelClassNames.rowSideMemberAdmin,
+                  )}
+                >
+                  {canShowActions ? (
+                    <div className={clubPanelClassNames.actionRow}>
+                      {canAssignAdmins && !member.isAdmin ? (
+                        <button
+                          type="button"
+                          className={clubPanelClassNames.action}
+                          onClick={() => onAssignAdmin(member)}
+                        >
+                          设为管理员
+                        </button>
+                      ) : null}
+                      {canAdjustContributions ? (
+                        <button
+                          type="button"
+                          className={cx(
+                            clubPanelClassNames.action,
+                            clubPanelClassNames.actionGold,
+                          )}
+                          onClick={() => onAdjustContribution(member)}
+                        >
+                          修改贡献值
+                        </button>
+                      ) : null}
+                      {canRemoveMembers && !member.isAdmin && !member.isCurrentUser ? (
+                        <button
+                          type="button"
+                          className={cx(
+                            clubPanelClassNames.action,
+                            clubPanelClassNames.actionDanger,
+                          )}
+                          onClick={() => onRemoveMember(member)}
+                        >
+                          移出成员
+                        </button>
+                      ) : null}
+                    </div>
+                  ) : null}
+                </div>
+              </article>
           ))
         ) : (
-          <EmptyState asListItem={false}>当前没有可管理的成员数据。</EmptyState>
+          <EmptyState asListItem={false}>当前没有成员数据。</EmptyState>
+        )}
+      </div>
+    </section>
+  );
+}
+
+export function ClubContributionChangesPanel({
+  isLoading,
+  changes,
+  members,
+}: {
+  isLoading: boolean;
+  changes: AuditEventEntry[];
+  members: ClubAdminMemberEntry[];
+}) {
+  const memberNamesById = new Map(
+    members.map((member) => [member.playerId, member.displayName]),
+  );
+  const memberRanksById = new Map(
+    members.map((member) => [
+      member.playerId,
+      member.rankLabel || member.rankCode || '成员',
+    ]),
+  );
+
+  if (isLoading) {
+    return (
+      <p className="m-0 text-[#9ab0c1]">正在加载贡献变化列表...</p>
+    );
+  }
+
+  return (
+    <section className={clubPanelClassNames.list}>
+      <div className={clubPanelClassNames.listBody}>
+        {changes.length > 0 ? (
+          changes.map((change) => {
+            const playerId = change.details.playerId ?? '';
+            const delta = change.details.delta ?? '--';
+            const contribution = change.details.contribution ?? '--';
+            const playerName = memberNamesById.get(playerId) ?? (playerId || '--');
+            const rankLabel = memberRanksById.get(playerId) ?? '--';
+            const deltaValue = Number(delta);
+            const contributionValue = Number(contribution);
+            const deltaText =
+              Number.isFinite(deltaValue) && deltaValue >= 0
+                ? `+${delta}`
+                : delta;
+            const contributionText = Number.isFinite(contributionValue)
+              ? formatNumber(contributionValue)
+              : contribution;
+
+            return (
+              <article key={change.id} className={clubPanelClassNames.row}>
+                <div className={clubPanelClassNames.rowMain}>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <strong>{playerName}</strong>
+                    <StatusPill tone={deltaValue >= 0 ? 'success' : 'danger'}>
+                      {deltaText}
+                    </StatusPill>
+                    <StatusPill
+                      tone="warning"
+                      className="border-[rgba(239,189,111,0.52)] bg-[rgba(239,189,111,0.18)] text-[#ffd98a]"
+                    >
+                      {rankLabel}
+                    </StatusPill>
+                  </div>
+                  <span>调整后贡献值 {contributionText}</span>
+                  {change.note ? <span>理由 {change.note}</span> : null}
+                </div>
+                <div
+                  className={cx(
+                    clubPanelClassNames.rowSide,
+                    clubPanelClassNames.rowSideMemberAdmin,
+                  )}
+                >
+                  <span>{formatDateTime(change.occurredAt)}</span>
+                  <span>操作人 {change.actorId ?? '--'}</span>
+                </div>
+              </article>
+            );
+          })
+        ) : (
+          <EmptyState asListItem={false}>当前没有贡献值变化记录。</EmptyState>
         )}
       </div>
     </section>

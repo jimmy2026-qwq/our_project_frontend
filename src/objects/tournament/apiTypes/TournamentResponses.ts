@@ -1,4 +1,9 @@
 import type { TournamentTableView } from './TableResponses';
+import type {
+  AdvancementRuleView,
+  KnockoutRuleConfigView,
+  SwissRuleConfigView,
+} from './TournamentDomainTypes';
 
 export interface TournamentStageSummaryView {
   stageId: string;
@@ -11,6 +16,9 @@ export interface TournamentStageSummaryView {
   schedulingPoolSize: number;
   pendingTablePlanCount: number;
   scheduledTableCount: number;
+  advancementRule?: AdvancementRuleView;
+  swissRule?: SwissRuleConfigView | null;
+  knockoutRule?: KnockoutRuleConfigView | null;
 }
 
 export interface TournamentSummaryView {
@@ -87,6 +95,9 @@ export interface TournamentOperationsStageView {
   schedulingPoolSize?: number;
   pendingTablePlanCount?: number;
   scheduledTableCount?: number;
+  advancementRule?: AdvancementRuleView;
+  swissRule?: SwissRuleConfigView | null;
+  knockoutRule?: KnockoutRuleConfigView | null;
   lineupSubmissions?: TournamentLineupSubmissionView[];
 }
 

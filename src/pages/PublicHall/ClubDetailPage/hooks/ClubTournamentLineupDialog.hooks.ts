@@ -178,7 +178,7 @@ export function useClubTournamentLineupWorkbench({
   tournament,
   open,
 }: UseClubTournamentLineupWorkbenchParams) {
-  const { notifyWarning } = useNotice();
+  const { notifySuccess, notifyWarning } = useNotice();
   const [members, setMembers] = useState<PlayerProfile[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -385,14 +385,50 @@ export function useClubTournamentLineupWorkbench({
     );
   }
 
+  async function submitLineup() {
+    const effectiveStageId =
+      selectedStageId || stageOptions[0]?.stageId || '';
+
+    if (!tournament?.id || !effectiveStageId || selectedPlayerIds.length === 0) {
+      notifyWarning(
+        'Lineup is incomplete',
+        'Select a stage and at least one player before submitting the lineup.',
+      );
+      return false;
+    }
+
+    try {
+      setIsSubmitting(true);
+      await tournamentApi.submitStageLineup(tournament.id, effectiveStageId, {
+        clubId,
+        operatorId,
+        seats: selectedPlayerIds.map((playerId) => ({ playerId })),
+      });
+      notifySuccess(
+        'Lineup submitted',
+        'The tournament lineup has been submitted.',
+      );
+      return true;
+    } catch (error) {
+      notifyWarning(
+        'Unable to submit lineup',
+        error instanceof Error
+          ? error.message
+          : 'The lineup submission did not complete.',
+      );
+      return false;
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return {
     workbench,
-    setIsSubmitting,
     setSelectedStageId,
     setStatusFilter,
     setEloSort,
     setSelectedPlayerIds,
     togglePlayer,
-    notifyWarning,
+    submitLineup,
   };
 }

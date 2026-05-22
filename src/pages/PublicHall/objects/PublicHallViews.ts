@@ -1,4 +1,9 @@
 import type { StageStatus, TournamentStatus } from '@/objects';
+import type {
+  AdvancementRuleView,
+  KnockoutRuleConfigView,
+  SwissRuleConfigView,
+} from '@/objects/tournament';
 import type { ClubSummary } from '@/pages/objects/club';
 
 export interface PublicSchedule {
@@ -52,6 +57,7 @@ export interface TournamentPublicProfile {
   participantCount?: number;
   whitelistType: 'Club' | 'Player' | 'Mixed';
   clubIds?: string[];
+  playerIds?: string[];
   clubCount?: number;
   playerCount?: number;
   whitelistCount?: number;
@@ -67,11 +73,15 @@ export interface TournamentPublicProfile {
     status: StageStatus;
     currentRound?: number;
     roundCount: number;
+    schedulingPoolSize?: number;
     tableCount: number;
     archivedTableCount?: number;
     pendingTablePlanCount: number;
     standings?: unknown | null;
     bracket?: unknown | null;
+    advancementRule?: AdvancementRuleView;
+    swissRule?: SwissRuleConfigView | null;
+    knockoutRule?: KnockoutRuleConfigView | null;
     lineupSubmissions?: Array<{
       submissionId: string;
       clubId: string;
@@ -137,7 +147,9 @@ export interface ClubPublicProfile {
     name: string;
     status?: TournamentStatus;
     source?: 'recent' | 'invited';
+    participationStatus?: 'Invited' | 'Participating';
     canSubmitLineup?: boolean;
+    canDecline?: boolean;
   }>;
 }
 

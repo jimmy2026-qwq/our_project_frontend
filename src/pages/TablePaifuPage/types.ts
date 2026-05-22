@@ -1,4 +1,47 @@
-import type { SeatWind } from '@/objects/tournament/apiTypes';
+import type { SeatWind, TableSeat } from '@/objects/tournament/apiTypes';
+
+export type HandOutcome = 'Tsumo' | 'Ron' | 'ExhaustiveDraw' | 'AbortiveDraw';
+
+export type PaifuActionType =
+  | 'Draw'
+  | 'Discard'
+  | 'Chi'
+  | 'Pon'
+  | 'Kan'
+  | 'Riichi'
+  | 'DoraReveal'
+  | 'Win'
+  | 'DrawGame'
+  | 'AddedKan'
+  | 'ClosedKan'
+  | 'OpenKan';
+
+export interface PaifuYaku {
+  name: string;
+  han: number;
+}
+
+export interface PaifuScoreChange {
+  playerId: string;
+  delta: number;
+}
+
+export interface PaifuRoundSettlement {
+  riichiSticksDelta: number;
+  honbaPayment: number;
+  notes: string[];
+}
+
+export interface PaifuAction {
+  sequenceNo: number;
+  actor?: string;
+  actionType: PaifuActionType | string;
+  tile?: string;
+  shantenAfterAction?: number;
+  handTilesAfterAction?: string[];
+  revealedTiles: string[];
+  note?: string;
+}
 
 export interface PaifuFinalStanding {
   playerId: string;
@@ -13,21 +56,50 @@ export interface PaifuRoundSummary {
   descriptor: {
     roundWind: SeatWind;
     handNumber: number;
+    /**
+     * Number of honba sticks at the start of this round. This is a paifu input,
+     * not a frontend-derived value; the game engine must apply continuation rules.
+     */
     honba: number;
   };
-  actions: Array<{
-    sequenceNo: number;
-    actor?: string;
-    actionType: string;
-    tile?: string;
-  }>;
+  initialHands: Record<string, string[]>;
+  actions: PaifuAction[];
   result: {
-    outcome: string;
+    outcome: HandOutcome | string;
     winner?: string;
     target?: string;
     han?: number;
     fu?: number;
+    yaku: PaifuYaku[];
+    /**
+     * Full five dora indicators for this hand. Real paifu records should
+     * provide the complete list; doraIndicatorCount controls how many are shown.
+     */
+    doraIndicators?: string[];
+    /**
+     * Full five ura-dora indicators for this hand. The displayed count matches
+     * doraIndicatorCount, but visibility depends on uraDoraVisible.
+     */
+    uraDoraIndicators?: string[];
+    /**
+     * Whether ura-dora should be shown to the viewer. Usually true only when the
+     * winning player has riichi; false means the frontend shows five backs.
+     */
+    uraDoraVisible?: boolean;
+    /**
+     * Fixed hand value shown in the win result panel. This is not the same as
+     * player score delta and should exclude riichi-stick transfer and other
+     * settlement bookkeeping. Yakuman examples: pure nine gates is 64000 for a
+     * child win and 96000 for a dealer win.
+     */
     points: number;
+    scoreChanges: PaifuScoreChange[];
+    settlement?: PaifuRoundSettlement;
+    /**
+     * Required for ExhaustiveDraw results. Score changes cannot infer tenpai
+     * when all players are tenpai or all players are noten.
+     */
+    tenpaiPlayerIds?: string[];
   };
 }
 
@@ -38,6 +110,9 @@ export interface TablePaifuDetail {
     tournamentId: string;
     stageId: string;
     recordedAt: string;
+    source?: string;
+    seats?: TableSeat[];
+    matchRecordId?: string | null;
   };
   rounds: PaifuRoundSummary[];
   finalStandings: PaifuFinalStanding[];

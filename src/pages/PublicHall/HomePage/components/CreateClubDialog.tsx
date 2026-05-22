@@ -1,7 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { clubsApi } from '@/pages/PublicHall/objects/data.transport';
 import { FieldGroup, TextInputField } from '@/components/ui';
 import { ActionButton } from '@/components/ui';
 import {
@@ -15,8 +13,7 @@ import {
   DialogSurface,
   DialogTitle,
 } from '@/components/ui';
-import { useAuth } from '@/app/auth/useAuth';
-import { useNotice } from '@/app/feedback/useNotice';
+import { useCreateClubDialogAction } from '../hooks';
 
 export function CreateClubDialog({
   open,
@@ -25,59 +22,23 @@ export function CreateClubDialog({
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }) {
-  const navigate = useNavigate();
-  const { session } = useAuth();
-  const { notifySuccess, notifyWarning } = useNotice();
   const [name, setName] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const {
+    canCreate,
+    creatorName,
+    isSubmitting,
+    handleSubmit,
+  } = useCreateClubDialogAction({
+    open,
+    name,
+    onOpenChange,
+  });
 
   useEffect(() => {
     if (!open) {
       setName('');
-      setIsSubmitting(false);
     }
   }, [open]);
-
-  const operatorId = session?.user.operatorId ?? session?.user.userId;
-  const canCreate =
-    !!session?.user.roles.isRegisteredPlayer &&
-    !!operatorId &&
-    name.trim().length > 0 &&
-    !isSubmitting;
-
-  async function handleSubmit() {
-    if (!session?.user.roles.isRegisteredPlayer || !operatorId) {
-      notifyWarning('无法创建俱乐部', '当前账号没有创建俱乐部所需的权限。');
-      return;
-    }
-
-    const trimmedName = name.trim();
-    if (!trimmedName) {
-      notifyWarning('请填写俱乐部名称', '俱乐部名称不能为空。');
-      return;
-    }
-
-    try {
-      setIsSubmitting(true);
-      const created = await clubsApi.createClub({
-        name: trimmedName,
-        creatorId: operatorId,
-      });
-      notifySuccess(
-        '俱乐部已创建',
-        `${created.name} 已创建，当前账号已被设为俱乐部管理员。`,
-      );
-      onOpenChange(false);
-      navigate(`/public/clubs/${created.id}`);
-    } catch (error) {
-      notifyWarning(
-        '创建俱乐部失败',
-        error instanceof Error ? error.message : '创建俱乐部时发生未知错误。',
-      );
-    } finally {
-      setIsSubmitting(false);
-    }
-  }
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -102,7 +63,7 @@ export function CreateClubDialog({
               />
               <TextInputField
                 label="创建者"
-                value={session?.user.displayName ?? ''}
+                value={creatorName}
                 readOnly
               />
             </FieldGroup>

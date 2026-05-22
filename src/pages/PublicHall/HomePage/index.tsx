@@ -13,6 +13,7 @@ import {
   PublicHallLoading,
 } from '@/pages/PublicHall/components/shared';
 import {
+  usePublicHallCurrentPlayer,
   usePublicHallHomeData,
   usePublicHallLeaderboardData,
   usePublicHallState,
@@ -20,8 +21,6 @@ import {
 import type { PublicHallState } from '@/pages/PublicHall/objects/types';
 import { useAuth } from '@/app/auth/useAuth';
 import { useRefreshNotice } from '@/app/feedback/useRefreshNotice';
-import { useAsyncResource } from '@/hooks/useAsyncResource';
-import { playerApi } from '@/pages/PublicHall/objects/data.transport';
 
 const lobbyClassNames = {
   portal:
@@ -45,7 +44,11 @@ const lobbyClassNames = {
   playerLogin:
     'relative z-[1] mr-2 inline-flex h-12 min-w-[86px] items-center justify-center rounded-[14px] border-2 !border-[rgba(220,176,100,0.92)] bg-[rgba(231,184,88,0.96)] bg-[linear-gradient(180deg,rgba(255,234,183,0.98),rgba(231,184,88,0.96))] px-[18px] text-[0.94rem] font-extrabold tracking-[0.08em] text-[rgba(105,50,35,0.98)] no-underline shadow-[inset_0_1px_0_rgba(255,247,223,0.4),0_8px_14px_rgba(17,20,52,0.18)]',
   avatarIcon:
-    'relative block h-[22px] w-[22px] text-[rgba(123,74,75,0.96)] before:absolute before:left-1/2 before:top-0 before:h-3 before:w-3 before:-translate-x-1/2 before:rounded-full before:bg-current after:absolute after:bottom-0 after:left-1/2 after:h-3 after:w-5 after:-translate-x-1/2 after:rounded-[12px_12px_7px_7px] after:bg-current',
+    'relative block h-[22px] w-[22px] text-[rgba(123,74,75,0.96)]',
+  avatarIconHead:
+    'absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-current',
+  avatarIconBody:
+    'absolute bottom-0 left-1/2 h-3 w-5 -translate-x-1/2 rounded-[12px_12px_7px_7px] bg-current',
   lobby:
     'relative z-[1] mt-[116px] grid grid-cols-[minmax(0,7fr)_minmax(0,3fr)] items-start gap-6 bg-transparent p-6 shadow-none backdrop-blur-none max-[980px]:mt-24 max-[980px]:grid-cols-1 max-[980px]:p-[18px]',
   main: 'grid min-h-0 gap-[22px]',
@@ -59,9 +62,13 @@ const lobbyClassNames = {
     'relative isolate grid min-h-[174px] cursor-pointer content-start gap-3 border-0 bg-transparent p-0 text-left text-[#ffe8cf] shadow-none transition-[transform,filter] duration-200 hover:-translate-y-[3px]',
   menuButtonActive: '-translate-y-[3px] saturate-[1.04]',
   menuFrame:
-    'pointer-events-none absolute inset-0 z-0 rounded-[30px] bg-[rgba(177,112,55,0.98)] bg-[linear-gradient(180deg,rgba(255,214,138,0.98),rgba(177,112,55,0.98))] shadow-[0_14px_24px_rgba(45,15,14,0.22),inset_0_-1px_0_rgba(125,64,30,0.8)] [clip-path:polygon(5%_0,95%_0,100%_10%,100%_88%,95%_100%,5%_100%,0_88%,0_10%)] after:absolute after:inset-1 after:rounded-[26px] after:bg-[rgba(72,24,24,0.98)] after:bg-[linear-gradient(180deg,rgba(92,31,28,0.98),rgba(72,24,24,0.98))] after:shadow-[inset_0_1px_0_rgba(255,225,183,0.36),inset_0_-10px_16px_rgba(36,12,12,0.28)] after:[clip-path:inherit]',
+    'pointer-events-none absolute inset-0 z-0 rounded-[30px] bg-[rgba(177,112,55,0.98)] bg-[linear-gradient(180deg,rgba(255,214,138,0.98),rgba(177,112,55,0.98))] shadow-[0_14px_24px_rgba(45,15,14,0.22),inset_0_-1px_0_rgba(125,64,30,0.8)] [clip-path:polygon(5%_0,95%_0,100%_10%,100%_88%,95%_100%,5%_100%,0_88%,0_10%)]',
+  menuFrameInner:
+    'absolute inset-1 rounded-[26px] bg-[rgba(72,24,24,0.98)] bg-[linear-gradient(180deg,rgba(92,31,28,0.98),rgba(72,24,24,0.98))] shadow-[inset_0_1px_0_rgba(255,225,183,0.36),inset_0_-10px_16px_rgba(36,12,12,0.28)] [clip-path:inherit]',
   menuSurface:
-    'pointer-events-none absolute inset-x-4 bottom-[26px] top-[14px] z-[1] overflow-hidden rounded-3xl bg-[rgba(89,28,27,0.98)] bg-[linear-gradient(180deg,rgba(111,36,31,0.98),rgba(89,28,27,0.98))] shadow-[inset_0_1px_0_rgba(255,213,180,0.18),inset_0_-18px_24px_rgba(59,16,16,0.28)] [clip-path:polygon(5%_0,95%_0,100%_11%,100%_88%,95%_100%,5%_100%,0_88%,0_11%)] before:pointer-events-none before:absolute before:inset-0 before:bg-[linear-gradient(180deg,rgba(255,214,188,0.06),rgba(255,214,188,0)_24%),linear-gradient(135deg,rgba(255,184,150,0.045)_25%,transparent_25%),linear-gradient(225deg,rgba(255,184,150,0.045)_25%,transparent_25%),linear-gradient(315deg,rgba(0,0,0,0.04)_25%,transparent_25%),linear-gradient(45deg,rgba(0,0,0,0.04)_25%,transparent_25%)] before:bg-[length:auto,26px_26px,26px_26px,26px_26px,26px_26px] before:opacity-95',
+    'pointer-events-none absolute inset-x-4 bottom-[26px] top-[14px] z-[1] overflow-hidden rounded-3xl bg-[rgba(89,28,27,0.98)] bg-[linear-gradient(180deg,rgba(111,36,31,0.98),rgba(89,28,27,0.98))] shadow-[inset_0_1px_0_rgba(255,213,180,0.18),inset_0_-18px_24px_rgba(59,16,16,0.28)] [clip-path:polygon(5%_0,95%_0,100%_11%,100%_88%,95%_100%,5%_100%,0_88%,0_11%)]',
+  menuSurfacePattern:
+    'pointer-events-none absolute inset-0 bg-[linear-gradient(180deg,rgba(255,214,188,0.06),rgba(255,214,188,0)_24%),linear-gradient(135deg,rgba(255,184,150,0.045)_25%,transparent_25%),linear-gradient(225deg,rgba(255,184,150,0.045)_25%,transparent_25%),linear-gradient(315deg,rgba(0,0,0,0.04)_25%,transparent_25%),linear-gradient(45deg,rgba(0,0,0,0.04)_25%,transparent_25%)] bg-[length:auto,26px_26px,26px_26px,26px_26px,26px_26px] opacity-95',
   menuFlower:
     'pointer-events-none absolute z-[3] h-10 w-10 bg-[rgba(212,150,76,0.98)] bg-[linear-gradient(180deg,rgba(255,221,146,0.98),rgba(212,150,76,0.98))] [clip-path:polygon(50%_0,63%_21%,86%_8%,79%_32%,100%_50%,79%_68%,86%_92%,63%_79%,50%_100%,37%_79%,14%_92%,21%_68%,0_50%,21%_32%,14%_8%,37%_21%)] [filter:drop-shadow(0_5px_8px_rgba(61,19,16,0.22))]',
   menuFlowerLeft: '-left-2 -top-2.5 -rotate-[14deg]',
@@ -94,13 +101,13 @@ export function PublicHallHomePage() {
     error: leaderboardError,
   } = usePublicHallLeaderboardData(state, data, reloadKey);
   const { notifyRefreshResult } = useRefreshNotice();
-  const { data: currentPlayer } = useAsyncResource(async () => {
-    if (!session?.user.roles.isRegisteredPlayer || !operatorId) {
-      return null;
-    }
-
-    return playerApi.getCurrentPlayer(operatorId);
-  }, [operatorId, session?.user.roles.isRegisteredPlayer]);
+  const { data: currentPlayer } = usePublicHallCurrentPlayer(
+    session,
+    operatorId,
+  );
+  const canCreateTournament = !!session?.user.roles.isSuperAdmin;
+  const canCreateClub = !!session?.user.roles.isRegisteredPlayer;
+  const canManagePlayers = !!session?.user.roles.isSuperAdmin;
 
   const handleStateChange = (patch: Partial<PublicHallState>) => {
     setState((current) => ({ ...current, ...patch }));
@@ -181,6 +188,7 @@ export function PublicHallHomePage() {
       <PublicClubsSection
         payload={data.clubs}
         state={state}
+        canCreateClub={canCreateClub}
         onStateChange={handleStateChange}
         onRefresh={handleRefresh}
       />
@@ -196,6 +204,7 @@ export function PublicHallHomePage() {
           payload={leaderboardData.leaderboard}
           state={state}
           clubs={data.clubs.envelope.items}
+          canManagePlayers={canManagePlayers}
           onStateChange={handleStateChange}
           onRefresh={handleRefresh}
           onPlayerManaged={forceReload}
@@ -209,6 +218,7 @@ export function PublicHallHomePage() {
       <PublicSchedulesSection
         payload={data.schedules}
         state={state}
+        canCreateTournament={canCreateTournament}
         onStateChange={handleStateChange}
         onRefresh={handleRefresh}
       />
@@ -279,7 +289,10 @@ export function PublicHallHomePage() {
             <span
               className={lobbyClassNames.avatarIcon}
               aria-hidden="true"
-            />
+            >
+              <span className={lobbyClassNames.avatarIconHead} />
+              <span className={lobbyClassNames.avatarIconBody} />
+            </span>
           )}
         </Link>
       </section>
@@ -305,11 +318,15 @@ export function PublicHallHomePage() {
                 )}
                 onClick={() => handleStateChange({ activeView: entry.id })}
               >
-                <span className={lobbyClassNames.menuFrame} aria-hidden="true" />
+                <span className={lobbyClassNames.menuFrame} aria-hidden="true">
+                  <span className={lobbyClassNames.menuFrameInner} />
+                </span>
                 <span
                   className={lobbyClassNames.menuSurface}
                   aria-hidden="true"
-                />
+                >
+                  <span className={lobbyClassNames.menuSurfacePattern} />
+                </span>
                 <span
                   className={cx(
                     lobbyClassNames.menuFlower,

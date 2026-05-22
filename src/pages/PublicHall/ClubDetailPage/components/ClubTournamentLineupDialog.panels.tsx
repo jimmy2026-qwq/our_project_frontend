@@ -131,7 +131,7 @@ export function ClubTournamentLineupBody({
 
         <div className="grid gap-3 rounded-[22px] border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] p-4">
           <div className="flex items-center justify-between gap-3">
-            <strong>可参赛成员</strong>
+            <strong className="text-[#9ab0c1]">可参赛成员</strong>
             <StatusPill tone="info">
               已选：{selectedPlayerIds.length}
             </StatusPill>
@@ -145,7 +145,9 @@ export function ClubTournamentLineupBody({
                 >
                   <div className="flex items-start justify-between gap-3">
                     <span className="grid gap-1">
-                      <strong>{member.displayName}</strong>
+                      <strong className="text-[#9ab0c1]">
+                        {member.displayName}
+                      </strong>
                       <span className="text-sm text-[#9ab0c1]">
                         ELO {member.elo ?? 0} /{' '}
                         {getPlayerStatusLabel(member.playerStatus)}

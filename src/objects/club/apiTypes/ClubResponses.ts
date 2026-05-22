@@ -20,14 +20,18 @@ export interface Club {
 }
 
 export interface ClubPrivilegeDefinition {
-  key: string;
-  label?: string;
-  description?: string;
+  code: string;
+  label: string;
+  description: string;
+  delegatedPermissions: string[];
 }
 
 export interface ClubMemberPrivilegeSnapshot {
-  clubId: string;
   playerId: string;
+  contribution: number;
   rankCode: string;
+  rankLabel: string;
   privileges: string[];
+  isAdmin: boolean;
+  internalTitle?: string | null;
 }

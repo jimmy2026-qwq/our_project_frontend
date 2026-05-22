@@ -1,7 +1,13 @@
 ﻿import {
+  AcceptClubTournamentAPI,
+  AdjustClubMemberContributionAPI,
   AssignClubAdminAPI,
+  AssignClubTitleAPI,
+  ClearClubTitleAPI,
   CreateClubAPI,
+  DeclineClubTournamentAPI,
   GetClubAPI,
+  ListClubMemberPrivilegesAPI,
   ListClubApplicationsAPI,
   ListClubMembersAPI,
   ListClubsAPI,
@@ -10,10 +16,14 @@
   ReviewClubApplicationAPI,
 } from '@/api/club';
 import {
+  AuthCheckPermissionAPI,
+} from '@/api/auth';
+import {
   PlatformAdminBanPlayerAPI,
   PlatformAdminGrantSuperAdminAPI,
 } from '@/api/platformadmin';
-import { GetCurrentPlayerAPI, GetPlayerAPI } from '@/api/player';
+import { OpsAnalyticsListAggregateAuditsAPI } from '@/api/opsanalytics';
+import { GetCurrentPlayerAPI, GetPlayerAPI, ListPlayersAPI } from '@/api/player';
 import {
   GetPublicClubAPI,
   GetPublicTournamentAPI,
@@ -30,28 +40,40 @@ import {
   TournamentListAPI,
   TournamentPublishAPI,
   TournamentRegisterClubAPI,
+  TournamentRegisterPlayerAPI,
   TournamentStageDirectoryAPI,
+  TournamentStageConfigureRulesAPI,
+  TournamentStageCreateAPI,
   TournamentStageScheduleTablesAPI,
   TournamentStageSubmitLineupAPI,
   TournamentStageTablesAPI,
   TournamentTableGetAPI,
   TournamentTableStartAPI,
   TournamentTableUpdateOwnReadyAPI,
+  TournamentWhitelistListAPI,
 } from '@/api/tournament';
 import type {
+  AdjustClubMemberContributionRequest,
   AdjudicateAppealRequest,
   AppealListQuery,
   AppealTicketView,
   AssignClubAdminRequest,
+  AssignClubTitleRequest,
+  AuditEventEntry,
   BanPlayerRequest,
+  ClearClubTitleRequest,
   Club,
   ClubApplicationListQuery,
   ClubListQuery,
   ClubMemberListQuery,
+  ClubMemberPrivilegeListQuery,
+  ClubMemberPrivilegeSnapshot,
   ClubMembershipApplicationView,
   ClubTournamentParticipationView,
   ClubTournamentQuery,
+  ConfigureStageRulesRequest,
   CreateClubRequest,
+  CreateTournamentStageRequest,
   CreateTournamentRequest,
   GrantSuperAdminRequest,
   ListEnvelope,
@@ -69,6 +91,7 @@ import type {
   TournamentDetailView,
   TournamentListQuery,
   TournamentMutationView,
+  TournamentWhitelistEntryView,
   TournamentStageDirectoryEntry,
   TournamentSummaryView,
   TournamentTableView,
@@ -79,6 +102,7 @@ import type {
 } from '@/objects/platformadmin';
 import type { UpdateAppealWorkflowRequest } from '@/objects/tournament/appeal';
 import type { PlayerProfileView } from '@/objects/player';
+import type { PlayerListQuery } from '@/objects/player';
 import {
   mapClub,
   mapClubApplicationView,
@@ -101,6 +125,7 @@ import {
 } from '@/pages/PublicHall/objects';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
+import type { Permission } from '@/objects/auth';
 
 export interface CreatedTournamentView {
   id: string;
@@ -161,6 +186,18 @@ export const publicApi = {
   },
 };
 
+export const authApi = {
+  checkPermission(payload: {
+    operatorId: string;
+    permission: Permission;
+    clubId?: string;
+    tournamentId?: string;
+    subjectPlayerId?: string;
+  }) {
+    return sendAPI<boolean>(new AuthCheckPermissionAPI(payload));
+  },
+};
+
 export const clubsApi = {
   getClub(clubId: string) {
     return sendAPI<Club>(new GetClubAPI(clubId));
@@ -176,10 +213,40 @@ export const clubsApi = {
   assignClubAdmin(clubId: string, payload: AssignClubAdminRequest) {
     return sendAPI<Club>(new AssignClubAdminAPI(clubId, payload));
   },
+  assignClubTitle(clubId: string, payload: AssignClubTitleRequest) {
+    return sendAPI<Club>(new AssignClubTitleAPI(clubId, payload)).then(
+      mapClub,
+    );
+  },
+  clearClubTitle(
+    clubId: string,
+    playerId: string,
+    payload: ClearClubTitleRequest,
+  ) {
+    return sendAPI<Club>(
+      new ClearClubTitleAPI(clubId, playerId, payload),
+    ).then(mapClub);
+  },
   getClubMembers(clubId: string, filters: ClubMemberListQuery = {}) {
     return sendAPI(new ListClubMembersAPI(clubId, filters)).then((envelope) =>
       mapEnvelope(envelope, mapClubMember),
     );
+  },
+  getClubMemberPrivileges(
+    clubId: string,
+    filters: ClubMemberPrivilegeListQuery = {},
+  ) {
+    return sendAPI<ListEnvelope<ClubMemberPrivilegeSnapshot>>(
+      new ListClubMemberPrivilegesAPI(clubId, filters),
+    );
+  },
+  adjustClubMemberContribution(
+    clubId: string,
+    payload: AdjustClubMemberContributionRequest,
+  ) {
+    return sendAPI<Club>(
+      new AdjustClubMemberContributionAPI(clubId, payload),
+    ).then(mapClub);
   },
   removeClubMember(
     clubId: string,
@@ -208,6 +275,41 @@ export const clubsApi = {
     return sendAPI<ClubMembershipApplicationView>(
       new ReviewClubApplicationAPI(clubId, membershipId, payload),
     ).then(mapClubApplicationView);
+  },
+  acceptClubTournament(clubId: string, tournamentId: string, operatorId: string) {
+    return sendAPI<TournamentMutationView>(
+      new AcceptClubTournamentAPI(clubId, tournamentId, operatorId),
+    );
+  },
+  declineClubTournament(clubId: string, tournamentId: string, operatorId: string) {
+    return sendAPI<TournamentMutationView>(
+      new DeclineClubTournamentAPI(clubId, tournamentId, operatorId),
+    );
+  },
+};
+
+export const opsAnalyticsApi = {
+  getClubContributionAudits({
+    clubId,
+    operatorId,
+    limit = 100,
+    offset = 0,
+  }: {
+    clubId: string;
+    operatorId: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    return sendAPI<ListEnvelope<AuditEventEntry>>(
+      new OpsAnalyticsListAggregateAuditsAPI({
+        operatorId,
+        aggregateType: 'club',
+        aggregateId: clubId,
+        eventType: 'ClubMemberContributionAdjusted',
+        limit,
+        offset,
+      }),
+    );
   },
 };
 
@@ -242,6 +344,23 @@ export const tournamentApi = {
       new TournamentStageScheduleTablesAPI(tournamentId, stageId, operatorId),
     );
   },
+  createTournamentStage(
+    tournamentId: string,
+    payload: CreateTournamentStageRequest,
+  ) {
+    return sendAPI<TournamentSummaryView>(
+      new TournamentStageCreateAPI(tournamentId, payload),
+    );
+  },
+  configureTournamentStageRules(
+    tournamentId: string,
+    stageId: string,
+    payload: ConfigureStageRulesRequest,
+  ) {
+    return sendAPI<TournamentSummaryView>(
+      new TournamentStageConfigureRulesAPI(tournamentId, stageId, payload),
+    );
+  },
   registerTournamentClub(
     tournamentId: string,
     clubId: string,
@@ -249,6 +368,29 @@ export const tournamentApi = {
   ) {
     return sendAPI<TournamentMutationView>(
       new TournamentRegisterClubAPI(tournamentId, clubId, operatorId),
+    );
+  },
+  registerTournamentPlayer(
+    tournamentId: string,
+    playerId: string,
+    operatorId?: string,
+  ) {
+    return sendAPI<TournamentSummaryView>(
+      new TournamentRegisterPlayerAPI(tournamentId, playerId, operatorId),
+    );
+  },
+  getTournamentWhitelist(
+    tournamentId: string,
+    filters: {
+      participantKind?: string;
+      playerId?: string;
+      clubId?: string;
+      limit?: number;
+      offset?: number;
+    } = {},
+  ) {
+    return sendAPI<ListEnvelope<TournamentWhitelistEntryView>>(
+      new TournamentWhitelistListAPI(tournamentId, filters),
     );
   },
   submitStageLineup(
@@ -319,6 +461,11 @@ export const tournamentApi = {
 };
 
 export const playerApi = {
+  getPlayers(filters: PlayerListQuery = {}) {
+    return sendAPI(new ListPlayersAPI(filters)).then((envelope) =>
+      mapEnvelope(envelope, mapPlayerProfile),
+    );
+  },
   getCurrentPlayer(operatorId: string) {
     return sendAPI<PlayerProfileView>(new GetCurrentPlayerAPI(operatorId)).then(
       mapPlayerProfile,

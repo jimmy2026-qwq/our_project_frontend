@@ -32,6 +32,7 @@ export interface AuditEventEntry {
   occurredAt: string;
   actorId?: string | null;
   details: Record<string, string>;
+  note?: string | null;
 }
 
 export interface DomainEventDeliveryReceipt {

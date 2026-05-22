@@ -1,18 +1,20 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 import { Alert } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { ClubPublicProfile } from '@/pages/PublicHall/objects';
-import { useAuth } from '@/app/auth/useAuth';
+import type { AuthSession } from '@/providers/auth/AuthSession';
 
 import { ClubApplicationDialog } from './ClubApplicationDialog';
+import { ClubContributionDialog } from './ClubContributionDialog';
+import { ClubTitleDialog } from './ClubTitleDialog';
 import { ClubTournamentLineupDialog } from './ClubTournamentLineupDialog';
 import type { DetailState } from '@/pages/PublicHall/objects/types';
 import { useClubDetailWorkbench } from '../hooks/club-detail.hooks';
 import {
-  ClubAdminMembersPanel,
+  ClubContributionChangesPanel,
+  ClubMembersPanel,
   ClubHeroActions,
   ClubInboxPanel,
   ClubPublicInfoPanel,
@@ -20,7 +22,12 @@ import {
 } from './club-detail.panels';
 import { PublicDetailNotFound } from '@/pages/PublicHall/components/shared';
 
-type ClubDetailTab = 'home' | 'tournaments' | 'applications' | 'members';
+type ClubDetailTab =
+  | 'home'
+  | 'tournaments'
+  | 'applications'
+  | 'members'
+  | 'contributionChanges';
 
 const clubDetailShellClassNames = {
   shell: 'relative grid gap-[18px] text-[#f2f7fb]',
@@ -48,23 +55,33 @@ const clubDetailShellClassNames = {
 
 export const PublicClubDetailSection = ({
   state,
+  session,
+  onNavigateBack,
   onRefreshDetail,
 }: {
   state: DetailState<ClubPublicProfile>;
+  session: AuthSession | null;
+  onNavigateBack: () => void;
   onRefreshDetail?: () => void;
 }) => {
-  const navigate = useNavigate();
-  const { session } = useAuth();
   const {
     workbench,
     setIsApplicationDialogOpen,
     setIsLineupDialogOpen,
     setSelectedLineupTournament,
+    setIsContributionDialogOpen,
+    setSelectedContributionMember,
+    setIsTitleDialogOpen,
+    setSelectedTitleMember,
     setIsCurrentMember,
     handleApplicationStatusChange,
     handleReview,
+    handleAcceptTournamentInvitation,
+    handleDeclineTournamentInvitation,
     handleAssignAdmin,
     handleRemoveMember,
+    handleAdjustContribution,
+    handleUpdateTitle,
   } = useClubDetailWorkbench({
     state,
     session,
@@ -88,11 +105,14 @@ export const PublicClubDetailSection = ({
   const tabItems: Array<{ id: ClubDetailTab; label: string }> = [
     { id: 'home', label: '俱乐部主页' },
     { id: 'tournaments', label: '相关赛事' },
-    ...(workbench.isCurrentClubAdmin
+    ...(workbench.canReviewApplications
       ? [
           { id: 'applications' as const, label: '申请处理' },
-          { id: 'members' as const, label: '成员管理' },
         ]
+      : []),
+    { id: 'members', label: '成员列表' },
+    ...(workbench.canViewContributionChanges
+      ? [{ id: 'contributionChanges' as const, label: '贡献变化' }]
       : []),
   ];
 
@@ -103,7 +123,7 @@ export const PublicClubDetailSection = ({
           <button
             type="button"
             className={clubDetailShellClassNames.back}
-            onClick={() => navigate('/public')}
+            onClick={onNavigateBack}
           >
             返回公共大厅
           </button>
@@ -154,6 +174,12 @@ export const PublicClubDetailSection = ({
                 <ClubRecentTournamentsPanel
                   tournaments={workbench.profile.activeTournaments}
                   canManageLineup={workbench.canManageLineup}
+                  onAcceptInvitation={(tournament) =>
+                    void handleAcceptTournamentInvitation(tournament)
+                  }
+                  onDeclineInvitation={(tournament) =>
+                    void handleDeclineTournamentInvitation(tournament)
+                  }
                   onOpenLineup={(tournament) => {
                     setSelectedLineupTournament(tournament);
                     setIsLineupDialogOpen(true);
@@ -164,7 +190,7 @@ export const PublicClubDetailSection = ({
 
             {activeTab === 'applications' ? (
               <div className={cx(clubDetailShellClassNames.panel, clubDetailShellClassNames.panelFull)}>
-                {workbench.isCurrentClubAdmin ? (
+                {workbench.canReviewApplications ? (
                   <ClubInboxPanel
                     isInboxLoading={workbench.isInboxLoading}
                     applicationInbox={workbench.applicationInbox}
@@ -182,18 +208,34 @@ export const PublicClubDetailSection = ({
 
             {activeTab === 'members' ? (
               <div className={cx(clubDetailShellClassNames.panel, clubDetailShellClassNames.panelFull)}>
-                {workbench.isCurrentClubAdmin ? (
-                  <ClubAdminMembersPanel
-                    isLoading={workbench.isClubMembersLoading}
-                    members={workbench.clubMembers}
-                    onAssignAdmin={(member) => void handleAssignAdmin(member)}
-                    onRemoveMember={(member) => void handleRemoveMember(member)}
-                  />
-                ) : (
-                  <EmptyState asListItem={false}>
-                    你当前没有管理这家俱乐部成员的权限。
-                  </EmptyState>
-                )}
+                <ClubMembersPanel
+                  isLoading={workbench.isClubMembersLoading}
+                  members={workbench.clubMembers}
+                  canAssignAdmins={workbench.canAssignAdmins}
+                  canAdjustContributions={workbench.canAdjustContributions}
+                  canEditTitles={workbench.canEditTitles}
+                  canRemoveMembers={workbench.canRemoveMembers}
+                  onAssignAdmin={(member) => void handleAssignAdmin(member)}
+                  onAdjustContribution={(member) => {
+                    setSelectedContributionMember(member);
+                    setIsContributionDialogOpen(true);
+                  }}
+                  onEditTitle={(member) => {
+                    setSelectedTitleMember(member);
+                    setIsTitleDialogOpen(true);
+                  }}
+                  onRemoveMember={(member) => void handleRemoveMember(member)}
+                />
+              </div>
+            ) : null}
+
+            {activeTab === 'contributionChanges' ? (
+              <div className={cx(clubDetailShellClassNames.panel, clubDetailShellClassNames.panelFull)}>
+                <ClubContributionChangesPanel
+                  isLoading={workbench.isContributionChangesLoading}
+                  changes={workbench.contributionChanges}
+                  members={workbench.clubMembers}
+                />
               </div>
             ) : null}
 
@@ -230,6 +272,36 @@ export const PublicClubDetailSection = ({
               setSelectedLineupTournament(null);
             }
           }}
+        />
+      ) : null}
+
+      {workbench.canAdjustContributions ? (
+        <ClubContributionDialog
+          open={workbench.isContributionDialogOpen}
+          member={workbench.selectedContributionMember}
+          isSubmitting={workbench.isContributionSubmitting}
+          onOpenChange={(nextOpen) => {
+            setIsContributionDialogOpen(nextOpen);
+            if (!nextOpen) {
+              setSelectedContributionMember(null);
+            }
+          }}
+          onSubmit={handleAdjustContribution}
+        />
+      ) : null}
+
+      {workbench.canEditTitles ? (
+        <ClubTitleDialog
+          open={workbench.isTitleDialogOpen}
+          member={workbench.selectedTitleMember}
+          isSubmitting={workbench.isTitleSubmitting}
+          onOpenChange={(nextOpen) => {
+            setIsTitleDialogOpen(nextOpen);
+            if (!nextOpen) {
+              setSelectedTitleMember(null);
+            }
+          }}
+          onSubmit={handleUpdateTitle}
         />
       ) : null}
     </>

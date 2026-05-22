@@ -1,4 +1,5 @@
 import type { PlayerProfile } from '@/pages/objects/player';
+import { mapPlayerClubIds } from '@/pages/objects/player';
 import type { ClubSummary } from './ClubSummary';
 import type { ClubApplicationView } from './ClubApplicationViews';
 
@@ -28,8 +29,9 @@ export function mapClubMember(item: PlayerProfileView): PlayerProfile {
     applicantUserId: item.userId,
     displayName: item.nickname,
     playerStatus: item.status,
+    currentRank: item.currentRank,
     elo: item.elo,
-    clubIds: item.affiliatedClubIds,
+    clubIds: mapPlayerClubIds(item),
   };
 }
 

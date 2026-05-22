@@ -2,6 +2,8 @@ import type {
   TournamentPublicProfile,
 } from '@/pages/PublicHall/objects';
 import type { ClubSummary } from '@/pages/objects/club';
+import type { PlayerProfile } from '@/pages/objects/player';
+import type { TournamentStageRuleDraft } from './tournament-detail.rules';
 
 export interface TournamentDetailTableItem {
   id: string;
@@ -18,6 +20,8 @@ export interface TournamentDetailWorkbenchState {
   isSubmittingTournamentAction: boolean;
   tournamentActionError: string;
   publishBlockedOpen: boolean;
+  rulesDialogOpen: boolean;
+  ruleDraft: TournamentStageRuleDraft;
   playerNames: Record<string, string>;
   showMoreInfo: boolean;
   canManageTournament: boolean;
@@ -29,5 +33,8 @@ export interface TournamentDetailWorkbenchState {
   lineupSubmissionCounts: Record<string, number>;
   invitedClubs: ClubSummary[];
   selectableClubs: ClubSummary[];
+  participantPlayers: PlayerProfile[];
+  selectablePlayers: PlayerProfile[];
+  selectedPlayerId: string;
   visibleTables: TournamentDetailTableItem[];
 }

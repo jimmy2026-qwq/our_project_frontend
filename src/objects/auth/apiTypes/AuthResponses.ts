@@ -5,6 +5,31 @@ export type Role =
   | 'TournamentAdmin'
   | 'SuperAdmin';
 
+export type Permission =
+  | 'ViewPublicSchedule'
+  | 'ViewClubDirectory'
+  | 'ViewPublicLeaderboard'
+  | 'ViewOwnDashboard'
+  | 'ViewClubDashboard'
+  | 'SubmitClubApplication'
+  | 'WithdrawClubApplication'
+  | 'ManageClubMembership'
+  | 'ManageClubOperations'
+  | 'SetClubTitle'
+  | 'AssignClubAdmin'
+  | 'SubmitTournamentLineup'
+  | 'ManageTournamentStages'
+  | 'ConfigureTournamentRules'
+  | 'ResetTableState'
+  | 'ManageTableSeatState'
+  | 'FileAppealTicket'
+  | 'ResolveAppeal'
+  | 'ManageGlobalDictionary'
+  | 'BanRegisteredPlayer'
+  | 'DissolveClub'
+  | 'AssignTournamentAdmin'
+  | 'ViewAuditTrail';
+
 export type SessionPrincipalKind = 'Anonymous' | 'Guest' | 'RegisteredPlayer';
 
 export interface CurrentSessionRoleFlags {

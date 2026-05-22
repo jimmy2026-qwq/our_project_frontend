@@ -24,6 +24,8 @@ export interface SubmitStageLineupRequest {
 
 export interface ConfigureStageRulesRequest {
   operatorId: string;
+  format?: TournamentFormat;
+  roundCount?: number;
   advancementRuleType?: string;
   cutSize?: number;
   thresholdScore?: number;

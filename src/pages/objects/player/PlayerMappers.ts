@@ -9,6 +9,15 @@ export interface CreatedPlayerView {
   elo: number;
 }
 
+export function mapPlayerClubIds(item: PlayerProfileView): string[] {
+  return Array.from(
+    new Set([
+      ...(item.clubId ? [item.clubId] : []),
+      ...(item.affiliatedClubIds ?? []),
+    ]),
+  );
+}
+
 export function mapPlayerProfile(item: PlayerProfileView): PlayerProfile {
   return {
     playerId: item.playerId,
@@ -17,7 +26,7 @@ export function mapPlayerProfile(item: PlayerProfileView): PlayerProfile {
     playerStatus: item.status,
     currentRank: item.currentRank,
     elo: item.elo,
-    clubIds: item.affiliatedClubIds,
+    clubIds: mapPlayerClubIds(item),
   };
 }
 

@@ -61,7 +61,9 @@ async function loadClubTournaments(
           item.clubParticipationStatus === 'Participating'
             ? ('recent' as const)
             : ('invited' as const),
+        participationStatus: item.clubParticipationStatus,
         canSubmitLineup: item.canSubmitLineup,
+        canDecline: item.canDecline,
       }));
   } catch {
     return [];

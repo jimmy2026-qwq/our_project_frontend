@@ -19,8 +19,11 @@ const publicShellClassNames = {
     'rounded-[28px] border border-[rgba(255,255,255,0.08)] bg-[rgba(14,31,46,0.78)] px-6 py-7 shadow-[0_18px_48px_rgba(0,0,0,0.22)]',
   backLink:
     'inline-flex w-fit text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',
-  detailFrame:
-    'relative isolate before:pointer-events-none before:fixed before:inset-0 before:-z-20 before:bg-[url("/tournament_background.png")] before:bg-cover before:bg-center before:bg-no-repeat after:pointer-events-none after:fixed after:inset-0 after:-z-10 after:bg-[linear-gradient(180deg,rgba(8,10,18,0.14),rgba(8,10,18,0.04)_18%,rgba(8,10,18,0.18))]',
+  detailFrame: 'relative isolate',
+  detailFrameBackground:
+    'pointer-events-none fixed inset-0 -z-20 bg-[url("/tournament_background.png")] bg-cover bg-center bg-no-repeat',
+  detailFrameOverlay:
+    'pointer-events-none fixed inset-0 -z-10 bg-[linear-gradient(180deg,rgba(8,10,18,0.14),rgba(8,10,18,0.04)_18%,rgba(8,10,18,0.18))]',
 };
 
 interface PublicHallLoadingProps {
@@ -98,7 +101,19 @@ export const PublicDetailPageFrame = ({
 }: {
   children: ReactNode;
 }) => {
-  return <div className={publicShellClassNames.detailFrame}>{children}</div>;
+  return (
+    <div className={publicShellClassNames.detailFrame}>
+      <span
+        className={publicShellClassNames.detailFrameBackground}
+        aria-hidden="true"
+      />
+      <span
+        className={publicShellClassNames.detailFrameOverlay}
+        aria-hidden="true"
+      />
+      {children}
+    </div>
+  );
 };
 
 export const PublicDetailNotFound = ({ title }: { title: string }) => {

@@ -11,7 +11,6 @@ import {
   SelectField,
   StatusPill,
 } from '@/components/ui';
-import { useAuth } from '@/app/auth/useAuth';
 import type {
   PlayerLeaderboardEntry,
   PublicSchedule,
@@ -81,17 +80,17 @@ const publicHallSectionSlots = {
 export const PublicSchedulesSection = ({
   payload,
   state,
+  canCreateTournament,
   onStateChange,
   onRefresh,
 }: {
   payload: LoadState<PublicSchedule>;
   state: PublicHallState;
+  canCreateTournament: boolean;
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
 }) => {
-  const { session } = useAuth();
   const [isCreateTournamentOpen, setIsCreateTournamentOpen] = useState(false);
-  const canCreateTournament = !!session?.user.roles.isSuperAdmin;
 
   return (
     <>
@@ -207,17 +206,17 @@ export const PublicSchedulesSection = ({
 export const PublicClubsSection = ({
   payload,
   state,
+  canCreateClub,
   onStateChange,
   onRefresh,
 }: {
   payload: LoadState<ClubSummary>;
   state: PublicHallState;
+  canCreateClub: boolean;
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
 }) => {
-  const { session } = useAuth();
   const [isCreateClubOpen, setIsCreateClubOpen] = useState(false);
-  const canCreateClub = !!session?.user.roles.isRegisteredPlayer;
 
   return (
     <>
@@ -300,6 +299,7 @@ export const PublicLeaderboardSection = ({
   payload,
   state,
   clubs,
+  canManagePlayers,
   onStateChange,
   onRefresh,
   onPlayerManaged,
@@ -307,14 +307,13 @@ export const PublicLeaderboardSection = ({
   payload: LoadState<PlayerLeaderboardEntry>;
   state: PublicHallState;
   clubs: ClubSummary[];
+  canManagePlayers: boolean;
   onStateChange: (patch: Partial<PublicHallState>) => void;
   onRefresh: () => void;
   onPlayerManaged?: () => void;
 }) => {
-  const { session } = useAuth();
   const [managedPlayer, setManagedPlayer] =
     useState<PlayerLeaderboardEntry | null>(null);
-  const canManagePlayers = !!session?.user.roles.isSuperAdmin;
 
   return (
     <>

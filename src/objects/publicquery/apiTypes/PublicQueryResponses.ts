@@ -1,4 +1,10 @@
-import type { StageStatus, TournamentStatus } from '@/objects/tournament';
+import type {
+  AdvancementRuleView,
+  KnockoutRuleConfigView,
+  StageStatus,
+  SwissRuleConfigView,
+  TournamentStatus,
+} from '@/objects/tournament';
 
 export interface PublicScheduleView {
   tournamentId: string;
@@ -26,11 +32,15 @@ export interface PublicTournamentStageView {
   status: 'Pending' | 'Ready' | 'Active' | 'Completed';
   currentRound?: number;
   roundCount: number;
+  schedulingPoolSize?: number;
   tableCount: number;
   archivedTableCount?: number;
   pendingTablePlanCount: number;
   standings?: unknown | null;
   bracket?: unknown | null;
+  advancementRule?: AdvancementRuleView;
+  swissRule?: SwissRuleConfigView | null;
+  knockoutRule?: KnockoutRuleConfigView | null;
 }
 
 export interface PublicTournamentDetailView {

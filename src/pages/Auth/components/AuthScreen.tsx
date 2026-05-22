@@ -5,9 +5,11 @@ import { cx } from '@/components/ui/cx';
 
 const inputClassName = [
   'flex min-h-11 w-full min-w-0 rounded-[14px] border border-[rgba(176,223,229,0.14)]',
-  'bg-[rgba(5,14,23,0.88)] px-3.5 py-[11px] text-[#f2f7fb]',
+  'bg-[rgba(5,14,23,0.88)] px-3.5 py-[11px] text-[#f2f7fb] [color-scheme:dark]',
   'shadow-xs outline-none transition-[transform,border-color,background-color,box-shadow,color,opacity] duration-200',
   'placeholder:text-[#9ab0c1] disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-55',
+  '[&:-webkit-autofill]:[-webkit-text-fill-color:#f2f7fb] [&:-webkit-autofill]:shadow-[inset_0_0_0_1000px_rgba(5,14,23,0.88)]',
+  '[&:-webkit-autofill:focus]:[-webkit-text-fill-color:#f2f7fb] [&:-webkit-autofill:focus]:shadow-[inset_0_0_0_1000px_rgba(5,14,23,0.88),0_0_0_3px_rgba(114,216,209,0.12)]',
   'focus-visible:border-[rgba(114,216,209,0.36)] focus-visible:shadow-[0_0_0_3px_rgba(114,216,209,0.12)]',
   'focus-visible:outline-none hover:enabled:-translate-y-px',
 ].join(' ');
@@ -97,7 +99,7 @@ export function AuthScreen({
   extraActions,
 }: AuthScreenProps) {
   return (
-    <main className={'relative z-10 min-h-screen overflow-hidden bg-[#0b1620] px-6 py-10 [font-family:"JetBrains_Sans","Segoe_UI",sans-serif] text-[#f2f7fb] [&_button]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif] [&_input]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif]'}>
+    <main className={'relative z-10 min-h-screen overflow-hidden bg-[#0b1620] px-6 py-10 [color-scheme:dark] [font-family:"JetBrains_Sans","Segoe_UI",sans-serif] text-[#f2f7fb] [&_button]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif] [&_input]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif]'}>
       <section className="mx-auto grid min-h-[calc(100vh-5rem)] max-w-6xl items-center gap-8 lg:grid-cols-[1.05fr_0.95fr]">
         <div className="grid gap-5">
           <p className="inline-flex w-fit rounded-full border border-[rgba(236,197,122,0.22)] bg-[rgba(255,255,255,0.04)] px-4 py-2 text-sm text-[#ecc57a]">

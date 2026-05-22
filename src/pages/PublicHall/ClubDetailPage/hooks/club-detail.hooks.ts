@@ -1,10 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { clubsApi } from '@/pages/PublicHall/objects/data.transport';
+import {
+  authApi,
+  clubsApi,
+  opsAnalyticsApi,
+} from '@/pages/PublicHall/objects/data.transport';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type { ClubApplication, ClubApplicationView } from '@/pages/objects/club';
 import type { PlayerProfile } from '@/pages/objects/player';
 import type { ClubPublicProfile } from '@/pages/PublicHall/objects';
+import type { Permission } from '@/objects/auth';
 import {
   loadPlayerContext,
   loadTrackedApplication,
@@ -22,78 +27,15 @@ import type {
   ClubAdminMemberEntry,
   ClubDetailWorkbenchState,
 } from '../objects/club-detail.types';
+import {
+  loadClubMemberAdminEntries,
+  resolveClubAdminAccess,
+} from '../objects/club-detail.workbench';
 
 interface UseClubDetailWorkbenchParams {
   state: DetailState<ClubPublicProfile>;
   session: AuthSession | null;
   onRefreshDetail?: () => void;
-}
-
-async function resolveClubAdminAccess(clubId: string, playerId: string) {
-  try {
-    const club = await clubsApi.getClub(clubId);
-
-    if (club.admins?.includes(playerId)) {
-      return true;
-    }
-  } catch {
-    // Fall through to local override.
-  }
-
-  if (hasClubAdminOverride(clubId, playerId)) {
-    return true;
-  }
-
-  return false;
-}
-
-async function loadClubMemberAdminEntries(
-  clubId: string,
-  currentOperatorId: string,
-  currentPlayer: PlayerProfile | null,
-): Promise<ClubAdminMemberEntry[]> {
-  const [club, membersEnvelope] = await Promise.all([
-    clubsApi.getClub(clubId).catch(() => null),
-    clubsApi.getClubMembers(clubId, { limit: 100, offset: 0 }),
-  ]);
-  const members = [...membersEnvelope.items];
-  const adminIds = new Set(club?.admins ?? []);
-
-  if (
-    currentPlayer &&
-    !members.some(
-      (member) =>
-        member.playerId === currentPlayer.playerId ||
-        (!!member.applicantUserId &&
-          member.applicantUserId === currentPlayer.applicantUserId),
-    )
-  ) {
-    members.unshift(currentPlayer);
-  }
-
-  return members
-    .map((member) => ({
-      ...member,
-      isAdmin:
-        adminIds.has(member.playerId) ||
-        hasClubAdminOverride(clubId, member.playerId),
-      isCurrentUser:
-        (!!currentPlayer && member.playerId === currentPlayer.playerId) ||
-        (!currentPlayer &&
-          !!member.applicantUserId &&
-          member.applicantUserId === currentOperatorId),
-    }))
-    .sort((left, right) => {
-      if (left.isCurrentUser !== right.isCurrentUser) {
-        return left.isCurrentUser ? -1 : 1;
-      }
-
-      if (left.isAdmin !== right.isAdmin) {
-        return left.isAdmin ? -1 : 1;
-      }
-
-      return left.displayName.localeCompare(right.displayName);
-    });
 }
 
 export function useClubDetailWorkbench({
@@ -108,6 +50,16 @@ export function useClubDetailWorkbench({
   const [selectedLineupTournament, setSelectedLineupTournament] = useState<
     ClubPublicProfile['activeTournaments'][number] | null
   >(null);
+  const [isContributionDialogOpen, setIsContributionDialogOpen] =
+    useState(false);
+  const [selectedContributionMember, setSelectedContributionMember] =
+    useState<ClubAdminMemberEntry | null>(null);
+  const [isContributionSubmitting, setIsContributionSubmitting] =
+    useState(false);
+  const [isTitleDialogOpen, setIsTitleDialogOpen] = useState(false);
+  const [selectedTitleMember, setSelectedTitleMember] =
+    useState<ClubAdminMemberEntry | null>(null);
+  const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
   const [isCurrentMember, setIsCurrentMember] = useState(false);
   const [isCurrentClubAdmin, setIsCurrentClubAdmin] = useState(false);
   const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);
@@ -120,6 +72,21 @@ export function useClubDetailWorkbench({
     ClubApplicationView[]
   >([]);
   const [isInboxLoading, setIsInboxLoading] = useState(false);
+  const [contributionChanges, setContributionChanges] = useState<
+    ClubDetailWorkbenchState['contributionChanges']
+  >([]);
+  const [isContributionChangesLoading, setIsContributionChangesLoading] =
+    useState(false);
+  const [contributionChangesRefreshKey, setContributionChangesRefreshKey] =
+    useState(0);
+  const [canViewContributionChanges, setCanViewContributionChanges] =
+    useState(false);
+  const [baseClubPermissions, setBaseClubPermissions] = useState({
+    canAssignAdmins: false,
+    canAdjustContributions: false,
+    canEditTitles: false,
+    canManageMembership: false,
+  });
   const [clubMembers, setClubMembers] = useState<ClubAdminMemberEntry[]>([]);
   const [isClubMembersLoading, setIsClubMembersLoading] = useState(false);
 
@@ -133,7 +100,17 @@ export function useClubDetailWorkbench({
         name.trim().toLowerCase() ===
         session.user.displayName.trim().toLowerCase(),
     );
-
+  const currentMemberEntry = clubMembers.find((member) => member.isCurrentUser);
+  const currentMemberPrivileges = currentMemberEntry?.privileges ?? [];
+  const hasApproveRosterPrivilege =
+    currentMemberPrivileges.includes('approve-roster');
+  const canReviewApplications =
+    baseClubPermissions.canManageMembership || hasApproveRosterPrivilege;
+  const canRemoveMembers = canReviewApplications;
+  const canAssignAdmins = baseClubPermissions.canAssignAdmins;
+  const canAdjustContributions =
+    baseClubPermissions.canAdjustContributions;
+  const canEditTitles = baseClubPermissions.canEditTitles;
   useEffect(() => {
     if (!session?.user.roles.isRegisteredPlayer || !profile) {
       setIsCurrentMember(false);
@@ -203,10 +180,145 @@ export function useClubDetailWorkbench({
   }, [isApplicationDialogOpen, profile, session]);
 
   useEffect(() => {
+    if (!profile) {
+      setClubMemberNames([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    void clubsApi
+      .getClubMembers(profile.id, { limit: 100, offset: 0 })
+      .then((envelope) => {
+        if (!cancelled) {
+          setClubMemberNames(
+            envelope.items
+              .map((item) => item.displayName)
+              .filter((name) => name.trim().length > 0),
+          );
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setClubMemberNames([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile]);
+
+  useEffect(() => {
+    if (!profile) {
+      setClubMembers([]);
+      setIsClubMembersLoading(false);
+      return;
+    }
+
+    let cancelled = false;
+    const currentOperatorId =
+      session?.user.operatorId ?? session?.user.userId ?? '';
+    setIsClubMembersLoading(true);
+
+    void loadClubMemberAdminEntries(
+      profile.id,
+      currentOperatorId,
+      currentPlayerProfile,
+    )
+      .then((entries) => {
+        if (!cancelled) {
+          setClubMembers(entries);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setClubMembers([]);
+        }
+      })
+      .finally(() => {
+        if (!cancelled) {
+          setIsClubMembersLoading(false);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [currentPlayerProfile, profile, session]);
+
+  useEffect(() => {
+    if (!profile || !session) {
+      setBaseClubPermissions({
+        canAssignAdmins: false,
+        canAdjustContributions: false,
+        canEditTitles: false,
+        canManageMembership: false,
+      });
+      return;
+    }
+
+    const operatorId = session.user.operatorId ?? session.user.userId;
+
+    if (!operatorId) {
+      setBaseClubPermissions({
+        canAssignAdmins: false,
+        canAdjustContributions: false,
+        canEditTitles: false,
+        canManageMembership: false,
+      });
+      return;
+    }
+
+    let cancelled = false;
+    setBaseClubPermissions({
+      canAssignAdmins: false,
+      canAdjustContributions: false,
+      canEditTitles: false,
+      canManageMembership: false,
+    });
+    const check = (permission: Permission) =>
+      authApi
+        .checkPermission({
+          operatorId,
+          permission,
+          clubId: profile.id,
+        })
+        .catch(() => false);
+
+    void Promise.all([
+      check('AssignClubAdmin'),
+      check('ManageClubOperations'),
+      check('SetClubTitle'),
+      check('ManageClubMembership'),
+    ]).then(
+      ([
+        canAssignAdmins,
+        canAdjustContributions,
+        canEditTitles,
+        canManageMembership,
+      ]) => {
+        if (!cancelled) {
+          setBaseClubPermissions({
+            canAssignAdmins,
+            canAdjustContributions,
+            canEditTitles,
+            canManageMembership,
+          });
+        }
+      },
+    );
+
+    return () => {
+      cancelled = true;
+    };
+  }, [profile, session]);
+
+  useEffect(() => {
     if (
       !session?.user.roles.isRegisteredPlayer ||
       !profile ||
-      !isCurrentClubAdmin
+      !canReviewApplications
     ) {
       setApplicationInbox([]);
       setIsInboxLoading(false);
@@ -243,78 +355,91 @@ export function useClubDetailWorkbench({
     return () => {
       cancelled = true;
     };
-  }, [isCurrentClubAdmin, profile, session]);
+  }, [canReviewApplications, profile, session]);
 
   useEffect(() => {
-    if (!profile) {
-      setClubMemberNames([]);
+    if (!profile || !session) {
+      setCanViewContributionChanges(false);
+      return;
+    }
+
+    const operatorId = session.user.operatorId ?? session.user.userId;
+
+    if (!operatorId) {
+      setCanViewContributionChanges(false);
       return;
     }
 
     let cancelled = false;
+    setCanViewContributionChanges(false);
 
-    void clubsApi
-      .getClubMembers(profile.id, { limit: 100, offset: 0 })
-      .then((envelope) => {
+    void authApi
+      .checkPermission({
+        operatorId,
+        permission: 'ViewAuditTrail',
+        clubId: profile.id,
+      })
+      .then((canView) => {
         if (!cancelled) {
-          setClubMemberNames(
-            envelope.items
-              .map((item) => item.displayName)
-              .filter((name) => name.trim().length > 0),
-          );
+          setCanViewContributionChanges(canView);
         }
       })
       .catch(() => {
         if (!cancelled) {
-          setClubMemberNames([]);
+          setCanViewContributionChanges(false);
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [profile]);
+  }, [profile, session]);
 
   useEffect(() => {
-    if (
-      !session?.user.roles.isRegisteredPlayer ||
-      !profile ||
-      !isCurrentClubAdmin
-    ) {
-      setClubMembers([]);
-      setIsClubMembersLoading(false);
+    if (!profile || !canViewContributionChanges) {
+      setContributionChanges([]);
+      setIsContributionChangesLoading(false);
+      return;
+    }
+
+    const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
+
+    if (!operatorId) {
+      setContributionChanges([]);
+      setIsContributionChangesLoading(false);
       return;
     }
 
     let cancelled = false;
-    const currentOperatorId = session.user.operatorId ?? session.user.userId;
-    setIsClubMembersLoading(true);
+    setIsContributionChangesLoading(true);
 
-    void loadClubMemberAdminEntries(
-      profile.id,
-      currentOperatorId,
-      currentPlayerProfile,
-    )
-      .then((entries) => {
+    void opsAnalyticsApi
+      .getClubContributionAudits({
+        clubId: profile.id,
+        operatorId,
+        limit: 100,
+        offset: 0,
+      })
+      .then((envelope) => {
         if (!cancelled) {
-          setClubMembers(entries);
+          setContributionChanges(envelope.items);
         }
       })
       .catch(() => {
         if (!cancelled) {
-          setClubMembers([]);
+          setContributionChanges([]);
         }
       })
       .finally(() => {
         if (!cancelled) {
-          setIsClubMembersLoading(false);
+          setIsContributionChangesLoading(false);
         }
       });
 
     return () => {
       cancelled = true;
     };
-  }, [currentPlayerProfile, isCurrentClubAdmin, profile, session]);
+  }, [canViewContributionChanges, contributionChangesRefreshKey, profile, session]);
 
   const workbench = useMemo<ClubDetailWorkbenchState | null>(() => {
     if (!profile) {
@@ -345,12 +470,26 @@ export function useClubDetailWorkbench({
       isApplicationDialogOpen,
       isLineupDialogOpen,
       selectedLineupTournament,
+      isContributionDialogOpen,
+      selectedContributionMember,
+      isContributionSubmitting,
+      isTitleDialogOpen,
+      selectedTitleMember,
+      isTitleSubmitting,
       isCurrentMember,
       isCurrentClubAdmin,
       clubMemberNames,
       currentApplicationStatus,
       applicationInbox,
       isInboxLoading,
+      contributionChanges,
+      isContributionChangesLoading,
+      canViewContributionChanges,
+      canReviewApplications,
+      canAssignAdmins,
+      canAdjustContributions,
+      canEditTitles,
+      canRemoveMembers,
       clubMembers,
       isClubMembersLoading,
       isFeaturedMember,
@@ -362,18 +501,32 @@ export function useClubDetailWorkbench({
     };
   }, [
     applicationInbox,
+    canAdjustContributions,
+    canAssignAdmins,
+    canEditTitles,
+    canRemoveMembers,
+    canReviewApplications,
+    canViewContributionChanges,
     clubMemberNames,
     clubMembers,
+    contributionChanges,
     currentApplicationStatus,
     isApplicationDialogOpen,
+    isContributionDialogOpen,
+    isContributionChangesLoading,
+    isContributionSubmitting,
     isCurrentClubAdmin,
     isCurrentMember,
     isFeaturedMember,
     isInboxLoading,
     isClubMembersLoading,
     isLineupDialogOpen,
+    isTitleDialogOpen,
+    isTitleSubmitting,
     profile,
+    selectedContributionMember,
     selectedLineupTournament,
+    selectedTitleMember,
     session,
   ]);
 
@@ -381,7 +534,7 @@ export function useClubDetailWorkbench({
     applicationId: string,
     decision: 'approve' | 'reject',
   ) {
-    if (!workbench?.profile.id || !workbench.operatorId) {
+    if (!workbench?.profile.id || !workbench.operatorId || !canReviewApplications) {
       return;
     }
 
@@ -449,19 +602,78 @@ export function useClubDetailWorkbench({
     }
   }
 
+  async function handleAcceptTournamentInvitation(
+    tournament: ClubPublicProfile['activeTournaments'][number],
+  ) {
+    if (!workbench?.profile.id || !workbench.operatorId) {
+      return;
+    }
+
+    await clubsApi.acceptClubTournament(
+      workbench.profile.id,
+      tournament.id,
+      workbench.operatorId,
+    );
+
+    notifyMutationResult(
+      { source: 'api' as const },
+      {
+        successTitle: '已通过赛事邀请',
+        successMessage: `${workbench.profile.name} 已加入 ${tournament.name}。`,
+        fallbackTitle: '赛事邀请处理需要关注',
+        fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
+      },
+    );
+
+    onRefreshDetail?.();
+  }
+
+  async function handleDeclineTournamentInvitation(
+    tournament: ClubPublicProfile['activeTournaments'][number],
+  ) {
+    if (!workbench?.profile.id || !workbench.operatorId) {
+      return;
+    }
+
+    const confirmed = await confirmDanger({
+      title: '拒绝赛事邀请？',
+      message: `这会拒绝 ${tournament.name} 对 ${workbench.profile.name} 的参赛邀请。`,
+      confirmText: '确认拒绝',
+    });
+
+    if (!confirmed) {
+      return;
+    }
+
+    await clubsApi.declineClubTournament(
+      workbench.profile.id,
+      tournament.id,
+      workbench.operatorId,
+    );
+
+    notifyMutationResult(
+      { source: 'api' as const },
+      {
+        successTitle: '已拒绝赛事邀请',
+        successMessage: `${tournament.name} 的邀请已经处理。`,
+        fallbackTitle: '赛事邀请处理需要关注',
+        fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
+      },
+    );
+
+    onRefreshDetail?.();
+  }
+
   async function refreshClubMembers() {
-    if (
-      !profile ||
-      !isCurrentClubAdmin ||
-      !session?.user.roles.isRegisteredPlayer
-    ) {
+    if (!profile) {
       return;
     }
 
     setIsClubMembersLoading(true);
 
     try {
-      const currentOperatorId = session.user.operatorId ?? session.user.userId;
+      const currentOperatorId =
+        session?.user.operatorId ?? session?.user.userId ?? '';
       setClubMembers(
         await loadClubMemberAdminEntries(
           profile.id,
@@ -475,7 +687,7 @@ export function useClubDetailWorkbench({
   }
 
   async function handleAssignAdmin(member: PlayerProfile) {
-    if (!profile?.id || !workbench?.operatorId) {
+    if (!profile?.id || !workbench?.operatorId || !canAssignAdmins) {
       return;
     }
 
@@ -530,7 +742,12 @@ export function useClubDetailWorkbench({
   }
 
   async function handleRemoveMember(member: ClubAdminMemberEntry) {
-    if (!profile?.id || !workbench?.operatorId || member.isAdmin) {
+    if (
+      !profile?.id ||
+      !workbench?.operatorId ||
+      member.isAdmin ||
+      !canRemoveMembers
+    ) {
       return;
     }
 
@@ -563,6 +780,88 @@ export function useClubDetailWorkbench({
     }
   }
 
+  async function handleAdjustContribution(
+    member: ClubAdminMemberEntry,
+    delta: number,
+    note?: string,
+  ) {
+    if (!profile?.id || !workbench?.operatorId || !canAdjustContributions) {
+      return;
+    }
+
+    setIsContributionSubmitting(true);
+
+    try {
+      await clubsApi.adjustClubMemberContribution(profile.id, {
+        playerId: member.playerId,
+        operatorId: workbench.operatorId,
+        delta,
+        note: note?.trim() || undefined,
+      });
+
+      notifyMutationResult(
+        { source: 'api' as const },
+        {
+          successTitle: '贡献值已更新',
+          successMessage: `${member.displayName} 的贡献值变化已提交。`,
+          fallbackTitle: '贡献值更新需要关注',
+          fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
+        },
+      );
+
+      setIsContributionDialogOpen(false);
+      setSelectedContributionMember(null);
+      setContributionChangesRefreshKey((current) => current + 1);
+      await refreshClubMembers();
+      onRefreshDetail?.();
+    } finally {
+      setIsContributionSubmitting(false);
+    }
+  }
+
+  async function handleUpdateTitle(
+    member: ClubAdminMemberEntry,
+    nextTitle: string,
+  ) {
+    if (!profile?.id || !workbench?.operatorId || !canEditTitles) {
+      return;
+    }
+
+    const normalizedTitle = nextTitle.trim();
+    setIsTitleSubmitting(true);
+
+    try {
+      if (normalizedTitle) {
+        await clubsApi.assignClubTitle(profile.id, {
+          playerId: member.playerId,
+          operatorId: workbench.operatorId,
+          title: normalizedTitle,
+        });
+      } else {
+        await clubsApi.clearClubTitle(profile.id, member.playerId, {
+          operatorId: workbench.operatorId,
+        });
+      }
+
+      notifyMutationResult(
+        { source: 'api' as const },
+        {
+          successTitle: normalizedTitle ? '头衔已更新' : '头衔已清除',
+          successMessage: `${member.displayName} 的专属头衔已经更新。`,
+          fallbackTitle: '头衔更新需要关注',
+          fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
+        },
+      );
+
+      setIsTitleDialogOpen(false);
+      setSelectedTitleMember(null);
+      await refreshClubMembers();
+      onRefreshDetail?.();
+    } finally {
+      setIsTitleSubmitting(false);
+    }
+  }
+
   function handleApplicationStatusChange(
     status: ClubApplication['status'] | null,
   ) {
@@ -574,10 +873,18 @@ export function useClubDetailWorkbench({
     setIsApplicationDialogOpen,
     setIsLineupDialogOpen,
     setSelectedLineupTournament,
+    setIsContributionDialogOpen,
+    setSelectedContributionMember,
+    setIsTitleDialogOpen,
+    setSelectedTitleMember,
     setIsCurrentMember,
     handleApplicationStatusChange,
     handleReview,
+    handleAcceptTournamentInvitation,
+    handleDeclineTournamentInvitation,
     handleAssignAdmin,
     handleRemoveMember,
+    handleAdjustContribution,
+    handleUpdateTitle,
   };
 }
