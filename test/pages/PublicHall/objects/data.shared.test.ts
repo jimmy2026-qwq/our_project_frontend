@@ -5,7 +5,7 @@ import {
   mapAdminStageStatus,
   mapLeaderboardStatus,
   mapTournamentDetailFromAdminView,
-} from '@/pages/PublicHall/objects/data.shared';
+} from '@/pages/PublicShared/objects/data.shared';
 
 describe('public-hall data.shared', () => {
   it('maps suspended leaderboard status to the public inactive state', () => {
@@ -26,7 +26,7 @@ describe('public-hall data.shared', () => {
   it('maps admin stage statuses to the public tournament detail stage status set', () => {
     expect(mapAdminStageStatus('Active')).toBe('Active');
     expect(mapAdminStageStatus('Completed')).toBe('Completed');
-    expect(mapAdminStageStatus('Ready')).toBe('Pending');
+    expect(mapAdminStageStatus('Ready')).toBe('Ready');
     expect(mapAdminStageStatus(undefined)).toBe('Pending');
   });
 

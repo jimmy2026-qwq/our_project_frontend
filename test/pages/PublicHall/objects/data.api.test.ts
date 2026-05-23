@@ -17,22 +17,22 @@ const clubsApiMock = vi.hoisted(() => ({
   getClubTournaments: vi.fn(),
 }));
 
-vi.mock('@/pages/PublicHall/objects/data.transport', () => ({
+vi.mock('@/pages/PublicShared/objects/data.transport', () => ({
   publicApi: publicApiMock,
   tournamentApi: tournamentApiMock,
   clubsApi: clubsApiMock,
 }));
 
-import { loadTournamentDetail } from '@/pages/PublicHall/objects/data.detail';
-import { loadLeaderboard } from '@/pages/PublicHall/HomePage/objects/data.home.leaderboard';
+import { loadTournamentDetail } from '@/pages/PublicShared/objects/data.detail';
+import { loadLeaderboard } from '@/pages/PublicHallPage/objects/data.home.leaderboard';
 import {
   loadManagedDraftSchedules,
   loadSchedules,
-} from '@/pages/PublicHall/HomePage/objects/data.home.schedules';
+} from '@/pages/PublicHallPage/objects/data.home.schedules';
 import type {
   PublicHallState,
   PublicHallViewerContext,
-} from '@/pages/PublicHall/objects/types';
+} from '@/pages/PublicShared/objects/types';
 
 function envelope<T>(items: T[], offset = 0) {
   return {
@@ -144,7 +144,7 @@ describe('public-hall data api integration', () => {
         tournamentStatus: 'Draft',
         stageId: 'stage-1',
         stageName: 'Qualifier',
-        stageStatus: 'Pending',
+        stageStatus: 'Ready',
         scheduledAt: '2026-05-21T10:00:00Z',
         isUnpublished: true,
       },

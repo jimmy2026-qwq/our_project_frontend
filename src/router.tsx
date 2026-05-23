@@ -49,21 +49,21 @@ export const router = createBrowserRouter([
               {
                 index: true,
                 lazy: async () => {
-                  const { PublicHallHomePage } = await import('@/pages/PublicHall/HomePage');
+                  const { PublicHallHomePage } = await import('@/pages/PublicHallPage');
                   return { Component: PublicHallHomePage };
                 },
               },
               {
                 path: 'tournaments/:tournamentId',
                 lazy: async () => {
-                  const { PublicTournamentDetailPage } = await import('@/pages/PublicHall/TournamentDetailPage');
+                  const { PublicTournamentDetailPage } = await import('@/pages/PublicTournamentDetailPage');
                   return { Component: PublicTournamentDetailPage };
                 },
               },
               {
                 path: 'clubs/:clubId',
                 lazy: async () => {
-                  const { PublicClubDetailPage } = await import('@/pages/PublicHall/ClubDetailPage');
+                  const { PublicClubDetailPage } = await import('@/pages/PublicClubDetailPage');
                   return { Component: PublicClubDetailPage };
                 },
               },
