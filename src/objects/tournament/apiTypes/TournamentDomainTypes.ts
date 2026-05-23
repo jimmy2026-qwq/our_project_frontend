@@ -8,14 +8,12 @@ export type AdvancementRuleType =
 
 export type TournamentStatus =
   | 'Draft'
-  | 'Registration'
   | 'RegistrationOpen'
   | 'Scheduled'
   | 'InProgress'
   | 'Completed'
   | 'Cancelled'
-  | 'Archived'
-  | 'Finished';
+  | 'Archived';
 
 export type StageStatus = 'Pending' | 'Ready' | 'Active' | 'Completed' | 'Archived';
 

@@ -39,6 +39,8 @@ export const PublicTournamentDetailSection = ({
     handleInvitePlayer,
     handlePublishTournament,
     handleScheduleStage,
+    handleCompleteStage,
+    handleSettleTournament,
     handleSaveRules,
     openRulesDialog,
   } = useTournamentDetailWorkbench({
@@ -71,12 +73,24 @@ export const PublicTournamentDetailSection = ({
           </button>
           <div className={detailShellClassNames.title}>{`赛事：${workbench.profile.name}`}</div>
           <div className={detailShellClassNames.headerActions}>
-            {workbench.canScheduleStage ? (
+            {workbench.headerStageAction ? (
               <Button
-                onClick={() => void handleScheduleStage()}
+                onClick={() => {
+                  if (workbench.headerStageAction?.kind === 'completeStage') {
+                    void handleCompleteStage();
+                    return;
+                  }
+
+                  if (workbench.headerStageAction?.kind === 'settleTournament') {
+                    void handleSettleTournament();
+                    return;
+                  }
+
+                  void handleScheduleStage();
+                }}
                 disabled={workbench.isSubmittingTournamentAction}
               >
-                赛段排桌
+                {workbench.headerStageAction.label}
               </Button>
             ) : null}
             {workbench.isWaitingForLineups ? (
@@ -110,6 +124,7 @@ export const PublicTournamentDetailSection = ({
           tableDetailError={runtime.tableDetailError}
           tabItems={runtime.tabItems}
           updatingReadyTableId={runtime.updatingReadyTableId}
+          uploadingDemoPaifuTableId={runtime.uploadingDemoPaifuTableId}
           waitingTables={runtime.waitingTables}
           workbench={workbench}
           onActiveTabChange={runtime.setActiveTab}
@@ -126,6 +141,9 @@ export const PublicTournamentDetailSection = ({
           }
           onToggleOwnReady={(tableId, isReady) =>
             void runtime.handleToggleOwnReady(tableId, isReady)
+          }
+          onUploadDemoPaifu={(table) =>
+            void runtime.handleUploadDemoPaifu(table)
           }
           onToggleShowMore={() => setShowMoreInfo((current) => !current)}
         />

@@ -27,12 +27,21 @@ export function TileImage({
   );
 }
 
-export function HandTile({ seat, tile }: { seat: SeatWind; tile: string }) {
+export function HandTile({
+  className = '',
+  seat,
+  tile,
+}: {
+  className?: string;
+  seat: SeatWind;
+  tile: string;
+}) {
   return (
     <span
       className={[
         'group/tile relative inline-flex shrink-0',
         'transition-transform duration-150 hover:-translate-y-1',
+        className,
         tileSizeClasses[seat],
       ].join(' ')}
     >

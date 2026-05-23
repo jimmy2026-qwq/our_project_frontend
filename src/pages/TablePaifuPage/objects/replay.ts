@@ -238,6 +238,10 @@ export function getRoundPlayerId(paifu: TablePaifuDetail, seat: SeatWind) {
   );
 }
 
+export function getPlayerDisplayName(paifu: TablePaifuDetail, playerId: string) {
+  return paifu.metadata.playerNames?.[playerId] ?? playerId;
+}
+
 export function getCurrentPlayerPoints({
   paifu,
   playerId,
@@ -536,6 +540,45 @@ function getClosedKanTiles(action: PaifuAction): MeldTile[] {
   }));
 }
 
+function getAddedTileIndex({
+  afterTiles,
+  beforeTiles,
+  preferredTile,
+}: {
+  afterTiles: string[];
+  beforeTiles: string[];
+  preferredTile?: string;
+}) {
+  const remainingBeforeCounts = beforeTiles.reduce<Record<string, number>>(
+    (counts, tile) => ({
+      ...counts,
+      [tile]: (counts[tile] ?? 0) + 1,
+    }),
+    {},
+  );
+
+  const addedIndex = afterTiles.findIndex((tile) => {
+    const remainingCount = remainingBeforeCounts[tile] ?? 0;
+
+    if (remainingCount > 0) {
+      remainingBeforeCounts[tile] = remainingCount - 1;
+      return false;
+    }
+
+    return !preferredTile || tile === preferredTile;
+  });
+
+  if (addedIndex >= 0) {
+    return addedIndex;
+  }
+
+  const preferredIndex = preferredTile
+    ? afterTiles.findIndex((tile) => tile === preferredTile)
+    : -1;
+
+  return preferredIndex >= 0 ? preferredIndex : afterTiles.length - 1;
+}
+
 export function getReplaySnapshot(
   paifu: TablePaifuDetail,
   round: PaifuRoundSummary,
@@ -565,9 +608,12 @@ export function getReplaySnapshot(
     West: false,
     North: false,
   };
+  const drawnTileIndexes: Record<string, number | undefined> = {};
 
-  getReplayActions(round)
-    .slice(0, replayStep)
+  const sequenceLimit = getReplaySequenceLimit(round, replayStep);
+
+  round.actions
+    .filter((action) => action.sequenceNo <= sequenceLimit)
     .forEach((action) => {
       if (!action.actor) {
         return;
@@ -578,7 +624,20 @@ export function getReplaySnapshot(
         return;
       }
 
-      if (action.handTilesAfterAction && shouldApplyHandSnapshot(action, round)) {
+      if (action.actionType === 'Draw' && action.handTilesAfterAction) {
+        const beforeTiles = hands[action.actor] ?? [];
+        const afterTiles = [...action.handTilesAfterAction];
+
+        hands[action.actor] = afterTiles;
+        drawnTileIndexes[action.actor] = getAddedTileIndex({
+          afterTiles,
+          beforeTiles,
+          preferredTile: action.tile,
+        });
+      } else if (
+        action.handTilesAfterAction &&
+        shouldApplyHandSnapshot(action, round)
+      ) {
         hands[action.actor] = [...action.handTilesAfterAction];
       }
 
@@ -592,6 +651,7 @@ export function getReplaySnapshot(
         hands[action.actor] = action.handTilesAfterAction
           ? hands[action.actor]
           : removeFirstTile(hands[action.actor] ?? [], action.tile);
+        drawnTileIndexes[action.actor] = undefined;
         pendingRiichiSideways[actorSeat] = false;
         rivers[actorSeat] = [
           ...rivers[actorSeat],
@@ -638,9 +698,13 @@ export function getReplaySnapshot(
           },
         ];
       }
+
+      if (action.actionType === 'Win' || action.actionType === 'DrawGame') {
+        drawnTileIndexes[action.actor] = undefined;
+      }
     });
 
-  return { hands, melds, rivers };
+  return { drawnTileIndexes, hands, melds, rivers };
 }
 
 export function getInitialRoundIndex(rounds: PaifuRoundSummary[]) {

@@ -41,6 +41,8 @@ import {
   TournamentPublishAPI,
   TournamentRegisterClubAPI,
   TournamentRegisterPlayerAPI,
+  TournamentSettleAPI,
+  TournamentStageCompleteAPI,
   TournamentStageDirectoryAPI,
   TournamentStageConfigureRulesAPI,
   TournamentStageCreateAPI,
@@ -50,6 +52,7 @@ import {
   TournamentTableGetAPI,
   TournamentTableStartAPI,
   TournamentTableUpdateOwnReadyAPI,
+  TournamentTableUploadPaifuAPI,
   TournamentWhitelistListAPI,
 } from '@/api/tournament';
 import type {
@@ -62,6 +65,7 @@ import type {
   AuditEventEntry,
   BanPlayerRequest,
   ClearClubTitleRequest,
+  CompleteStageRequest,
   Club,
   ClubApplicationListQuery,
   ClubListQuery,
@@ -85,12 +89,15 @@ import type {
   RemoveClubMemberRequest,
   ReviewClubApplicationRequest,
   ScheduleQuery,
+  SettleTournamentRequest,
   StartTableRequest,
+  StageAdvancementSnapshot,
   SubmitStageLineupRequest,
   TableListQuery,
   TournamentDetailView,
   TournamentListQuery,
   TournamentMutationView,
+  TournamentSettlementView,
   TournamentWhitelistEntryView,
   TournamentStageDirectoryEntry,
   TournamentSummaryView,
@@ -126,6 +133,7 @@ import {
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 import type { Permission } from '@/objects/auth';
+import type { TablePaifuDetail } from '@/pages/TablePaifuPage/types';
 
 export interface CreatedTournamentView {
   id: string;
@@ -344,6 +352,23 @@ export const tournamentApi = {
       new TournamentStageScheduleTablesAPI(tournamentId, stageId, operatorId),
     );
   },
+  completeTournamentStage(
+    tournamentId: string,
+    stageId: string,
+    payload: CompleteStageRequest,
+  ) {
+    return sendAPI<StageAdvancementSnapshot>(
+      new TournamentStageCompleteAPI(tournamentId, stageId, payload),
+    );
+  },
+  settleTournament(
+    tournamentId: string,
+    payload: SettleTournamentRequest,
+  ) {
+    return sendAPI<TournamentSettlementView>(
+      new TournamentSettleAPI(tournamentId, payload),
+    );
+  },
   createTournamentStage(
     tournamentId: string,
     payload: CreateTournamentStageRequest,
@@ -439,6 +464,17 @@ export const tournamentApi = {
   ) {
     return sendAPI<TournamentTableView>(
       new TournamentTableUpdateOwnReadyAPI(tableId, payload),
+    ).then(mapTableDetail);
+  },
+  uploadPaifu(
+    tableId: string,
+    payload: {
+      operatorId?: string;
+      paifu: TablePaifuDetail;
+    },
+  ) {
+    return sendAPI<TournamentTableView>(
+      new TournamentTableUploadPaifuAPI(tableId, payload),
     ).then(mapTableDetail);
   },
   getAppeals(filters: AppealListQuery) {

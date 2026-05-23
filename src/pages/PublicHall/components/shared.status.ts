@@ -6,7 +6,7 @@ export const getStatusTone = (
   if (
     normalized.includes('active') ||
     normalized.includes('approved') ||
-    normalized.includes('finished')
+    normalized.includes('completed')
   ) {
     return 'success';
   }
@@ -14,6 +14,8 @@ export const getStatusTone = (
   if (
     normalized.includes('progress') ||
     normalized.includes('registration') ||
+    normalized.includes('scheduled') ||
+    normalized.includes('ready') ||
     normalized.includes('scoring')
   ) {
     return 'info';
@@ -29,6 +31,7 @@ export const getStatusTone = (
 
   if (
     normalized.includes('banned') ||
+    normalized.includes('cancelled') ||
     normalized.includes('reject') ||
     normalized.includes('appeal')
   ) {

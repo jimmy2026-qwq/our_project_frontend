@@ -109,10 +109,13 @@ export interface TablePaifuDetail {
     tableId: string;
     tournamentId: string;
     stageId: string;
+    tournamentName?: string;
+    stageName?: string;
     recordedAt: string;
     source?: string;
     seats?: TableSeat[];
     matchRecordId?: string | null;
+    playerNames?: Record<string, string>;
   };
   rounds: PaifuRoundSummary[];
   finalStandings: PaifuFinalStanding[];

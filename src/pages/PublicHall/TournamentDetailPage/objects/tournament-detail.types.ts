@@ -14,6 +14,14 @@ export interface TournamentDetailTableItem {
   playerIds: string[];
 }
 
+export type TournamentHeaderStageAction =
+  | {
+      kind: 'scheduleStage' | 'completeStage' | 'settleTournament';
+      label: string;
+      stageId: string;
+    }
+  | null;
+
 export interface TournamentDetailWorkbenchState {
   profile: TournamentPublicProfile;
   selectedClubId: string;
@@ -27,6 +35,7 @@ export interface TournamentDetailWorkbenchState {
   canManageTournament: boolean;
   canPublishTournament: boolean;
   canScheduleStage: boolean;
+  headerStageAction: TournamentHeaderStageAction;
   isWaitingForLineups: boolean;
   missingLineupClubNames: string[];
   submittedLineupClubIds: string[];

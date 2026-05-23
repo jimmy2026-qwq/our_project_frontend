@@ -53,8 +53,10 @@ export function mapTableDetail(item: TournamentTableView): TableDetail {
       item.seats?.map((seat) => ({
         seat: seat.seat,
         playerId: seat.playerId,
+        initialPoints: seat.initialPoints ?? 25000,
         disconnected: seat.disconnected ?? false,
         ready: seat.ready ?? false,
+        clubId: seat.clubId ?? null,
       })) ?? [],
   };
 }
@@ -64,16 +66,41 @@ export function mapMatchRecordSummary(item: TournamentMatchRecordView | MatchRec
   const record = item as MatchRecordSummary & {
     recordId?: string;
     generatedAt?: string;
-    seatResults?: Array<{ playerId: string; placement: number }>;
-    notes?: string[];
+    seatResults?: Array<{
+      playerId: string;
+      placement: number;
+      finalPoints?: number;
+      scoreDelta?: number;
+    }>;
   };
-  const winner = record.seatResults?.find((seat) => seat.placement === 1);
+  const orderedResults = [...(record.seatResults ?? [])].sort(
+    (left, right) => left.placement - right.placement,
+  );
+  const winner = orderedResults.find((seat) => seat.placement === 1);
+  const summary =
+    legacy.summary ??
+    (orderedResults.length > 0
+      ? orderedResults
+          .map((seat) => {
+            const finalPoints =
+              typeof seat.finalPoints === 'number'
+                ? ` ${seat.finalPoints}点`
+                : '';
+            const scoreDelta =
+              typeof seat.scoreDelta === 'number'
+                ? ` (${seat.scoreDelta >= 0 ? '+' : ''}${seat.scoreDelta})`
+                : '';
+
+            return `${seat.placement}位 ${seat.playerId}${finalPoints}${scoreDelta}`;
+          })
+          .join(' / ')
+      : '');
 
   return {
     ...item,
     id: legacy.id ?? record.recordId ?? '',
     recordedAt: legacy.recordedAt ?? record.generatedAt ?? '',
     winnerId: legacy.winnerId ?? winner?.playerId ?? '',
-    summary: legacy.summary ?? record.notes?.join(' / ') ?? '',
+    summary,
   };
 }

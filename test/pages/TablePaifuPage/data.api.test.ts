@@ -48,7 +48,26 @@ describe('TablePaifuPage data api integration', () => {
       offset: 0,
       hasMore: false,
       appliedFilters: { tableId: 'table-1' },
-    });
+    })
+      .mockResolvedValueOnce({
+        tournamentId: 'tournament-1',
+        name: 'Test Tournament',
+        stages: [
+          {
+            stageId: 'stage-1',
+            name: 'Old Stage Name',
+            format: 'Knockout',
+            status: 'Completed',
+            roundCount: 1,
+            tableCount: 1,
+            pendingTablePlanCount: 0,
+          },
+        ],
+      })
+      .mockResolvedValueOnce({
+        playerId: 'player-east',
+        nickname: 'East Player',
+      });
 
     const result = await loadTablePaifus('table-1');
     const message = sendAPIMock.mock.calls[0]?.[0];
@@ -64,7 +83,12 @@ describe('TablePaifuPage data api integration', () => {
             tableId: 'table-1',
             tournamentId: 'tournament-1',
             stageId: 'stage-1',
+            tournamentName: 'Test Tournament',
+            stageName: 'Test Tournament 淘汰赛',
             recordedAt: '2026-05-21T10:00:00Z',
+            playerNames: {
+              'player-east': 'East Player',
+            },
           },
           rounds: [],
           finalStandings: [
@@ -80,4 +104,3 @@ describe('TablePaifuPage data api integration', () => {
     });
   });
 });
-

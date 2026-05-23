@@ -1,3 +1,5 @@
+import type { SeatWind } from '@/objects/tournament/apiTypes';
+import type { TableDetail } from '@/pages/objects/tournament';
 import type { TablePaifuDetail } from './types';
 
 const demoSeats = [
@@ -30,6 +32,16 @@ const demoSeats = [
     ready: true,
   },
 ] as const;
+
+const demoPlayerIdBySeat: Record<SeatWind, string> = {
+  East: 'player-east',
+  South: 'player-south',
+  West: 'player-west',
+  North: 'player-north',
+};
+
+const fullDoraRow = ['4z', '6z', '5m', '2p', '7s'];
+const fullUraDoraRow = ['1m', '3p', '9s', '2z', '7z'];
 
 const eastNineTerminals = [
   '1m',
@@ -361,6 +373,12 @@ const exhaustiveDrawActions = [
     note: 'Kan dora indicator after the open kan discard.',
   },
   ...createExhaustiveDrawActions(7),
+  {
+    sequenceNo: 59,
+    actionType: 'DrawGame',
+    revealedTiles: [],
+    note: 'The wall is exhausted and the hand ends in exhaustive draw.',
+  },
 ];
 
 // Demo boundary: this file is temporary frontend-only data for testing the
@@ -442,6 +460,9 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
         result: {
           outcome: 'AbortiveDraw',
           yaku: [],
+          doraIndicators: fullDoraRow,
+          uraDoraIndicators: fullUraDoraRow,
+          uraDoraVisible: false,
           points: 0,
           scoreChanges: [
             { playerId: 'player-east', delta: 0 },
@@ -485,6 +506,9 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
         result: {
           outcome: 'ExhaustiveDraw',
           yaku: [],
+          doraIndicators: ['5z', '6z', '5m', '2p', '7s'],
+          uraDoraIndicators: fullUraDoraRow,
+          uraDoraVisible: false,
           points: 0,
           scoreChanges: [
             { playerId: 'player-east', delta: 3000 },
@@ -545,6 +569,9 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
           han: 26,
           fu: 0,
           yaku: [{ name: '纯正九莲宝灯', han: 26 }],
+          doraIndicators: fullDoraRow,
+          uraDoraIndicators: fullUraDoraRow,
+          uraDoraVisible: false,
           points: 64300,
           scoreChanges: [
             { playerId: 'player-east', delta: -64600 },
@@ -563,5 +590,92 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
         },
       },
     ],
+  };
+}
+
+export function createDemoTablePaifuForTable(table: TableDetail): TablePaifuDetail {
+  const demoPaifu = createDemoTablePaifu(table.id);
+  const tableSeatByWind = Object.fromEntries(
+    table.seats.map((seat) => [seat.seat, seat]),
+  ) as Partial<Record<SeatWind, TableDetail['seats'][number]>>;
+  const demoSeatByPlayer = Object.fromEntries(
+    Object.entries(demoPlayerIdBySeat).map(([seat, playerId]) => [
+      playerId,
+      seat as SeatWind,
+    ]),
+  );
+  const playerIdMap = Object.fromEntries(
+    Object.entries(demoPlayerIdBySeat).map(([seat, demoPlayerId]) => [
+      demoPlayerId,
+      tableSeatByWind[seat as SeatWind]?.playerId ?? demoPlayerId,
+    ]),
+  );
+
+  function mapPlayerId(playerId: string) {
+    return playerIdMap[playerId] ?? playerId;
+  }
+
+  function mapInitialHands(initialHands: Record<string, string[]>) {
+    return Object.fromEntries(
+      Object.entries(initialHands).map(([playerId, tiles]) => [
+        mapPlayerId(playerId),
+        [...tiles],
+      ]),
+    );
+  }
+
+  return {
+    ...demoPaifu,
+    id: `demo-paifu-${table.id}`,
+    metadata: {
+      ...demoPaifu.metadata,
+      tableId: table.id,
+      tournamentId: table.tournamentId,
+      stageId: table.stageId,
+      recordedAt: new Date().toISOString(),
+      seats: table.seats.map((seat) => ({
+        seat: seat.seat,
+        playerId: seat.playerId,
+        initialPoints: seat.initialPoints,
+        disconnected: seat.disconnected,
+        ready: seat.ready,
+        clubId: seat.clubId ?? null,
+      })),
+      matchRecordId: null,
+    },
+    finalStandings: demoPaifu.finalStandings.map((standing) => {
+      const seat = demoSeatByPlayer[standing.playerId] ?? standing.seat;
+      const tableSeat = tableSeatByWind[seat];
+
+      return {
+        ...standing,
+        playerId: mapPlayerId(standing.playerId),
+        seat,
+        finalPoints:
+          (tableSeat?.initialPoints ?? 25000) + (standing.finalPoints - 25000),
+      };
+    }),
+    rounds: demoPaifu.rounds.map((round) => ({
+      ...round,
+      initialHands: mapInitialHands(round.initialHands),
+      actions: round.actions.map((action) => ({
+        ...action,
+        actor: action.actor ? mapPlayerId(action.actor) : undefined,
+      })),
+      result: {
+        ...round.result,
+        winner: round.result.winner
+          ? mapPlayerId(round.result.winner)
+          : undefined,
+        target: round.result.target
+          ? mapPlayerId(round.result.target)
+          : undefined,
+        scoreChanges: round.result.scoreChanges.map((change) => ({
+          ...change,
+          playerId: mapPlayerId(change.playerId),
+        })),
+        tenpaiPlayerIds: round.result.tenpaiPlayerIds?.map(mapPlayerId),
+      },
+    })),
   };
 }

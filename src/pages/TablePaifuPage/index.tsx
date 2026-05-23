@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { LoadingProgress } from '@/components/ui';
 import { ApiError } from '@/system/api/http';
@@ -14,6 +14,7 @@ import type { TablePaifuDetail } from './types';
 
 export function TablePaifuPage() {
   const { tableId = '' } = useParams();
+  const navigate = useNavigate();
   const [paifu, setPaifu] = useState<TablePaifuDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -80,10 +81,30 @@ export function TablePaifuPage() {
 
   const rounds = useMemo(() => paifu?.rounds ?? [], [paifu]);
   const selectedRound = rounds[Math.min(selectedRoundIndex, Math.max(rounds.length - 1, 0))];
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate(tableId ? `/tables/${tableId}` : '/');
+    }
+  };
+
+  const backButton = (
+    <button
+      type="button"
+      aria-label="返回上一页"
+      className="fixed left-4 top-4 z-50 grid h-10 w-10 place-items-center rounded-full border border-[rgba(176,223,229,0.22)] bg-[rgba(7,18,28,0.82)] text-xl leading-none text-[#d9f5f7] shadow-[0_14px_30px_rgba(0,0,0,0.28)] backdrop-blur transition hover:border-[rgba(176,223,229,0.45)] hover:bg-[rgba(12,31,45,0.92)] focus:outline-none focus:ring-2 focus:ring-[#7ddce8]"
+      onClick={handleBack}
+      title="返回上一页"
+    >
+      ←
+    </button>
+  );
 
   if (isLoading) {
     return (
       <section className="grid gap-6">
+        {backButton}
         <LoadingProgress
           label="Loading paifu"
           message="Fetching the archived match record and round summaries."
@@ -95,6 +116,7 @@ export function TablePaifuPage() {
   if (!paifu || !selectedRound) {
     return (
       <section className="grid min-h-[60vh] place-items-center text-[#c7d6e2]">
+        {backButton}
         <div className="rounded-[20px] border border-[rgba(176,223,229,0.14)] bg-[rgba(7,18,28,0.72)] px-5 py-4">
           {error ?? 'No paifu data is available.'}
         </div>
@@ -104,6 +126,7 @@ export function TablePaifuPage() {
 
   return (
     <section className="mt-[14px] grid gap-0">
+      {backButton}
       <PaifuHandTable
         onSelectRound={setSelectedRoundIndex}
         paifu={paifu}

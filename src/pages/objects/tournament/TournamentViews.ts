@@ -14,8 +14,10 @@ export interface TournamentTableSummary {
 export interface TableSeatState {
   seat: SeatWind;
   playerId: string;
+  initialPoints: number;
   disconnected: boolean;
   ready: boolean;
+  clubId?: string | null;
 }
 
 export interface TableDetail {
@@ -30,7 +32,9 @@ export interface TableDetail {
 export interface MatchRecordSummary {
   id: string;
   tournamentId: string;
+  tournamentName?: string;
   stageId: string;
+  stageName?: string;
   tableId: string;
   recordedAt: string;
   winnerId: string;

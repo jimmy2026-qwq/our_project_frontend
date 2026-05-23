@@ -37,7 +37,7 @@ export function TournamentRulesDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
         <DialogOverlay />
-        <DialogSurface>
+        <DialogSurface className="text-[#f2f7fb] [&_option]:bg-[rgba(8,18,29,0.98)] [&_option]:text-[#f2f7fb] [&_[data-slot=dialog-title]]:text-[#f2f7fb] [&_[data-slot=input]]:text-[#f2f7fb] [&_[data-slot=select]]:text-[#f2f7fb]">
           <DialogHeader className="border-b border-[rgba(176,223,229,0.14)] px-6 py-5">
             <DialogTitle>{hasStage ? '修改当前阶段规则' : '创建当前阶段规则'}</DialogTitle>
             <DialogDescription>

@@ -13,6 +13,7 @@ import type {
   MatchRecordListQuery,
   PublicClubDetailView,
   PublicTournamentDetailView,
+  PublicTournamentStageView,
   TableListQuery,
   TournamentMatchRecordView,
   TournamentTableView,
@@ -26,6 +27,7 @@ import {
 } from '@/pages/objects/tournament';
 import type {
   AppealSummary,
+  MatchRecordSummary,
   TournamentTableSummary,
 } from '@/pages/objects/tournament';
 import { sendAPI } from '@/system/api';
@@ -103,6 +105,36 @@ function getPublicTournamentName(tournamentId: string) {
   return sendAPI<PublicTournamentDetailView>(
     new GetPublicTournamentAPI(tournamentId),
   ).then((tournament) => tournament.name);
+}
+
+function getPublicTournamentDetail(tournamentId: string) {
+  return sendAPI<PublicTournamentDetailView>(
+    new GetPublicTournamentAPI(tournamentId),
+  );
+}
+
+function getStageFormatLabel(format?: string) {
+  switch (format) {
+    case 'Knockout':
+      return '淘汰赛';
+    case 'Swiss':
+      return '瑞士轮';
+    default:
+      return undefined;
+  }
+}
+
+function getStageDisplayName(
+  tournament: PublicTournamentDetailView,
+  stage?: PublicTournamentStageView,
+) {
+  const formatLabel = getStageFormatLabel(stage?.format);
+
+  if (formatLabel) {
+    return `${tournament.name} ${formatLabel}`;
+  }
+
+  return stage?.name ?? undefined;
 }
 
 function getPublicClubName(clubId: string) {
@@ -183,6 +215,41 @@ export async function loadPlayerDashboardData(operatorId: string) {
   const archivedRecords = [...recordsEnvelope.items]
     .sort((left, right) => right.recordedAt.localeCompare(left.recordedAt))
     .slice(0, 8);
+  const recordTournamentDetails = new Map<string, PublicTournamentDetailView>();
+
+  await Promise.all(
+    [
+      ...new Set(
+        archivedRecords.map((record) => record.tournamentId).filter(Boolean),
+      ),
+    ].map(async (tournamentId) => {
+      try {
+        recordTournamentDetails.set(
+          tournamentId,
+          await getPublicTournamentDetail(tournamentId),
+        );
+      } catch {
+        // Keep ids as fallback labels when public detail is unavailable.
+      }
+    }),
+  );
+
+  const namedArchivedRecords: MatchRecordSummary[] = archivedRecords.map(
+    (record) => {
+      const tournament = recordTournamentDetails.get(record.tournamentId);
+      const stage = tournament?.stages.find(
+        (candidate) => candidate.stageId === record.stageId,
+      );
+
+      return {
+        ...record,
+        tournamentName: tournament?.name ?? record.tournamentId,
+        stageName: tournament
+          ? getStageDisplayName(tournament, stage) ?? record.stageId
+          : record.stageId,
+      };
+    },
+  );
 
   const appeals = [...appealsEnvelope.items].sort((left, right) =>
     (right.updatedAt ?? right.createdAt).localeCompare(
@@ -195,7 +262,7 @@ export async function loadPlayerDashboardData(operatorId: string) {
     playerClubs,
     dashboard,
     recentTables,
-    archivedRecords,
+    archivedRecords: namedArchivedRecords,
     appeals,
   };
 }

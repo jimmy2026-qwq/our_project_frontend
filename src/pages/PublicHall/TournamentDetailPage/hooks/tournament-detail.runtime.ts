@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { tournamentApi } from '@/pages/PublicHall/objects/data.transport';
 import type { AppealSummary, TableDetail } from '@/pages/objects/tournament';
+import { createDemoTablePaifuForTable } from '@/pages/TablePaifuPage/demo';
 
 import type {
   TournamentDetailTableItem,
@@ -31,6 +32,7 @@ export function useTournamentDetailRuntime({
   const [tableDetailError, setTableDetailError] = useState('');
   const [isLoadingTableDetail, setIsLoadingTableDetail] = useState(false);
   const [isSubmittingTableAction, setIsSubmittingTableAction] = useState(false);
+  const [uploadingDemoPaifuTableId, setUploadingDemoPaifuTableId] = useState('');
   const [pendingStartConfirmation, setPendingStartConfirmation] = useState<{
     tableId: string;
     tableCode: string;
@@ -285,6 +287,30 @@ export function useTournamentDetailRuntime({
     }
   }
 
+  async function handleUploadDemoPaifu(table: Pick<TournamentDetailTableItem, 'id'>) {
+    if (!operatorId) {
+      return;
+    }
+
+    try {
+      setUploadingDemoPaifuTableId(table.id);
+      setTableDetailError('');
+      const detail = await tournamentApi.getTable(table.id);
+      const paifu = createDemoTablePaifuForTable(detail);
+      await tournamentApi.uploadPaifu(table.id, {
+        operatorId,
+        paifu,
+      });
+      onScheduleSuccess?.();
+    } catch (error) {
+      setTableDetailError(
+        error instanceof Error ? error.message : '无法上传默认牌谱结束牌桌。',
+      );
+    } finally {
+      setUploadingDemoPaifuTableId('');
+    }
+  }
+
   function updateAppealLocally(nextAppeal: AppealSummary) {
     setAppeals((current) =>
       current.map((appeal) =>
@@ -396,6 +422,7 @@ export function useTournamentDetailRuntime({
     tableDetailError,
     tabItems,
     updatingReadyTableId,
+    uploadingDemoPaifuTableId,
     waitingTables,
     closeAppealDecisionDialog,
     handleAssignAppeal,
@@ -403,6 +430,7 @@ export function useTournamentDetailRuntime({
     handleStartManagedTable,
     handleSubmitAppealDecision,
     handleToggleOwnReady,
+    handleUploadDemoPaifu,
     openAppealActionDialog,
     setActiveTab,
     setAppealVerdict,

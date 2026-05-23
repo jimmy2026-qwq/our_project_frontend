@@ -34,6 +34,7 @@ export function TournamentDetailContent({
   tableDetailError,
   tabItems,
   updatingReadyTableId,
+  uploadingDemoPaifuTableId,
   waitingTables,
   workbench,
   onActiveTabChange,
@@ -47,6 +48,7 @@ export function TournamentDetailContent({
   onSelectManageTable,
   onStartManagedTable,
   onToggleOwnReady,
+  onUploadDemoPaifu,
   onToggleShowMore,
 }: {
   activeTab: TournamentDetailTab;
@@ -60,6 +62,7 @@ export function TournamentDetailContent({
   tableDetailError: string;
   tabItems: TabItem[];
   updatingReadyTableId: string;
+  uploadingDemoPaifuTableId: string;
   waitingTables: TournamentDetailTableItem[];
   workbench: TournamentDetailWorkbenchState;
   onActiveTabChange: (tab: TournamentDetailTab) => void;
@@ -76,6 +79,7 @@ export function TournamentDetailContent({
   onSelectManageTable: (table: TournamentDetailTableItem) => void;
   onStartManagedTable: (table: TournamentDetailTableItem) => void;
   onToggleOwnReady: (tableId: string, isReady: boolean) => void;
+  onUploadDemoPaifu: (table: TournamentDetailTableItem) => void;
   onToggleShowMore: () => void;
 }) {
   return (
@@ -135,8 +139,10 @@ export function TournamentDetailContent({
             participantWaitingTableDetails={participantWaitingTableDetails}
             tableDetailError={tableDetailError}
             updatingReadyTableId={updatingReadyTableId}
+            uploadingDemoPaifuTableId={uploadingDemoPaifuTableId}
             workbench={workbench}
             onToggleOwnReady={onToggleOwnReady}
+            onUploadDemoPaifu={onUploadDemoPaifu}
           />
         ) : null}
 

@@ -29,7 +29,7 @@ export interface PublicTournamentStageView {
   name: string;
   format?: string;
   order?: number;
-  status: 'Pending' | 'Ready' | 'Active' | 'Completed';
+  status: StageStatus;
   currentRound?: number;
   roundCount: number;
   schedulingPoolSize?: number;

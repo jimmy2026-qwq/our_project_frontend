@@ -142,6 +142,107 @@ const round: PaifuRoundSummary = {
 };
 
 describe('TablePaifuPage replay', () => {
+  it('shows the hand state before the next discard, including the drawn tile', () => {
+    const drawDiscardRound: PaifuRoundSummary = {
+      ...round,
+      actions: [
+        {
+          sequenceNo: 1,
+          actor: 'player-east',
+          actionType: 'Draw',
+          tile: '5m',
+          handTilesAfterAction: ['1m', '2m', '3m', '4m', '5m'],
+          revealedTiles: [],
+        },
+        {
+          sequenceNo: 2,
+          actor: 'player-east',
+          actionType: 'Discard',
+          tile: '1m',
+          handTilesAfterAction: ['2m', '3m', '4m', '5m'],
+          revealedTiles: ['1m'],
+        },
+        {
+          sequenceNo: 3,
+          actor: 'player-south',
+          actionType: 'Draw',
+          tile: '3m',
+          handTilesAfterAction: ['1m', '2m', '3m'],
+          revealedTiles: [],
+        },
+        {
+          sequenceNo: 4,
+          actor: 'player-south',
+          actionType: 'Discard',
+          tile: '1m',
+          handTilesAfterAction: ['2m', '3m'],
+          revealedTiles: ['1m'],
+        },
+      ],
+    };
+
+    const beforeFirstDiscard = getReplaySnapshot(paifu, drawDiscardRound, 0);
+    const beforeSecondDiscard = getReplaySnapshot(paifu, drawDiscardRound, 1);
+
+    expect(beforeFirstDiscard.hands['player-east']).toEqual([
+      '1m',
+      '2m',
+      '3m',
+      '4m',
+      '5m',
+    ]);
+    expect(beforeFirstDiscard.drawnTileIndexes['player-east']).toBe(4);
+    expect(beforeFirstDiscard.rivers.East).toEqual([]);
+    expect(beforeSecondDiscard.hands['player-east']).toEqual([
+      '2m',
+      '3m',
+      '4m',
+      '5m',
+    ]);
+    expect(beforeSecondDiscard.hands['player-south']).toEqual([
+      '1m',
+      '2m',
+      '3m',
+    ]);
+    expect(beforeSecondDiscard.drawnTileIndexes['player-east']).toBeUndefined();
+    expect(beforeSecondDiscard.drawnTileIndexes['player-south']).toBe(2);
+    expect(beforeSecondDiscard.rivers.East).toEqual([
+      { tile: '1m', sideways: false },
+    ]);
+  });
+
+  it('identifies the drawn tile by comparing the previous hand, not by array position', () => {
+    const sortedDrawRound: PaifuRoundSummary = {
+      ...round,
+      initialHands: {
+        ...round.initialHands,
+        'player-east': ['1m', '3m', '4m'],
+      },
+      actions: [
+        {
+          sequenceNo: 1,
+          actor: 'player-east',
+          actionType: 'Draw',
+          tile: '2m',
+          handTilesAfterAction: ['1m', '2m', '3m', '4m'],
+          revealedTiles: [],
+        },
+        {
+          sequenceNo: 2,
+          actor: 'player-east',
+          actionType: 'Discard',
+          tile: '1m',
+          handTilesAfterAction: ['2m', '3m', '4m'],
+          revealedTiles: ['1m'],
+        },
+      ],
+    };
+    const snapshot = getReplaySnapshot(paifu, sortedDrawRound, 0);
+
+    expect(snapshot.hands['player-east']).toEqual(['1m', '2m', '3m', '4m']);
+    expect(snapshot.drawnTileIndexes['player-east']).toBe(1);
+  });
+
   it('keeps seven discards per player in the exhaustive draw demo hand', () => {
     const demoPaifu = createDemoTablePaifu('table-1');
     const exhaustiveDrawRound = demoPaifu.rounds.find(

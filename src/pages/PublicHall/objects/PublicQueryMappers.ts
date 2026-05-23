@@ -64,7 +64,7 @@ export function mapPublicSchedule(
 function mapStageStatus(
   status: PublicTournamentStageView['status'],
 ): StageStatus {
-  return status === 'Ready' ? 'Pending' : status;
+  return status;
 }
 
 function mapTournamentWhitelistType(
@@ -87,10 +87,13 @@ function mapTournamentWhitelistType(
 export function mapPublicTournamentDetail(
   item: PublicTournamentDetailView,
 ): TournamentPublicProfile {
+  const stages = [...item.stages].sort(
+    (left, right) => (left.order ?? 0) - (right.order ?? 0),
+  );
   const nextStage =
-    item.stages.find(
-      (stage) => stage.status === 'Active' || stage.status === 'Ready',
-    ) ?? item.stages[0];
+    stages.find(
+      (stage) => stage.status !== 'Completed' && stage.status !== 'Archived',
+    ) ?? stages[stages.length - 1];
 
   return {
     id: item.tournamentId,
@@ -98,11 +101,11 @@ export function mapPublicTournamentDetail(
     organizer: item.organizer,
     status: item.status,
     tagline: `Organizer: ${item.organizer}`,
-    description: `Public tournament detail includes ${item.stages.length} stage(s), ${item.playerIds.length} player slot(s), and ${item.whitelistCount} whitelist entry/entries.`,
+    description: `Public tournament detail includes ${stages.length} stage(s), ${item.playerIds.length} player slot(s), and ${item.whitelistCount} whitelist entry/entries.`,
     venue: item.organizer,
     startsAt: item.startsAt,
     endsAt: item.endsAt,
-    stageCount: item.stages.length,
+    stageCount: stages.length,
     whitelistType: mapTournamentWhitelistType(item),
     clubIds: item.clubIds,
     playerIds: item.playerIds,
@@ -113,7 +116,7 @@ export function mapPublicTournamentDetail(
     nextStageName: nextStage?.name ?? 'No stages available',
     nextStageStatus: nextStage ? mapStageStatus(nextStage.status) : 'Pending',
     nextScheduledAt: item.startsAt,
-    stages: item.stages.map((stage) => ({
+    stages: stages.map((stage) => ({
       stageId: stage.stageId,
       name: stage.name,
       status: mapStageStatus(stage.status),

@@ -280,6 +280,14 @@ export function PaifuHandTable({
           aria-hidden="true"
           className="absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(236,197,122,0.22)] bg-[radial-gradient(circle,rgba(236,197,122,0.24),transparent_62%)] opacity-80"
         />
+        <div className="absolute right-5 top-5 z-[15] grid max-w-[min(28rem,calc(100%-2.5rem))] justify-items-end gap-1 rounded-2xl border border-[rgba(176,223,229,0.18)] bg-[rgba(7,18,28,0.72)] px-4 py-3 text-right shadow-[0_12px_32px_rgba(0,0,0,0.28)] backdrop-blur">
+          <strong className="max-w-full truncate text-sm text-[#f2f7fb]">
+            {paifu.metadata.tournamentName ?? paifu.metadata.tournamentId}
+          </strong>
+          <span className="max-w-full truncate text-xs font-semibold text-[#c7d6e2]">
+            {paifu.metadata.stageName ?? paifu.metadata.stageId}
+          </span>
+        </div>
 
         <CenterTable
           isExhaustiveDrawResult={isExhaustiveDrawResult}
@@ -335,6 +343,9 @@ export function PaifuHandTable({
         {seatOrder.map((seat) => (
           <PlayerHand
             key={seat}
+            drawnTileIndex={
+              replaySnapshot.drawnTileIndexes[getRoundPlayerId(paifu, seat)]
+            }
             isExhaustiveDrawResult={isExhaustiveDrawResult}
             hands={replaySnapshot.hands}
             paifu={paifu}

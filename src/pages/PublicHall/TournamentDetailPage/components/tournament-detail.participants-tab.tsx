@@ -83,7 +83,7 @@ export function TournamentDetailParticipantsTab({
           detailShellClassNames.panelFull,
         )}
       >
-        <section className="grid h-full min-h-0 auto-rows-min content-start gap-[14px]">
+        <section className="grid h-full min-h-0 content-start gap-[14px] overflow-x-hidden overflow-y-auto pr-2 [scrollbar-gutter:stable]">
           <div className="grid auto-rows-min content-start items-start gap-4 p-4">
             <h2 className="m-0 text-[1.25rem] font-semibold text-[#f2f7fb]">
               {participantText.participants}

@@ -19,6 +19,7 @@ import {
   createRuleDraftFromStage,
   getCurrentRuleStage,
   getDefaultRoundCount,
+  normalizeKnockoutBracketSize,
 } from '../objects/tournament-detail.rules';
 import type { TournamentStageRuleDraft } from '../objects/tournament-detail.rules';
 import {
@@ -91,6 +92,24 @@ export function useTournamentDetailWorkbench({
     );
     const lineupSubmissionCounts = getNextStageLineupSubmissionCounts(profile);
     const submittedLineupClubIds = Object.keys(lineupSubmissionCounts);
+    const orderedStages = [...(profile.stages ?? [])].sort(
+      (left, right) => (left.order ?? 0) - (right.order ?? 0),
+    );
+    const isStageCompleted = (stage: (typeof orderedStages)[number]) =>
+      stage.status === 'Completed' || stage.status === 'Archived';
+    const isTournamentClosed =
+      profile.status === 'Completed' ||
+      profile.status === 'Archived';
+    const declaredNextStage = orderedStages.find(
+      (stage) => stage.stageId === profile.nextStageId,
+    );
+    const nextStage =
+      declaredNextStage && !isStageCompleted(declaredNextStage)
+        ? declaredNextStage
+        : orderedStages.find((stage) => !isStageCompleted(stage)) ?? null;
+    const nextStageTables = nextStage
+      ? tables.filter((table) => table.stageId === nextStage.stageId)
+      : [];
     const isWaitingForLineups =
       canManageTournament &&
       !!profile.nextStageId &&
@@ -99,10 +118,67 @@ export function useTournamentDetailWorkbench({
       missingLineupClubNames.length > 0;
     const canScheduleStage =
       canManageTournament &&
-      !!profile.nextStageId &&
+      !!nextStage &&
+      !isTournamentClosed &&
       (profile.status === 'RegistrationOpen' ||
+        profile.status === 'Scheduled' ||
         profile.status === 'InProgress') &&
-      missingLineupClubNames.length === 0;
+      missingLineupClubNames.length === 0 &&
+      !isStageCompleted(nextStage) &&
+      nextStageTables.length === 0 &&
+      (nextStage.tableCount ?? 0) === 0;
+    const completableStage =
+      orderedStages.find((stage) => {
+        if (isStageCompleted(stage)) {
+          return false;
+        }
+
+        const stageTables = tables.filter(
+          (table) => table.stageId === stage.stageId,
+        );
+        const scheduledTableCount = Math.max(
+          stage.tableCount ?? 0,
+          stageTables.length,
+        );
+        const archivedTableCount =
+          stageTables.length > 0
+            ? stageTables.filter((table) => table.status === 'Archived').length
+            : stage.archivedTableCount ?? 0;
+
+        return (
+          scheduledTableCount > 0 &&
+          archivedTableCount >= scheduledTableCount &&
+          (stage.pendingTablePlanCount ?? 0) === 0
+        );
+      }) ?? null;
+    const finalStage = orderedStages[orderedStages.length - 1] ?? null;
+    const allStagesCompleted =
+      orderedStages.length > 0 && orderedStages.every(isStageCompleted);
+    const canSettleTournament =
+      canManageTournament &&
+      !!finalStage &&
+      allStagesCompleted &&
+      !isTournamentClosed;
+    const headerStageAction =
+      canScheduleStage && nextStage
+        ? ({
+            kind: 'scheduleStage',
+            label: '赛段排桌',
+            stageId: nextStage.stageId,
+          } as const)
+        : completableStage && canManageTournament && !isTournamentClosed
+          ? ({
+              kind: 'completeStage',
+              label: '结束赛段',
+              stageId: completableStage.stageId,
+            } as const)
+          : canSettleTournament && finalStage
+            ? ({
+                kind: 'settleTournament',
+                label: '赛事结算',
+                stageId: finalStage.stageId,
+              } as const)
+            : null;
     const invitedClubIds = profile.clubIds ?? [];
     const selectableClubs = availableClubs.filter(
       (club) => !invitedClubIds.includes(club.id),
@@ -166,6 +242,7 @@ export function useTournamentDetailWorkbench({
       canManageTournament,
       canPublishTournament,
       canScheduleStage,
+      headerStageAction,
       isWaitingForLineups,
       missingLineupClubNames,
       submittedLineupClubIds,
@@ -353,11 +430,12 @@ export function useTournamentDetailWorkbench({
   }
 
   async function handleScheduleStage() {
-    if (
-      !operatorId ||
-      !workbench?.profile.id ||
-      !workbench.profile.nextStageId
-    ) {
+    const stageId =
+      workbench?.headerStageAction?.kind === 'scheduleStage'
+        ? workbench.headerStageAction.stageId
+        : workbench?.profile.nextStageId;
+
+    if (!operatorId || !workbench?.profile.id || !stageId) {
       return;
     }
 
@@ -378,9 +456,10 @@ export function useTournamentDetailWorkbench({
       setTournamentActionError('');
       await tournamentApi.scheduleTournamentStage(
         workbench.profile.id,
-        workbench.profile.nextStageId,
+        stageId,
         operatorId,
       );
+      await refreshTournamentProfile(workbench.profile.id);
       onScheduleSuccess?.();
     } catch (error) {
       setTournamentActionError(
@@ -402,8 +481,10 @@ export function useTournamentDetailWorkbench({
       return;
     }
 
-    const advanceCount = Math.max(1, Math.floor(ruleDraft.advanceCount || 0));
     const isKnockout = ruleDraft.format === 'Knockout';
+    const advanceCount = isKnockout
+      ? normalizeKnockoutBracketSize(ruleDraft.advanceCount)
+      : Math.max(1, Math.floor(ruleDraft.advanceCount || 0));
 
     try {
       setIsSubmittingTournamentAction(true);
@@ -422,9 +503,7 @@ export function useTournamentDetailWorkbench({
               : 'SwissCut',
             cutSize: isKnockout ? undefined : advanceCount,
             bracketSize: isKnockout ? advanceCount : undefined,
-            targetTableCount: isKnockout
-              ? Math.max(1, Math.ceil(advanceCount / 4))
-              : undefined,
+            targetTableCount: isKnockout ? advanceCount / 4 : undefined,
             schedulingPoolSize: currentRuleStage.schedulingPoolSize ?? 4,
             pairingMethod: isKnockout
               ? undefined
@@ -458,9 +537,7 @@ export function useTournamentDetailWorkbench({
             : 'SwissCut',
           cutSize: isKnockout ? undefined : advanceCount,
           bracketSize: isKnockout ? advanceCount : undefined,
-          targetTableCount: isKnockout
-            ? Math.max(1, Math.ceil(advanceCount / 4))
-            : undefined,
+          targetTableCount: isKnockout ? advanceCount / 4 : undefined,
           pairingMethod: isKnockout ? undefined : 'balanced-elo',
           carryOverPoints: isKnockout ? undefined : true,
           maxRounds: isKnockout ? undefined : getDefaultRoundCount(ruleDraft.format),
@@ -484,6 +561,70 @@ export function useTournamentDetailWorkbench({
     }
   }
 
+  async function handleCompleteStage() {
+    if (
+      !operatorId ||
+      !workbench?.profile.id ||
+      workbench.headerStageAction?.kind !== 'completeStage'
+    ) {
+      return;
+    }
+
+    try {
+      setIsSubmittingTournamentAction(true);
+      setTournamentActionError('');
+      await tournamentApi.completeTournamentStage(
+        workbench.profile.id,
+        workbench.headerStageAction.stageId,
+        { operatorId },
+      );
+      await refreshTournamentProfile(workbench.profile.id);
+      onScheduleSuccess?.();
+    } catch (error) {
+      setTournamentActionError(
+        error instanceof Error
+          ? error.message
+          : '结束赛段失败，请稍后重试。',
+      );
+    } finally {
+      setIsSubmittingTournamentAction(false);
+    }
+  }
+
+  async function handleSettleTournament() {
+    if (
+      !operatorId ||
+      !workbench?.profile.id ||
+      workbench.headerStageAction?.kind !== 'settleTournament'
+    ) {
+      return;
+    }
+
+    try {
+      setIsSubmittingTournamentAction(true);
+      setTournamentActionError('');
+      await tournamentApi.settleTournament(workbench.profile.id, {
+        operatorId,
+        finalStageId: workbench.headerStageAction.stageId,
+        prizePool: 0,
+        houseFeeAmount: 0,
+        clubShareRatio: 0,
+        adjustments: [],
+        finalizeSettlement: true,
+      });
+      await refreshTournamentProfile(workbench.profile.id);
+      onScheduleSuccess?.();
+    } catch (error) {
+      setTournamentActionError(
+        error instanceof Error
+          ? error.message
+          : '赛事结算失败，请稍后重试。',
+      );
+    } finally {
+      setIsSubmittingTournamentAction(false);
+    }
+  }
+
   return {
     workbench,
     setSelectedClubId,
@@ -496,6 +637,8 @@ export function useTournamentDetailWorkbench({
     handleInvitePlayer,
     handlePublishTournament,
     handleScheduleStage,
+    handleCompleteStage,
+    handleSettleTournament,
     handleSaveRules,
     openRulesDialog,
   };

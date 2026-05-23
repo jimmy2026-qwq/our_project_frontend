@@ -39,6 +39,10 @@ export function formatRankLabel(rank?: PublicHallRankSnapshot | null) {
 export function mapAdminStageStatus(
   status?: string,
 ): TournamentPublicProfile['nextStageStatus'] {
+  if (status === 'Ready') {
+    return 'Ready';
+  }
+
   if (status === 'Active') {
     return 'Active';
   }
@@ -47,14 +51,25 @@ export function mapAdminStageStatus(
     return 'Completed';
   }
 
+  if (status === 'Archived') {
+    return 'Archived';
+  }
+
   return 'Pending';
 }
 
 export function mapTournamentDetailFromAdminView(
   item: TournamentDetailView,
 ): TournamentPublicProfile {
-  const stages = item.stages ?? [];
-  const nextStage = stages[0];
+  const stages = [...(item.stages ?? [])].sort(
+    (left, right) => (left.order ?? 0) - (right.order ?? 0),
+  );
+  const nextStage =
+    stages.find(
+      (stage) =>
+        stage.status !== 'Completed' &&
+        stage.status !== 'Archived',
+    ) ?? stages[stages.length - 1];
   const participatingClubIds =
     item.participatingClubs?.map((club) => club.clubId) ?? [];
   const participatingPlayerCount = item.participatingPlayers?.length ?? 0;

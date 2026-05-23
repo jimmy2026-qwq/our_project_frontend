@@ -13,6 +13,7 @@ import type { TournamentPublicProfile } from '@/pages/PublicHall/objects';
 import type { DetailState } from '@/pages/PublicHall/objects/types';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 
+import { getTournamentFormatLabel } from '../objects/tournament-detail.rules';
 import type { TournamentDetailTableItem } from '../objects/tournament-detail.types';
 import {
   createFallbackClubSummary,
@@ -28,6 +29,38 @@ export async function loadTournamentProfileForWorkbench(
     const adminView = await tournamentApi.getTournament(tournamentId);
     return mapTournamentDetailFromAdminView(adminView);
   }
+}
+
+function mergeTournamentProfiles(
+  incoming: TournamentPublicProfile,
+  previous?: TournamentPublicProfile | null,
+): TournamentPublicProfile {
+  if (!previous) {
+    return incoming;
+  }
+
+  const previousStagesById = new Map(
+    (previous.stages ?? []).map((stage) => [stage.stageId, stage]),
+  );
+
+  return {
+    ...previous,
+    ...incoming,
+    stages: (incoming.stages ?? []).map((stage) => {
+      const previousStage = previousStagesById.get(stage.stageId);
+
+      return previousStage
+        ? {
+            ...previousStage,
+            ...stage,
+            archivedTableCount:
+              stage.archivedTableCount ?? previousStage.archivedTableCount,
+            standings: stage.standings ?? previousStage.standings,
+            bracket: stage.bracket ?? previousStage.bracket,
+          }
+        : stage;
+    }),
+  };
 }
 
 export function useTournamentDetailWorkbenchData({
@@ -70,7 +103,10 @@ export function useTournamentDetailWorkbenchData({
       .getTournament(currentProfile.id)
       .then((detail) => {
         if (!cancelled) {
-          setLocalProfile(mapTournamentDetailFromAdminView(detail));
+          const adminProfile = mapTournamentDetailFromAdminView(detail);
+          setLocalProfile((current) =>
+            mergeTournamentProfiles(adminProfile, current ?? currentProfile),
+          );
         }
       })
       .catch(() => {
@@ -250,10 +286,12 @@ export function useTournamentDetailWorkbenchData({
               },
             );
 
+            const stageDisplayName = `${currentProfile.name} ${getTournamentFormatLabel(stage.format)}`;
+
             return envelope.items.map((table) => ({
               id: table.id,
               stageId: table.stageId,
-              stageName: stage.name,
+              stageName: stageDisplayName,
               tableCode: table.tableCode,
               status: table.status,
               playerIds: table.playerIds,

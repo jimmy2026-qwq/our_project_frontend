@@ -26,6 +26,8 @@ import {
   getLeaderboardStatusLabel,
   getRelationLabel,
   getTournamentStatusLabel,
+  STAGE_STATUS_FILTER_OPTIONS,
+  TOURNAMENT_STATUS_FILTER_OPTIONS,
 } from '@/pages/PublicHall/objects/utils';
 import { getStatusTone } from '@/pages/PublicHall/components/shared.status';
 
@@ -131,11 +133,11 @@ export const PublicSchedulesSection = ({
               })
             }
           >
-            <option value="">全部状态</option>
-            <option value="Draft">草稿</option>
-            <option value="RegistrationOpen">报名中</option>
-            <option value="InProgress">进行中</option>
-            <option value="Finished">已结束</option>
+            {TOURNAMENT_STATUS_FILTER_OPTIONS.map((option) => (
+              <option key={option.value || 'all'} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </SelectField>
           <SelectField
             label="赛事阶段"
@@ -147,10 +149,11 @@ export const PublicSchedulesSection = ({
               })
             }
           >
-            <option value="">全部阶段</option>
-            <option value="Pending">未开始</option>
-            <option value="Active">进行中</option>
-            <option value="Completed">已完成</option>
+            {STAGE_STATUS_FILTER_OPTIONS.map((option) => (
+              <option key={option.value || 'all'} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </SelectField>
         </FilterActionRow>
         <section className={hallSectionClassNames.list}>

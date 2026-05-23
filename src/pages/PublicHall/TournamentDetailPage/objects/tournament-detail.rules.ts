@@ -41,6 +41,11 @@ function normalizePositiveInteger(value: unknown, fallback: number) {
     : fallback;
 }
 
+export function normalizeKnockoutBracketSize(value: unknown, fallback = 4) {
+  const count = normalizePositiveInteger(value, fallback);
+  return Math.max(4, Math.ceil(count / 4) * 4);
+}
+
 export function getStageAdvanceCount(stage: TournamentStageWithRules | null) {
   if (!stage) {
     return 8;
@@ -54,9 +59,9 @@ export function getStageAdvanceCount(stage: TournamentStageWithRules | null) {
       ? rule.targetTableCount * 4
       : undefined;
 
-    return normalizePositiveInteger(
+    return normalizeKnockoutBracketSize(
       knockoutRule?.bracketSize ?? targetCount,
-      8,
+      4,
     );
   }
 

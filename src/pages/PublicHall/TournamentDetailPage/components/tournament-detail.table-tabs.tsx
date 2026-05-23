@@ -19,15 +19,19 @@ export function TournamentDetailTablesTab({
   participantWaitingTableDetails,
   tableDetailError,
   updatingReadyTableId,
+  uploadingDemoPaifuTableId,
   workbench,
   onToggleOwnReady,
+  onUploadDemoPaifu,
 }: {
   operatorId: string;
   participantWaitingTableDetails: Record<string, TableDetail>;
   tableDetailError: string;
   updatingReadyTableId: string;
+  uploadingDemoPaifuTableId: string;
   workbench: TournamentDetailWorkbenchState;
   onToggleOwnReady: (tableId: string, isReady: boolean) => void;
+  onUploadDemoPaifu: (table: TournamentDetailTableItem) => void;
 }) {
   return (
     <div
@@ -47,6 +51,7 @@ export function TournamentDetailTablesTab({
                 .map((playerId) => workbench.playerNames[playerId] ?? playerId)
                 .join(' / ');
               const isFinished = table.status === 'Archived';
+              const isInProgress = table.status === 'InProgress';
               const isWaiting = table.status === 'WaitingPreparation';
               const participantTableDetail =
                 participantWaitingTableDetails[table.id];
@@ -90,6 +95,18 @@ export function TournamentDetailTablesTab({
                             : ownSeat.ready
                               ? '取消准备'
                               : '标记准备'}
+                        </button>
+                      ) : null}
+                      {workbench.canManageTournament && isInProgress ? (
+                        <button
+                          type="button"
+                          className={detailShellClassNames.action}
+                          onClick={() => onUploadDemoPaifu(table)}
+                          disabled={uploadingDemoPaifuTableId === table.id}
+                        >
+                          {uploadingDemoPaifuTableId === table.id
+                            ? '上传中...'
+                            : '默认牌谱结束'}
                         </button>
                       ) : null}
                       {isWaiting ? (

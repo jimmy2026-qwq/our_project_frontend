@@ -62,7 +62,7 @@ export function ManagedTableDetailDialog({
     >
       <DialogPortal>
         <DialogOverlay />
-        <DialogSurface>
+        <DialogSurface className="text-[#f2f7fb]">
           <DialogHeader className="border-b border-[rgba(176,223,229,0.14)] px-6 py-5">
             <DialogTitle>
               {selectedManageTable
@@ -70,7 +70,7 @@ export function ManagedTableDetailDialog({
                 : '牌桌详情'}
             </DialogTitle>
           </DialogHeader>
-          <DialogBody className="grid gap-4 px-6 py-5">
+          <DialogBody className="grid gap-4 px-6 py-5 text-[#f2f7fb]">
             {isLoadingTableDetail ? (
               <p className="m-0 text-[#9ab0c1]">正在加载牌桌详情...</p>
             ) : null}
@@ -78,10 +78,15 @@ export function ManagedTableDetailDialog({
               <Alert variant="danger">{tableDetailError}</Alert>
             ) : null}
             {tableDetail?.seats.map((seat) => (
-              <div key={seat.seat} className={detailShellClassNames.seatRow}>
+              <div
+                key={seat.seat}
+                className={`${detailShellClassNames.seatRow} text-[#f2f7fb]`}
+              >
                 <div className="grid gap-1">
-                  <strong>{seat.seat}</strong>
-                  <span>{playerNames[seat.playerId] ?? seat.playerId}</span>
+                  <strong className="text-[#f2f7fb]">{seat.seat}</strong>
+                  <span className="text-[#f2f7fb]">
+                    {playerNames[seat.playerId] ?? seat.playerId}
+                  </span>
                 </div>
                 <StatusPill tone={getSeatStatusTone(seat)}>
                   {getSeatStatusLabel(seat)}
