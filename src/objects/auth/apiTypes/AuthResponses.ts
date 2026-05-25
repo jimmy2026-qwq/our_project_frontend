@@ -46,12 +46,12 @@ export interface CurrentSessionView {
   displayName: string;
   authenticated: boolean;
   roles: CurrentSessionRoleFlags;
-  player?: {
+  player: {
     id: string;
     userId: string;
     nickname: string;
   } | null;
-  guestSession?: {
+  guestSession: {
     id: string;
     displayName: string;
   } | null;

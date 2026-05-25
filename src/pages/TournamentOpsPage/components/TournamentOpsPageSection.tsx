@@ -181,7 +181,7 @@ export function TournamentOpsPageSection({
           <option value="InProgress">对局中</option>
           <option value="Scoring">结算中</option>
           <option value="Archived">已结束</option>
-          <option value="AppealPending">申诉处理中</option>
+          <option value="AppealInProgress">申诉处理中</option>
         </SelectField>
         <TextInputField
           label="玩家编号"

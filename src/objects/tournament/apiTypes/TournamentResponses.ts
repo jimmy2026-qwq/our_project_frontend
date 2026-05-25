@@ -2,23 +2,29 @@ import type { TournamentTableView } from './TableResponses';
 import type {
   AdvancementRuleView,
   KnockoutRuleConfigView,
+  PlayerStatus,
+  RankPlatform,
+  StageStatus,
   SwissRuleConfigView,
+  TournamentFormat,
+  TournamentParticipantKind,
+  TournamentStatus,
 } from './TournamentDomainTypes';
 
 export interface TournamentStageSummaryView {
   stageId: string;
   name: string;
-  format: string;
+  format: TournamentFormat;
   order: number;
-  status: string;
+  status: StageStatus;
   currentRound: number;
   roundCount: number;
   schedulingPoolSize: number;
   pendingTablePlanCount: number;
   scheduledTableCount: number;
-  advancementRule?: AdvancementRuleView;
-  swissRule?: SwissRuleConfigView | null;
-  knockoutRule?: KnockoutRuleConfigView | null;
+  advancementRule: AdvancementRuleView;
+  swissRule: SwissRuleConfigView | null;
+  knockoutRule: KnockoutRuleConfigView | null;
 }
 
 export interface TournamentSummaryView {
@@ -27,7 +33,7 @@ export interface TournamentSummaryView {
   organizer: string;
   startsAt: string;
   endsAt: string;
-  status: string;
+  status: TournamentStatus;
   participatingClubIds: string[];
   participatingPlayerIds: string[];
   adminIds: string[];
@@ -42,7 +48,7 @@ export interface TournamentLineupSubmissionView {
   submittedAt: string;
   activePlayerIds: string[];
   reservePlayerIds: string[];
-  note?: string | null;
+  note: string | null;
 }
 
 export interface TournamentParticipantClubView {
@@ -53,12 +59,12 @@ export interface TournamentParticipantClubView {
 export interface TournamentParticipantPlayerView {
   playerId: string;
   nickname: string;
-  status: string;
+  status: PlayerStatus;
   elo: number;
   currentRank: {
-    platform: string;
+    platform: RankPlatform;
     tier: string;
-    stars?: number | null;
+    stars: number | null;
   };
   clubIds: string[];
 }
@@ -74,9 +80,9 @@ export interface TournamentWhitelistSummaryView {
 export interface TournamentStageDirectoryEntry {
   stageId: string;
   name: string;
-  format: string;
+  format: TournamentFormat;
   order: number;
-  status: string;
+  status: StageStatus;
   currentRound: number;
   roundCount: number;
   schedulingPoolSize: number;
@@ -87,31 +93,31 @@ export interface TournamentStageDirectoryEntry {
 export interface TournamentOperationsStageView {
   stageId: string;
   name: string;
-  status: string;
-  format?: string;
-  order?: number;
-  currentRound?: number;
-  roundCount?: number;
-  schedulingPoolSize?: number;
-  pendingTablePlanCount?: number;
-  scheduledTableCount?: number;
-  advancementRule?: AdvancementRuleView;
-  swissRule?: SwissRuleConfigView | null;
-  knockoutRule?: KnockoutRuleConfigView | null;
-  lineupSubmissions?: TournamentLineupSubmissionView[];
+  format: TournamentFormat;
+  order: number;
+  status: StageStatus;
+  currentRound: number;
+  roundCount: number;
+  schedulingPoolSize: number;
+  pendingTablePlanCount: number;
+  scheduledTableCount: number;
+  advancementRule: AdvancementRuleView;
+  swissRule: SwissRuleConfigView | null;
+  knockoutRule: KnockoutRuleConfigView | null;
+  lineupSubmissions: TournamentLineupSubmissionView[];
 }
 
 export interface TournamentDetailView {
   tournamentId: string;
   name: string;
   organizer: string;
-  status: string;
+  status: TournamentStatus;
   startsAt: string;
   endsAt: string;
-  participatingClubs?: TournamentParticipantClubView[];
-  participatingPlayers?: Array<{ playerId: string }>;
-  whitelistSummary?: TournamentWhitelistSummaryView;
-  stages?: TournamentOperationsStageView[];
+  participatingClubs: TournamentParticipantClubView[];
+  participatingPlayers: TournamentParticipantPlayerView[];
+  whitelistSummary: TournamentWhitelistSummaryView;
+  stages: TournamentOperationsStageView[];
 }
 
 export interface TournamentMutationView {
@@ -120,7 +126,7 @@ export interface TournamentMutationView {
 }
 
 export interface TournamentWhitelistEntryView {
-  participantKind: string;
-  playerId?: string | null;
-  clubId?: string | null;
+  participantKind: TournamentParticipantKind;
+  playerId: string | null;
+  clubId: string | null;
 }

@@ -1,10 +1,20 @@
 export type SeatWind = 'East' | 'South' | 'West' | 'North';
-export type TournamentFormat = 'Swiss' | 'Knockout';
+export type TournamentFormat =
+  | 'Swiss'
+  | 'Knockout'
+  | 'RoundRobin'
+  | 'Finals'
+  | 'Custom';
+export type RankPlatform = 'Tenhou' | 'MahjongSoul' | 'Custom';
+export type PlayerStatus = 'Active' | 'Suspended' | 'Banned';
+export type TournamentParticipantKind = 'Club' | 'Player';
 export type AdvancementRuleType =
   | 'SwissCut'
   | 'KnockoutElimination'
   | 'ScoreThreshold'
   | 'Custom';
+export type SwissPairingMethod = 'balanced-elo' | 'snake';
+export type KnockoutSeedingPolicy = 'rating' | 'elo' | 'ranking' | 'standings';
 
 export type TournamentStatus =
   | 'Draft'
@@ -19,23 +29,23 @@ export type StageStatus = 'Pending' | 'Ready' | 'Active' | 'Completed' | 'Archiv
 
 export interface AdvancementRuleView {
   ruleType: AdvancementRuleType;
-  cutSize?: number | null;
-  thresholdScore?: number | null;
-  targetTableCount?: number | null;
-  templateKey?: string | null;
-  note?: string | null;
+  cutSize: number | null;
+  thresholdScore: number | null;
+  targetTableCount: number | null;
+  templateKey: string | null;
+  note: string | null;
 }
 
 export interface SwissRuleConfigView {
-  pairingMethod: string;
+  pairingMethod: SwissPairingMethod;
   carryOverPoints: boolean;
-  maxRounds?: number | null;
+  maxRounds: number | null;
 }
 
 export interface KnockoutRuleConfigView {
-  bracketSize?: number | null;
+  bracketSize: number | null;
   thirdPlaceMatch: boolean;
-  seedingPolicy: string;
+  seedingPolicy: KnockoutSeedingPolicy;
   repechageEnabled: boolean;
 }
 
@@ -44,8 +54,9 @@ export type TableStatus =
   | 'InProgress'
   | 'Scoring'
   | 'Archived'
-  | 'AppealPending'
   | 'AppealInProgress';
+
+export type KnockoutLane = 'Championship' | 'Bronze' | 'Repechage';
 
 export interface TableSeat {
   seat: SeatWind;
@@ -53,7 +64,7 @@ export interface TableSeat {
   initialPoints: number;
   disconnected: boolean;
   ready: boolean;
-  clubId?: string | null;
+  clubId: string | null;
 }
 
 export interface Table {
@@ -63,15 +74,15 @@ export interface Table {
   stageId: string;
   seats: TableSeat[];
   stageRoundNumber: number;
-  bracketMatchId?: string | null;
-  bracketRoundNumber?: number | null;
+  bracketMatchId: string | null;
+  bracketRoundNumber: number | null;
   feederMatchIds: string[];
-  status: string;
-  startedAt?: string | null;
-  scoringStartedAt?: string | null;
-  endedAt?: string | null;
-  paifuId?: string | null;
-  matchRecordId?: string | null;
+  status: TableStatus;
+  startedAt: string | null;
+  scoringStartedAt: string | null;
+  endedAt: string | null;
+  paifuId: string | null;
+  matchRecordId: string | null;
   appealTicketIds: string[];
   resetCount: number;
   operatorNotes: string[];
@@ -86,7 +97,7 @@ export interface StageStandingEntry {
   totalFinalPoints: number;
   averagePlacement: number;
   qualified: boolean;
-  seed?: number | null;
+  seed: number | null;
 }
 
 export interface StageRankingSnapshot {
@@ -111,10 +122,10 @@ export interface StageAdvancementSnapshot {
 
 export interface KnockoutBracketSlot {
   seed: number;
-  playerId?: string | null;
+  playerId: string | null;
   bye: boolean;
-  sourceMatchId?: string | null;
-  sourcePlacement?: number | null;
+  sourceMatchId: string | null;
+  sourcePlacement: number | null;
 }
 
 export interface KnockoutBracketResult {
@@ -128,12 +139,12 @@ export interface KnockoutBracketMatch {
   id: string;
   roundNumber: number;
   position: number;
-  lane: string;
+  lane: KnockoutLane;
   slots: KnockoutBracketSlot[];
   sourceMatchIds: string[];
   advancementCount: number;
-  nextMatchId?: string | null;
-  tableId?: string | null;
+  nextMatchId: string | null;
+  tableId: string | null;
   unlocked: boolean;
   completed: boolean;
   results: KnockoutBracketResult[];

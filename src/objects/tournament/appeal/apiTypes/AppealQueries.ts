@@ -1,12 +1,17 @@
+import type { AppealPriority, AppealStatus } from './TournamentAppealResponses';
+
 export interface AppealListQuery {
   tournamentId?: string;
   stageId?: string;
-  status?: 'Open' | 'UnderReview' | 'Resolved' | 'Rejected' | 'Escalated';
+  status?: AppealStatus;
   tableId?: string;
   openedBy?: string;
   assigneeId?: string;
-  priority?: string;
+  priority?: AppealPriority;
   overdueOnly?: boolean;
+  dueBefore?: string;
+  dueAfter?: string;
+  asOf?: string;
   limit?: number;
   offset?: number;
 }

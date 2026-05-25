@@ -1,9 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type { AppealListQuery, AppealTicketView, ListEnvelope } from '@/objects';
+import type { AppealPriority, AppealStatus } from '@/objects/tournament/appeal';
 
 export class AppealListAPI extends APIMessage<ListEnvelope<AppealTicketView>> {
-  readonly status?: string;
-  readonly priority?: string;
+  readonly status?: AppealStatus;
+  readonly priority?: AppealPriority;
   readonly tournamentId?: string;
   readonly stageId?: string;
   readonly tableId?: string;

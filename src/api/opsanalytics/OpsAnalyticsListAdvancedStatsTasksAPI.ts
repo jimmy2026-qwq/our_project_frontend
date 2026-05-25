@@ -1,16 +1,17 @@
 import { APIMessage, encodeBackendOption } from '@/system/api';
 import type { AdvancedStatsRecomputeTask, ListEnvelope } from '@/objects';
+import type { BackendOption } from '@/system/api';
 
 export interface OpsAnalyticsListAdvancedStatsTasksAPIRequest {
   operatorId: string;
-  status?: string;
+  status?: AdvancedStatsRecomputeTask['status'];
   limit?: number;
   offset?: number;
 }
 
 export class OpsAnalyticsListAdvancedStatsTasksAPI extends APIMessage<ListEnvelope<AdvancedStatsRecomputeTask>> {
   readonly operatorId: string;
-  readonly status: string[];
+  readonly status: BackendOption<AdvancedStatsRecomputeTask['status']>;
   readonly limit: number[];
   readonly offset: number[];
 

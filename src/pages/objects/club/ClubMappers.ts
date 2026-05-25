@@ -1,5 +1,5 @@
 import type { PlayerProfile } from '@/pages/objects/player';
-import { mapPlayerClubIds } from '@/pages/objects/player';
+import { mapPlayerClubIds, mapPlayerStatus } from '@/pages/objects/player';
 import type { ClubSummary } from './ClubSummary';
 import type { ClubApplicationView } from './ClubApplicationViews';
 
@@ -28,7 +28,7 @@ export function mapClubMember(item: PlayerProfileView): PlayerProfile {
     playerId: item.playerId,
     applicantUserId: item.userId,
     displayName: item.nickname,
-    playerStatus: item.status,
+    playerStatus: mapPlayerStatus(item.status),
     currentRank: item.currentRank,
     elo: item.elo,
     clubIds: mapPlayerClubIds(item),
@@ -43,7 +43,7 @@ function normalizeApplicant(
     applicantUserId: applicant.applicantUserId ?? undefined,
     displayName: applicant.displayName,
     playerStatus:
-      (applicant.playerStatus as PlayerProfile['playerStatus']) ?? undefined,
+      applicant.playerStatus ? mapPlayerStatus(applicant.playerStatus) : undefined,
     currentRank: applicant.currentRank ?? undefined,
     elo: applicant.elo ?? undefined,
     clubIds: applicant.clubIds ?? [],

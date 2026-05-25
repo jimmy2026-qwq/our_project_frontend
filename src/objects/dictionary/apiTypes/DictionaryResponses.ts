@@ -1,7 +1,13 @@
 export interface GlobalDictionarySchemaEntry {
   key: string;
   description: string;
-  valueType: string;
+  valueType:
+    | 'Integer'
+    | 'Decimal'
+    | 'Weight'
+    | 'RatioVector'
+    | 'StageRuleTemplate'
+    | 'Metadata';
   defaultValue: string;
 }
 
@@ -13,24 +19,26 @@ export interface GlobalDictionarySchemaView {
 export interface GlobalDictionaryEntry {
   key: string;
   value: string;
-  updatedBy?: string | null;
+  updatedBy: string | null;
   updatedAt: string;
-  note?: string | null;
+  note: string | null;
 }
+
+export type DictionaryNamespaceStatus = 'Pending' | 'Approved' | 'Rejected' | 'Revoked';
 
 export interface DictionaryNamespaceRegistration {
   namespacePrefix: string;
-  status: string;
+  status: DictionaryNamespaceStatus;
   requestedBy: string;
   requestedAt: string;
-  reviewedBy?: string | null;
-  reviewedAt?: string | null;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
   ownerPlayerId: string;
   coOwnerPlayerIds: string[];
   editorPlayerIds: string[];
-  contextClubId?: string | null;
-  reviewDueAt?: string | null;
-  note?: string | null;
+  contextClubId: string | null;
+  reviewDueAt: string | null;
+  note: string | null;
 }
 
 export interface DictionaryNamespaceOwnerBacklog {
@@ -45,8 +53,8 @@ export interface DictionaryNamespaceBacklogView {
   pendingCount: number;
   overdueCount: number;
   dueSoonCount: number;
-  oldestPendingRequestedAt?: string | null;
-  nextDueAt?: string | null;
+  oldestPendingRequestedAt: string | null;
+  nextDueAt: string | null;
   ownerBacklog: DictionaryNamespaceOwnerBacklog[];
 }
 
@@ -55,7 +63,7 @@ export interface DictionaryNamespaceReminderAction {
   action: string;
   ownerPlayerId: string;
   occurredAt: string;
-  note?: string | null;
+  note: string | null;
 }
 
 export type GlobalDictionarySchemaResponse = GlobalDictionarySchemaView;

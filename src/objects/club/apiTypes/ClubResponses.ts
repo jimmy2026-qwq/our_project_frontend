@@ -2,21 +2,23 @@ import type { PlayerProfileView as PlayerProfile } from '@/objects/player';
 
 export type PlayerProfileView = PlayerProfile;
 
+export type ClubRelationKind = 'Alliance' | 'Rivalry' | 'Neutral';
+
 export interface ClubRelation {
-  relation: 'Alliance' | 'Rivalry' | 'Neutral';
+  relation: ClubRelationKind;
 }
 
 export interface Club {
   id: string;
   name: string;
   members: string[];
-  admins?: string[];
+  admins: string[];
   powerRating: number;
-  treasuryBalance?: number;
-  totalPoints?: number;
-  pointPool?: number;
-  relations?: ClubRelation[];
-  dissolvedAt?: string | null;
+  treasuryBalance: number;
+  totalPoints: number;
+  pointPool: number;
+  relations: ClubRelation[];
+  dissolvedAt: string | null;
 }
 
 export interface ClubPrivilegeDefinition {
@@ -33,5 +35,5 @@ export interface ClubMemberPrivilegeSnapshot {
   rankLabel: string;
   privileges: string[];
   isAdmin: boolean;
-  internalTitle?: string | null;
+  internalTitle: string | null;
 }

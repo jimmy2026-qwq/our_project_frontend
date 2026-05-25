@@ -1,6 +1,7 @@
 import { APIMessage } from '@/system/api';
 import type { CreateTournamentRequest, TournamentSummaryView } from '@/objects';
 import { emptyBackendOption } from '@/system/api/backend-option.transport';
+import type { AdvancementRuleType, KnockoutSeedingPolicy, SwissPairingMethod } from '@/objects/tournament';
 
 export class TournamentCreateAPI extends APIMessage<TournamentSummaryView> {
   readonly name: string;
@@ -25,18 +26,18 @@ export class TournamentCreateAPI extends APIMessage<TournamentSummaryView> {
       roundCount: stage.roundCount,
       operatorId: stage.operatorId ? [stage.operatorId] : emptyBackendOption<string>(),
       ruleTemplateKey: stage.ruleTemplateKey ? [stage.ruleTemplateKey] : emptyBackendOption<string>(),
-      advancementRuleType: stage.advancementRuleType ? [stage.advancementRuleType] : emptyBackendOption<string>(),
+      advancementRuleType: stage.advancementRuleType ? [stage.advancementRuleType] : emptyBackendOption<AdvancementRuleType>(),
       cutSize: stage.cutSize === undefined ? emptyBackendOption<number>() : [stage.cutSize],
       thresholdScore: stage.thresholdScore === undefined ? emptyBackendOption<number>() : [stage.thresholdScore],
       targetTableCount: stage.targetTableCount === undefined ? emptyBackendOption<number>() : [stage.targetTableCount],
       note: stage.note ? [stage.note] : emptyBackendOption<string>(),
-      pairingMethod: stage.pairingMethod ? [stage.pairingMethod] : emptyBackendOption<string>(),
+      pairingMethod: stage.pairingMethod ? [stage.pairingMethod] : emptyBackendOption<SwissPairingMethod>(),
       carryOverPoints: stage.carryOverPoints === undefined ? emptyBackendOption<boolean>() : [stage.carryOverPoints],
       maxRounds: stage.maxRounds === undefined ? emptyBackendOption<number>() : [stage.maxRounds],
       bracketSize: stage.bracketSize === undefined ? emptyBackendOption<number>() : [stage.bracketSize],
       thirdPlaceMatch: stage.thirdPlaceMatch === undefined ? emptyBackendOption<boolean>() : [stage.thirdPlaceMatch],
       repechageEnabled: stage.repechageEnabled === undefined ? emptyBackendOption<boolean>() : [stage.repechageEnabled],
-      seedingPolicy: stage.seedingPolicy ? [stage.seedingPolicy] : emptyBackendOption<string>(),
+      seedingPolicy: stage.seedingPolicy ? [stage.seedingPolicy] : emptyBackendOption<KnockoutSeedingPolicy>(),
       schedulingPoolSize: stage.schedulingPoolSize === undefined ? emptyBackendOption<number>() : [stage.schedulingPoolSize],
     }));
   }

@@ -5,9 +5,11 @@ import type {
   PublicTournamentQuery,
   PublicTournamentSummaryView,
 } from '@/objects';
+import type { TournamentStatus } from '@/objects/tournament';
+import type { BackendOption } from '@/system/api/backend-option.transport';
 
 export class ListPublicTournamentsAPI extends APIMessage<ListEnvelope<PublicTournamentSummaryView>> {
-  readonly status: string[];
+  readonly status: BackendOption<TournamentStatus>;
   readonly organizer: string[];
   readonly limit: number[];
   readonly offset: number[];

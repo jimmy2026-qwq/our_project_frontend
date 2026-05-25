@@ -1,3 +1,5 @@
+import type { PlayerStatus, RankPlatform } from '@/objects/tournament';
+
 export interface PlayerRoleFlagsView {
   isRegisteredPlayer: boolean;
   isClubAdmin: boolean;
@@ -11,11 +13,11 @@ export interface PlayerProfileView {
   nickname: string;
   registeredAt: string;
   currentRank: {
-    platform: string;
+    platform: RankPlatform;
     tier: string;
-    stars?: number | null;
+    stars: number | null;
   };
-  status: 'Active' | 'Inactive' | 'Banned';
+  status: PlayerStatus;
   elo: number;
   clubId: string | null;
   affiliatedClubIds: string[];

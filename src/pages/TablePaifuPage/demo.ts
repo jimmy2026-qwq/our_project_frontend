@@ -9,6 +9,7 @@ const demoSeats = [
     initialPoints: 25000,
     disconnected: false,
     ready: true,
+    clubId: null,
   },
   {
     seat: 'South',
@@ -16,6 +17,7 @@ const demoSeats = [
     initialPoints: 25000,
     disconnected: false,
     ready: true,
+    clubId: null,
   },
   {
     seat: 'West',
@@ -23,6 +25,7 @@ const demoSeats = [
     initialPoints: 25000,
     disconnected: false,
     ready: true,
+    clubId: null,
   },
   {
     seat: 'North',
@@ -30,6 +33,7 @@ const demoSeats = [
     initialPoints: 25000,
     disconnected: false,
     ready: true,
+    clubId: null,
   },
 ] as const;
 

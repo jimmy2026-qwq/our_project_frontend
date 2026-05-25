@@ -1,10 +1,17 @@
 import type {
   AdvancementRuleView,
+  KnockoutBracketSnapshot,
   KnockoutRuleConfigView,
+  RankPlatform,
+  SeatWind,
+  StageRankingSnapshot,
   StageStatus,
   SwissRuleConfigView,
+  TournamentFormat,
   TournamentStatus,
 } from '@/objects/tournament';
+
+type PlayerStatus = 'Active' | 'Suspended' | 'Banned';
 
 export interface PublicScheduleView {
   tournamentId: string;
@@ -13,34 +20,34 @@ export interface PublicScheduleView {
   stageId: string;
   stageName: string;
   stageStatus: StageStatus;
-  currentRound?: number;
-  roundCount?: number;
+  currentRound: number;
+  roundCount: number;
   startsAt: string;
-  endsAt?: string;
-  tableCount?: number;
-  activeTableCount?: number;
-  pendingTablePlanCount?: number;
-  participantCount?: number;
-  whitelistCount?: number;
+  endsAt: string;
+  tableCount: number;
+  activeTableCount: number;
+  pendingTablePlanCount: number;
+  participantCount: number;
+  whitelistCount: number;
 }
 
 export interface PublicTournamentStageView {
   stageId: string;
   name: string;
-  format?: string;
-  order?: number;
+  format: TournamentFormat;
+  order: number;
   status: StageStatus;
-  currentRound?: number;
+  currentRound: number;
   roundCount: number;
-  schedulingPoolSize?: number;
+  schedulingPoolSize: number;
   tableCount: number;
-  archivedTableCount?: number;
+  archivedTableCount: number;
   pendingTablePlanCount: number;
-  standings?: unknown | null;
-  bracket?: unknown | null;
-  advancementRule?: AdvancementRuleView;
-  swissRule?: SwissRuleConfigView | null;
-  knockoutRule?: KnockoutRuleConfigView | null;
+  standings: StageRankingSnapshot | null;
+  bracket: KnockoutBracketSnapshot | null;
+  advancementRule: AdvancementRuleView;
+  swissRule: SwissRuleConfigView | null;
+  knockoutRule: KnockoutRuleConfigView | null;
 }
 
 export interface PublicTournamentDetailView {
@@ -78,17 +85,17 @@ export interface PublicClubDirectoryEntry {
   clubId: string;
   name: string;
   memberCount: number;
-  activeMemberCount?: number;
-  adminCount?: number;
+  activeMemberCount: number;
+  adminCount: number;
   powerRating: number;
-  totalPoints?: number;
+  totalPoints: number;
   treasuryBalance: number;
-  pointPool?: number;
-  allianceCount?: number;
-  rivalryCount?: number;
-  strongestRivalClubId?: string | null;
-  strongestRivalPower?: number | null;
-  honorTitles?: string[];
+  pointPool: number;
+  allianceCount: number;
+  rivalryCount: number;
+  strongestRivalClubId: string | null;
+  strongestRivalPower: number | null;
+  honorTitles: string[];
   relations: PublicClubRelationView[];
 }
 
@@ -97,75 +104,75 @@ export interface PublicClubHonorView {
 }
 
 export interface PublicClubLineupMemberView {
-  playerId?: string;
+  playerId: string;
   nickname: string;
-  elo?: number;
-  currentRank?: RankSnapshotView | null;
-  status?: string;
-  isAdmin?: boolean;
-  internalTitle?: string | null;
-  privileges?: string[];
+  elo: number;
+  currentRank: RankSnapshotView;
+  status: PlayerStatus;
+  isAdmin: boolean;
+  internalTitle: string | null;
+  privileges: string[];
 }
 
 export interface PublicClubRecentMatchSeatView {
   playerId: string;
   nickname: string;
-  clubId?: string | null;
-  seat: string;
+  clubId: string | null;
+  seat: SeatWind;
   placement: number;
   scoreDelta: number;
   finalPoints: number;
 }
 
 export interface PublicClubRecentMatchView {
-  matchRecordId?: string;
-  tournamentId?: string;
+  matchRecordId: string;
+  tournamentId: string;
   tournamentName: string;
-  stageId?: string;
-  stageName?: string;
-  tableId?: string;
-  generatedAt?: string;
-  seats?: PublicClubRecentMatchSeatView[];
+  stageId: string;
+  stageName: string;
+  tableId: string;
+  generatedAt: string;
+  seats: PublicClubRecentMatchSeatView[];
 }
 
 export interface ClubApplicationPolicyView {
-  requirementsText?: string | null;
-  applicationsOpen?: boolean;
-  expectedReviewSlaHours?: number | null;
-  pendingApplicationCount?: number | null;
+  applicationsOpen: boolean;
+  requirementsText: string | null;
+  expectedReviewSlaHours: number | null;
+  pendingApplicationCount: number;
 }
 
 export interface PublicClubDetailView {
   clubId: string;
   name: string;
   memberCount: number;
-  activeMemberCount?: number;
-  adminCount?: number;
+  activeMemberCount: number;
+  adminCount: number;
   powerRating: number;
-  totalPoints?: number;
-  treasuryBalance?: number;
-  pointPool?: number;
-  relations?: PublicClubRelationView[];
-  honors?: PublicClubHonorView[];
-  applicationPolicy?: ClubApplicationPolicyView | null;
-  currentLineup?: PublicClubLineupMemberView[];
-  recentMatches?: PublicClubRecentMatchView[];
+  totalPoints: number;
+  treasuryBalance: number;
+  pointPool: number;
+  relations: PublicClubRelationView[];
+  honors: PublicClubHonorView[];
+  applicationPolicy: ClubApplicationPolicyView;
+  currentLineup: PublicClubLineupMemberView[];
+  recentMatches: PublicClubRecentMatchView[];
 }
 
 export interface RankSnapshotView {
-  platform: string;
+  platform: RankPlatform;
   tier: string;
-  stars?: number | null;
+  stars: number | null;
 }
 
 export interface PlayerLeaderboardEntry {
   playerId: string;
   nickname: string;
   elo: number;
-  currentRank?: RankSnapshotView | null;
-  normalizedRankScore?: number | null;
+  currentRank: RankSnapshotView;
+  normalizedRankScore: number | null;
   clubIds: string[];
-  status: 'Active' | 'Suspended' | 'Banned';
+  status: PlayerStatus;
 }
 
 export interface ClubLeaderboardEntry {

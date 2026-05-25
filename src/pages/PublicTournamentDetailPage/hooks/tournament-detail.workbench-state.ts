@@ -134,7 +134,6 @@ function getVisibleTables({
               table.playerIds.includes(operatorId)) ||
             table.status === 'InProgress' ||
             table.status === 'Scoring' ||
-            table.status === 'AppealPending' ||
             table.status === 'AppealInProgress' ||
             table.status === 'Archived',
         )),

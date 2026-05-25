@@ -1,5 +1,7 @@
 import type { ClubApplicationStatus } from './ClubApplicationStatus';
 
+export type ClubApplicationReviewDecision = 'approve' | 'reject';
+
 export interface ClubMembershipApplicationRequest {
   applicantUserId?: string;
   displayName: string;
@@ -21,7 +23,7 @@ export interface RejectClubApplicationRequest {
 
 export interface ReviewClubApplicationRequest {
   operatorId: string;
-  decision: 'approve' | 'reject' | string;
+  decision: ClubApplicationReviewDecision;
   playerId?: string;
   note?: string;
 }

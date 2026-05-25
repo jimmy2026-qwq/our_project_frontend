@@ -184,7 +184,7 @@ export async function loadPlayerDashboardData(operatorId: string) {
           ? 0
           : status === 'Scoring'
             ? 1
-            : status === 'AppealPending' || status === 'AppealInProgress'
+            : status === 'AppealInProgress'
               ? 2
               : 3;
 

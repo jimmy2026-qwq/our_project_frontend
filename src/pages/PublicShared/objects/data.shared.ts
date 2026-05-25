@@ -8,6 +8,7 @@ import type {
   PublicHallRankSnapshot,
   PublicHallState,
 } from './types';
+import type { PlayerStatus } from '@/objects/tournament';
 
 export const DEFAULT_PUBLIC_HALL_STATE: PublicHallState = {
   activeView: 'schedules',
@@ -24,6 +25,16 @@ export function mapLeaderboardStatus(
   status: PublicHallLeaderboardStatus,
 ): PlayerLeaderboardEntry['status'] {
   return status === 'Suspended' ? 'Inactive' : status;
+}
+
+export function mapLeaderboardStatusFilter(
+  status: PublicHallState['leaderboardStatus'],
+): PlayerStatus | undefined {
+  if (!status) {
+    return undefined;
+  }
+
+  return status === 'Inactive' ? 'Suspended' : status;
 }
 
 export function formatRankLabel(rank?: PublicHallRankSnapshot | null) {

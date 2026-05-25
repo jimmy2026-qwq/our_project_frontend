@@ -1,6 +1,7 @@
 import type { PlayerProfile } from './PlayerProfile';
 
 import type { PlayerProfileView } from '@/objects/player';
+import type { PlayerStatus } from '@/objects/tournament';
 
 export interface CreatedPlayerView {
   id: string;
@@ -18,12 +19,16 @@ export function mapPlayerClubIds(item: PlayerProfileView): string[] {
   );
 }
 
+export function mapPlayerStatus(status: PlayerStatus): PlayerProfile['playerStatus'] {
+  return status === 'Suspended' ? 'Inactive' : status;
+}
+
 export function mapPlayerProfile(item: PlayerProfileView): PlayerProfile {
   return {
     playerId: item.playerId,
     applicantUserId: item.userId,
     displayName: item.nickname,
-    playerStatus: item.status,
+    playerStatus: mapPlayerStatus(item.status),
     currentRank: item.currentRank,
     elo: item.elo,
     clubIds: mapPlayerClubIds(item),

@@ -1,9 +1,17 @@
+import type {
+  AppealAttachmentMediaKind,
+  AppealAttachmentStorageKind,
+  AppealDecisionType,
+  AppealPriority,
+  AppealTableResolution,
+} from './TournamentAppealResponses';
+
 export interface AppealAttachmentRequest {
   name: string;
   uri: string;
   contentType?: string | null;
-  storageKind?: string | null;
-  mediaKind?: string | null;
+  storageKind?: AppealAttachmentStorageKind | null;
+  mediaKind?: AppealAttachmentMediaKind | null;
   checksum?: string | null;
   checksumAlgorithm?: string | null;
   sizeBytes?: number | null;
@@ -15,7 +23,7 @@ export interface FileAppealRequest {
   playerId: string;
   description: string;
   attachments?: AppealAttachmentRequest[];
-  priority?: string;
+  priority?: AppealPriority;
   dueAt?: string;
 }
 
@@ -27,9 +35,9 @@ export interface ResolveAppealRequest {
 
 export interface AdjudicateAppealRequest {
   operatorId: string;
-  decision: 'Resolve' | 'Reject' | 'Escalate';
+  decision: AppealDecisionType;
   verdict: string;
-  tableResolution?: 'RestorePriorState' | 'ArchiveTable' | 'ResumeScoring' | 'ResumePlay' | 'ForceReset';
+  tableResolution?: AppealTableResolution;
   note?: string;
 }
 
@@ -37,7 +45,7 @@ export interface UpdateAppealWorkflowRequest {
   operatorId: string;
   assigneeId?: string;
   clearAssignee?: boolean;
-  priority?: string;
+  priority?: AppealPriority;
   dueAt?: string;
   clearDueAt?: boolean;
   note?: string;

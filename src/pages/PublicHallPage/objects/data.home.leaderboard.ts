@@ -5,7 +5,11 @@ import type {
 } from '@/pages/PublicShared/objects';
 
 import type { LoadState, PublicHallState } from '@/pages/PublicShared/objects/types';
-import { formatRankLabel, mapLeaderboardStatus } from '@/pages/PublicShared/objects/data.shared';
+import {
+  formatRankLabel,
+  mapLeaderboardStatus,
+  mapLeaderboardStatusFilter,
+} from '@/pages/PublicShared/objects/data.shared';
 
 function createEmptyLoadState<T>(): LoadState<T> {
   return {
@@ -28,7 +32,7 @@ export async function loadLeaderboard(
   try {
     const envelope = await publicApi.getPublicPlayerLeaderboard({
       clubId: state.leaderboardClubId || undefined,
-      status: state.leaderboardStatus || undefined,
+      status: mapLeaderboardStatusFilter(state.leaderboardStatus),
     });
 
     const clubNamesById = new Map(

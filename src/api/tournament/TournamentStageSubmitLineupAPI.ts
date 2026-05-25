@@ -1,6 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { SubmitStageLineupRequest, TournamentMutationView } from '@/objects';
+import type { SeatWind, SubmitStageLineupRequest, TournamentMutationView } from '@/objects';
 import { emptyBackendOption } from '@/system/api/backend-option.transport';
+import type { BackendOption } from '@/system/api/backend-option.transport';
 
 export class TournamentStageSubmitLineupAPI extends APIMessage<TournamentMutationView> {
   readonly tournamentId: string;
@@ -8,8 +9,8 @@ export class TournamentStageSubmitLineupAPI extends APIMessage<TournamentMutatio
   readonly request: {
     clubId: string;
     operatorId: string;
-    seats: Array<{ playerId: string; preferredWind: string[]; reserve: boolean }>;
-    note: string[];
+    seats: Array<{ playerId: string; preferredWind: BackendOption<SeatWind>; reserve: boolean }>;
+    note: BackendOption<string>;
   };
 
   constructor(tournamentId: string, stageId: string, payload: SubmitStageLineupRequest) {
@@ -21,7 +22,7 @@ export class TournamentStageSubmitLineupAPI extends APIMessage<TournamentMutatio
       operatorId: payload.operatorId,
       seats: payload.seats.map((seat) => ({
         playerId: seat.playerId,
-        preferredWind: seat.preferredWind ? [seat.preferredWind] : emptyBackendOption<string>(),
+        preferredWind: seat.preferredWind ? [seat.preferredWind] : emptyBackendOption<SeatWind>(),
         reserve: seat.reserve ?? false,
       })),
       note: payload.note ? [payload.note] : emptyBackendOption<string>(),

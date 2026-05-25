@@ -1,10 +1,12 @@
+import type { PlayerStatus } from '@/objects/tournament';
+
 export interface PlatformAdminPlayerView {
   playerId: string;
   userId: string;
   nickname: string;
-  status: 'Active' | 'Inactive' | 'Banned';
+  status: PlayerStatus;
   clubIds: string[];
-  bannedReason?: string | null;
+  bannedReason: string | null;
   isSuperAdmin: boolean;
 }
 
@@ -17,8 +19,8 @@ export interface PlatformAdminClubView {
   adminCount: number;
   totalPoints: number;
   powerRating: number;
-  dissolvedAt?: string | null;
-  dissolvedBy?: string | null;
+  dissolvedAt: string | null;
+  dissolvedBy: string | null;
 }
 
 export type PlatformAdminPlayerResponse = PlatformAdminPlayerView;

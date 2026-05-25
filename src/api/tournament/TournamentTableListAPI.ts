@@ -1,8 +1,9 @@
 import { APIMessage } from '@/system/api';
 import type { ListEnvelope, TableListQuery, TournamentTableView } from '@/objects';
+import type { TableStatus } from '@/objects/tournament';
 
 export class TournamentTableListAPI extends APIMessage<ListEnvelope<TournamentTableView>> {
-  readonly status?: string;
+  readonly status?: TableStatus;
   readonly playerId?: string;
   readonly tournamentId?: string;
   readonly stageId?: string;

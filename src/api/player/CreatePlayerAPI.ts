@@ -1,13 +1,15 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
+import type { RankPlatform } from '@/objects/tournament';
 import type { CreatePlayerRequest, PlayerResponse } from '@/objects/player';
+import type { BackendOption } from '@/system/api/backend-option.transport';
 
 export class CreatePlayerAPI extends APIMessage<PlayerResponse> {
   readonly userId: string;
   readonly nickname: string;
-  readonly rankPlatform: string;
+  readonly rankPlatform: RankPlatform;
   readonly tier: string;
-  readonly stars: number[];
+  readonly stars: BackendOption<number>;
   readonly initialElo: number;
 
   constructor(payload: CreatePlayerRequest) {

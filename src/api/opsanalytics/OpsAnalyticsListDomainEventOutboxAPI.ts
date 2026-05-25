@@ -1,10 +1,11 @@
 import { APIMessage, encodeBackendOption } from '@/system/api';
-import type { DomainEventOutboxRecord, ListEnvelope } from '@/objects';
+import type { DomainEventOutboxRecord, DomainEventOutboxStatus, ListEnvelope } from '@/objects';
+import type { BackendOption } from '@/system/api';
 
 export interface OpsAnalyticsListDomainEventOutboxAPIRequest {
   operatorId: string;
   asOf?: string;
-  status?: string;
+  status?: DomainEventOutboxStatus;
   eventType?: string;
   aggregateType?: string;
   aggregateId?: string;
@@ -19,7 +20,7 @@ export interface OpsAnalyticsListDomainEventOutboxAPIRequest {
 export class OpsAnalyticsListDomainEventOutboxAPI extends APIMessage<ListEnvelope<DomainEventOutboxRecord>> {
   readonly operatorId: string;
   readonly asOf: string[];
-  readonly status: string[];
+  readonly status: BackendOption<DomainEventOutboxStatus>;
   readonly eventType: string[];
   readonly aggregateType: string[];
   readonly aggregateId: string[];

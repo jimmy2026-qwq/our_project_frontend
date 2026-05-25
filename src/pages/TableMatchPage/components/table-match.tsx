@@ -37,7 +37,6 @@ function getTableStatusLabel(status: TableDetail['status']) {
       return '进行中';
     case 'Scoring':
       return '结算中';
-    case 'AppealPending':
     case 'AppealInProgress':
       return '申诉处理中';
     case 'Archived':
@@ -72,7 +71,7 @@ function getSeatStatusLabel(detail: { ready: boolean; disconnected: boolean }) {
 }
 
 function getAppealButtonText(status: TableDetail['status']) {
-  if (status === 'AppealPending' || status === 'AppealInProgress') {
+  if (status === 'AppealInProgress') {
     return '申诉处理中';
   }
 
@@ -320,8 +319,7 @@ export function SeatsOverviewCard({
                   ? '只有本桌参赛玩家可以发起赛事申诉。'
                   : table.status === 'Archived'
                     ? '牌桌已归档，不能再创建新的申诉工单。'
-                    : table.status === 'AppealPending' ||
-                        table.status === 'AppealInProgress'
+                    : table.status === 'AppealInProgress'
                       ? '当前牌桌已有进行中的申诉工单。'
                       : '如对本桌赛事过程有异议，可在这里提交申诉说明。'}
             </p>

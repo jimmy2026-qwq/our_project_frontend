@@ -5,6 +5,7 @@ export * from './ClubManagementRequests';
 export type {
   Club,
   ClubRelation,
+  ClubRelationKind,
   ClubPrivilegeDefinition,
   ClubMemberPrivilegeSnapshot,
 } from './ClubResponses';

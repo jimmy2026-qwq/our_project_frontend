@@ -76,7 +76,7 @@ export interface UpdateClubRecruitmentPolicyRequest {
 export interface UpdateClubRelationRequest {
   operatorId: string;
   targetClubId: string;
-  relation: string;
+  relation: ClubRelationKind;
   note?: string;
 }
 
@@ -91,7 +91,7 @@ export interface ClubListQuery {
 }
 
 export interface ClubMemberListQuery {
-  status?: string;
+  status?: PlayerStatus;
   nickname?: string;
   limit?: number;
   offset?: number;
@@ -108,3 +108,5 @@ export interface ClubMemberPrivilegeListQuery {
 export interface RemoveClubMemberRequest {
   operatorId?: string;
 }
+import type { PlayerStatus } from '@/objects/tournament';
+import type { ClubRelationKind } from './ClubResponses';

@@ -1,14 +1,15 @@
 import { APIMessage } from '@/system/api';
-import type { AppealTicketView, FileAppealRequest } from '@/objects/tournament/appeal';
+import type { AppealPriority, AppealTicketView, FileAppealRequest } from '@/objects/tournament/appeal';
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
+import type { BackendOption } from '@/system/api/backend-option.transport';
 
 export class AppealFileAPI extends APIMessage<AppealTicketView> {
   readonly tableId: string;
   readonly playerId: string;
   readonly description: string;
   readonly attachments: NonNullable<FileAppealRequest['attachments']>;
-  readonly priority: string[];
-  readonly dueAt: string[];
+  readonly priority: BackendOption<AppealPriority>;
+  readonly dueAt: BackendOption<string>;
 
   constructor(tableId: string, payload: FileAppealRequest) {
     super();

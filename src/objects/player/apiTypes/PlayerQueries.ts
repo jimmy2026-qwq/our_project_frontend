@@ -1,6 +1,8 @@
+import type { PlayerStatus } from '@/objects/tournament';
+
 export interface PlayerListQuery {
   clubId?: string;
-  status?: 'Active' | 'Inactive' | 'Banned';
+  status?: PlayerStatus;
   nickname?: string;
   limit?: number;
   offset?: number;

@@ -1,13 +1,14 @@
 import { APIMessage } from '@/system/api';
 import type {
   DictionaryListNamespacesQuery,
+  DictionaryNamespaceStatus,
   DictionaryNamespaceRegistration,
   ListEnvelope,
 } from '@/objects';
 
 export class DictionaryListNamespacesAPI extends APIMessage<ListEnvelope<DictionaryNamespaceRegistration>> {
   readonly operatorId: string;
-  readonly status?: string;
+  readonly status?: DictionaryNamespaceStatus;
   readonly contextClubId?: string;
   readonly ownerId?: string;
   readonly requestedBy?: string;

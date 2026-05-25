@@ -3,6 +3,7 @@
 import { clubsApi } from '@/pages/PublicShared/objects/data.transport';
 import type {
   TournamentDetailView,
+  TournamentFormat,
   TournamentOperationsStageView,
   TournamentStageDirectoryEntry,
 } from '@/objects/tournament';
@@ -24,6 +25,28 @@ import { playerApi } from '@/pages/PublicShared/objects/data.transport';
 type PublicTournamentStage = NonNullable<
   TournamentPublicProfile['stages']
 >[number];
+
+const fallbackAdvancementRule = {
+  ruleType: 'Custom',
+  cutSize: null,
+  thresholdScore: null,
+  targetTableCount: null,
+  templateKey: null,
+  note: 'unconfigured',
+} as const;
+
+function normalizeTournamentFormat(format?: string): TournamentFormat {
+  switch (format) {
+    case 'Swiss':
+    case 'Knockout':
+    case 'RoundRobin':
+    case 'Finals':
+    case 'Custom':
+      return format;
+    default:
+      return 'Custom';
+  }
+}
 
 function getSelectedPlayerIds(
   detail: TournamentDetailView | null,
@@ -72,6 +95,10 @@ function mapStageDirectoryEntryToDetailStage(
     schedulingPoolSize: stage.schedulingPoolSize,
     pendingTablePlanCount: stage.pendingTablePlanCount,
     scheduledTableCount: stage.scheduledTableCount,
+    advancementRule: fallbackAdvancementRule,
+    swissRule: null,
+    knockoutRule: null,
+    lineupSubmissions: [],
   };
 }
 
@@ -82,12 +109,21 @@ function mapPublicStageToDetailStage(
     stageId: stage.stageId,
     name: stage.name,
     status: stage.status,
-    format: stage.format,
-    order: stage.order,
-    currentRound: stage.currentRound,
+    format: normalizeTournamentFormat(stage.format),
+    order: stage.order ?? 0,
+    currentRound: stage.currentRound ?? 0,
     roundCount: stage.roundCount,
+    schedulingPoolSize: stage.schedulingPoolSize ?? 0,
     pendingTablePlanCount: stage.pendingTablePlanCount,
     scheduledTableCount: stage.tableCount,
+    advancementRule: stage.advancementRule ?? fallbackAdvancementRule,
+    swissRule: stage.swissRule ?? null,
+    knockoutRule: stage.knockoutRule ?? null,
+    lineupSubmissions:
+      stage.lineupSubmissions?.map((submission) => ({
+        ...submission,
+        note: submission.note ?? null,
+      })) ?? [],
   };
 }
 
@@ -158,6 +194,15 @@ async function loadTournamentDetailForLineup(
       status: tournament.status ?? 'RegistrationOpen',
       startsAt: '',
       endsAt: '',
+      participatingClubs: [],
+      participatingPlayers: [],
+      whitelistSummary: {
+        totalEntries: 0,
+        clubCount: 0,
+        playerCount: 0,
+        clubIds: [],
+        playerIds: [],
+      },
       stages: fallbackStages,
     };
   }

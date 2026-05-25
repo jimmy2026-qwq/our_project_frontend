@@ -31,6 +31,10 @@ describe('mapClubMember', () => {
       applicantUserId: 'user-2',
       displayName: 'Bravo',
       playerStatus: 'Banned',
+      currentRank: {
+        platform: 'Custom',
+        tier: 'Unranked',
+      },
       elo: 1400,
       clubIds: ['club-z'],
     });

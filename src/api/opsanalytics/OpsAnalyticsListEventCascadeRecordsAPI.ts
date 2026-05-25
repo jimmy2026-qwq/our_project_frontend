@@ -1,9 +1,10 @@
 import { APIMessage, encodeBackendOption } from '@/system/api';
-import type { EventCascadeRecord, ListEnvelope } from '@/objects';
+import type { EventCascadeRecord, EventCascadeStatus, ListEnvelope } from '@/objects';
+import type { BackendOption } from '@/system/api';
 
 export interface OpsAnalyticsListEventCascadeRecordsAPIRequest {
   operatorId: string;
-  status?: string;
+  status?: EventCascadeStatus;
   consumer?: string;
   eventType?: string;
   aggregateType?: string;
@@ -14,7 +15,7 @@ export interface OpsAnalyticsListEventCascadeRecordsAPIRequest {
 
 export class OpsAnalyticsListEventCascadeRecordsAPI extends APIMessage<ListEnvelope<EventCascadeRecord>> {
   readonly operatorId: string;
-  readonly status: string[];
+  readonly status: BackendOption<EventCascadeStatus>;
   readonly consumer: string[];
   readonly eventType: string[];
   readonly aggregateType: string[];

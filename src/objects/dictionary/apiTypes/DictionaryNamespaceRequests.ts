@@ -1,3 +1,5 @@
+import type { DictionaryNamespaceStatus } from './DictionaryResponses';
+
 export interface DictionaryNamespaceBacklogQuery {
   operatorId: string;
   asOf?: string;
@@ -6,7 +8,7 @@ export interface DictionaryNamespaceBacklogQuery {
 
 export interface DictionaryListNamespacesQuery {
   operatorId: string;
-  status?: string;
+  status?: DictionaryNamespaceStatus;
   contextClubId?: string;
   ownerId?: string;
   requestedBy?: string;

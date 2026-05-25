@@ -49,12 +49,12 @@ export interface AdvancedStatsRecomputeTask {
   requestedAt: string;
   status: AdvancedStatsRecomputeTaskStatus;
   attempts: number;
-  lastError?: string | null;
-  lastMatchRecordId?: string | null;
-  nextAttemptAt?: string | null;
-  startedAt?: string | null;
-  completedAt?: string | null;
-  deadLetteredAt?: string | null;
+  lastError: string | null;
+  lastMatchRecordId: string | null;
+  nextAttemptAt: string | null;
+  startedAt: string | null;
+  completedAt: string | null;
+  deadLetteredAt: string | null;
   version: number;
 }
 
@@ -66,7 +66,7 @@ export interface AdvancedStatsTaskQueueSummary {
   completedCount: number;
   failedCount: number;
   deadLetterCount: number;
-  oldestRunnableRequestedAt?: string | null;
-  nextScheduledRetryAt?: string | null;
-  newestCompletedAt?: string | null;
+  oldestRunnableRequestedAt: string | null;
+  nextScheduledRetryAt: string | null;
+  newestCompletedAt: string | null;
 }

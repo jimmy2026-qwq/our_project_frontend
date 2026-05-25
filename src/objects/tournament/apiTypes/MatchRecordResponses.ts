@@ -3,7 +3,7 @@ import type { SeatWind } from './TournamentDomainTypes';
 export interface TournamentMatchRecordSeatResultView {
   playerId: string;
   seat: SeatWind;
-  clubId?: string | null;
+  clubId: string | null;
   finalPoints: number;
   placement: number;
   scoreDelta: number;
@@ -19,8 +19,8 @@ export interface TournamentMatchRecordView {
   stageRoundNumber: number;
   generatedAt: string;
   seatResults: TournamentMatchRecordSeatResultView[];
-  paifuId?: string | null;
-  finalizedBy?: string | null;
+  paifuId: string | null;
+  finalizedBy: string | null;
   sourceEvent: string;
   notes: string[];
 }

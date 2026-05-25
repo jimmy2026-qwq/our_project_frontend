@@ -1,4 +1,10 @@
-import type { TournamentFormat } from './TournamentDomainTypes';
+import type {
+  AdvancementRuleType,
+  KnockoutSeedingPolicy,
+  SeatWind,
+  SwissPairingMethod,
+  TournamentFormat,
+} from './TournamentDomainTypes';
 
 export interface CreateTournamentRequest {
   name: string;
@@ -11,7 +17,7 @@ export interface CreateTournamentRequest {
 
 export interface StageLineupSeatRequest {
   playerId: string;
-  preferredWind?: string | null;
+  preferredWind?: SeatWind | null;
   reserve?: boolean;
 }
 
@@ -26,19 +32,19 @@ export interface ConfigureStageRulesRequest {
   operatorId: string;
   format?: TournamentFormat;
   roundCount?: number;
-  advancementRuleType?: string;
+  advancementRuleType?: AdvancementRuleType;
   cutSize?: number;
   thresholdScore?: number;
   targetTableCount?: number;
   schedulingPoolSize?: number;
   ruleTemplateKey?: string;
-  pairingMethod?: string;
+  pairingMethod?: SwissPairingMethod;
   carryOverPoints?: boolean;
   maxRounds?: number;
   bracketSize?: number;
   thirdPlaceMatch?: boolean;
   repechageEnabled?: boolean;
-  seedingPolicy?: string;
+  seedingPolicy?: KnockoutSeedingPolicy;
   note?: string;
 }
 
@@ -50,18 +56,18 @@ export interface CreateTournamentStageRequest {
   roundCount: number;
   operatorId?: string;
   ruleTemplateKey?: string;
-  advancementRuleType?: string;
+  advancementRuleType?: AdvancementRuleType;
   cutSize?: number;
   thresholdScore?: number;
   targetTableCount?: number;
   note?: string;
-  pairingMethod?: string;
+  pairingMethod?: SwissPairingMethod;
   carryOverPoints?: boolean;
   maxRounds?: number;
   bracketSize?: number;
   thirdPlaceMatch?: boolean;
   repechageEnabled?: boolean;
-  seedingPolicy?: string;
+  seedingPolicy?: KnockoutSeedingPolicy;
   schedulingPoolSize?: number;
 }
 

@@ -1,18 +1,21 @@
 import type { ClubApplicationStatus } from './ClubApplicationStatus';
+import type { RankPlatform, TournamentStatus } from '@/objects/tournament';
+
+type PlayerStatus = 'Active' | 'Suspended' | 'Banned';
 
 export interface ClubMembershipApplicantView {
-  playerId?: string;
-  applicantUserId?: string;
+  playerId: string | null;
+  applicantUserId: string | null;
   displayName: string;
-  playerStatus?: string;
-  currentRank?:
+  playerStatus: PlayerStatus | null;
+  currentRank:
     | {
-        platform: string;
+        platform: RankPlatform;
         tier: string;
-        stars?: number | null;
+        stars: number | null;
       }
     | null;
-  elo?: number;
+  elo: number | null;
   clubIds: string[];
 }
 
@@ -22,26 +25,27 @@ export interface ClubMembershipApplicationView {
   clubName: string;
   applicant: ClubMembershipApplicantView;
   submittedAt: string;
-  message?: string;
+  message: string | null;
   status: ClubApplicationStatus;
-  reviewedBy?: string | null;
-  reviewedByDisplayName?: string | null;
-  reviewedAt?: string | null;
-  reviewNote?: string | null;
-  withdrawnByPrincipalId?: string | null;
+  reviewedBy: string | null;
+  reviewedByDisplayName: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
+  withdrawnByPrincipalId: string | null;
   canReview: boolean;
   canWithdraw: boolean;
 }
 
 export type ClubTournamentParticipationStatus = 'Invited' | 'Participating';
+export type ClubTournamentScope = 'recent' | 'active' | 'all';
 
 export interface ClubTournamentParticipationView {
   clubId: string;
   tournamentId: string;
   name: string;
-  status: string;
+  status: TournamentStatus;
   clubParticipationStatus: ClubTournamentParticipationStatus;
-  stageName?: string | null;
+  stageName: string | null;
   startsAt: string;
   endsAt: string;
   canViewDetail: boolean;
@@ -54,19 +58,19 @@ export type ClubTournamentParticipationResponse = ClubTournamentParticipationVie
 
 export interface ClubMembershipApplication {
   id: string;
-  applicantUserId?: string | null;
+  applicantUserId: string | null;
   displayName: string;
   submittedAt: string;
-  message?: string | null;
+  message: string | null;
   status: ClubApplicationStatus;
-  reviewedBy?: string | null;
-  reviewedAt?: string | null;
-  reviewNote?: string | null;
-  withdrawnByPrincipalId?: string | null;
+  reviewedBy: string | null;
+  reviewedAt: string | null;
+  reviewNote: string | null;
+  withdrawnByPrincipalId: string | null;
 }
 
 export interface ClubTournamentQuery {
-  scope?: string;
+  scope?: ClubTournamentScope;
   viewer?: string;
   limit?: number;
   offset?: number;

@@ -47,13 +47,13 @@ export interface TournamentPaifuRoundSettlementView {
 
 export interface TournamentPaifuActionView {
   sequenceNo: number;
-  actor?: string | null;
+  actor: string | null;
   actionType: TournamentPaifuActionType | string;
-  tile?: string | null;
-  shantenAfterAction?: number | null;
-  handTilesAfterAction?: string[] | null;
+  tile: string | null;
+  shantenAfterAction: number | null;
+  handTilesAfterAction: string[] | null;
   revealedTiles: string[];
-  note?: string | null;
+  note: string | null;
 }
 
 export interface TournamentPaifuRoundView {
@@ -66,18 +66,18 @@ export interface TournamentPaifuRoundView {
   actions: TournamentPaifuActionView[];
   result: {
     outcome: TournamentPaifuHandOutcome | string;
-    winner?: string | null;
-    target?: string | null;
-    han?: number | null;
-    fu?: number | null;
+    winner: string | null;
+    target: string | null;
+    han: number | null;
+    fu: number | null;
     yaku: TournamentPaifuYakuView[];
-    doraIndicators?: string[] | null;
-    uraDoraIndicators?: string[] | null;
-    uraDoraVisible?: boolean | null;
+    doraIndicators: string[] | null;
+    uraDoraIndicators: string[] | null;
+    uraDoraVisible: boolean | null;
     points: number;
     scoreChanges: TournamentPaifuScoreChangeView[];
-    settlement?: TournamentPaifuRoundSettlementView | null;
-    tenpaiPlayerIds?: string[] | null;
+    settlement: TournamentPaifuRoundSettlementView | null;
+    tenpaiPlayerIds: string[] | null;
   };
 }
 
@@ -88,7 +88,7 @@ export interface TournamentPaifuMetadataView {
   tournamentId: string;
   stageId: string;
   seats: TableSeat[];
-  matchRecordId?: string | null;
+  matchRecordId: string | null;
 }
 
 export interface TournamentPaifuSummaryView {
@@ -98,7 +98,7 @@ export interface TournamentPaifuSummaryView {
   stageId: string;
   recordedAt: string;
   source: string;
-  matchRecordId?: string | null;
+  matchRecordId: string | null;
   totalHands: number;
   playerIds: string[];
   finalStandings: TournamentPaifuFinalStandingView[];

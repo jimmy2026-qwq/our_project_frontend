@@ -12,7 +12,6 @@ export function getTableStatusLabel(status: string) {
       return '进行中';
     case 'Scoring':
       return '待结算';
-    case 'AppealPending':
     case 'AppealInProgress':
       return '申诉处理中';
     case 'Archived':
@@ -26,7 +25,6 @@ export function getTableSortWeight(status: string) {
   switch (status) {
     case 'InProgress':
     case 'Scoring':
-    case 'AppealPending':
     case 'AppealInProgress':
       return 0;
     case 'Archived':
@@ -44,7 +42,6 @@ export function getTableStatusTone(status: string) {
       return 'success' as const;
     case 'Scoring':
       return 'warning' as const;
-    case 'AppealPending':
     case 'AppealInProgress':
       return 'danger' as const;
     case 'Archived':

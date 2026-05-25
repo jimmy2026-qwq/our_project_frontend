@@ -24,40 +24,34 @@ export function mapTournamentDirectoryEntry(
 }
 
 export function mapTournamentTable(item: TournamentTableView): TournamentTableSummary {
-  const playerIds = item.seats?.map((seat) => seat.playerId) ?? [];
-  const status = item.status ?? 'WaitingPreparation';
-  const tableId = item.id ?? item.tableId ?? '';
+  const playerIds = item.seats.map((seat) => seat.playerId);
 
   return {
-    id: tableId,
-    tournamentId: item.tournamentId ?? '',
+    id: item.tableId,
+    tournamentId: item.tournamentId,
     stageId: item.stageId,
     tableCode: `Table ${String(item.tableNo).padStart(2, '0')}`,
-    status,
+    status: item.status,
     playerIds,
     seatCount: playerIds.length || 4,
   };
 }
 
 export function mapTableDetail(item: TournamentTableView): TableDetail {
-  const status = item.status ?? 'WaitingPreparation';
-  const tableId = item.id ?? item.tableId ?? '';
-
   return {
-    id: tableId,
-    tournamentId: item.tournamentId ?? '',
+    id: item.tableId,
+    tournamentId: item.tournamentId,
     stageId: item.stageId,
     tableNo: item.tableNo,
-    status,
-    seats:
-      item.seats?.map((seat) => ({
-        seat: seat.seat,
-        playerId: seat.playerId,
-        initialPoints: seat.initialPoints ?? 25000,
-        disconnected: seat.disconnected ?? false,
-        ready: seat.ready ?? false,
-        clubId: seat.clubId ?? null,
-      })) ?? [],
+    status: item.status,
+    seats: item.seats.map((seat) => ({
+      seat: seat.seat,
+      playerId: seat.playerId,
+      initialPoints: seat.initialPoints,
+      disconnected: seat.disconnected,
+      ready: seat.ready,
+      clubId: seat.clubId,
+    })),
   };
 }
 

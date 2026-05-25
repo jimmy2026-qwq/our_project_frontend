@@ -1,17 +1,18 @@
 import { APIMessage } from '@/system/api';
-import type { ListEnvelope, TournamentSettlementView } from '@/objects';
+import type { ListEnvelope, TournamentSettlementQuery, TournamentSettlementView } from '@/objects';
+import type { TournamentSettlementStatus } from '@/objects/tournament';
 
 export class TournamentSettlementListAPI extends APIMessage<ListEnvelope<TournamentSettlementView>> {
   readonly tournamentId: string;
   readonly stageId?: string;
-  readonly status?: string;
+  readonly status?: TournamentSettlementStatus;
   readonly championId?: string;
   readonly limit?: number;
   readonly offset?: number;
 
   constructor(
     tournamentId: string,
-    filters: { stageId?: string; status?: string; championId?: string; limit?: number; offset?: number } = {},
+    filters: TournamentSettlementQuery = {},
   ) {
     super();
     this.tournamentId = tournamentId;

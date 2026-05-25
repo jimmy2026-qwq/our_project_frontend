@@ -1,10 +1,12 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
 import type { ListEnvelope, PublicClubDirectoryEntry, PublicClubQuery } from '@/objects';
+import type { ClubRelationKind } from '@/objects/club';
+import type { BackendOption } from '@/system/api/backend-option.transport';
 
 export class ListPublicClubsAPI extends APIMessage<ListEnvelope<PublicClubDirectoryEntry>> {
   readonly name: string[];
-  readonly relation: string[];
+  readonly relation: BackendOption<ClubRelationKind>;
   readonly limit: number[];
   readonly offset: number[];
 

@@ -1,7 +1,12 @@
-import type { TableStatus } from './TournamentDomainTypes';
+import type {
+  TableStatus,
+  TournamentParticipantKind,
+  TournamentStatus,
+} from './TournamentDomainTypes';
+import type { TournamentSettlementStatus } from './SettlementResponses';
 
 export interface TournamentListQuery {
-  status?: string;
+  status?: TournamentStatus;
   adminId?: string;
   organizer?: string;
   limit?: number;
@@ -9,7 +14,7 @@ export interface TournamentListQuery {
 }
 
 export interface TournamentWhitelistQuery {
-  participantKind?: string;
+  participantKind?: TournamentParticipantKind;
   playerId?: string;
   clubId?: string;
   limit?: number;
@@ -18,7 +23,7 @@ export interface TournamentWhitelistQuery {
 
 export interface TournamentSettlementQuery {
   stageId?: string;
-  status?: string;
+  status?: TournamentSettlementStatus;
   championId?: string;
   limit?: number;
   offset?: number;

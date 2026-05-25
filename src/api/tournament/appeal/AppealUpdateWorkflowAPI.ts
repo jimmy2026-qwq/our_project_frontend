@@ -1,5 +1,6 @@
 import { APIMessage } from '@/system/api';
 import type {
+  AppealPriority,
   AppealTicketView,
   UpdateAppealWorkflowRequest,
 } from '@/objects/tournament/appeal';
@@ -9,7 +10,7 @@ export class AppealUpdateWorkflowAPI extends APIMessage<AppealTicketView> {
   readonly operatorId: string;
   readonly assigneeId?: string;
   readonly clearAssignee: boolean;
-  readonly priority?: string;
+  readonly priority?: AppealPriority;
   readonly dueAt?: string;
   readonly clearDueAt: boolean;
   readonly note?: string;

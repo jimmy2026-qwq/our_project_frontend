@@ -2,14 +2,20 @@ export type DomainEventDeliveryStatus =
   | 'Pending'
   | 'Delivered'
   | 'Failed'
-  | 'Quarantined'
-  | 'Skipped';
+  | 'Quarantined';
+
+export type DomainEventOutboxStatus =
+  | 'Pending'
+  | 'Processing'
+  | 'Completed'
+  | 'DeadLetter'
+  | 'Quarantined';
+
+export type EventCascadeStatus = 'Pending' | 'Completed';
 
 export type DomainEventSubscriberStatusKind =
   | 'Active'
-  | 'Paused'
-  | 'Failed'
-  | 'Unknown';
+  | 'Failed';
 
 export interface DomainEventOutboxRecord {
   id: string;
@@ -20,8 +26,8 @@ export interface DomainEventOutboxRecord {
   occurredAt: string;
   status: DomainEventDeliveryStatus;
   attemptCount: number;
-  nextAttemptAt?: string | null;
-  lastError?: string | null;
+  nextAttemptAt: string | null;
+  lastError: string | null;
 }
 
 export interface AuditEventEntry {
@@ -30,9 +36,9 @@ export interface AuditEventEntry {
   aggregateId: string;
   eventType: string;
   occurredAt: string;
-  actorId?: string | null;
+  actorId: string | null;
   details: Record<string, string>;
-  note?: string | null;
+  note: string | null;
 }
 
 export interface DomainEventDeliveryReceipt {
@@ -41,7 +47,7 @@ export interface DomainEventDeliveryReceipt {
   subscriberId: string;
   deliveredAt: string;
   status: DomainEventDeliveryStatus;
-  errorMessage?: string | null;
+  errorMessage: string | null;
 }
 
 export interface DomainEventBusSummary {
@@ -68,8 +74,8 @@ export interface DomainEventOutboxBatchOperationResult {
 export interface DomainEventSubscriberStatus {
   subscriberId: string;
   status: DomainEventSubscriberStatusKind;
-  lastDeliveredAt?: string | null;
-  lastError?: string | null;
+  lastDeliveredAt: string | null;
+  lastError: string | null;
   lagCount: number;
 }
 
@@ -77,10 +83,10 @@ export interface DomainEventSubscriberPartitionStatus {
   subscriberId: string;
   partitionKey: string;
   status: DomainEventSubscriberStatusKind;
-  cursor?: string | null;
+  cursor: string | null;
   lagCount: number;
-  lastDeliveredAt?: string | null;
-  lastError?: string | null;
+  lastDeliveredAt: string | null;
+  lastError: string | null;
 }
 
 export interface EventCascadeRecord {

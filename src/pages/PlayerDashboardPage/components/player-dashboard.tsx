@@ -55,7 +55,6 @@ function getRecentTableStatusLabel(status: TournamentTableSummary['status']) {
       return '进行中';
     case 'Scoring':
       return '结算中';
-    case 'AppealPending':
     case 'AppealInProgress':
       return '申诉处理中';
     case 'Archived':

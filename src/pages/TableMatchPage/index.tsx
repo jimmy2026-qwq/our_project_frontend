@@ -127,7 +127,6 @@ export function TableMatchPage() {
     !!operatorId &&
     !!ownSeat &&
     table?.status !== 'Archived' &&
-    table?.status !== 'AppealPending' &&
     table?.status !== 'AppealInProgress';
 
   async function handleSubmitAppeal() {
