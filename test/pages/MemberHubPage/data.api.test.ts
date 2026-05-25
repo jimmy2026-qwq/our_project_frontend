@@ -70,13 +70,12 @@ describe('member-hub data api integration', () => {
 
     expect(sendAPIMock).toHaveBeenCalledOnce();
     expect(sendAPIMock.mock.calls[0][0]).toMatchObject({
-      adminId: ['player-1'],
-      joinableOnly: [],
-      memberId: [],
-      name: [],
-      activeOnly: [true],
-      limit: [20],
-      offset: [0],
+      query: {
+        adminId: 'player-1',
+        activeOnly: true,
+        limit: 20,
+        offset: 0,
+      },
     });
     expect(result).toMatchObject({
       source: 'api',
@@ -118,10 +117,12 @@ describe('member-hub data api integration', () => {
     expect(sendAPIMock).toHaveBeenCalledOnce();
     expect(sendAPIMock.mock.calls[0][0]).toMatchObject({
       clubId: 'club-1',
-      operatorId: ['player-1'],
-      status: ['Pending'],
-      limit: [20],
-      offset: [0],
+      query: {
+        operatorId: 'player-1',
+        status: 'Pending',
+        limit: 20,
+        offset: 0,
+      },
     });
     expect(result).toMatchObject({
       source: 'api',

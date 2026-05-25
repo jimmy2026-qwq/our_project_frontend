@@ -6,7 +6,9 @@ export interface FeatureModule {
   summary: string;
   entities: string[];
   primaryRoles: Role[];
-  routes: string[];
+  frontendRoutes?: string[];
+  apiMessages?: string[];
+  apiDomains?: string[];
 }
 
 export interface RoleCapability {

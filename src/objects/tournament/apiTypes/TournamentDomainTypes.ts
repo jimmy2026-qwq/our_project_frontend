@@ -27,6 +27,12 @@ export type TournamentStatus =
 
 export type StageStatus = 'Pending' | 'Ready' | 'Active' | 'Completed' | 'Archived';
 
+export interface RankSnapshotView {
+  platform: RankPlatform;
+  tier: string;
+  stars: number | null;
+}
+
 export interface AdvancementRuleView {
   ruleType: AdvancementRuleType;
   cutSize: number | null;

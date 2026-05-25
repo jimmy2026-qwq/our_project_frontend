@@ -1,7 +1,3 @@
-import type { PlayerProfileView as PlayerProfile } from '@/objects/player';
-
-export type PlayerProfileView = PlayerProfile;
-
 export type ClubRelationKind = 'Alliance' | 'Rivalry' | 'Neutral';
 
 export interface ClubRelation {

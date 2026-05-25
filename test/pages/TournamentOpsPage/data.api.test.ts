@@ -140,23 +140,29 @@ describe('tournament-ops data api integration', () => {
     expect(sendAPIMock.mock.calls[0][0]).toMatchObject({
       tournamentId: 'tournament-1',
       stageId: 'stage-1',
-      status: 'WaitingPreparation',
-      playerId: 'player-1',
-      limit: 10,
-      offset: 0,
+      query: {
+        status: 'WaitingPreparation',
+        playerId: 'player-1',
+        limit: 10,
+        offset: 0,
+      },
     });
     expect(sendAPIMock.mock.calls[1][0]).toMatchObject({
-      tournamentId: 'tournament-1',
-      stageId: 'stage-1',
-      playerId: 'player-1',
-      limit: 10,
-      offset: 0,
+      query: {
+        tournamentId: 'tournament-1',
+        stageId: 'stage-1',
+        playerId: 'player-1',
+        limit: 10,
+        offset: 0,
+      },
     });
     expect(sendAPIMock.mock.calls[2][0]).toMatchObject({
-      tournamentId: 'tournament-1',
-      status: 'Open',
-      limit: 10,
-      offset: 0,
+      query: {
+        tournamentId: 'tournament-1',
+        status: 'Open',
+        limit: 10,
+        offset: 0,
+      },
     });
   });
 

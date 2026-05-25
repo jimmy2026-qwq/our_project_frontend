@@ -1,5 +1,3 @@
-import type { SeatWind } from './TournamentDomainTypes';
-
 export interface StartTableRequest {
   operatorId?: string;
 }
@@ -11,7 +9,6 @@ export interface ForceResetTableRequest {
 
 export interface UpdateTableSeatStateRequest {
   operatorId: string;
-  seat: SeatWind;
   ready?: boolean;
   disconnected?: boolean;
   note?: string;

@@ -2,7 +2,8 @@ import type {
   AdvancementRuleView,
   KnockoutBracketSnapshot,
   KnockoutRuleConfigView,
-  RankPlatform,
+  PlayerStatus,
+  RankSnapshotView,
   SeatWind,
   StageRankingSnapshot,
   StageStatus,
@@ -10,8 +11,6 @@ import type {
   TournamentFormat,
   TournamentStatus,
 } from '@/objects/tournament';
-
-type PlayerStatus = 'Active' | 'Suspended' | 'Banned';
 
 export interface PublicScheduleView {
   tournamentId: string;
@@ -157,12 +156,6 @@ export interface PublicClubDetailView {
   applicationPolicy: ClubApplicationPolicyView;
   currentLineup: PublicClubLineupMemberView[];
   recentMatches: PublicClubRecentMatchView[];
-}
-
-export interface RankSnapshotView {
-  platform: RankPlatform;
-  tier: string;
-  stars: number | null;
 }
 
 export interface PlayerLeaderboardEntry {

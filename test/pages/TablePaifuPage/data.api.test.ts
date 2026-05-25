@@ -73,7 +73,7 @@ describe('TablePaifuPage data api integration', () => {
     const message = sendAPIMock.mock.calls[0]?.[0];
 
     expect(message).toBeInstanceOf(TournamentPaifuListAPI);
-    expect(message).toMatchObject({ tableId: 'table-1' });
+    expect(message).toMatchObject({ query: { tableId: 'table-1' } });
     expect(result).toMatchObject({
       total: 1,
       items: [

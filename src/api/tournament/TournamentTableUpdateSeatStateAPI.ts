@@ -1,12 +1,16 @@
 import { APIMessage } from '@/system/api';
-import type { TournamentTableView, UpdateTableSeatStateRequest } from '@/objects';
+import type { SeatWind, TournamentTableView, UpdateTableSeatStateRequest } from '@/objects';
+
+type UpdateTableSeatStatePayload = UpdateTableSeatStateRequest & {
+  seat: SeatWind;
+};
 
 export class TournamentTableUpdateSeatStateAPI extends APIMessage<TournamentTableView> {
   readonly tableId: string;
   readonly seat: string;
-  readonly request: Omit<UpdateTableSeatStateRequest, 'seat'>;
+  readonly request: UpdateTableSeatStateRequest;
 
-  constructor(tableId: string, payload: UpdateTableSeatStateRequest) {
+  constructor(tableId: string, payload: UpdateTableSeatStatePayload) {
     super();
     this.tableId = tableId;
     this.seat = payload.seat;

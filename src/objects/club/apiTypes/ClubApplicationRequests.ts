@@ -36,7 +36,6 @@ export interface WithdrawClubApplicationRequest {
 
 export interface ClubApplicationListQuery {
   operatorId: string;
-  guestSessionId?: string;
   status?: ClubApplicationStatus;
   applicantUserId?: string;
   displayName?: string;

@@ -1,20 +1,16 @@
 import type { ClubApplicationStatus } from './ClubApplicationStatus';
-import type { RankPlatform, TournamentStatus } from '@/objects/tournament';
-
-type PlayerStatus = 'Active' | 'Suspended' | 'Banned';
+import type {
+  PlayerStatus,
+  RankSnapshotView,
+  TournamentStatus,
+} from '@/objects/tournament';
 
 export interface ClubMembershipApplicantView {
   playerId: string | null;
   applicantUserId: string | null;
   displayName: string;
   playerStatus: PlayerStatus | null;
-  currentRank:
-    | {
-        platform: RankPlatform;
-        tier: string;
-        stars: number | null;
-      }
-    | null;
+  currentRank: RankSnapshotView | null;
   elo: number | null;
   clubIds: string[];
 }

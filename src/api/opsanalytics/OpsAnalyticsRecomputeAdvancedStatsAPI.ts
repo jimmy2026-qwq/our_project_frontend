@@ -1,30 +1,17 @@
-import { APIMessage, encodeBackendOption } from '@/system/api';
-import type { AdvancedStatsRecomputeTask } from '@/objects';
+import { APIMessage } from '@/system/api';
+import type { AdvancedStatsRecomputeRequest, AdvancedStatsRecomputeTask } from '@/objects';
 
-export interface OpsAnalyticsRecomputeAdvancedStatsAPIRequest {
-  operatorId: string;
-  mode?: string;
-  ownerType?: string;
-  ownerId?: string;
-  reason?: string;
-  limit?: number;
-}
+export type OpsAnalyticsRecomputeAdvancedStatsAPIRequest = AdvancedStatsRecomputeRequest;
 
 export class OpsAnalyticsRecomputeAdvancedStatsAPI extends APIMessage<AdvancedStatsRecomputeTask[]> {
-  readonly operatorId: string;
-  readonly mode: string;
-  readonly ownerType: string[];
-  readonly ownerId: string[];
-  readonly reason: string[];
-  readonly limit: number;
+  readonly request: AdvancedStatsRecomputeRequest;
 
   constructor(payload: OpsAnalyticsRecomputeAdvancedStatsAPIRequest) {
     super();
-    this.operatorId = payload.operatorId;
-    this.mode = payload.mode ?? 'Full';
-    this.ownerType = encodeBackendOption(payload.ownerType);
-    this.ownerId = encodeBackendOption(payload.ownerId);
-    this.reason = encodeBackendOption(payload.reason);
-    this.limit = payload.limit ?? 500;
+    this.request = {
+      ...payload,
+      mode: payload.mode ?? 'Full',
+      limit: payload.limit ?? 500,
+    };
   }
 }

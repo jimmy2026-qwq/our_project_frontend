@@ -1,3 +1,6 @@
+import type { PlayerStatus } from '@/objects/tournament';
+import type { ClubRelationKind } from './ClubResponses';
+
 export interface CreateClubRequest {
   name: string;
   creatorId: string;
@@ -108,5 +111,3 @@ export interface ClubMemberPrivilegeListQuery {
 export interface RemoveClubMemberRequest {
   operatorId?: string;
 }
-import type { PlayerStatus } from '@/objects/tournament';
-import type { ClubRelationKind } from './ClubResponses';

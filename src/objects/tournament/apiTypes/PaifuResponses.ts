@@ -56,29 +56,33 @@ export interface TournamentPaifuActionView {
   note: string | null;
 }
 
+export interface TournamentPaifuRoundDescriptorView {
+  roundWind: SeatWind;
+  handNumber: number;
+  honba: number;
+}
+
+export interface TournamentPaifuRoundResultView {
+  outcome: TournamentPaifuHandOutcome | string;
+  winner: string | null;
+  target: string | null;
+  han: number | null;
+  fu: number | null;
+  yaku: TournamentPaifuYakuView[];
+  doraIndicators: string[] | null;
+  uraDoraIndicators: string[] | null;
+  uraDoraVisible: boolean | null;
+  points: number;
+  scoreChanges: TournamentPaifuScoreChangeView[];
+  settlement: TournamentPaifuRoundSettlementView | null;
+  tenpaiPlayerIds: string[] | null;
+}
+
 export interface TournamentPaifuRoundView {
-  descriptor: {
-    roundWind: SeatWind;
-    handNumber: number;
-    honba: number;
-  };
+  descriptor: TournamentPaifuRoundDescriptorView;
   initialHands: Record<string, string[]>;
   actions: TournamentPaifuActionView[];
-  result: {
-    outcome: TournamentPaifuHandOutcome | string;
-    winner: string | null;
-    target: string | null;
-    han: number | null;
-    fu: number | null;
-    yaku: TournamentPaifuYakuView[];
-    doraIndicators: string[] | null;
-    uraDoraIndicators: string[] | null;
-    uraDoraVisible: boolean | null;
-    points: number;
-    scoreChanges: TournamentPaifuScoreChangeView[];
-    settlement: TournamentPaifuRoundSettlementView | null;
-    tenpaiPlayerIds: string[] | null;
-  };
+  result: TournamentPaifuRoundResultView;
 }
 
 export interface TournamentPaifuMetadataView {

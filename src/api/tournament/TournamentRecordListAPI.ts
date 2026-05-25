@@ -2,15 +2,10 @@ import { APIMessage } from '@/system/api';
 import type { ListEnvelope, MatchRecordListQuery, TournamentMatchRecordView } from '@/objects';
 
 export class TournamentRecordListAPI extends APIMessage<ListEnvelope<TournamentMatchRecordView>> {
-  readonly tournamentId?: string;
-  readonly stageId?: string;
-  readonly playerId?: string;
-  readonly tableId?: string;
-  readonly limit?: number;
-  readonly offset?: number;
+  readonly query: MatchRecordListQuery;
 
-  constructor(filters: MatchRecordListQuery & { tableId?: string } = {}) {
+  constructor(filters: MatchRecordListQuery = {}) {
     super();
-    Object.assign(this, filters);
+    this.query = filters;
   }
 }

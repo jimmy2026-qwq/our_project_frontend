@@ -3,7 +3,7 @@ import type {
   AdvancementRuleView,
   KnockoutRuleConfigView,
   PlayerStatus,
-  RankPlatform,
+  RankSnapshotView,
   StageStatus,
   SwissRuleConfigView,
   TournamentFormat,
@@ -61,11 +61,7 @@ export interface TournamentParticipantPlayerView {
   nickname: string;
   status: PlayerStatus;
   elo: number;
-  currentRank: {
-    platform: RankPlatform;
-    tier: string;
-    stars: number | null;
-  };
+  currentRank: RankSnapshotView;
   clubIds: string[];
 }
 

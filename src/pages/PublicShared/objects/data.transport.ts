@@ -99,6 +99,7 @@ import type {
   TournamentMutationView,
   TournamentSettlementView,
   TournamentWhitelistEntryView,
+  TournamentWhitelistQuery,
   TournamentStageDirectoryEntry,
   TournamentSummaryView,
   TournamentTableView,
@@ -406,13 +407,7 @@ export const tournamentApi = {
   },
   getTournamentWhitelist(
     tournamentId: string,
-    filters: {
-      participantKind?: string;
-      playerId?: string;
-      clubId?: string;
-      limit?: number;
-      offset?: number;
-    } = {},
+    filters: TournamentWhitelistQuery = {},
   ) {
     return sendAPI<ListEnvelope<TournamentWhitelistEntryView>>(
       new TournamentWhitelistListAPI(tournamentId, filters),

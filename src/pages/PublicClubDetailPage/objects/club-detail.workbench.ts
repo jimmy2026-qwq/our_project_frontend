@@ -6,6 +6,19 @@ import { clubsApi } from '@/pages/PublicShared/objects/data.transport';
 
 import type { ClubAdminMemberEntry } from './club-detail.types';
 
+function normalizeOptionalString(value: unknown): string | null {
+  if (typeof value === 'string') {
+    return value;
+  }
+
+  if (Array.isArray(value)) {
+    const [first] = value;
+    return typeof first === 'string' ? first : null;
+  }
+
+  return null;
+}
+
 export async function resolveClubAdminAccess(
   clubId: string,
   playerId: string,
@@ -79,7 +92,7 @@ export async function loadClubMemberAdminEntries(
         rankCode: privilegeSnapshot?.rankCode,
         rankLabel: privilegeSnapshot?.rankLabel,
         privileges: privilegeSnapshot?.privileges,
-        internalTitle: privilegeSnapshot?.internalTitle ?? null,
+        internalTitle: normalizeOptionalString(privilegeSnapshot?.internalTitle),
       };
     })
     .sort((left, right) => {

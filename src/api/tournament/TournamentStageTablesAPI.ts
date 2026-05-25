@@ -1,20 +1,15 @@
 import { APIMessage } from '@/system/api';
-import type { ListEnvelope, TableListQuery, TournamentTableView } from '@/objects';
-import type { TableStatus } from '@/objects/tournament';
+import type { ListEnvelope, StageTableQuery, TournamentTableView } from '@/objects';
 
 export class TournamentStageTablesAPI extends APIMessage<ListEnvelope<TournamentTableView>> {
   readonly tournamentId: string;
   readonly stageId: string;
-  readonly status?: TableStatus;
-  readonly playerId?: string;
-  readonly roundNumber?: number;
-  readonly limit?: number;
-  readonly offset?: number;
+  readonly query: StageTableQuery;
 
-  constructor(tournamentId: string, stageId: string, filters: TableListQuery & { roundNumber?: number } = {}) {
+  constructor(tournamentId: string, stageId: string, filters: StageTableQuery = {}) {
     super();
     this.tournamentId = tournamentId;
     this.stageId = stageId;
-    Object.assign(this, filters);
+    this.query = filters;
   }
 }

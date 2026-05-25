@@ -40,21 +40,25 @@ export interface CurrentSessionRoleFlags {
   isSuperAdmin: boolean;
 }
 
+export interface CurrentSessionPlayerView {
+  id: string;
+  userId: string;
+  nickname: string;
+}
+
+export interface CurrentSessionGuestSessionView {
+  id: string;
+  displayName: string;
+}
+
 export interface CurrentSessionView {
   principalKind: SessionPrincipalKind;
   principalId: string;
   displayName: string;
   authenticated: boolean;
   roles: CurrentSessionRoleFlags;
-  player: {
-    id: string;
-    userId: string;
-    nickname: string;
-  } | null;
-  guestSession: {
-    id: string;
-    displayName: string;
-  } | null;
+  player: CurrentSessionPlayerView | null;
+  guestSession: CurrentSessionGuestSessionView | null;
 }
 
 export interface AuthSuccessView {
