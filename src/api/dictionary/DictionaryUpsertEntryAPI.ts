@@ -1,10 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type {
-  GlobalDictionaryEntry,
+  GlobalDictionaryEntryView,
   UpsertDictionaryRequest,
 } from '@/objects/dictionary';
 
-export class DictionaryUpsertEntryAPI extends APIMessage<GlobalDictionaryEntry> {
+export class DictionaryUpsertEntryAPI extends APIMessage<GlobalDictionaryEntryView> {
   readonly operatorId: string;
   readonly key: string;
   readonly value: string;

@@ -1,10 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type {
-  DictionaryNamespaceReminderAction,
+  DictionaryNamespaceReminderActionView,
   ProcessDictionaryNamespaceRemindersRequest,
 } from '@/objects/dictionary';
 
-export class DictionaryProcessNamespaceRemindersAPI extends APIMessage<DictionaryNamespaceReminderAction[]> {
+export class DictionaryProcessNamespaceRemindersAPI extends APIMessage<DictionaryNamespaceReminderActionView[]> {
   readonly operatorId: string;
   readonly asOf?: string;
   readonly dueSoonHours: number;

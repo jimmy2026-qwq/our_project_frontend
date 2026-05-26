@@ -14,6 +14,7 @@ export { DeclineClubTournamentAPI } from './DeclineClubTournamentAPI';
 export { GetClubAPI } from './GetClubAPI';
 export { GetClubApplicationAPI } from './GetClubApplicationAPI';
 export { GetClubMemberPrivilegeAPI } from './GetClubMemberPrivilegeAPI';
+export { ListClubContributionAuditsAPI } from './ListClubContributionAuditsAPI';
 export { GetCurrentClubApplicationAPI } from './GetCurrentClubApplicationAPI';
 export { ListClubApplicationsAPI } from './ListClubApplicationsAPI';
 export { ListClubMemberPrivilegesAPI } from './ListClubMemberPrivilegesAPI';

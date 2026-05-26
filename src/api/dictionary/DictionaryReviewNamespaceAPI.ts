@@ -1,10 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type {
-  DictionaryNamespaceRegistration,
+  DictionaryNamespaceRegistrationView,
   ReviewDictionaryNamespaceRequest,
 } from '@/objects/dictionary';
 
-export class DictionaryReviewNamespaceAPI extends APIMessage<DictionaryNamespaceRegistration> {
+export class DictionaryReviewNamespaceAPI extends APIMessage<DictionaryNamespaceRegistrationView> {
   readonly operatorId: string;
   readonly namespacePrefix: string;
   readonly approve: boolean;

@@ -1,4 +1,4 @@
-import type { SeatWind } from '@/objects/tournament/apiTypes';
+import type { SeatWind } from '@/objects/tournament';
 
 import type { PaifuAction, PaifuRoundSummary, TablePaifuDetail } from '../types';
 import {

@@ -1,5 +1,5 @@
 ﻿import type { ClubApplication, ClubApplicationView } from '@/pages/objects/club';
-import type { AuditEventEntry } from '@/objects';
+import type { ClubContributionAuditEntry } from '@/objects';
 import type { PlayerProfile } from '@/pages/objects/player';
 import type { ClubPublicProfile } from '@/pages/PublicShared/objects';
 
@@ -11,6 +11,19 @@ export interface ClubAdminMemberEntry extends PlayerProfile {
   rankLabel?: string;
   privileges?: string[];
   internalTitle?: string | null;
+}
+
+export interface ClubContributionTitleField {
+  rankCode: string;
+  defaultLabel: string;
+  displayLabel: string;
+  minimumContribution?: number;
+  privileges?: string[];
+}
+
+export interface ClubContributionTitleDraft {
+  rankCode: string;
+  label: string;
 }
 
 export interface ClubDetailWorkbenchState {
@@ -27,13 +40,16 @@ export interface ClubDetailWorkbenchState {
   isTitleDialogOpen: boolean;
   selectedTitleMember: ClubAdminMemberEntry | null;
   isTitleSubmitting: boolean;
+  isContributionTitleDialogOpen: boolean;
+  isContributionTitleSubmitting: boolean;
+  contributionTitleFields: ClubContributionTitleField[];
   isCurrentMember: boolean;
   isCurrentClubAdmin: boolean;
   clubMemberNames: string[];
   currentApplicationStatus: ClubApplication['status'] | null;
   applicationInbox: ClubApplicationView[];
   isInboxLoading: boolean;
-  contributionChanges: AuditEventEntry[];
+  contributionChanges: ClubContributionAuditEntry[];
   isContributionChangesLoading: boolean;
   canViewContributionChanges: boolean;
   canReviewApplications: boolean;

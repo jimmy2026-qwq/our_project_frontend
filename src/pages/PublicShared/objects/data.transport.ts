@@ -7,6 +7,7 @@
   CreateClubAPI,
   DeclineClubTournamentAPI,
   GetClubAPI,
+  ListClubContributionAuditsAPI,
   ListClubMemberPrivilegesAPI,
   ListClubApplicationsAPI,
   ListClubMembersAPI,
@@ -14,15 +15,19 @@
   ListClubTournamentsAPI,
   RemoveClubMemberAPI,
   ReviewClubApplicationAPI,
+  UpdateClubRankTreeAPI,
 } from '@/api/club';
 import {
   AuthCheckPermissionAPI,
 } from '@/api/auth';
 import {
+  DictionaryListEntriesAPI,
+  DictionaryUpsertEntryAPI,
+} from '@/api/dictionary';
+import {
   PlatformAdminBanPlayerAPI,
   PlatformAdminGrantSuperAdminAPI,
 } from '@/api/platformadmin';
-import { OpsAnalyticsListAggregateAuditsAPI } from '@/api/opsanalytics';
 import { GetCurrentPlayerAPI, GetPlayerAPI, ListPlayersAPI } from '@/api/player';
 import {
   GetPublicClubAPI,
@@ -62,11 +67,11 @@ import type {
   AppealTicketView,
   AssignClubAdminRequest,
   AssignClubTitleRequest,
-  AuditEventEntry,
   BanPlayerRequest,
   ClearClubTitleRequest,
   CompleteStageRequest,
   Club,
+  ClubContributionAuditEntry,
   ClubApplicationListQuery,
   ClubListQuery,
   ClubMemberListQuery,
@@ -79,7 +84,9 @@ import type {
   CreateClubRequest,
   CreateTournamentStageRequest,
   CreateTournamentRequest,
+  DictionaryListEntriesQuery,
   GrantSuperAdminRequest,
+  GlobalDictionaryEntryView,
   ListEnvelope,
   PlayerLeaderboardEntry,
   PlayerLeaderboardQuery,
@@ -103,6 +110,7 @@ import type {
   TournamentStageDirectoryEntry,
   TournamentSummaryView,
   TournamentTableView,
+  UpdateClubRankTreeRequest,
   UpdateOwnTableReadyStateRequest,
 } from '@/objects';
 import type {
@@ -207,6 +215,24 @@ export const authApi = {
   },
 };
 
+export const dictionaryApi = {
+  listEntries(filters: DictionaryListEntriesQuery = {}) {
+    return sendAPI<ListEnvelope<GlobalDictionaryEntryView>>(
+      new DictionaryListEntriesAPI(filters),
+    );
+  },
+  upsertEntry(payload: {
+    operatorId: string;
+    key: string;
+    value: string;
+    note?: string;
+  }) {
+    return sendAPI<GlobalDictionaryEntryView>(
+      new DictionaryUpsertEntryAPI(payload),
+    );
+  },
+};
+
 export const clubsApi = {
   getClub(clubId: string) {
     return sendAPI<Club>(new GetClubAPI(clubId));
@@ -257,6 +283,30 @@ export const clubsApi = {
       new AdjustClubMemberContributionAPI(clubId, payload),
     ).then(mapClub);
   },
+  updateClubRankTree(clubId: string, payload: UpdateClubRankTreeRequest) {
+    return sendAPI<Club>(new UpdateClubRankTreeAPI(clubId, payload)).then(
+      mapClub,
+    );
+  },
+  getClubContributionAudits({
+    clubId,
+    operatorId,
+    limit = 100,
+    offset = 0,
+  }: {
+    clubId: string;
+    operatorId: string;
+    limit?: number;
+    offset?: number;
+  }) {
+    return sendAPI<ListEnvelope<ClubContributionAuditEntry>>(
+      new ListClubContributionAuditsAPI(clubId, {
+        operatorId,
+        limit,
+        offset,
+      }),
+    );
+  },
   removeClubMember(
     clubId: string,
     playerId: string,
@@ -293,31 +343,6 @@ export const clubsApi = {
   declineClubTournament(clubId: string, tournamentId: string, operatorId: string) {
     return sendAPI<TournamentMutationView>(
       new DeclineClubTournamentAPI(clubId, tournamentId, operatorId),
-    );
-  },
-};
-
-export const opsAnalyticsApi = {
-  getClubContributionAudits({
-    clubId,
-    operatorId,
-    limit = 100,
-    offset = 0,
-  }: {
-    clubId: string;
-    operatorId: string;
-    limit?: number;
-    offset?: number;
-  }) {
-    return sendAPI<ListEnvelope<AuditEventEntry>>(
-      new OpsAnalyticsListAggregateAuditsAPI({
-        operatorId,
-        aggregateType: 'club',
-        aggregateId: clubId,
-        eventType: 'ClubMemberContributionAdjusted',
-        limit,
-        offset,
-      }),
     );
   },
 };

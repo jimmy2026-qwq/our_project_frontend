@@ -8,7 +8,7 @@ import type {
   PublicHallRankSnapshot,
   PublicHallState,
 } from './types';
-import type { PlayerStatus } from '@/objects/tournament';
+import type { PlayerStatus } from '@/objects/player';
 
 export const DEFAULT_PUBLIC_HALL_STATE: PublicHallState = {
   activeView: 'schedules',

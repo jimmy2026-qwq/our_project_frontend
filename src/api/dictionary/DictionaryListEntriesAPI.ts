@@ -1,11 +1,11 @@
 import { APIMessage } from '@/system/api';
 import type {
   DictionaryListEntriesQuery,
-  GlobalDictionaryEntry,
+  GlobalDictionaryEntryView,
   ListEnvelope,
 } from '@/objects';
 
-export class DictionaryListEntriesAPI extends APIMessage<ListEnvelope<GlobalDictionaryEntry>> {
+export class DictionaryListEntriesAPI extends APIMessage<ListEnvelope<GlobalDictionaryEntryView>> {
   readonly prefix?: string;
   readonly updatedBy?: string;
   readonly limit?: number;

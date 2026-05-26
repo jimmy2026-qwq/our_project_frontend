@@ -1,4 +1,4 @@
-import type { SeatWind, TableSeat } from '@/objects/tournament/apiTypes';
+import type { SeatWind, TableSeat } from '@/objects/tournament';
 
 export type HandOutcome = 'Tsumo' | 'Ron' | 'ExhaustiveDraw' | 'AbortiveDraw';
 

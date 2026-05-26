@@ -1,5 +1,5 @@
 import type { TableStatus } from '@/objects';
-import type { SeatWind } from '@/objects/tournament/apiTypes';
+import type { SeatWind } from '@/objects/tournament';
 
 export interface TournamentTableSummary {
   id: string;

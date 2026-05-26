@@ -1,5 +1,5 @@
 import type { PlayerProfile } from '@/pages/objects/player';
-import type { ClubApplicationStatus } from '@/objects/club/apiTypes';
+import type { ClubApplicationStatus } from '@/objects/club';
 
 export interface ClubApplication {
   id: string;

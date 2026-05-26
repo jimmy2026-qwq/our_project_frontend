@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { SeatWind } from '@/objects/tournament/apiTypes';
+import type { SeatWind } from '@/objects/tournament';
 
 import {
   tileFaceClasses,

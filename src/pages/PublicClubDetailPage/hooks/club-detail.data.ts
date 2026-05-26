@@ -1,15 +1,15 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import {
   authApi,
   clubsApi,
-  opsAnalyticsApi,
 } from '@/pages/PublicShared/objects/data.transport';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type { ClubApplication, ClubApplicationView } from '@/pages/objects/club';
 import type { PlayerProfile } from '@/pages/objects/player';
 import type { ClubPublicProfile } from '@/pages/PublicShared/objects';
 import type { Permission } from '@/objects/auth';
+import type { ClubRankNodeView } from '@/objects/club';
 import {
   loadPlayerContext,
   loadTrackedApplication,
@@ -23,6 +23,141 @@ import {
   loadClubMemberAdminEntries,
   resolveClubAdminAccess,
 } from '../objects/club-detail.workbench';
+
+const DEFAULT_CONTRIBUTION_TITLE_FIELDS = [
+  { rankCode: 'rookie', defaultLabel: '萌新', minimumContribution: 0 },
+  { rankCode: 'member', defaultLabel: '同伴', minimumContribution: 500 },
+  { rankCode: 'core', defaultLabel: '主力', minimumContribution: 1500 },
+  { rankCode: 'ace', defaultLabel: '王牌', minimumContribution: 3000 },
+] satisfies Array<{
+  rankCode: string;
+  defaultLabel: string;
+  minimumContribution: number;
+}>;
+
+const LEGACY_MEMBER_TITLE = '成员';
+
+function normalizeTitle(value: string | null | undefined) {
+  return value?.trim() ?? '';
+}
+
+function isLegacyMemberTitle(value: string | null | undefined) {
+  return normalizeTitle(value) === LEGACY_MEMBER_TITLE;
+}
+
+function defaultRankCodeForContribution(contribution: number | undefined) {
+  if (typeof contribution !== 'number') {
+    return null;
+  }
+
+  const matchingFields = DEFAULT_CONTRIBUTION_TITLE_FIELDS.filter(
+    (field) => field.minimumContribution <= contribution,
+  );
+  const lastMatch = matchingFields[matchingFields.length - 1];
+
+  return lastMatch?.rankCode ?? null;
+}
+
+function buildContributionTitleFields(
+  members: ClubAdminMemberEntry[],
+  rankTree: ClubRankNodeView[],
+): ClubDetailWorkbenchState['contributionTitleFields'] {
+  const defaultsByCode = new Map(
+    DEFAULT_CONTRIBUTION_TITLE_FIELDS.map((field, index) => [
+      field.rankCode,
+      { ...field, sortIndex: index },
+    ]),
+  );
+  const observedLabelsByCode = new Map(
+    members
+      .flatMap((member) => {
+        const label = normalizeTitle(member.rankLabel);
+
+        if (!member.rankCode || !label || isLegacyMemberTitle(label)) {
+          return [];
+        }
+
+        return [[member.rankCode, label] as const];
+      }),
+  );
+  const rankTreeByCode = new Map(
+    rankTree
+      .filter((field) => field.code.trim())
+      .map((field) => [field.code, field]),
+  );
+  const rankCodes = Array.from(
+    new Set([
+      ...DEFAULT_CONTRIBUTION_TITLE_FIELDS.map((field) => field.rankCode),
+      ...rankTreeByCode.keys(),
+      ...observedLabelsByCode.keys(),
+    ]),
+  );
+
+  return rankCodes
+    .map((rankCode) => {
+      const defaultField = defaultsByCode.get(rankCode);
+      const rankTreeField = rankTreeByCode.get(rankCode);
+      const defaultLabel =
+        defaultField?.defaultLabel ??
+        observedLabelsByCode.get(rankCode) ??
+        rankCode;
+      const displayLabel =
+        rankTreeField?.label?.trim() ||
+        observedLabelsByCode.get(rankCode) ||
+        defaultLabel;
+
+      return {
+        rankCode,
+        defaultLabel,
+        displayLabel,
+        minimumContribution:
+          rankTreeField?.minimumContribution ??
+          defaultField?.minimumContribution,
+        privileges: rankTreeField?.privileges ?? [],
+        sortIndex: defaultField?.sortIndex ?? Number.MAX_SAFE_INTEGER,
+      };
+    })
+    .sort((left, right) => {
+      if (left.sortIndex !== right.sortIndex) {
+        return left.sortIndex - right.sortIndex;
+      }
+
+      return left.rankCode.localeCompare(right.rankCode, 'zh-CN');
+    })
+    .map(({ sortIndex: _sortIndex, ...field }) => field);
+}
+
+function applyContributionTitleOverrides(
+  members: ClubAdminMemberEntry[],
+  fields: ClubDetailWorkbenchState['contributionTitleFields'],
+): ClubAdminMemberEntry[] {
+  const titleByRankCode = new Map(
+    fields.map((field) => [field.rankCode, field.displayLabel]),
+  );
+
+  return members.map((member) => {
+    const effectiveRankCode =
+      !member.rankCode || isLegacyMemberTitle(member.rankLabel)
+        ? defaultRankCodeForContribution(member.contribution)
+        : member.rankCode;
+
+    if (!effectiveRankCode) {
+      return member;
+    }
+
+    const overriddenLabel = titleByRankCode.get(effectiveRankCode);
+
+    if (!overriddenLabel || overriddenLabel === member.rankLabel) {
+      return member;
+    }
+
+    return {
+      ...member,
+      rankCode: effectiveRankCode,
+      rankLabel: overriddenLabel,
+    };
+  });
+}
 
 interface UseClubDetailDataParams {
   profile: ClubPublicProfile | null;
@@ -48,6 +183,13 @@ export function useClubDetailData({
   const [selectedTitleMember, setSelectedTitleMember] =
     useState<ClubAdminMemberEntry | null>(null);
   const [isTitleSubmitting, setIsTitleSubmitting] = useState(false);
+  const [isContributionTitleDialogOpen, setIsContributionTitleDialogOpen] =
+    useState(false);
+  const [isContributionTitleSubmitting, setIsContributionTitleSubmitting] =
+    useState(false);
+  const [clubRankTree, setClubRankTree] = useState<ClubRankNodeView[]>([]);
+  const [contributionTitleRefreshKey, setContributionTitleRefreshKey] =
+    useState(0);
   const [isCurrentMember, setIsCurrentMember] = useState(false);
   const [isCurrentClubAdmin, setIsCurrentClubAdmin] = useState(false);
   const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);
@@ -97,6 +239,48 @@ export function useClubDetailData({
   const canAdjustContributions =
     baseClubPermissions.canAdjustContributions;
   const canEditTitles = baseClubPermissions.canEditTitles;
+
+  const contributionTitleFields = useMemo(
+    () =>
+      profile
+        ? buildContributionTitleFields(
+            clubMembers,
+            clubRankTree,
+          )
+        : [],
+    [clubMembers, clubRankTree, profile],
+  );
+  const displayClubMembers = useMemo(
+    () => applyContributionTitleOverrides(clubMembers, contributionTitleFields),
+    [clubMembers, contributionTitleFields],
+  );
+
+  useEffect(() => {
+    if (!profile) {
+      setClubRankTree([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    void clubsApi
+      .getClub(profile.id)
+      .then((club) => {
+        if (!cancelled) {
+          setClubRankTree(club.rankTree ?? []);
+        }
+      })
+      .catch(() => {
+        if (!cancelled) {
+          setClubRankTree([]);
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [contributionTitleRefreshKey, profile]);
+
   useEffect(() => {
     if (!session?.user.roles.isRegisteredPlayer || !profile) {
       setIsCurrentMember(false);
@@ -399,7 +583,7 @@ export function useClubDetailData({
     let cancelled = false;
     setIsContributionChangesLoading(true);
 
-    void opsAnalyticsApi
+    void clubsApi
       .getClubContributionAudits({
         clubId: profile.id,
         operatorId,
@@ -446,6 +630,12 @@ export function useClubDetailData({
     setSelectedTitleMember,
     isTitleSubmitting,
     setIsTitleSubmitting,
+    isContributionTitleDialogOpen,
+    setIsContributionTitleDialogOpen,
+    isContributionTitleSubmitting,
+    setIsContributionTitleSubmitting,
+    contributionTitleFields,
+    setContributionTitleRefreshKey,
     isCurrentMember,
     setIsCurrentMember,
     isCurrentClubAdmin,
@@ -465,7 +655,7 @@ export function useClubDetailData({
     canAssignAdmins,
     canAdjustContributions,
     canEditTitles,
-    clubMembers,
+    clubMembers: displayClubMembers,
     setClubMembers,
     isClubMembersLoading,
     setIsClubMembersLoading,

@@ -8,6 +8,7 @@ import type { AuthSession } from '@/providers/auth/AuthSession';
 
 import { ClubApplicationDialog } from './ClubApplicationDialog';
 import { ClubContributionDialog } from './ClubContributionDialog';
+import { ClubContributionTitlesDialog } from './ClubContributionTitlesDialog';
 import { ClubTitleDialog } from './ClubTitleDialog';
 import { ClubTournamentLineupDialog } from './ClubTournamentLineupDialog';
 import type { DetailState } from '@/pages/PublicShared/objects/types';
@@ -73,6 +74,7 @@ export const PublicClubDetailSection = ({
     setSelectedContributionMember,
     setIsTitleDialogOpen,
     setSelectedTitleMember,
+    setIsContributionTitleDialogOpen,
     setIsCurrentMember,
     handleApplicationStatusChange,
     handleReview,
@@ -82,6 +84,7 @@ export const PublicClubDetailSection = ({
     handleRemoveMember,
     handleAdjustContribution,
     handleUpdateTitle,
+    handleUpdateContributionTitles,
   } = useClubDetailWorkbench({
     state,
     session,
@@ -215,6 +218,9 @@ export const PublicClubDetailSection = ({
                   canAdjustContributions={workbench.canAdjustContributions}
                   canEditTitles={workbench.canEditTitles}
                   canRemoveMembers={workbench.canRemoveMembers}
+                  onOpenContributionTitles={() =>
+                    setIsContributionTitleDialogOpen(true)
+                  }
                   onAssignAdmin={(member) => void handleAssignAdmin(member)}
                   onAdjustContribution={(member) => {
                     setSelectedContributionMember(member);
@@ -304,6 +310,15 @@ export const PublicClubDetailSection = ({
           onSubmit={handleUpdateTitle}
         />
       ) : null}
+
+      <ClubContributionTitlesDialog
+        open={workbench.isContributionTitleDialogOpen}
+        fields={workbench.contributionTitleFields}
+        canManage={workbench.canEditTitles}
+        isSubmitting={workbench.isContributionTitleSubmitting}
+        onOpenChange={setIsContributionTitleDialogOpen}
+        onSubmit={handleUpdateContributionTitles}
+      />
     </>
   );
 };

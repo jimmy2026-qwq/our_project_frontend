@@ -1,4 +1,5 @@
-import type { AppealPriority, AppealStatus } from './TournamentAppealResponses';
+import type { AppealPriority } from './AppealPriority';
+import type { AppealStatus } from './AppealStatus';
 
 export interface AppealListQuery {
   tournamentId?: string;

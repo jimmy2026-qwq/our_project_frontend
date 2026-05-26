@@ -1,4 +1,4 @@
-import type { CurrentSessionRoleFlags } from '@/objects/auth/apiTypes';
+import type { CurrentSessionRoleFlags } from '@/objects/auth';
 
 export type AuthRoleFlags = CurrentSessionRoleFlags;
 

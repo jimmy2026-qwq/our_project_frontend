@@ -1,4 +1,4 @@
-import type { SeatWind } from '@/objects/tournament/apiTypes';
+import type { SeatWind } from '@/objects/tournament';
 
 export const handPositionClasses: Record<SeatWind, string> = {
   East: 'bottom-[20px] left-1/2 w-[min(94%,900px)] -translate-x-1/2 justify-center',

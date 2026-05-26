@@ -1,7 +1,7 @@
 import type { PlayerProfile } from './PlayerProfile';
 
 import type { PlayerProfileView } from '@/objects/player';
-import type { PlayerStatus } from '@/objects/tournament';
+import type { PlayerStatus } from '@/objects/player';
 
 export interface CreatedPlayerView {
   id: string;

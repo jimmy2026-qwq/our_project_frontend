@@ -1,4 +1,4 @@
-import type { Role } from '@/objects/auth/apiTypes';
+import type { Role } from '@/objects/auth';
 
 export interface FeatureModule {
   id: string;

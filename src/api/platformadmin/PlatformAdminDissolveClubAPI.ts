@@ -1,10 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type {
   DissolveClubRequest,
-  PlatformAdminClubResponse,
+  PlatformAdminClubView,
 } from '@/objects/platformadmin';
 
-export class PlatformAdminDissolveClubAPI extends APIMessage<PlatformAdminClubResponse> {
+export class PlatformAdminDissolveClubAPI extends APIMessage<PlatformAdminClubView> {
   readonly clubId: string;
   readonly operatorId: string;
 

@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { CreatePlayerRequest, PlayerResponse } from '@/objects/player';
+import type { CreatePlayerRequest, PlayerProfileView } from '@/objects/player';
 
-export class CreatePlayerAPI extends APIMessage<PlayerResponse> {
+export class CreatePlayerAPI extends APIMessage<PlayerProfileView> {
   readonly request: CreatePlayerRequest;
 
   constructor(payload: CreatePlayerRequest) {

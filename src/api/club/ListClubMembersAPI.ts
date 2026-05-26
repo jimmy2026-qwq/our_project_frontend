@@ -1,7 +1,7 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
 import type { PlayerProfileView, ClubMemberListQuery, ListEnvelope } from '@/objects';
-import type { PlayerStatus } from '@/objects/tournament';
+import type { PlayerStatus } from '@/objects/player';
 import type { BackendOption } from '@/system/api/backend-option.transport';
 
 export class ListClubMembersAPI extends APIMessage<ListEnvelope<PlayerProfileView>> {

@@ -1,11 +1,11 @@
 import { APIMessage } from '@/system/api';
 import type {
   DictionaryListNamespacesQuery,
-  DictionaryNamespaceRegistration,
+  DictionaryNamespaceRegistrationView,
   ListEnvelope,
 } from '@/objects';
 
-export class DictionaryListNamespacesAPI extends APIMessage<ListEnvelope<DictionaryNamespaceRegistration>> {
+export class DictionaryListNamespacesAPI extends APIMessage<ListEnvelope<DictionaryNamespaceRegistrationView>> {
   readonly query: DictionaryListNamespacesQuery;
 
   constructor(filters: DictionaryListNamespacesQuery) {

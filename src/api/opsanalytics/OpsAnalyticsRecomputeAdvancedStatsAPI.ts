@@ -1,4 +1,5 @@
 import { APIMessage } from '@/system/api';
+import { AdvancedStatsBackfillModes } from '@/objects';
 import type { AdvancedStatsRecomputeRequest, AdvancedStatsRecomputeTask } from '@/objects';
 
 export type OpsAnalyticsRecomputeAdvancedStatsAPIRequest = AdvancedStatsRecomputeRequest;
@@ -10,7 +11,7 @@ export class OpsAnalyticsRecomputeAdvancedStatsAPI extends APIMessage<AdvancedSt
     super();
     this.request = {
       ...payload,
-      mode: payload.mode ?? 'Full',
+      mode: payload.mode ?? AdvancedStatsBackfillModes.Full,
       limit: payload.limit ?? 500,
     };
   }

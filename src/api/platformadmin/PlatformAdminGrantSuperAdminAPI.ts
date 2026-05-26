@@ -1,10 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type {
   GrantSuperAdminRequest,
-  PlatformAdminPlayerResponse,
+  PlatformAdminPlayerView,
 } from '@/objects/platformadmin';
 
-export class PlatformAdminGrantSuperAdminAPI extends APIMessage<PlatformAdminPlayerResponse> {
+export class PlatformAdminGrantSuperAdminAPI extends APIMessage<PlatformAdminPlayerView> {
   readonly playerId: string;
   readonly operatorId: string;
 

@@ -1,3 +1,2 @@
-export * from './PlayerQueries';
-export * from './PlayerRequests';
-export * from './PlayerResponses';
+export * from './CreatePlayerRequest';
+export * from './PlayerListQuery';

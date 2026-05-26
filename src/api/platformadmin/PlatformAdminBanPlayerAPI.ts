@@ -1,10 +1,10 @@
 import { APIMessage } from '@/system/api';
 import type {
   BanPlayerRequest,
-  PlatformAdminPlayerResponse,
+  PlatformAdminPlayerView,
 } from '@/objects/platformadmin';
 
-export class PlatformAdminBanPlayerAPI extends APIMessage<PlatformAdminPlayerResponse> {
+export class PlatformAdminBanPlayerAPI extends APIMessage<PlatformAdminPlayerView> {
   readonly playerId: string;
   readonly operatorId: string;
   readonly reason: string;

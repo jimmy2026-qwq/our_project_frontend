@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { PlayerResponse } from '@/objects/player';
+import type { PlayerProfileView } from '@/objects/player';
 
-export class GetCurrentPlayerAPI extends APIMessage<PlayerResponse> {
+export class GetCurrentPlayerAPI extends APIMessage<PlayerProfileView> {
   constructor(readonly operatorId: string) {
     super();
   }

@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { GlobalDictionaryEntry } from '@/objects/dictionary';
+import type { GlobalDictionaryEntryView } from '@/objects/dictionary';
 
-export class DictionaryGetEntryAPI extends APIMessage<GlobalDictionaryEntry> {
+export class DictionaryGetEntryAPI extends APIMessage<GlobalDictionaryEntryView> {
   readonly key: string;
 
   constructor(key: string) {

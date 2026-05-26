@@ -5,7 +5,7 @@ import { EmptyState } from '@/components/ui';
 import { Button, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { ClubApplicationView } from '@/pages/objects/club';
-import type { AuditEventEntry } from '@/objects';
+import type { ClubContributionAuditEntry } from '@/objects';
 import type { PlayerProfile } from '@/pages/objects/player';
 import type { ClubPublicProfile } from '@/pages/PublicShared/objects';
 
@@ -294,19 +294,29 @@ function getMemberBadgeText(member: ClubAdminMemberEntry) {
     return internalTitle;
   }
 
+  const rankTitle = (member.rankLabel || member.rankCode)?.trim();
+
+  if (rankTitle && rankTitle !== '成员') {
+    return rankTitle;
+  }
+
   if (member.isAdmin) {
     return '管理员';
   }
 
-  return member.rankLabel || member.rankCode || '成员';
+  return null;
 }
 
 function getMemberBadgeClassName(member: ClubAdminMemberEntry) {
-  if (member.isAdmin || !member.internalTitle?.trim()) {
+  if (!member.internalTitle?.trim()) {
     return undefined;
   }
 
   return 'border-[rgba(178,132,255,0.34)] bg-[rgba(154,112,255,0.16)] text-[#cdb8ff]';
+}
+
+function getMemberBadgeTone(member: ClubAdminMemberEntry) {
+  return member.isAdmin ? 'success' : 'warning';
 }
 
 export function ClubMembersPanel({
@@ -316,6 +326,7 @@ export function ClubMembersPanel({
   canAdjustContributions,
   canEditTitles,
   canRemoveMembers,
+  onOpenContributionTitles,
   onAssignAdmin,
   onAdjustContribution,
   onEditTitle,
@@ -327,6 +338,7 @@ export function ClubMembersPanel({
   canAdjustContributions: boolean;
   canEditTitles: boolean;
   canRemoveMembers: boolean;
+  onOpenContributionTitles: () => void;
   onAssignAdmin: (member: PlayerProfile) => void;
   onAdjustContribution: (member: ClubAdminMemberEntry) => void;
   onEditTitle: (member: ClubAdminMemberEntry) => void;
@@ -339,15 +351,42 @@ export function ClubMembersPanel({
 
   if (isLoading) {
     return (
-      <p className="m-0 text-[#9ab0c1]">正在加载成员列表...</p>
+      <section className="grid gap-3">
+        <div className="flex justify-end">
+          <button
+            type="button"
+            className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[rgba(176,223,229,0.24)] bg-[rgba(5,14,23,0.82)] text-[1rem] font-bold text-[#c7d6e2]"
+            aria-label="查看通用贡献头衔"
+            title="查看通用贡献头衔"
+            onClick={onOpenContributionTitles}
+          >
+            i
+          </button>
+        </div>
+        <p className="m-0 text-[#9ab0c1]">正在加载成员列表...</p>
+      </section>
     );
   }
 
   return (
-    <section className={clubPanelClassNames.list}>
+    <section className={cx(clubPanelClassNames.list, 'grid-rows-[auto_minmax(0,1fr)]')}>
+      <div className="flex justify-end">
+        <button
+          type="button"
+          className="inline-flex h-9 w-9 cursor-pointer items-center justify-center rounded-full border border-[rgba(176,223,229,0.24)] bg-[rgba(5,14,23,0.82)] text-[1rem] font-bold text-[#c7d6e2] transition hover:-translate-y-px hover:border-[rgba(239,189,111,0.44)] hover:text-[#f5c98e]"
+          aria-label="查看通用贡献头衔"
+          title="查看通用贡献头衔"
+          onClick={onOpenContributionTitles}
+        >
+          i
+        </button>
+      </div>
       <div className={clubPanelClassNames.listBody}>
         {members.length > 0 ? (
-          members.map((member) => (
+          members.map((member) => {
+            const badgeText = getMemberBadgeText(member);
+
+            return (
               <article
                 key={member.playerId}
                 className={clubPanelClassNames.row}
@@ -355,7 +394,7 @@ export function ClubMembersPanel({
                 <div className={clubPanelClassNames.rowMain}>
                   <div className="flex flex-wrap items-center gap-2">
                     <strong>{member.displayName}</strong>
-                    {canEditTitles ? (
+                    {badgeText && canEditTitles ? (
                       <button
                         type="button"
                         className="m-0 cursor-pointer border-0 bg-transparent p-0"
@@ -363,20 +402,20 @@ export function ClubMembersPanel({
                         title="设置专属头衔"
                       >
                         <StatusPill
-                          tone={member.isAdmin ? 'success' : 'warning'}
+                          tone={getMemberBadgeTone(member)}
                           className={getMemberBadgeClassName(member)}
                         >
-                          {getMemberBadgeText(member)}
+                          {badgeText}
                         </StatusPill>
                       </button>
-                    ) : (
+                    ) : badgeText ? (
                       <StatusPill
-                        tone={member.isAdmin ? 'success' : 'warning'}
+                        tone={getMemberBadgeTone(member)}
                         className={getMemberBadgeClassName(member)}
                       >
-                        {getMemberBadgeText(member)}
+                        {badgeText}
                       </StatusPill>
-                    )}
+                    ) : null}
                     {typeof member.elo === 'number' ? (
                       <StatusPill tone="warning">ELO {member.elo}</StatusPill>
                     ) : null}
@@ -430,7 +469,8 @@ export function ClubMembersPanel({
                   ) : null}
                 </div>
               </article>
-          ))
+            );
+          })
         ) : (
           <EmptyState asListItem={false}>当前没有成员数据。</EmptyState>
         )}
@@ -445,7 +485,7 @@ export function ClubContributionChangesPanel({
   members,
 }: {
   isLoading: boolean;
-  changes: AuditEventEntry[];
+  changes: ClubContributionAuditEntry[];
   members: ClubAdminMemberEntry[];
 }) {
   const memberNamesById = new Map(
@@ -469,9 +509,9 @@ export function ClubContributionChangesPanel({
       <div className={clubPanelClassNames.listBody}>
         {changes.length > 0 ? (
           changes.map((change) => {
-            const playerId = change.details.playerId ?? '';
-            const delta = change.details.delta ?? '--';
-            const contribution = change.details.contribution ?? '--';
+            const playerId = change.playerId ?? '';
+            const delta = change.delta ?? '--';
+            const contribution = change.contribution ?? '--';
             const playerName = memberNamesById.get(playerId) ?? (playerId || '--');
             const rankLabel = memberRanksById.get(playerId) ?? '--';
             const deltaValue = Number(delta);

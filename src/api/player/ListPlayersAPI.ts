@@ -3,7 +3,7 @@ import { APIMessage } from '@/system/api';
 import type { ListEnvelope } from '@/objects';
 import type { PlayerListQuery, PlayerProfileView } from '@/objects/player';
 import type { BackendOption } from '@/system/api/backend-option.transport';
-import type { PlayerStatus } from '@/objects/tournament';
+import type { PlayerStatus } from '@/objects/player';
 
 export class ListPlayersAPI extends APIMessage<ListEnvelope<PlayerProfileView>> {
   readonly clubId: string[];
