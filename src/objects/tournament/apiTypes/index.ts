@@ -41,7 +41,6 @@ export * from './TournamentMatchRecordResponse';
 export * from './TournamentMutationResponse';
 export * from './TournamentOperationsStageResponse';
 export * from './TournamentPaifuSummaryResponse';
-export * from './TournamentParticipantClubResponse';
 export * from './TournamentParticipantPlayerResponse';
 export * from './TournamentSettlementResponse';
 export * from './TournamentStageDirectoryResponse';

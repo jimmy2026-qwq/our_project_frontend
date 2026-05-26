@@ -1,7 +1,7 @@
-import type { ClubRelation } from './ClubRelation';
+import type { ClubRelationView } from './ClubRelationView';
 import type { ClubRankNodeView } from './ClubRankNodeView';
 
-export interface Club {
+export interface ClubView {
   id: string;
   name: string;
   members: string[];
@@ -11,6 +11,6 @@ export interface Club {
   totalPoints: number;
   pointPool: number;
   rankTree: ClubRankNodeView[];
-  relations: ClubRelation[];
+  relations: ClubRelationView[];
   dissolvedAt: string | null;
 }

@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { Club } from '@/objects/club';
+import type { ClubView } from '@/objects/club';
 
-export class AddClubMemberAPI extends APIMessage<Club> {
+export class AddClubMemberAPI extends APIMessage<ClubView> {
   readonly operatorId: string[];
 
   constructor(

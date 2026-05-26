@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { AssignClubAdminRequest, Club } from '@/objects/club';
+import type { AssignClubAdminRequest, ClubView } from '@/objects/club';
 
-export class AssignClubAdminAPI extends APIMessage<Club> {
+export class AssignClubAdminAPI extends APIMessage<ClubView> {
   readonly playerId: string;
   readonly operatorId: string;
 

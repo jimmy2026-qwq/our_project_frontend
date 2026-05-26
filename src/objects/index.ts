@@ -1,6 +1,5 @@
 export * from './auth';
 export * from './club';
-export * from './dictionary';
 export * from './opsanalytics';
 export * from './platformadmin';
 export * from './player';

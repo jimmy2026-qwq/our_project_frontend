@@ -1,5 +1,5 @@
 import type { ClubRelationKind } from './ClubRelationKind';
 
-export interface ClubRelation {
+export interface ClubRelationView {
   relation: ClubRelationKind;
 }

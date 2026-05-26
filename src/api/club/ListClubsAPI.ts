@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { Club, ClubListQuery, ListEnvelope } from '@/objects';
+import type { ClubView, ClubListQuery, ListEnvelope } from '@/objects';
 
-export class ListClubsAPI extends APIMessage<ListEnvelope<Club>> {
+export class ListClubsAPI extends APIMessage<ListEnvelope<ClubView>> {
   readonly query: ClubListQuery;
 
   constructor(filters: ClubListQuery = {}) {

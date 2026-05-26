@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { ClubMemberPrivilegeSnapshot } from '@/objects/club';
+import type { ClubMemberPrivilegeSnapshotView } from '@/objects/club';
 
-export class GetClubMemberPrivilegeAPI extends APIMessage<ClubMemberPrivilegeSnapshot> {
+export class GetClubMemberPrivilegeAPI extends APIMessage<ClubMemberPrivilegeSnapshotView> {
   constructor(
     readonly clubId: string,
     readonly playerId: string,

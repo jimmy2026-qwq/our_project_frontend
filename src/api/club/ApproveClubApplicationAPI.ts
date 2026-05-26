@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { ApproveClubApplicationRequest, Club } from '@/objects/club';
+import type { ApproveClubApplicationRequest, ClubView } from '@/objects/club';
 
-export class ApproveClubApplicationAPI extends APIMessage<Club> {
+export class ApproveClubApplicationAPI extends APIMessage<ClubView> {
   readonly playerId: string;
   readonly operatorId: string;
   readonly note: string[];

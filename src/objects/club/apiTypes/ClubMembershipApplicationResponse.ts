@@ -1,6 +1,6 @@
 import type { ClubApplicationStatus } from '../ClubApplicationStatus';
 
-export interface ClubMembershipApplication {
+export interface ClubMembershipApplicationResponse {
   id: string;
   applicantUserId: string | null;
   displayName: string;

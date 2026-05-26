@@ -1,4 +1,4 @@
-export interface ClubMemberPrivilegeSnapshot {
+export interface ClubMemberPrivilegeSnapshotView {
   playerId: string;
   contribution: number;
   rankCode: string;

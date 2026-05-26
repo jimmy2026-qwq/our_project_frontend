@@ -1,6 +1,6 @@
 import { APIMessage } from '@/system/api';
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
-import type { ClubMemberPrivilegeListQuery, ClubMemberPrivilegeSnapshot, ListEnvelope } from '@/objects';
+import type { ClubMemberPrivilegeListQuery, ClubMemberPrivilegeSnapshotView, ListEnvelope } from '@/objects';
 
 interface ClubMemberPrivilegeListQueryTransport {
   playerId: [] | [string];
@@ -10,7 +10,7 @@ interface ClubMemberPrivilegeListQueryTransport {
   offset: [] | [number];
 }
 
-export class ListClubMemberPrivilegesAPI extends APIMessage<ListEnvelope<ClubMemberPrivilegeSnapshot>> {
+export class ListClubMemberPrivilegesAPI extends APIMessage<ListEnvelope<ClubMemberPrivilegeSnapshotView>> {
   readonly query: ClubMemberPrivilegeListQueryTransport;
 
   constructor(

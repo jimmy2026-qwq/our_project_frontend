@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { ClubMembershipApplication, ClubMembershipApplicationRequest } from '@/objects/club';
+import type { ClubMembershipApplicationResponse, ClubMembershipApplicationRequest } from '@/objects/club';
 
-export class SubmitClubApplicationAPI extends APIMessage<ClubMembershipApplication> {
+export class SubmitClubApplicationAPI extends APIMessage<ClubMembershipApplicationResponse> {
   readonly request: ClubMembershipApplicationRequest;
 
   constructor(

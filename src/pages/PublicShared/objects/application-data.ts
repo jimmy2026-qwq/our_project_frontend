@@ -1,4 +1,4 @@
-﻿import {
+import {
   GetClubApplicationAPI,
   GetCurrentClubApplicationAPI,
   ListClubsAPI,
@@ -9,7 +9,7 @@ import { GetCurrentPlayerAPI } from '@/api/player';
 import type {
   ClubApplicationDetailQuery,
   ClubListQuery,
-  ClubMembershipApplication,
+  ClubMembershipApplicationResponse,
   ClubMembershipApplicationRequest,
   ClubMembershipApplicationView,
   WithdrawClubApplicationRequest,
@@ -67,7 +67,7 @@ export interface HomeClubApplicationState {
   application: ApplicationState;
 }
 
-type ClubApplicationMutation = ClubMembershipApplication;
+type ClubApplicationMutation = ClubMembershipApplicationResponse;
 
 const clubsApi = {
   getClubs(filters: ClubListQuery) {
@@ -79,7 +79,7 @@ const clubsApi = {
     clubId: string,
     payload: ClubMembershipApplicationRequest,
   ) {
-    return sendAPI<ClubMembershipApplication>(
+    return sendAPI<ClubMembershipApplicationResponse>(
       new SubmitClubApplicationAPI(clubId, payload),
     );
   },
@@ -88,7 +88,7 @@ const clubsApi = {
     membershipId: string,
     payload: WithdrawClubApplicationRequest,
   ) {
-    return sendAPI<ClubMembershipApplication>(
+    return sendAPI<ClubMembershipApplicationResponse>(
       new WithdrawClubApplicationAPI(clubId, membershipId, payload),
     );
   },

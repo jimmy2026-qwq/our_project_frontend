@@ -1,4 +1,4 @@
-﻿import {
+import {
   AcceptClubTournamentAPI,
   AdjustClubMemberContributionAPI,
   AssignClubAdminAPI,
@@ -20,10 +20,6 @@
 import {
   AuthCheckPermissionAPI,
 } from '@/api/auth';
-import {
-  DictionaryListEntriesAPI,
-  DictionaryUpsertEntryAPI,
-} from '@/api/dictionary';
 import {
   PlatformAdminBanPlayerAPI,
   PlatformAdminGrantSuperAdminAPI,
@@ -70,13 +66,13 @@ import type {
   BanPlayerRequest,
   ClearClubTitleRequest,
   CompleteStageRequest,
-  Club,
+  ClubView,
   ClubContributionAuditEntry,
   ClubApplicationListQuery,
   ClubListQuery,
   ClubMemberListQuery,
   ClubMemberPrivilegeListQuery,
-  ClubMemberPrivilegeSnapshot,
+  ClubMemberPrivilegeSnapshotView,
   ClubMembershipApplicationView,
   ClubTournamentParticipationView,
   ClubTournamentQuery,
@@ -84,9 +80,7 @@ import type {
   CreateClubRequest,
   CreateTournamentStageRequest,
   CreateTournamentRequest,
-  DictionaryListEntriesQuery,
   GrantSuperAdminRequest,
-  GlobalDictionaryEntryView,
   ListEnvelope,
   PlayerLeaderboardEntry,
   PlayerLeaderboardQuery,
@@ -215,30 +209,12 @@ export const authApi = {
   },
 };
 
-export const dictionaryApi = {
-  listEntries(filters: DictionaryListEntriesQuery = {}) {
-    return sendAPI<ListEnvelope<GlobalDictionaryEntryView>>(
-      new DictionaryListEntriesAPI(filters),
-    );
-  },
-  upsertEntry(payload: {
-    operatorId: string;
-    key: string;
-    value: string;
-    note?: string;
-  }) {
-    return sendAPI<GlobalDictionaryEntryView>(
-      new DictionaryUpsertEntryAPI(payload),
-    );
-  },
-};
-
 export const clubsApi = {
   getClub(clubId: string) {
-    return sendAPI<Club>(new GetClubAPI(clubId));
+    return sendAPI<ClubView>(new GetClubAPI(clubId));
   },
   createClub(payload: CreateClubRequest) {
-    return sendAPI<Club>(new CreateClubAPI(payload)).then(mapClub);
+    return sendAPI<ClubView>(new CreateClubAPI(payload)).then(mapClub);
   },
   getClubs(filters: ClubListQuery) {
     return sendAPI(new ListClubsAPI(filters)).then((envelope) =>
@@ -246,10 +222,10 @@ export const clubsApi = {
     );
   },
   assignClubAdmin(clubId: string, payload: AssignClubAdminRequest) {
-    return sendAPI<Club>(new AssignClubAdminAPI(clubId, payload));
+    return sendAPI<ClubView>(new AssignClubAdminAPI(clubId, payload));
   },
   assignClubTitle(clubId: string, payload: AssignClubTitleRequest) {
-    return sendAPI<Club>(new AssignClubTitleAPI(clubId, payload)).then(
+    return sendAPI<ClubView>(new AssignClubTitleAPI(clubId, payload)).then(
       mapClub,
     );
   },
@@ -258,7 +234,7 @@ export const clubsApi = {
     playerId: string,
     payload: ClearClubTitleRequest,
   ) {
-    return sendAPI<Club>(
+    return sendAPI<ClubView>(
       new ClearClubTitleAPI(clubId, playerId, payload),
     ).then(mapClub);
   },
@@ -271,7 +247,7 @@ export const clubsApi = {
     clubId: string,
     filters: ClubMemberPrivilegeListQuery = {},
   ) {
-    return sendAPI<ListEnvelope<ClubMemberPrivilegeSnapshot>>(
+    return sendAPI<ListEnvelope<ClubMemberPrivilegeSnapshotView>>(
       new ListClubMemberPrivilegesAPI(clubId, filters),
     );
   },
@@ -279,12 +255,12 @@ export const clubsApi = {
     clubId: string,
     payload: AdjustClubMemberContributionRequest,
   ) {
-    return sendAPI<Club>(
+    return sendAPI<ClubView>(
       new AdjustClubMemberContributionAPI(clubId, payload),
     ).then(mapClub);
   },
   updateClubRankTree(clubId: string, payload: UpdateClubRankTreeRequest) {
-    return sendAPI<Club>(new UpdateClubRankTreeAPI(clubId, payload)).then(
+    return sendAPI<ClubView>(new UpdateClubRankTreeAPI(clubId, payload)).then(
       mapClub,
     );
   },
@@ -312,7 +288,7 @@ export const clubsApi = {
     playerId: string,
     payload: RemoveClubMemberRequest,
   ) {
-    return sendAPI<Club>(
+    return sendAPI<ClubView>(
       new RemoveClubMemberAPI(clubId, playerId, payload),
     ).then(mapClub);
   },

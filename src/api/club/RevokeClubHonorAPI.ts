@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { Club, RevokeClubHonorRequest } from '@/objects/club';
+import type { ClubView, RevokeClubHonorRequest } from '@/objects/club';
 
-export class RevokeClubHonorAPI extends APIMessage<Club> {
+export class RevokeClubHonorAPI extends APIMessage<ClubView> {
   readonly operatorId: string;
   readonly title: string;
   readonly note: string[];

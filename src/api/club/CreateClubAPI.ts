@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { Club, CreateClubRequest } from '@/objects/club';
+import type { ClubView, CreateClubRequest } from '@/objects/club';
 
-export class CreateClubAPI extends APIMessage<Club> {
+export class CreateClubAPI extends APIMessage<ClubView> {
   readonly name: string;
   readonly creatorId: string;
 

@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { AwardClubHonorRequest, Club } from '@/objects/club';
+import type { AwardClubHonorRequest, ClubView } from '@/objects/club';
 
-export class AwardClubHonorAPI extends APIMessage<Club> {
+export class AwardClubHonorAPI extends APIMessage<ClubView> {
   readonly operatorId: string;
   readonly title: string;
   readonly note: string[];

@@ -17,7 +17,7 @@ export type Permission =
   | 'ManageTableSeatState'
   | 'FileAppealTicket'
   | 'ResolveAppeal'
-  | 'ManageGlobalDictionary'
+  | 'ManagePlatformOperations'
   | 'BanRegisteredPlayer'
   | 'DissolveClub'
   | 'AssignTournamentAdmin'

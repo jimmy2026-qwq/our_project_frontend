@@ -6,11 +6,11 @@ import type { ClubApplicationView } from './ClubApplicationViews';
 import type {
   ClubMembershipApplicantView,
   ClubMembershipApplicationView,
-  Club,
+  ClubView,
 } from '@/objects/club';
 import type { PlayerProfileView } from '@/objects/player';
 
-export function mapClub(item: Club): ClubSummary {
+export function mapClub(item: ClubView): ClubSummary {
   return {
     id: item.id,
     name: item.name,

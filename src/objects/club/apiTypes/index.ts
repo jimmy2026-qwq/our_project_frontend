@@ -9,7 +9,7 @@ export * from './ClubMembershipApplicationRequest';
 export * from './RejectClubApplicationRequest';
 export * from './ReviewClubApplicationRequest';
 export * from './WithdrawClubApplicationRequest';
-export * from './ClubMembershipApplication';
+export * from './ClubMembershipApplicationResponse';
 export * from './ClubTournamentQuery';
 export * from './AddClubMemberRequest';
 export * from './AdjustClubMemberContributionRequest';

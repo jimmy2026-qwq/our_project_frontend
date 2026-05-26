@@ -33,7 +33,7 @@ export const roleCapabilities: RoleCapability[] = [
     role: 'SuperAdmin',
     description: 'Platform-level governance role with access to public workflows plus elevated administration.',
     landingRoute: '/public',
-    canRead: ['Dictionary config', 'Audit trail', 'Global operations view'],
-    canWrite: ['Maintain dictionary', 'Review audits', 'Apply platform-level configuration'],
+    canRead: ['Audit trail', 'Global operations view'],
+    canWrite: ['Review audits', 'Apply platform-level operations'],
   },
 ];

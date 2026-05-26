@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { ClubMembershipApplication, WithdrawClubApplicationRequest } from '@/objects/club';
+import type { ClubMembershipApplicationResponse, WithdrawClubApplicationRequest } from '@/objects/club';
 
-export class WithdrawClubApplicationAPI extends APIMessage<ClubMembershipApplication> {
+export class WithdrawClubApplicationAPI extends APIMessage<ClubMembershipApplicationResponse> {
   readonly guestSessionId: string[];
   readonly operatorId: string[];
   readonly note: string[];

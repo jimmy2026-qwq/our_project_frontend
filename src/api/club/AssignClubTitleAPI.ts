@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { AssignClubTitleRequest, Club } from '@/objects/club';
+import type { AssignClubTitleRequest, ClubView } from '@/objects/club';
 
-export class AssignClubTitleAPI extends APIMessage<Club> {
+export class AssignClubTitleAPI extends APIMessage<ClubView> {
   readonly playerId: string;
   readonly operatorId: string;
   readonly title: string;

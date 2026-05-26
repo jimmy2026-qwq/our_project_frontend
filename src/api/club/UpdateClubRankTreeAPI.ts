@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { Club, ClubRankNodeRequest, UpdateClubRankTreeRequest } from '@/objects/club';
+import type { ClubView, ClubRankNodeRequest, UpdateClubRankTreeRequest } from '@/objects/club';
 
-export class UpdateClubRankTreeAPI extends APIMessage<Club> {
+export class UpdateClubRankTreeAPI extends APIMessage<ClubView> {
   readonly operatorId: string;
   readonly ranks: ClubRankNodeRequest[];
   readonly note: string[];

@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { AdjustClubMemberContributionRequest, Club } from '@/objects/club';
+import type { AdjustClubMemberContributionRequest, ClubView } from '@/objects/club';
 
-export class AdjustClubMemberContributionAPI extends APIMessage<Club> {
+export class AdjustClubMemberContributionAPI extends APIMessage<ClubView> {
   readonly operatorId: string;
   readonly playerId: string;
   readonly delta: number;

@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { Club } from '@/objects/club';
+import type { ClubView } from '@/objects/club';
 
-export class GetClubAPI extends APIMessage<Club> {
+export class GetClubAPI extends APIMessage<ClubView> {
   constructor(readonly clubId: string) {
     super();
   }

@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { Club, RemoveClubMemberRequest } from '@/objects/club';
+import type { ClubView, RemoveClubMemberRequest } from '@/objects/club';
 
-export class RemoveClubMemberAPI extends APIMessage<Club> {
+export class RemoveClubMemberAPI extends APIMessage<ClubView> {
   readonly operatorId: string[];
 
   constructor(

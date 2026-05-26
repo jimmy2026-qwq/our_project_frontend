@@ -63,7 +63,6 @@ export const featureModules: FeatureModule[] = [
       'publicquery',
       'tournament',
       'opsanalytics',
-      'dictionary',
       'platformadmin',
     ],
   },
