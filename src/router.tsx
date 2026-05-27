@@ -1,8 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppShell } from '@/app/AppShell';
-import { RequireAuth } from '@/app/guards/RequireAuth';
-import { RequireRegisteredUser } from '@/app/guards/RequireRegisteredUser';
+import { RequireAuth } from '@/pages/Auth/RequireAuth';
+import { RequireRegisteredUser } from '@/pages/Auth/RequireRegisteredUser';
 
 const demoRoutes = import.meta.env.DEV
   ? [
