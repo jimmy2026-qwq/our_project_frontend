@@ -1,7 +1,7 @@
-﻿import type { ClubApplication, ClubApplicationView } from '@/pages/objects/club';
+import type { ClubApplication, ClubApplicationView } from '@/pages/objects/club';
 import type { ClubContributionAuditEntry } from '@/objects';
 import type { PlayerProfile } from '@/pages/objects/player';
-import type { ClubPublicProfile } from '@/pages/PublicShared/objects';
+import type { ClubPublicProfile } from './types';
 
 export interface ClubAdminMemberEntry extends PlayerProfile {
   isAdmin: boolean;

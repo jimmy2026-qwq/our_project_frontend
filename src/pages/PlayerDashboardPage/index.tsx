@@ -1,55 +1,27 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import { useAuth } from '@/app/auth/useAuth';
-import { useAsyncResource } from '@/hooks/useAsyncResource';
-
+import { PlayerDashboardSection } from './components/PlayerDashboardSection';
 import {
   PlayerDashboardEmpty,
   PlayerDashboardLoading,
-  PlayerDashboardShell,
-} from './components/player-dashboard';
-import { loadPlayerDashboardData } from './objects/data';
-
-type PlayerDetailTab = 'home' | 'recent' | 'history' | 'appeals';
+} from './components/PlayerDashboardStatus';
+import { usePlayerDashboard } from './hooks';
 
 export function PlayerDashboardPage() {
-  const navigate = useNavigate();
-  const { session, logout } = useAuth();
-  const operatorId = session?.user.operatorId ?? '';
-  const [activeTab, setActiveTab] = useState<PlayerDetailTab>('home');
+  const dashboard = usePlayerDashboard();
 
-  const { data, isLoading } = useAsyncResource(async () => {
-    if (!operatorId) {
-      return null;
-    }
-
-    try {
-      return await loadPlayerDashboardData(operatorId);
-    } catch {
-      return null;
-    }
-  }, [operatorId]);
-
-  async function handleLogout() {
-    await logout();
-    navigate('/public');
-  }
-
-  if (isLoading) {
+  if (dashboard.isLoading) {
     return <PlayerDashboardLoading />;
   }
 
-  if (!data) {
+  if (!dashboard.data) {
     return <PlayerDashboardEmpty />;
   }
 
   return (
-    <PlayerDashboardShell
-      data={data}
-      activeTab={activeTab}
-      onActiveTabChange={setActiveTab}
-      onLogout={() => void handleLogout()}
+    <PlayerDashboardSection
+      data={dashboard.data}
+      activeTab={dashboard.activeTab}
+      onActiveTabChange={dashboard.setActiveTab}
+      onLogout={() => void dashboard.handleLogout()}
     />
   );
 }

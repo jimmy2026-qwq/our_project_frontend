@@ -1,6 +1,6 @@
 import type {
   TournamentPublicProfile,
-} from '@/pages/PublicShared/objects';
+} from './types';
 import type { ClubSummary } from '@/pages/objects/club';
 import type { PlayerProfile } from '@/pages/objects/player';
 import type { TournamentStageRuleDraft } from './tournament-detail.rules';

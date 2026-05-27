@@ -4,7 +4,7 @@ import type {
   SwissRuleConfigView,
   TournamentFormat,
 } from '@/objects/tournament';
-import type { TournamentPublicProfile } from '@/pages/PublicShared/objects';
+import type { TournamentPublicProfile } from './types';
 
 export type TournamentStageRuleDraft = {
   format: TournamentFormat;

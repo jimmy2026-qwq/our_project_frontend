@@ -2,7 +2,7 @@ import { useReducer } from 'react';
 
 import {
   MemberHubLoading,
-  MemberHubPageSection,
+  MemberHubSection,
 } from './components';
 import {
   useMemberHubActions,
@@ -34,7 +34,7 @@ export function MemberHubPage() {
   }
 
   return (
-    <MemberHubPageSection
+    <MemberHubSection
       directory={directory}
       state={state}
       playerDashboardState={playerDashboardState}

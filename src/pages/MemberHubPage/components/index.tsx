@@ -1,6 +1,6 @@
 import { LoadingSection } from '@/components/ui';
 
-export { MemberHubPageSection } from './MemberHubPageSection';
+export { MemberHubSection } from './MemberHubSection';
 
 export function MemberHubLoading() {
   return (

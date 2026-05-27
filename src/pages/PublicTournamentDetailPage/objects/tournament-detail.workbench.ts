@@ -2,7 +2,7 @@ import type { ClubSummary } from '@/pages/objects/club';
 import type {
   ClubPublicProfile,
   TournamentPublicProfile,
-} from '@/pages/PublicShared/objects';
+} from './types';
 
 export function getTableStatusLabel(status: string) {
   switch (status) {

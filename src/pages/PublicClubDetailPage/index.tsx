@@ -1,13 +1,13 @@
 import { useNavigate, useParams } from 'react-router-dom';
 
-import {
-  PublicDetailPageFrame,
-  PublicDetailNotFound,
-  PublicHallLoading,
-} from '@/pages/PublicShared/components/shared';
 import { useAuth } from '@/app/auth/useAuth';
 
-import { PublicClubDetailSection } from './components/club-detail';
+import { PublicClubDetailSection } from './components/PublicClubDetailSection';
+import {
+  PublicClubDetailFrame,
+  PublicClubDetailLoading,
+  PublicClubDetailNotFound,
+} from './components/PublicClubDetailFrame';
 import { useClubDetail } from './hooks';
 
 export function PublicClubDetailPage() {
@@ -18,34 +18,28 @@ export function PublicClubDetailPage() {
 
   if (isLoading || !state) {
     return (
-      <PublicDetailPageFrame>
-        <PublicHallLoading
-          eyebrow="俱乐部详情"
-          title="正在载入俱乐部详情..."
-          summary="正在同步俱乐部公开信息、近期赛事和成员管理数据。"
-          progressLabel="俱乐部详情加载中"
-          progressMessage="加载完成后会直接进入新的详情界面。"
-        />
-      </PublicDetailPageFrame>
+      <PublicClubDetailFrame>
+        <PublicClubDetailLoading />
+      </PublicClubDetailFrame>
     );
   }
 
   if (!state.item) {
     return (
-      <PublicDetailPageFrame>
-        <PublicDetailNotFound title="Club not found" />
-      </PublicDetailPageFrame>
+      <PublicClubDetailFrame>
+        <PublicClubDetailNotFound title="Club not found" />
+      </PublicClubDetailFrame>
     );
   }
 
   return (
-    <PublicDetailPageFrame>
+    <PublicClubDetailFrame>
       <PublicClubDetailSection
         state={state}
         session={session}
         onNavigateBack={() => navigate('/public')}
         onRefreshDetail={refresh}
       />
-    </PublicDetailPageFrame>
+    </PublicClubDetailFrame>
   );
 }
