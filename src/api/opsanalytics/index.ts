@@ -2,7 +2,6 @@ export { OpsAnalyticsAdvancedStatsSummaryAPI } from './OpsAnalyticsAdvancedStats
 export { OpsAnalyticsClubAdvancedStatsAPI } from './OpsAnalyticsClubAdvancedStatsAPI';
 export { OpsAnalyticsClubDashboardAPI } from './OpsAnalyticsClubDashboardAPI';
 export { OpsAnalyticsListAdvancedStatsTasksAPI } from './OpsAnalyticsListAdvancedStatsTasksAPI';
-export { OpsAnalyticsPerformanceSummaryAPI } from './OpsAnalyticsPerformanceSummaryAPI';
 export { OpsAnalyticsPlayerAdvancedStatsAPI } from './OpsAnalyticsPlayerAdvancedStatsAPI';
 export { OpsAnalyticsPlayerDashboardAPI } from './OpsAnalyticsPlayerDashboardAPI';
 export { OpsAnalyticsProcessAdvancedStatsAPI } from './OpsAnalyticsProcessAdvancedStatsAPI';

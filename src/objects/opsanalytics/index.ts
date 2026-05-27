@@ -5,7 +5,4 @@ export * from './AdvancedStatsRecomputeTaskStatus';
 export * from './AdvancedStatsTaskQueueSummary';
 export * from './Dashboard';
 export * from './DashboardOwner';
-export * from './PerformanceDiagnosticsSnapshot';
-export * from './PerformanceMetricEntry';
-export * from './PerformanceStatusCount';
 export * from './apiTypes';
