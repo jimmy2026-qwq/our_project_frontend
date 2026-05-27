@@ -9,7 +9,7 @@ export function RequireAuth() {
   if (!isReady) {
     return (
       <div className="grid min-h-screen place-items-center bg-[#081018] px-6 text-[#9ab0c1]">
-        姝ｅ湪鎭㈠鐧诲綍鐘舵€?..
+        正在恢复登录状态...
       </div>
     );
   }
