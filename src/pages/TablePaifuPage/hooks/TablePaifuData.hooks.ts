@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
-import { GetPublicTournamentAPI } from '@/api/publicquery';
+import { GetPublicTournamentAPI } from '@/api/tournament';
 import { TournamentPaifuListAPI } from '@/api/tournament/TournamentPaifuListAPI';
 import type {
   ListEnvelope,

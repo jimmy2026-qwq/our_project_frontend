@@ -1,4 +1,4 @@
-import { GetPublicTournamentAPI } from '@/api/publicquery';
+import { GetPublicTournamentAPI } from '@/api/tournament';
 import {
   TournamentGetAPI,
   TournamentStageDirectoryAPI,

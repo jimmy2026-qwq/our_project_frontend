@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
-import { ListClubsAPI } from '@/api/club';
 import {
   GetPublicClubAPI,
   ListPublicClubsAPI,
-} from '@/api/publicquery';
+  ListClubsAPI,
+} from '@/api/club';
 import { mapClub, type ClubSummary } from '@/pages/objects/club';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import { sendAPI } from '@/system/api';

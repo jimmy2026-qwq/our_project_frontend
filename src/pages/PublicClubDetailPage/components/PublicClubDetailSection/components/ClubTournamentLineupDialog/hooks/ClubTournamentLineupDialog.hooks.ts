@@ -64,7 +64,7 @@ export function useClubTournamentLineupWorkbench({
     let cancelled = false;
     setIsLoading(true);
 
-    void loadClubLineupMembers(clubId, operatorId)
+    void loadClubLineupMembers(clubId)
       .then((items) => {
         if (!cancelled) {
           setMembers(items);
@@ -89,7 +89,7 @@ export function useClubTournamentLineupWorkbench({
     return () => {
       cancelled = true;
     };
-  }, [clubId, notifyWarning, open, operatorId]);
+  }, [clubId, notifyWarning, open]);
 
   useEffect(() => {
     if (!open || !tournament?.id) {

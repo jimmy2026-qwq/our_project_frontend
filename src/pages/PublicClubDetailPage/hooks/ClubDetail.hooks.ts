@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import {
   ListClubTournamentsAPI,
 } from '@/api/club';
-import { GetPublicClubAPI } from '@/api/publicquery';
+import { GetPublicClubAPI } from '@/api/club';
 import { GetCurrentPlayerAPI } from '@/api/player/GetCurrentPlayerAPI';
 import type {
   ClubDetailState,

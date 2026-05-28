@@ -64,6 +64,7 @@ export function useClubDetailMembership({
     if (!session?.user.roles.isRegisteredPlayer || !profile) {
       setIsCurrentMember(false);
       setIsCurrentClubAdmin(false);
+      setCurrentPlayerProfile(null);
       setCurrentApplicationStatus(null);
       return;
     }
@@ -112,6 +113,7 @@ export function useClubDetailMembership({
         }
       })().catch(() => {
         if (!cancelled) {
+          setIsCurrentMember(false);
           setCurrentPlayerProfile(null);
           setIsCurrentClubAdmin(false);
           setCurrentApplicationStatus(null);

@@ -70,18 +70,6 @@ async function loadClubMemberAdminEntries(
     ]),
   );
 
-  if (
-    currentPlayer &&
-    !members.some(
-      (member) =>
-        member.playerId === currentPlayer.playerId ||
-        (!!member.applicantUserId &&
-          member.applicantUserId === currentPlayer.applicantUserId),
-    )
-  ) {
-    members.unshift(currentPlayer);
-  }
-
   return members
     .map((member) => {
       const privilegeSnapshot = privilegesByPlayerId.get(member.playerId);

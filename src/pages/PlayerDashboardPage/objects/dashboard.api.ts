@@ -1,8 +1,9 @@
 import { OpsAnalyticsPlayerDashboardAPI } from '@/api/opsanalytics';
 import { GetCurrentPlayerAPI } from '@/api/player';
-import { GetPublicClubAPI, GetPublicTournamentAPI } from '@/api/publicquery';
+import { GetPublicClubAPI } from '@/api/club';
 import {
   AppealListAPI,
+  GetPublicTournamentAPI,
   TournamentRecordListAPI,
   TournamentTableListAPI,
 } from '@/api/tournament';

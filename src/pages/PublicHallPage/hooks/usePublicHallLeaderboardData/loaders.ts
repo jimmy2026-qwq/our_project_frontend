@@ -1,4 +1,4 @@
-import { PublicPlayerLeaderboardAPI } from '@/api/publicquery';
+import { PublicPlayerLeaderboardAPI } from '@/api/player';
 import type { ClubSummary } from '@/pages/objects/club';
 import { sendAPI } from '@/system/api';
 

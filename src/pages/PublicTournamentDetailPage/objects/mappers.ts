@@ -5,7 +5,7 @@ import type {
   PublicClubDirectoryEntry,
   PublicTournamentDetailView,
   PublicTournamentStageView,
-} from '@/objects/publicquery';
+} from '@/objects';
 import type { ClubSummary } from '@/pages/objects/club';
 import type { AppealSummary } from '@/pages/objects/tournament';
 

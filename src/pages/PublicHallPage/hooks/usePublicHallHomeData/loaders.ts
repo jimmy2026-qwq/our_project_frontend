@@ -1,7 +1,5 @@
-import {
-  ListPublicClubsAPI,
-  ListPublicSchedulesAPI,
-} from '@/api/publicquery';
+import { ListPublicClubsAPI } from '@/api/club';
+import { ListPublicSchedulesAPI } from '@/api/tournament';
 import type { ClubSummary } from '@/pages/objects/club';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';

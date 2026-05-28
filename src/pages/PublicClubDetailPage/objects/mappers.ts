@@ -1,8 +1,8 @@
-import type { PublicClubDetailView } from '@/objects/publicquery';
+import type { PublicClubDetailView } from '@/objects';
 import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
-} from '@/objects/publicquery';
+} from '@/objects';
 import type { StageStatus } from '@/objects';
 
 import type {

@@ -2,7 +2,7 @@ import type { ClubSummary } from '@/pages/objects/club';
 import type {
   PublicClubDirectoryEntry,
   PublicScheduleView,
-} from '@/objects/publicquery';
+} from '@/objects';
 
 import type { PublicSchedule } from './types';
 

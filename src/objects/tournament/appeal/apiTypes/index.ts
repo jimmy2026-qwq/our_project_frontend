@@ -1,4 +1,4 @@
-export * from './AppealQueries';
+export * from './AppealListQuery';
 export * from './AppealAttachmentMediaKind';
 export * from './AppealAttachmentRequest';
 export * from './AppealAttachmentStorageKind';
@@ -8,7 +8,6 @@ export * from './AppealDecisionType';
 export * from './AppealPriority';
 export * from './AppealStatus';
 export * from './AppealTableResolution';
-export * from './AppealTicketResponse';
 export * from './AppealTicketView';
 export * from './AdjudicateAppealRequest';
 export * from './FileAppealRequest';

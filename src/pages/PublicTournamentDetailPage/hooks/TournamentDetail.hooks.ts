@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { GetPublicTournamentAPI } from '@/api/publicquery';
+import { GetPublicTournamentAPI } from '@/api/tournament';
 import { TournamentGetAPI } from '@/api/tournament';
 import { sendAPI } from '@/system/api';
 

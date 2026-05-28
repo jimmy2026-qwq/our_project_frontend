@@ -1,7 +1,5 @@
 import { ListClubMembersAPI } from '@/api/club';
-import { GetCurrentPlayerAPI } from '@/api/player';
 import { mapClubMember } from '@/pages/objects/club';
-import { mapPlayerProfile } from '@/pages/objects/player';
 import type { PlayerProfile } from '@/pages/objects/player';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
@@ -10,37 +8,11 @@ import type { EloSort, MemberListItem, MemberStatusFilter } from '../types';
 
 export async function loadClubLineupMembers(
   clubId: string,
-  operatorId: string,
 ) {
   const envelope = await sendAPI(
     new ListClubMembersAPI(clubId, { limit: 100, offset: 0 }),
   ).then((result) => mapEnvelope(result, mapClubMember));
-  const items = [...envelope.items];
-
-  if (!operatorId) {
-    return items;
-  }
-
-  try {
-    const currentPlayer = await sendAPI(
-      new GetCurrentPlayerAPI(operatorId),
-    ).then(mapPlayerProfile);
-
-    if (
-      !items.some(
-        (member) =>
-          member.playerId === currentPlayer.playerId ||
-          (!!member.applicantUserId &&
-            member.applicantUserId === currentPlayer.applicantUserId),
-      )
-    ) {
-      items.unshift(currentPlayer);
-    }
-  } catch {
-    // Keep the club member list from the main endpoint when this lookup fails.
-  }
-
-  return items;
+  return envelope.items;
 }
 
 export function getVisibleLineupMembers({
