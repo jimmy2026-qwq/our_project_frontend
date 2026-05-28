@@ -1,5 +1,5 @@
 import { cx } from '@/components/ui/cx';
-import type { PublicView } from '../../objects/types';
+import type { PublicView } from '../../objects/PublicHallPage.types';
 
 import { lobbyClassNames } from './styles';
 

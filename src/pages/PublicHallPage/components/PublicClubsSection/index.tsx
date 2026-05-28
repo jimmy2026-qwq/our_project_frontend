@@ -8,7 +8,7 @@ import {
   PortalSection,
 } from '@/components/ui';
 import type { ClubSummary } from '@/pages/objects/club';
-import type { LoadState, PublicHallState } from '../../objects/types';
+import type { LoadState, PublicHallState } from '../../objects/PublicHallPage.types';
 
 import {
   hallSectionClassNames,

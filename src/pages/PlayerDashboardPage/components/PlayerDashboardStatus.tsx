@@ -7,7 +7,7 @@ import { PlayerDashboardFrame } from './PlayerDashboardFrame';
 import {
   detailShellClassNames,
   loadingClassNames,
-} from './PlayerDashboardSection/styles';
+} from './PlayerDashboardShell.styles';
 
 export function PlayerDashboardLoading() {
   return (

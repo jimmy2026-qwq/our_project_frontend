@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 
-import { detailShellClassNames } from './PlayerDashboardSection/styles';
+import { detailShellClassNames } from './PlayerDashboardShell.styles';
 
 export function PlayerDashboardFrame({ children }: { children: ReactNode }) {
   return (

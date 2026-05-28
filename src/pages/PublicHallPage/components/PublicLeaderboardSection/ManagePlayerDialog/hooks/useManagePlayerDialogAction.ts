@@ -6,7 +6,7 @@ import {
 } from '@/api/platformadmin';
 import { useAuth } from '@/app/auth/useAuth';
 import { useNotice } from '@/app/feedback/useNotice';
-import type { PlayerLeaderboardEntry } from '../../../../objects/types';
+import type { PlayerLeaderboardEntry } from '../../../../objects/PublicHallPage.types';
 import { sendAPI } from '@/system/api';
 
 export type PlayerAdminAction = 'ban' | 'grantSuperAdmin';

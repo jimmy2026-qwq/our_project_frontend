@@ -1,1 +1,1 @@
-export { loadTablePaifus } from './hooks/TablePaifuData.hooks';
+export { loadTablePaifus } from './hooks/useTablePaifuData';

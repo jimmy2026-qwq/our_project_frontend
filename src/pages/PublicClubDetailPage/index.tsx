@@ -1,22 +1,18 @@
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { useAuth } from '@/app/auth/useAuth';
-
-import { PublicClubDetailSection } from './components/PublicClubDetailSection';
+import { ClubDetailContent } from './components/ClubDetailContent';
+import { ClubDetailDialogs } from './components/ClubDetailDialogs';
+import { ClubDetailHeader } from './components/ClubDetailHeader';
+import { clubDetailShellClassNames } from './components/ClubDetailShell.styles';
 import {
   PublicClubDetailFrame,
   PublicClubDetailLoading,
   PublicClubDetailNotFound,
 } from './components/PublicClubDetailFrame';
-import { useClubDetail } from './hooks';
+import { usePublicClubDetailPage } from './hooks/usePublicClubDetailPage';
 
 export function PublicClubDetailPage() {
-  const navigate = useNavigate();
-  const { clubId } = useParams();
-  const { session } = useAuth();
-  const { state, isLoading, refresh } = useClubDetail(clubId, { session });
+  const page = usePublicClubDetailPage();
 
-  if (isLoading || !state) {
+  if (page.isLoading || !page.state) {
     return (
       <PublicClubDetailFrame>
         <PublicClubDetailLoading />
@@ -24,7 +20,7 @@ export function PublicClubDetailPage() {
     );
   }
 
-  if (!state.item) {
+  if (!page.state.item || !page.workbench || !page.clubSummary) {
     return (
       <PublicClubDetailFrame>
         <PublicClubDetailNotFound title="Club not found" />
@@ -34,11 +30,23 @@ export function PublicClubDetailPage() {
 
   return (
     <PublicClubDetailFrame>
-      <PublicClubDetailSection
-        state={state}
-        session={session}
-        onNavigateBack={() => navigate('/public')}
-        onRefreshDetail={refresh}
+      <section className={clubDetailShellClassNames.shell}>
+        <ClubDetailHeader
+          workbench={page.workbench}
+          onNavigateBack={page.onNavigateBack}
+          onApply={() => page.controls.setIsApplicationDialogOpen(true)}
+        />
+        <ClubDetailContent
+          state={page.state}
+          workbench={page.workbench}
+          controls={page.controls}
+        />
+      </section>
+      <ClubDetailDialogs
+        workbench={page.workbench}
+        clubSummary={page.clubSummary}
+        controls={page.controls}
+        onRefreshDetail={page.onRefreshDetail}
       />
     </PublicClubDetailFrame>
   );

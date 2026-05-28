@@ -7,8 +7,8 @@ import {
   SelectField,
 } from '@/components/ui';
 import type { ClubSummary } from '@/pages/objects/club';
-import type { PlayerLeaderboardEntry } from '../../objects/types';
-import type { LoadState, PublicHallState } from '../../objects/types';
+import type { PlayerLeaderboardEntry } from '../../objects/PublicHallPage.types';
+import type { LoadState, PublicHallState } from '../../objects/PublicHallPage.types';
 
 import {
   hallSectionClassNames,

@@ -1,47 +1,32 @@
-import { useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { TablePaifuEmpty, TablePaifuLoading, TablePaifuSection } from './components';
-import { useTablePaifuData } from './hooks';
+import {
+  TablePaifuBackButton,
+  TablePaifuEmpty,
+  TablePaifuLoading,
+} from './components';
+import { PaifuHandTable } from './components/PaifuHandTable';
+import { useTablePaifuPage } from './hooks/useTablePaifuPage';
 
 export function TablePaifuPage() {
-  const { tableId = '' } = useParams();
-  const navigate = useNavigate();
-  const {
-    paifu,
-    error,
-    isLoading,
-    selectedRoundIndex,
-    setSelectedRoundIndex,
-  } = useTablePaifuData(tableId);
-  const rounds = useMemo(() => paifu?.rounds ?? [], [paifu]);
-  const selectedRound =
-    rounds[Math.min(selectedRoundIndex, Math.max(rounds.length - 1, 0))];
+  const page = useTablePaifuPage();
 
-  const handleBack = () => {
-    if (window.history.length > 1) {
-      navigate(-1);
-    } else {
-      navigate(tableId ? `/tables/${tableId}` : '/');
-    }
-  };
-
-  if (isLoading) {
-    return <TablePaifuLoading onBack={handleBack} />;
+  if (page.isLoading) {
+    return <TablePaifuLoading onBack={page.onBack} />;
   }
 
-  if (!paifu || !selectedRound) {
-    return <TablePaifuEmpty error={error} onBack={handleBack} />;
+  if (!page.paifu || !page.replay.round) {
+    return <TablePaifuEmpty error={page.error} onBack={page.onBack} />;
   }
 
   return (
-    <TablePaifuSection
-      onBack={handleBack}
-      onSelectRound={setSelectedRoundIndex}
-      paifu={paifu}
-      round={selectedRound}
-      rounds={rounds}
-      selectedRoundIndex={selectedRoundIndex}
-    />
+    <section className="mt-[14px] grid gap-0">
+      <TablePaifuBackButton onBack={page.onBack} />
+      <PaifuHandTable
+        onSelectRound={page.replay.onSelectRound}
+        paifu={page.paifu}
+        round={page.replay.round}
+        rounds={page.replay.rounds}
+        selectedRoundIndex={page.replay.selectedRoundIndex}
+      />
+    </section>
   );
 }

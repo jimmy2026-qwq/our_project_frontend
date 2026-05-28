@@ -3,12 +3,10 @@ import { useParams } from 'react-router-dom';
 import { useAuth } from '@/app/auth/useAuth';
 
 import { TableMatchError, TableMatchLoading, TableMatchSection } from './components';
-import {
-  useTableMatchAppealForm,
-  useTableMatchData,
-  useTableMatchReadyAction,
-  useTableMatchSeatState,
-} from './hooks';
+import { useTableMatchAppealForm } from './hooks/useTableMatchAppealForm';
+import { useTableMatchData } from './hooks/useTableMatchData';
+import { useTableMatchReadyAction } from './hooks/useTableMatchReadyAction';
+import { useTableMatchSeatState } from './hooks/useTableMatchSeatState';
 
 export function TableMatchPage() {
   const { tableId = '' } = useParams();

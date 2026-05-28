@@ -1,14 +1,14 @@
 import type { PaifuRoundSummary, TablePaifuDetail } from '../../types';
 import { getRoundPlayerId, seatOrder } from '../../objects/replay';
-import { CenterTable, RoundPicker } from '../CenterTable';
+import { CenterTable, RoundPicker } from './components/CenterTable';
 import {
   ExhaustiveDrawStatusMarkers,
   OperationFlash,
   WinningResultOverlay,
-} from '../PaifuOverlays';
-import { PlayerHand, PlayerMelds, PlayerRiver } from '../PlayerAreas';
-import { ReplayControls } from '../ReplayControls';
-import { usePaifuHandTableReplay } from './hooks/PaifuHandTableReplay.hooks';
+} from './components/PaifuOverlays';
+import { PlayerHand, PlayerMelds, PlayerRiver } from './components/PlayerAreas';
+import { ReplayControls } from './components/ReplayControls';
+import { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
 
 interface PaifuHandTableProps {
   onSelectRound: (index: number) => void;

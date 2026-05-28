@@ -18,7 +18,7 @@ import {
   DialogSurface,
   DialogTitle,
 } from '@/components/ui';
-import type { PlayerLeaderboardEntry } from '../../../objects/types';
+import type { PlayerLeaderboardEntry } from '../../../objects/PublicHallPage.types';
 
 import {
   type PlayerAdminAction,

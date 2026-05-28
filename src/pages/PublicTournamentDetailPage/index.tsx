@@ -1,18 +1,24 @@
-import { useParams } from 'react-router-dom';
-
-import { PublicTournamentDetailSection } from './components/PublicTournamentDetailSection';
 import {
   PublicTournamentDetailFrame,
   PublicTournamentDetailLoading,
   PublicTournamentDetailNotFound,
 } from './components/PublicTournamentDetailFrame';
-import { useTournamentDetail } from './hooks';
+import { detailShellClassNames } from './components/detailShell.styles';
+import { TournamentDetailContent } from './components/TournamentDetailContent';
+import {
+  AppealDecisionDialog,
+  ManagedTableDetailDialog,
+  PendingStartConfirmationDialog,
+  PublishBlockedDialog,
+} from './components/TournamentDetailDialogs';
+import { TournamentDetailHeader } from './components/TournamentDetailHeader';
+import { TournamentRulesDialog } from './components/TournamentDetailDialogs/TournamentRulesDialog';
+import { usePublicTournamentDetailPage } from './hooks/usePublicTournamentDetailPage';
 
 export function PublicTournamentDetailPage() {
-  const { tournamentId } = useParams();
-  const { state, isLoading, refresh } = useTournamentDetail(tournamentId);
+  const page = usePublicTournamentDetailPage();
 
-  if (isLoading || !state) {
+  if (page.isLoading) {
     return (
       <PublicTournamentDetailFrame>
         <PublicTournamentDetailLoading />
@@ -20,7 +26,7 @@ export function PublicTournamentDetailPage() {
     );
   }
 
-  if (!state.item) {
+  if (page.isNotFound || !page.workbench || !page.dialogs.ruleDraft) {
     return (
       <PublicTournamentDetailFrame>
         <PublicTournamentDetailNotFound title="未找到赛事" />
@@ -30,10 +36,98 @@ export function PublicTournamentDetailPage() {
 
   return (
     <PublicTournamentDetailFrame>
-      <PublicTournamentDetailSection
-        key={tournamentId ?? 'missing-tournament'}
-        state={state}
-        onScheduleSuccess={refresh}
+      <section className={detailShellClassNames.shell}>
+        <TournamentDetailHeader
+          workbench={page.workbench}
+          onBack={page.shell.onBack}
+          onPublishTournament={page.header.onPublishTournament}
+          onRunHeaderStageAction={page.header.onRunHeaderStageAction}
+        />
+
+        <TournamentDetailContent
+          activeTab={page.content.activeTab}
+          appeals={page.content.appeals}
+          appealsError={page.content.appealsError}
+          canManageAppeals={page.content.canManageAppeals}
+          isSubmittingTableAction={page.content.isSubmittingTableAction}
+          operatorId={page.content.operatorId}
+          participantWaitingTableDetails={
+            page.content.participantWaitingTableDetails
+          }
+          submittingAppealId={page.content.submittingAppealId}
+          tableDetailError={page.content.tableDetailError}
+          tabItems={page.content.tabItems}
+          updatingReadyTableId={page.content.updatingReadyTableId}
+          uploadingDemoPaifuTableId={page.content.uploadingDemoPaifuTableId}
+          waitingTables={page.content.waitingTables}
+          workbench={page.workbench}
+          onActiveTabChange={page.content.onActiveTabChange}
+          onAssignAppeal={(appeal) =>
+            void page.content.onAssignAppeal(appeal)
+          }
+          onInviteClub={page.content.onInviteClub}
+          onInvitePlayer={page.content.onInvitePlayer}
+          onOpenRulesDialog={page.content.onOpenRulesDialog}
+          onOpenAppealAction={page.content.onOpenAppealAction}
+          onSelectClubId={page.content.onSelectClubId}
+          onSelectPlayerId={page.content.onSelectPlayerId}
+          onSelectManageTable={page.content.onSelectManageTable}
+          onStartManagedTable={(table) =>
+            void page.content.onStartManagedTable(table)
+          }
+          onToggleOwnReady={(tableId, isReady) =>
+            void page.content.onToggleOwnReady(tableId, isReady)
+          }
+          onUploadDemoPaifu={(table) =>
+            void page.content.onUploadDemoPaifu(table)
+          }
+          onToggleShowMore={page.content.onToggleShowMore}
+        />
+      </section>
+
+      <PublishBlockedDialog
+        open={page.dialogs.publishBlockedOpen}
+        onOpenChange={page.dialogs.onPublishBlockedOpenChange}
+      />
+
+      <TournamentRulesDialog
+        open={page.dialogs.rulesDialogOpen}
+        draft={page.dialogs.ruleDraft}
+        isSubmitting={page.dialogs.isSubmittingTournamentAction}
+        hasStage={page.dialogs.hasStage}
+        onOpenChange={page.dialogs.onRulesDialogOpenChange}
+        onDraftChange={page.dialogs.onRuleDraftChange}
+        onSubmit={page.dialogs.onSaveRules}
+      />
+
+      <ManagedTableDetailDialog
+        selectedManageTable={page.dialogs.selectedManageTable}
+        tableDetail={page.dialogs.tableDetail}
+        tableDetailError={page.dialogs.tableDetailError}
+        isLoadingTableDetail={page.dialogs.isLoadingTableDetail}
+        isSubmittingTableAction={page.dialogs.isSubmittingTableAction}
+        playerNames={page.dialogs.playerNames}
+        onClose={page.dialogs.onCloseManageTable}
+        onStartTable={(table, detail) =>
+          void page.dialogs.onStartManagedTable(table, detail)
+        }
+      />
+
+      <PendingStartConfirmationDialog
+        pendingStartConfirmation={page.dialogs.pendingStartConfirmation}
+        isSubmittingTableAction={page.dialogs.isSubmittingTableAction}
+        onClose={page.dialogs.onClosePendingStartConfirmation}
+        onForceStart={() => void page.dialogs.onForceStartManagedTable()}
+      />
+
+      <AppealDecisionDialog
+        selectedAppealAction={page.dialogs.selectedAppealAction}
+        appealVerdict={page.dialogs.appealVerdict}
+        appealActionError={page.dialogs.appealActionError}
+        submittingAppealId={page.dialogs.submittingAppealId}
+        onClose={page.dialogs.onCloseAppealDecisionDialog}
+        onVerdictChange={page.dialogs.onAppealVerdictChange}
+        onSubmit={() => void page.dialogs.onSubmitAppealDecision()}
       />
     </PublicTournamentDetailFrame>
   );

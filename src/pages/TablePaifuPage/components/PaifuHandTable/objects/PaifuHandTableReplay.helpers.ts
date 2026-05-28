@@ -1,6 +1,9 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { CenterScoreDisplay, TableStickDisplay } from '../../CenterTable';
+import type {
+  CenterScoreDisplay,
+  TableStickDisplay,
+} from '../components/CenterTable';
 import type { PaifuRoundSummary, TablePaifuDetail } from '../../../types';
 import {
   getCurrentRiichiStickCount,

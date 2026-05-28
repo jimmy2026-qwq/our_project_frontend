@@ -7,12 +7,12 @@ import {
   PortalSection,
   SelectField,
 } from '@/components/ui';
-import type { PublicSchedule } from '../../objects/types';
-import type { LoadState, PublicHallState } from '../../objects/types';
+import type { PublicSchedule } from '../../objects/PublicHallPage.types';
+import type { LoadState, PublicHallState } from '../../objects/PublicHallPage.types';
 import {
   STAGE_STATUS_FILTER_OPTIONS,
   TOURNAMENT_STATUS_FILTER_OPTIONS,
-} from '../../objects/labels';
+} from '../../functions/getPublicHallLabels';
 
 import {
   hallSectionClassNames,

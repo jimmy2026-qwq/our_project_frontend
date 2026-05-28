@@ -4,7 +4,7 @@ import type { ClubSummary } from '@/pages/objects/club';
 import {
   formatNumber,
   getRelationLabel,
-} from '../../objects/labels';
+} from '../../functions/getPublicHallLabels';
 
 import { hallSectionClassNames } from '../PublicHallSection.styles';
 
