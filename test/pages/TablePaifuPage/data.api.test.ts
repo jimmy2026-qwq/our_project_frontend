@@ -12,6 +12,7 @@ vi.mock('@/system/api', async (importOriginal) => {
 
 import { TournamentPaifuListAPI } from '@/api/tournament/TournamentPaifuListAPI';
 import { loadTablePaifus } from '@/pages/TablePaifuPage/data';
+import { mapPaifuSummary } from '@/pages/TablePaifuPage/objects/TablePaifuData.mappers';
 
 describe('TablePaifuPage data api integration', () => {
   beforeEach(() => {
@@ -101,6 +102,82 @@ describe('TablePaifuPage data api integration', () => {
           ],
         },
       ],
+    });
+  });
+
+  it('normalizes backend option arrays before replay reads paifu fields', () => {
+    const paifu = mapPaifuSummary({
+      paifuId: 'paifu-1',
+      tableId: 'table-1',
+      tournamentId: 'tournament-1',
+      stageId: 'stage-1',
+      recordedAt: '2026-05-21T10:00:00Z',
+      source: 'manual',
+      matchRecordId: ['record-1'],
+      totalHands: 1,
+      playerIds: ['player-east'],
+      metadata: {
+        recordedAt: '2026-05-21T10:00:00Z',
+        source: 'manual',
+        tableId: 'table-1',
+        tournamentId: 'tournament-1',
+        stageId: 'stage-1',
+        seats: [],
+        matchRecordId: ['record-1'],
+      },
+      rounds: [
+        {
+          descriptor: { roundWind: 'East', handNumber: 1, honba: 0 },
+          initialHands: { 'player-east': ['1m', '2m'] },
+          actions: [
+            {
+              sequenceNo: 1,
+              actor: ['player-east'],
+              actionType: 'Riichi',
+              tile: ['1m'],
+              shantenAfterAction: [0],
+              handTilesAfterAction: [['2m']],
+              revealedTiles: ['1m'],
+              note: ['double riichi'],
+            },
+          ],
+          result: {
+            outcome: 'Ron',
+            winner: ['player-east'],
+            target: [],
+            han: [2],
+            fu: [30],
+            yaku: [],
+            doraIndicators: [['4z']],
+            uraDoraIndicators: [],
+            uraDoraVisible: [true],
+            points: 2000,
+            scoreChanges: [],
+            settlement: [],
+            tenpaiPlayerIds: [],
+          },
+        },
+      ],
+      finalStandings: [],
+    } as never);
+
+    expect(paifu.metadata.matchRecordId).toBe('record-1');
+    expect(paifu.rounds[0].actions[0]).toMatchObject({
+      actor: 'player-east',
+      tile: '1m',
+      shantenAfterAction: 0,
+      handTilesAfterAction: ['2m'],
+      note: 'double riichi',
+    });
+    expect(paifu.rounds[0].result).toMatchObject({
+      winner: 'player-east',
+      target: undefined,
+      han: 2,
+      fu: 30,
+      doraIndicators: ['4z'],
+      uraDoraIndicators: [],
+      uraDoraVisible: true,
+      tenpaiPlayerIds: [],
     });
   });
 });

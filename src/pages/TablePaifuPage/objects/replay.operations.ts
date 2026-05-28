@@ -10,12 +10,14 @@ export function getInitialRoundIndex(rounds: PaifuRoundSummary[]) {
 }
 
 export function getOperationText(action: PaifuAction, round: PaifuRoundSummary) {
+  const note = typeof action.note === 'string' ? action.note : '';
+
   switch (action.actionType) {
     case 'DrawGame':
       return '\u4e5d\u79cd\u4e5d\u724c';
     case 'Riichi':
-      return action.note?.toLowerCase().includes('double riichi') ||
-        action.note?.includes('\u4e24\u7acb\u76f4')
+      return note.toLowerCase().includes('double riichi') ||
+        note.includes('\u4e24\u7acb\u76f4')
         ? '\u4e24\u7acb\u76f4'
         : '\u7acb\u76f4';
     case 'Win':

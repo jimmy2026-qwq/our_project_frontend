@@ -80,7 +80,7 @@ export function useTablePaifuData(tableId: string) {
   };
 }
 
-async function loadTablePaifus(
+export async function loadTablePaifus(
   tableId: string,
 ): Promise<ListEnvelope<TablePaifuDetail>> {
   const envelope = await sendAPI<ListEnvelope<TournamentPaifuSummaryView>>(
