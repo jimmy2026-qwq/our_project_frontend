@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
-import { mapPlayerProfile } from '@/pages/objects/player';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
+import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
 import {
   describeRuleDetails,
   getCurrentRuleStage,
-} from '../../../../../objects/TournamentDetail.rules';
+} from '../../../../../functions/getTournamentDetailRules';
 import {
   getKnockoutResultRows,
   getQualifiedPlayerIds,
@@ -16,7 +16,7 @@ import {
   isCompletedStage,
   isFinalStage,
   type PlayerListRow,
-} from '../objects/TournamentRulesPanel.results';
+} from '../functions/getTournamentRulesPanelResults';
 
 export function useTournamentDetailRulesPanel(
   workbench: TournamentDetailWorkbenchState,
@@ -57,7 +57,7 @@ export function useTournamentDetailRulesPanel(
       missingPlayerIds.map(async (playerId) => {
         try {
           const player = await sendAPI(new GetPlayerAPI(playerId)).then(
-            mapPlayerProfile,
+            toPlayerProfile,
           );
           return [playerId, player.displayName] as const;
         } catch {

@@ -1,8 +1,6 @@
 ﻿import { useState } from 'react';
 
-import type {
-  ClubAdminMemberEntry,
-} from '../../../objects/ClubDetail.types';
+import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 export function useClubDetailDialogs() {

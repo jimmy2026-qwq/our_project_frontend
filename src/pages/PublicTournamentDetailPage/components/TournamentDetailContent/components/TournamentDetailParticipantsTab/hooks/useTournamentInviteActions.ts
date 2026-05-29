@@ -3,13 +3,14 @@ import {
   TournamentRegisterClubAPI,
   TournamentRegisterPlayerAPI,
 } from '@/api/tournament';
-import { mapPlayerProfile, type PlayerProfile } from '@/pages/objects/player';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
 import type {
   RefreshTournamentProfile,
   UseTournamentDetailActionsParams,
 } from '../../../hooks/useTournamentDetailActions.types';
+import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
 
 export function useTournamentInviteActions({
   availableClubs,
@@ -120,7 +121,7 @@ export function useTournamentInviteActions({
           (player) => player.playerId === invitedPlayerId,
         ) ??
         (await sendAPI(new GetPlayerAPI(invitedPlayerId)).then(
-          mapPlayerProfile,
+          toPlayerProfile,
         ));
 
       setParticipantPlayers((current) => {

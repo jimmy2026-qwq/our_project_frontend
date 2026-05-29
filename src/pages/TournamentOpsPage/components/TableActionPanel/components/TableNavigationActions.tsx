@@ -1,5 +1,5 @@
 import { Alert, AlertDescription, AlertTitle, Button } from '@/components/ui';
-import type { TournamentTableSummary } from '@/pages/objects/tournament';
+import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
 
 interface TableNavigationActionsProps {
   table: TournamentTableSummary | null;

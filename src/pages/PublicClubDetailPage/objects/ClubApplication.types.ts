@@ -1,9 +1,7 @@
 import type { ClubMembershipApplicationResponse } from '@/objects';
-import type {
-  ClubApplication,
-  ClubSummary,
-} from '@/pages/objects/club';
-import type { PlayerProfile } from '@/pages/objects/player';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 export type DataSource = 'api' | 'mock';
 
@@ -23,6 +21,18 @@ export interface ApplicationState {
   application: ClubApplication | null;
   source?: DataSource;
   warning?: string;
+}
+
+export interface TrackedClubApplicationItem {
+  id: string;
+  clubId: string;
+  clubName: string;
+  operatorId: string;
+  applicantName: string;
+  message: string;
+  status: ClubApplication['status'];
+  submittedAt: string;
+  source: DataSource;
 }
 
 export interface HomeClubApplicationState {

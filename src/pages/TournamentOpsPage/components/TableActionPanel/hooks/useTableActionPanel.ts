@@ -5,7 +5,7 @@ import type { SeatWind } from '@/objects/tournament';
 import type {
   TableDetail,
   TournamentTableSummary,
-} from '@/pages/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 import { useTournamentSeatStateSync } from './useTournamentSeatStateSync';
 import { useTournamentTableActions } from './useTournamentTableActions';
 import { useTournamentTableDetailData } from './useTournamentTableDetailData';

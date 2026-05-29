@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 
-import type { RecentTableItem } from '../../../functions/loadPlayerDashboardData';
+import type { RecentTableItem } from '../../../objects/PlayerDashboard.types';
 import { getRecentTableStatusLabel } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 

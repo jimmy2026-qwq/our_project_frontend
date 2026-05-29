@@ -49,7 +49,9 @@ export function ClubContributionTitlesDialog({
 
     return !!current && draft.label !== current.displayLabel;
   });
-  const hasEmptyLabel = normalizedDrafts.some((draft) => draft.label.length === 0);
+  const hasEmptyLabel = normalizedDrafts.some(
+    (draft) => draft.label.length === 0,
+  );
   const canSubmit = canManage && hasChanges && !hasEmptyLabel && !isSubmitting;
 
   useEffect(() => {
@@ -103,7 +105,9 @@ export function ClubContributionTitlesDialog({
                     <FieldGroup>
                       <TextInputField
                         label="显示名称"
-                        value={draftLabels[field.rankCode] ?? field.displayLabel}
+                        value={
+                          draftLabels[field.rankCode] ?? field.displayLabel
+                        }
                         onChange={(event) => {
                           const nextValue = event.currentTarget.value;
 

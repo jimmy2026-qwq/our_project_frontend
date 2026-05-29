@@ -1,5 +1,5 @@
 import { EmptyState, StatusPill } from '@/components/ui';
-import type { AppealSummary } from '@/pages/objects/tournament';
+import type { AppealSummary } from '@/pages/objects/TournamentViews';
 
 import { formatDateTime } from '../functions/formatDateTime';
 import {

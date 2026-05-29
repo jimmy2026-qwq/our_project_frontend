@@ -6,13 +6,11 @@ import type {
   MatchRecordListQuery,
   TournamentMatchRecordView,
 } from '@/objects';
-import {
-  mapMatchRecordSummary,
-  type MatchRecordSummary,
-} from '@/pages/objects/tournament';
+import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 
 import type { LoadState, TournamentOpsState } from '../objects/data';
+import { toMatchRecordSummary } from '../objects/TournamentOps.mappers';
 
 export function useTournamentRecordsData(
   state: TournamentOpsState,
@@ -82,7 +80,7 @@ function getRecords(filters: MatchRecordListQuery) {
     new TournamentRecordListAPI(filters),
   ).then((envelope) => ({
     ...envelope,
-    items: envelope.items.map(mapMatchRecordSummary),
+    items: envelope.items.map(toMatchRecordSummary),
   }));
 }
 

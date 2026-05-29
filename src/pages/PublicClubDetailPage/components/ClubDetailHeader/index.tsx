@@ -1,6 +1,6 @@
 import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
 import { clubDetailShellClassNames } from '../ClubDetailShell.styles';
-import { ClubHeroActions } from './components/ClubHeroActions';
+import { ClubHeroActions } from './ClubHeroActions';
 
 interface ClubDetailHeaderProps {
   workbench: ClubDetailWorkbenchState;

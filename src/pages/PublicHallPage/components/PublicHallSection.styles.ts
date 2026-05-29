@@ -17,8 +17,7 @@ export const hallSectionClassNames = {
   list: 'grid h-full min-h-0 grid-rows-[minmax(0,1fr)] gap-[14px]',
   listBody:
     'grid h-full max-h-full min-h-0 flex-1 content-start gap-[14px] overflow-x-hidden overflow-y-auto pr-2.5 [scrollbar-color:rgba(245,214,146,0.46)_rgba(10,18,31,0.18)] [scrollbar-width:thin] [&::-webkit-scrollbar]:w-2.5 [&::-webkit-scrollbar-track]:rounded-full [&::-webkit-scrollbar-track]:bg-[rgba(10,18,31,0.18)] [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-[linear-gradient(180deg,rgba(245,214,146,0.7),rgba(208,170,98,0.7))]',
-  row:
-    'grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-6 gap-y-[14px] rounded-none border-2 !border-[rgba(219,175,98,0.42)] !bg-[rgba(40,62,112,0.24)] ![background-image:none] px-[18px] py-4 shadow-none max-[980px]:grid-cols-1',
+  row: 'grid grid-cols-[minmax(0,1fr)_auto] items-start gap-x-6 gap-y-[14px] rounded-none border-2 !border-[rgba(219,175,98,0.42)] !bg-[rgba(40,62,112,0.24)] ![background-image:none] px-[18px] py-4 shadow-none max-[980px]:grid-cols-1',
   rowMain:
     'grid gap-2 [&_span]:text-[rgba(225,230,243,0.92)] [&_strong]:text-[rgba(239,189,111,0.96)]',
   rowSide:

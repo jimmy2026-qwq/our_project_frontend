@@ -5,7 +5,7 @@ import type { SeatWind } from '@/objects/tournament';
 import {
   tileFaceClasses,
   tileSizeClasses,
-} from '../objects/paifuTableLayout';
+} from '../functions/getPaifuTableLayout';
 
 export function TileImage({
   className,
@@ -59,10 +59,9 @@ export function HandTile({
 export function HandBackTile({ seat }: { seat: SeatWind }) {
   return (
     <span
-      className={[
-        'relative inline-flex shrink-0',
-        tileSizeClasses[seat],
-      ].join(' ')}
+      className={['relative inline-flex shrink-0', tileSizeClasses[seat]].join(
+        ' ',
+      )}
     >
       <span className="block aspect-[80/129] w-full rounded-[6px] border border-[#95b6cf] bg-[linear-gradient(135deg,#163e72,#275a9c_48%,#7fb2dc)] shadow-[inset_0_2px_0_rgba(255,255,255,0.38),inset_0_-5px_0_rgba(7,19,46,0.34)]" />
     </span>
@@ -77,7 +76,11 @@ export function DoraIndicatorTile({ tile }: { tile: string }) {
   return <TileImage className="block w-[28px] select-none" tile={tile} />;
 }
 
-export function ResultBackTile({ className = 'w-[28px]' }: { className?: string }) {
+export function ResultBackTile({
+  className = 'w-[28px]',
+}: {
+  className?: string;
+}) {
   return (
     <span
       className={[

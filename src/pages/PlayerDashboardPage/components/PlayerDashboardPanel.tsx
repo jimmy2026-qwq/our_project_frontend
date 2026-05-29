@@ -16,4 +16,3 @@ export function PlayerDashboardPanel({ children }: { children: ReactNode }) {
     </div>
   );
 }
-

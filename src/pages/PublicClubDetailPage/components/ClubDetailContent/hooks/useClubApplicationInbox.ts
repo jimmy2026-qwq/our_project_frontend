@@ -2,13 +2,11 @@
 
 import { ListClubApplicationsAPI } from '@/api/club';
 import type { AuthSession } from '@/providers/auth/AuthSession';
-import {
-  mapClubApplicationView,
-  type ClubApplicationView,
-} from '@/pages/objects/club';
+import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
+import { toClubApplicationView } from '../../../objects/ClubDetailApplication.mappers';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 interface UseClubApplicationInboxParams {
@@ -50,7 +48,7 @@ export function useClubApplicationInbox({
         offset: 0,
       }),
     )
-      .then((envelope) => mapEnvelope(envelope, mapClubApplicationView))
+      .then((envelope) => mapEnvelope(envelope, toClubApplicationView))
       .then((envelope) => {
         if (!cancelled) {
           setApplicationInbox(envelope.items);

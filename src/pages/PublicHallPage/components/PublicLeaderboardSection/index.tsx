@@ -6,9 +6,12 @@ import {
   PortalSection,
   SelectField,
 } from '@/components/ui';
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import type { PlayerLeaderboardEntry } from '../../objects/PublicHallPage.types';
-import type { LoadState, PublicHallState } from '../../objects/PublicHallPage.types';
+import type {
+  LoadState,
+  PublicHallState,
+} from '../../objects/PublicHallPage.types';
 
 import {
   hallSectionClassNames,

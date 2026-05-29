@@ -4,4 +4,3 @@ export function formatMemberHubDateTime(value: string) {
     timeStyle: 'short',
   }).format(new Date(value));
 }
-

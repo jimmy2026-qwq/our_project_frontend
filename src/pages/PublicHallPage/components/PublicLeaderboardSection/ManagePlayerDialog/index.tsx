@@ -38,15 +38,16 @@ export function ManagePlayerDialog({
 }) {
   const [action, setAction] = useState<PlayerAdminAction>('ban');
   const [reason, setReason] = useState('');
-  const { canSubmit, isSubmitting, handleSubmit } =
-    useManagePlayerDialogAction({
+  const { canSubmit, isSubmitting, handleSubmit } = useManagePlayerDialogAction(
+    {
       open,
       player,
       action,
       reason,
       onOpenChange,
       onCompleted,
-    });
+    },
+  );
 
   useEffect(() => {
     if (!open) {

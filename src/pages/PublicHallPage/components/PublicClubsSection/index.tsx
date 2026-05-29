@@ -7,8 +7,11 @@ import {
   FilterActionRow,
   PortalSection,
 } from '@/components/ui';
-import type { ClubSummary } from '@/pages/objects/club';
-import type { LoadState, PublicHallState } from '../../objects/PublicHallPage.types';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type {
+  LoadState,
+  PublicHallState,
+} from '../../objects/PublicHallPage.types';
 
 import {
   hallSectionClassNames,

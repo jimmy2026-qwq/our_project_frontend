@@ -1,6 +1,4 @@
-import type {
-  ClubDetailWorkbenchState,
-} from '../../objects/ClubDetail.types';
+import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
 
 import { ClubApplicationDialog } from './components/ClubApplicationDialog';
 import { ClubContributionDialog } from './components/ClubContributionDialog';

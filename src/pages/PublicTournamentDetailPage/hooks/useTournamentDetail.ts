@@ -4,23 +4,25 @@ import { GetPublicTournamentAPI } from '@/api/tournament';
 import { TournamentGetAPI } from '@/api/tournament';
 import { sendAPI } from '@/system/api';
 
-import { mapTournamentDetailFromAdminView } from '../functions/loadTournamentAdminDetail';
-import { mapPublicTournamentDetail } from '../functions/mapTournamentDetail';
 import type { TournamentDetailState } from '../objects/PublicTournamentDetailPage.types';
+import {
+  toPublicTournamentDetail,
+  toTournamentDetailFromAdminView,
+} from '../objects/TournamentDetailTournament.mappers';
 
 async function loadTournamentDetail(
   tournamentId: string,
 ): Promise<TournamentDetailState> {
   try {
-    const item = await sendAPI(
-      new GetPublicTournamentAPI(tournamentId),
-    ).then(mapPublicTournamentDetail);
+    const item = await sendAPI(new GetPublicTournamentAPI(tournamentId)).then(
+      toPublicTournamentDetail,
+    );
     return { item, source: 'api' };
   } catch (error) {
     try {
       const draftItem = await sendAPI(new TournamentGetAPI(tournamentId));
       return {
-        item: mapTournamentDetailFromAdminView(draftItem),
+        item: toTournamentDetailFromAdminView(draftItem),
         source: 'api',
         warning:
           'This tournament is still in draft mode and is shown through the admin endpoint.',

@@ -1,10 +1,16 @@
-import { Button, DetailCard, DetailList, DetailListItem, StatusPill } from '@/components/ui';
+import {
+  Button,
+  DetailCard,
+  DetailList,
+  DetailListItem,
+  StatusPill,
+} from '@/components/ui';
 import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
 import {
   describeAdvancementRule,
   getRuleSummaryLabel,
   getTournamentFormatLabel,
-} from '../../../../objects/TournamentDetail.rules';
+} from '../../../../functions/getTournamentDetailRules';
 import { getStageStatusLabel } from '../../../../functions/getTournamentDetailLabels';
 import { getStatusTone } from '../../../../functions/getTournamentDetailStatus';
 import { useTournamentDetailRulesPanel } from './hooks/useTournamentDetailRulesPanel';
@@ -82,8 +88,10 @@ export function TournamentCurrentRulesPanel({
                     </span>
                   ))}
                 </div>
+              ) : rulesPanel.showTournamentResults ? (
+                '暂无赛事结果'
               ) : (
-                rulesPanel.showTournamentResults ? '暂无赛事结果' : '暂无晋级名单'
+                '暂无晋级名单'
               )
             }
           />

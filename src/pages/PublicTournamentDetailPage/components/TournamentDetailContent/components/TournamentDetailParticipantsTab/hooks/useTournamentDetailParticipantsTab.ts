@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
-import { participantText } from '../objects/TournamentDetailParticipantsText';
+import { participantText } from '../functions/getTournamentDetailParticipantsText';
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
 import {
   type LineupSubmission,

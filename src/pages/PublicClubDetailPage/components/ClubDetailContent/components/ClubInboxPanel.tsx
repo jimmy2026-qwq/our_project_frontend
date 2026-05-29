@@ -1,9 +1,9 @@
 import { EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { ClubApplicationView } from '@/pages/objects/club';
+import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
 
 import { formatDateTime } from '../../../functions/formatClubDetail';
-import { clubPanelClassNames } from './styles';
+import { clubPanelClassNames } from '../styles';
 
 function getApplicationStatusLabel(status: ClubApplicationView['status']) {
   switch (status) {

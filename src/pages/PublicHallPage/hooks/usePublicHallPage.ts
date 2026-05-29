@@ -2,15 +2,15 @@ import { useCallback, useReducer, useState } from 'react';
 
 import { useAuth } from '@/app/auth/useAuth';
 
-import { usePublicHallHomeData } from '../components/PublicHallActiveView/hooks/usePublicHallHomeData';
-import { usePublicHallLeaderboardData } from '../components/PublicHallActiveView/hooks/usePublicHallLeaderboardData';
-import { usePublicHallRefreshNotice } from '../components/PublicHallActiveView/hooks/usePublicHallRefreshNotice';
 import { usePublicHallCurrentPlayer } from '../components/PublicHallLobby/hooks/usePublicHallCurrentPlayer';
 import type {
   PublicHallState,
   PublicView,
 } from '../objects/PublicHallPage.types';
 import { usePublicHallState } from './usePublicHallState';
+import { usePublicHallHomeData } from './usePublicHallHomeData';
+import { usePublicHallLeaderboardData } from './usePublicHallLeaderboardData';
+import { usePublicHallRefreshNotice } from './usePublicHallRefreshNotice';
 
 export function usePublicHallPage() {
   const { state, setState } = usePublicHallState();

@@ -23,4 +23,3 @@ export function createMemberHubState(
     clubId: firstClubId,
   };
 }
-

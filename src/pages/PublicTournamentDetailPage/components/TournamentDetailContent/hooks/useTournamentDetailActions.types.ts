@@ -1,15 +1,16 @@
 import type { Dispatch, SetStateAction } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
-import type { ClubSummary } from '@/pages/objects/club';
-import type { PlayerProfile } from '@/pages/objects/player';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
 import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
-import type { TournamentStageRuleDraft } from '../../../objects/TournamentDetail.rules';
+import type { TournamentStageRuleDraft } from '../../../objects/TournamentDetailRule.types';
 
 export type CurrentRuleStage =
-  NonNullable<TournamentPublicProfile['stages']>[number] | null;
+  | NonNullable<TournamentPublicProfile['stages']>[number]
+  | null;
 
 export type RefreshTournamentProfile = (
   tournamentId: string,

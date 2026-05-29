@@ -13,8 +13,7 @@ const clubDetailFrameClassNames = {
   loadingShell: 'grid gap-[22px]',
   loadingPanel:
     'relative overflow-hidden rounded-[32px] bg-[radial-gradient(circle_at_top_right,rgba(236,197,122,0.14),transparent_30%),linear-gradient(180deg,rgba(20,39,58,0.95),rgba(8,18,29,0.9))] p-[38px] shadow-[0_32px_90px_rgba(0,0,0,0.34)]',
-  eyebrow:
-    'm-0 text-[0.82rem] uppercase tracking-[0.16em] text-[#ecc57a]',
+  eyebrow: 'm-0 text-[0.82rem] uppercase tracking-[0.16em] text-[#ecc57a]',
   title:
     'my-3 max-w-[820px] text-[clamp(2rem,4vw,4.2rem)] leading-none text-[#f2f7fb]',
   summary:
@@ -30,7 +29,10 @@ export const PublicClubDetailFrame = ({
 }) => {
   return (
     <div className={clubDetailFrameClassNames.root}>
-      <span className={clubDetailFrameClassNames.background} aria-hidden="true" />
+      <span
+        className={clubDetailFrameClassNames.background}
+        aria-hidden="true"
+      />
       <span className={clubDetailFrameClassNames.overlay} aria-hidden="true" />
       {children}
     </div>

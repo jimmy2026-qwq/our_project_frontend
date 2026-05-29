@@ -1,7 +1,10 @@
 import type { ReactNode } from 'react';
 import type { PublicView } from '../../objects/PublicHallPage.types';
 
-import { PublicHallLobbyMenu, type PublicHallLobbyEntry } from './PublicHallLobbyMenu';
+import {
+  PublicHallLobbyMenu,
+  type PublicHallLobbyEntry,
+} from './PublicHallLobbyMenu';
 import { PublicHallPlayerCard } from './PublicHallPlayerCard';
 import { lobbyClassNames } from './styles';
 

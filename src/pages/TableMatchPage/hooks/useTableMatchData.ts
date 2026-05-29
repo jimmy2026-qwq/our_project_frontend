@@ -1,13 +1,12 @@
 import { useEffect, useReducer, useState } from 'react';
 
-import {
-  TournamentTableGetAPI,
-} from '@/api/tournament';
+import { TournamentTableGetAPI } from '@/api/tournament';
 import type { TournamentTableView } from '@/objects';
-import type { TableDetail } from '@/pages/objects/tournament';
-import { mapTableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
+
+import { toTableDetail } from '../functions/toTableDetail';
 
 export function useTableMatchData(tableId: string) {
   const [table, setTable] = useState<TableDetail | null>(null);
@@ -89,7 +88,7 @@ export function useTableMatchData(tableId: string) {
 
 function getTable(tableId: string) {
   return sendAPI<TournamentTableView>(new TournamentTableGetAPI(tableId)).then(
-    mapTableDetail,
+    toTableDetail,
   );
 }
 

@@ -22,7 +22,10 @@ export function IndicatorPanel({
         {getIndicatorSlots({ count: shownCount, tiles, visible }).map(
           (tile, index) =>
             tile ? (
-              <DoraIndicatorTile key={`${label}-${tile}-${index}`} tile={tile} />
+              <DoraIndicatorTile
+                key={`${label}-${tile}-${index}`}
+                tile={tile}
+              />
             ) : (
               <ResultBackTile key={`${label}-back-${index}`} />
             ),
@@ -32,13 +35,7 @@ export function IndicatorPanel({
   );
 }
 
-export function WinningTile({
-  label,
-  tile,
-}: {
-  label: string;
-  tile: string;
-}) {
+export function WinningTile({ label, tile }: { label: string; tile: string }) {
   return (
     <span className="relative ml-5 inline-flex">
       <ResultTile tile={tile} />

@@ -5,7 +5,7 @@ import type {
   AppealSummary,
   MatchRecordSummary,
   TournamentTableSummary,
-} from '@/pages/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 
 import type { LoadState, TournamentDirectoryState } from '../objects/data';
 

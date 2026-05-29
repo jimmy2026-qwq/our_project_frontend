@@ -6,7 +6,7 @@ import {
   getReplaySnapshot,
   getVisibleDoraIndicatorCount,
   removeFirstTile,
-} from '../../../../objects/replay';
+} from '../../../../functions/getReplay';
 import { ResultTile } from '../TileViews';
 import { IndicatorPanel, WinningTile } from './WinningResultIndicators';
 
@@ -25,7 +25,8 @@ export function WinningResultOverlay({
 }) {
   const winnerId = round.result.winner ?? action?.actor;
   const winningTile = action?.tile;
-  const winLabel = round.result.outcome === 'Tsumo' ? '\u81ea\u6478' : '\u8363\u548c';
+  const winLabel =
+    round.result.outcome === 'Tsumo' ? '\u81ea\u6478' : '\u8363\u548c';
 
   if (!action || !winnerId) {
     return null;
@@ -47,7 +48,10 @@ export function WinningResultOverlay({
       <div className="grid h-full grid-rows-[auto_1fr_auto] gap-6">
         <div className="flex items-end justify-center gap-0">
           {displayHand.map((tile, index) => (
-            <ResultTile key={`${winnerId}-result-${tile}-${index}`} tile={tile} />
+            <ResultTile
+              key={`${winnerId}-result-${tile}-${index}`}
+              tile={tile}
+            />
           ))}
           {winningTile ? (
             <WinningTile label={winLabel} tile={winningTile} />
@@ -74,7 +78,9 @@ export function WinningResultOverlay({
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-3 text-xl"
             >
               <span>{yaku.name}</span>
-              <span className="text-[#ffd98a]">{formatYakuValue(yaku.han)}</span>
+              <span className="text-[#ffd98a]">
+                {formatYakuValue(yaku.han)}
+              </span>
             </div>
           ))}
         </div>

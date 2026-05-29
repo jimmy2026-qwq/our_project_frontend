@@ -2,7 +2,11 @@ import { useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
 
-import { TableMatchError, TableMatchLoading, TableMatchSection } from './components';
+import {
+  TableMatchError,
+  TableMatchLoading,
+  TableMatchSection,
+} from './components';
 import { useTableMatchAppealForm } from './hooks/useTableMatchAppealForm';
 import { useTableMatchData } from './hooks/useTableMatchData';
 import { useTableMatchReadyAction } from './hooks/useTableMatchReadyAction';

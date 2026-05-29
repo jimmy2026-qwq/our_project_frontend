@@ -3,16 +3,17 @@ import { type ReactNode } from 'react';
 import { Alert, EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 
-import type { ClubPublicProfile, DetailState } from '../../objects/PublicClubDetailPage.types';
+import type {
+  ClubPublicProfile,
+  DetailState,
+} from '../../objects/PublicClubDetailPage.types';
 import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
 import { clubDetailShellClassNames } from '../ClubDetailShell.styles';
-import {
-  ClubContributionChangesPanel,
-  ClubInboxPanel,
-  ClubMembersPanel,
-  ClubPublicInfoPanel,
-  ClubRecentTournamentsPanel,
-} from './components';
+import { ClubContributionChangesPanel } from './components/ClubContributionChangesPanel';
+import { ClubInboxPanel } from './components/ClubInboxPanel';
+import { ClubMembersPanel } from './components/ClubMembersPanel';
+import { ClubPublicInfoPanel } from './components/ClubPublicInfoPanel';
+import { ClubRecentTournamentsPanel } from './components/ClubRecentTournamentsPanel';
 import { useClubDetailContent } from './hooks/useClubDetailContent';
 import type { useClubDetailWorkbench } from './hooks/useClubDetailWorkbench';
 
@@ -32,8 +33,7 @@ export function ClubDetailContent({
   workbench,
   controls,
 }: ClubDetailContentProps) {
-  const { activeTab, setActiveTab, tabItems } =
-    useClubDetailContent(workbench);
+  const { activeTab, setActiveTab, tabItems } = useClubDetailContent(workbench);
 
   return (
     <div className={clubDetailShellClassNames.frame}>
@@ -44,7 +44,9 @@ export function ClubDetailContent({
             type="button"
             className={cx(
               clubDetailShellClassNames.navItem,
-              activeTab === tab.id ? clubDetailShellClassNames.navItemActive : '',
+              activeTab === tab.id
+                ? clubDetailShellClassNames.navItemActive
+                : '',
             )}
             onClick={() => setActiveTab(tab.id)}
           >
@@ -112,7 +114,9 @@ export function ClubDetailContent({
               onOpenContributionTitles={() =>
                 controls.setIsContributionTitleDialogOpen(true)
               }
-              onAssignAdmin={(member) => void controls.handleAssignAdmin(member)}
+              onAssignAdmin={(member) =>
+                void controls.handleAssignAdmin(member)
+              }
               onAdjustContribution={(member) => {
                 controls.setSelectedContributionMember(member);
                 controls.setIsContributionDialogOpen(true);
@@ -121,7 +125,9 @@ export function ClubDetailContent({
                 controls.setSelectedTitleMember(member);
                 controls.setIsTitleDialogOpen(true);
               }}
-              onRemoveMember={(member) => void controls.handleRemoveMember(member)}
+              onRemoveMember={(member) =>
+                void controls.handleRemoveMember(member)
+              }
             />
           </PanelFrame>
         ) : null}
@@ -136,7 +142,9 @@ export function ClubDetailContent({
           </PanelFrame>
         ) : null}
 
-        {state.warning ? <Alert variant="warning">{state.warning}</Alert> : null}
+        {state.warning ? (
+          <Alert variant="warning">{state.warning}</Alert>
+        ) : null}
       </div>
     </div>
   );

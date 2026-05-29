@@ -1,12 +1,12 @@
 import type { PaifuRoundSummary, TablePaifuDetail } from '../../types';
-import { getRoundPlayerId, seatOrder } from '../../objects/replay';
+import { getRoundPlayerId, seatOrder } from '../../functions/getReplay';
 import { CenterTable, RoundPicker } from './components/CenterTable';
-import {
-  ExhaustiveDrawStatusMarkers,
-  OperationFlash,
-  WinningResultOverlay,
-} from './components/PaifuOverlays';
-import { PlayerHand, PlayerMelds, PlayerRiver } from './components/PlayerAreas';
+import { ExhaustiveDrawStatusMarkers } from './components/PaifuOverlays/ExhaustiveDrawStatusMarkers';
+import { OperationFlash } from './components/PaifuOverlays/OperationFlash';
+import { WinningResultOverlay } from './components/PaifuOverlays/WinningResultOverlay';
+import { PlayerHand } from './components/PlayerAreas/PlayerHand';
+import { PlayerMelds } from './components/PlayerAreas/PlayerMelds';
+import { PlayerRiver } from './components/PlayerAreas/PlayerRiver';
 import { ReplayControls } from './components/ReplayControls';
 import { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
 
@@ -113,7 +113,9 @@ export function PaifuHandTable({
           <PlayerHand
             key={seat}
             drawnTileIndex={
-              replay.replaySnapshot.drawnTileIndexes[getRoundPlayerId(paifu, seat)]
+              replay.replaySnapshot.drawnTileIndexes[
+                getRoundPlayerId(paifu, seat)
+              ]
             }
             isExhaustiveDrawResult={replay.isExhaustiveDrawResult}
             hands={replay.replaySnapshot.hands}

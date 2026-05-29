@@ -4,14 +4,14 @@ import type {
   AppealSummary,
   MatchRecordSummary,
   TournamentTableSummary,
-} from '@/pages/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 
 import {
   DEFAULT_TOURNAMENT_OPS_STATE,
-  normalizeTournamentOpsState,
   type LoadState,
   type TournamentOpsState,
 } from '../objects/data';
+import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
 import { useTournamentOpsDirectoryData } from './useTournamentOpsDirectoryData';
 import { useTournamentOpsPanelData } from './useTournamentOpsPanelData';
 
@@ -22,10 +22,7 @@ export function useTournamentOpsState() {
   return { state, setState };
 }
 
-export function useTournamentOpsData(
-  state: TournamentOpsState,
-  reloadKey = 0,
-) {
+export function useTournamentOpsData(state: TournamentOpsState, reloadKey = 0) {
   const directoryState = useTournamentOpsDirectoryData(reloadKey);
   const directory = directoryState.directory;
   const normalizedState = directory

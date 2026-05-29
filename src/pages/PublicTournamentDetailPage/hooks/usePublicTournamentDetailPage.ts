@@ -50,8 +50,7 @@ export function usePublicTournamentDetailPage() {
       onBack: () => navigate('/public'),
     },
     header: {
-      onPublishTournament: () =>
-        void workbenchState.handlePublishTournament(),
+      onPublishTournament: () => void workbenchState.handlePublishTournament(),
       onRunHeaderStageAction: header.handleRunHeaderStageAction,
     },
     content: {
@@ -89,8 +88,7 @@ export function usePublicTournamentDetailPage() {
       ruleDraft: workbenchState.workbench?.ruleDraft,
       isSubmittingTournamentAction:
         workbenchState.workbench?.isSubmittingTournamentAction ?? false,
-      hasStage:
-        (workbenchState.workbench?.profile.stages?.length ?? 0) > 0,
+      hasStage: (workbenchState.workbench?.profile.stages?.length ?? 0) > 0,
       selectedManageTable: runtime.selectedManageTable,
       tableDetail: runtime.tableDetail,
       tableDetailError: runtime.tableDetailError,

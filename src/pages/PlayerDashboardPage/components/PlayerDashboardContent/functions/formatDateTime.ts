@@ -10,4 +10,3 @@ export function formatDateTime(value?: string | null) {
 
   return date.toLocaleString('zh-CN');
 }
-

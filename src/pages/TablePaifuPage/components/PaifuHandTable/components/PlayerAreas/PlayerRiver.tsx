@@ -2,7 +2,7 @@ import type { CSSProperties } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
 
-import type { RiverDiscard } from '../../../../objects/replay';
+import type { RiverDiscard } from '../../../../objects/ReplaySnapshot.types';
 import { TileImage } from '../TileViews';
 import {
   riverPositionClasses,
@@ -12,7 +12,7 @@ import {
   riverTileImageWidth,
   riverTileTopCrop,
   riverTileVisibleHeight,
-} from '../../objects/paifuTableLayout';
+} from '../../functions/getPaifuTableLayout';
 
 export function PlayerRiver({
   rivers,

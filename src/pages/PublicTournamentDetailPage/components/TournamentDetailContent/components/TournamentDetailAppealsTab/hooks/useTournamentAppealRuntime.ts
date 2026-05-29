@@ -5,16 +5,14 @@ import {
   AppealListAPI,
   AppealUpdateWorkflowAPI,
 } from '@/api/tournament';
-import type { AppealSummary } from '@/pages/objects/tournament';
+import type { AppealSummary } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import {
-  type AppealDecisionType,
-  getAppealDecisionLabel,
-} from '../../../../../objects/TournamentDetail.view';
-import { mapAppeal } from '../../../../../functions/mapTournamentDetail';
+import type { AppealDecisionType } from '../../../../../objects/TournamentDetailView.types';
+import { getAppealDecisionLabel } from '../../../../../functions/getTournamentDetailView';
+import { toAppealSummary } from '../../../../../objects/TournamentDetailAppeal.mappers';
 
 export function useTournamentAppealRuntime({
   operatorId,
@@ -49,7 +47,7 @@ export function useTournamentAppealRuntime({
         offset: 0,
       }),
     )
-      .then((envelope) => mapEnvelope(envelope, mapAppeal))
+      .then((envelope) => mapEnvelope(envelope, toAppealSummary))
       .then((envelope) => {
         if (!cancelled) {
           setAppeals(envelope.items);
@@ -107,7 +105,7 @@ export function useTournamentAppealRuntime({
           assigneeId: operatorId,
           note: '赛事管理员已认领此工单。',
         }),
-      ).then(mapAppeal);
+      ).then(toAppealSummary);
       updateAppealLocally({
         ...appeal,
         ...nextAppeal,
@@ -144,7 +142,7 @@ export function useTournamentAppealRuntime({
           verdict,
           note: `赛事管理员执行了${getAppealDecisionLabel(selectedAppealAction.decision)}操作。`,
         }),
-      ).then(mapAppeal);
+      ).then(toAppealSummary);
       updateAppealLocally(nextAppeal);
       setSelectedAppealAction(null);
       setAppealVerdict('');

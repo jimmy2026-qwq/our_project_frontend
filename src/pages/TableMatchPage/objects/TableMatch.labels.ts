@@ -1,4 +1,4 @@
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 export function getTableStatusLabel(status: TableDetail['status']) {
   switch (status) {

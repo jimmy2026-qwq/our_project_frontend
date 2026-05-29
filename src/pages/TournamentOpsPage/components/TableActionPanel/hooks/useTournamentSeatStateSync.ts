@@ -1,7 +1,7 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 interface TournamentSeatStateSyncParams {
   tableDetail: TableDetail | null;

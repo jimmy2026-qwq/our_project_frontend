@@ -5,7 +5,7 @@ import {
   isScoreSettlementRound,
   settlementAnimationDelayMs,
   settlementAnimationDurationMs,
-} from '../objects/PaifuHandTableReplay.helpers';
+} from '../functions/getPaifuHandTableReplay';
 
 export function usePaifuSettlementAnimation({
   hasRoundScoreDelta,
@@ -49,7 +49,10 @@ export function usePaifuSettlementAnimation({
 
       setSettlementProgress(progress);
 
-      if (elapsed < settlementAnimationDelayMs + settlementAnimationDurationMs) {
+      if (
+        elapsed <
+        settlementAnimationDelayMs + settlementAnimationDurationMs
+      ) {
         animationFrameRef.current = window.requestAnimationFrame(animate);
       } else {
         animationFrameRef.current = undefined;

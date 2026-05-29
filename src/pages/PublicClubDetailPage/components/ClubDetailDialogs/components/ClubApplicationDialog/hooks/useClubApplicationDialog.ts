@@ -1,19 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import type { ClubApplication, ClubSummary } from '@/pages/objects/club';
+import { useAuth } from '@/app/auth/useAuth';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+
 import type { HomeClubApplicationState } from '../../../../../objects/ClubApplication.types';
 import { getFallbackPlayerName } from '../../../../../functions/getClubApplicationHelpers';
-import { loadPlayerContext } from '../../../../../functions/loadClubApplicationData';
-import {
-  submitClubApplication,
-  withdrawClubApplication,
-} from '../../../../../functions/mutateClubApplication';
-import {
-  loadTrackedApplication,
-} from '../../../../../functions/loadTrackedClubApplication';
-import { useMutationNotice } from '@/app/feedback/useMutationNotice';
-import { useNotice } from '@/app/feedback/useNotice';
-import { useAuth } from '@/app/auth/useAuth';
+import { useClubApplicationLoaders } from '../../../../../hooks/useClubApplicationLoaders';
+import { useClubApplicationDialogActions } from './useClubApplicationDialogActions';
 
 export function useClubApplicationDialog({
   club,
@@ -27,11 +21,17 @@ export function useClubApplicationDialog({
   onApplicationUpdated?: (status: ClubApplication['status'] | null) => void;
 }) {
   const { session } = useAuth();
-  const { notifyMutationResult } = useMutationNotice();
-  const { notifyWarning } = useNotice();
+  const { loadPlayerContext, loadTrackedApplication } =
+    useClubApplicationLoaders();
   const [state, setState] = useState<HomeClubApplicationState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const { handleSubmit, handleWithdraw } = useClubApplicationDialogActions({
+    onApplicationUpdated,
+    onOpenChange,
+    setState,
+    state,
+  });
 
   useEffect(() => {
     if (!session?.user.roles.isRegisteredPlayer) {
@@ -45,10 +45,7 @@ export function useClubApplicationDialog({
     void (async () => {
       setIsLoading(true);
       const operatorId = session.user.operatorId ?? session.user.userId;
-      const playerContext = await loadPlayerContext(
-        operatorId,
-        session.user.displayName,
-      );
+      const playerContext = await loadPlayerContext(operatorId);
       const application = await loadTrackedApplication(operatorId, club.id);
 
       if (!cancelled) {
@@ -73,7 +70,13 @@ export function useClubApplicationDialog({
     return () => {
       cancelled = true;
     };
-  }, [club, onApplicationUpdated, session]);
+  }, [
+    club,
+    loadPlayerContext,
+    loadTrackedApplication,
+    onApplicationUpdated,
+    session,
+  ]);
 
   const selectedPlayerName =
     state?.playerContext.player?.displayName ??
@@ -106,7 +109,7 @@ export function useClubApplicationDialog({
     setIsRefreshing(true);
 
     const [playerContext, applicationState] = await Promise.all([
-      loadPlayerContext(state.operatorId, state.operatorDisplayName),
+      loadPlayerContext(state.operatorId),
       loadTrackedApplication(
         state.operatorId,
         club.id,
@@ -125,75 +128,6 @@ export function useClubApplicationDialog({
     );
     onApplicationUpdated?.(applicationState.application?.status ?? null);
     setIsRefreshing(false);
-  }
-
-  async function handleSubmit() {
-    if (!state) {
-      return;
-    }
-
-    try {
-      const result = await submitClubApplication(state);
-      setState((current) =>
-        current
-          ? {
-              ...current,
-              application: {
-                application: result.application,
-                source: result.source,
-                warning: result.warning,
-              },
-            }
-          : current,
-      );
-      notifyMutationResult(result, {
-        successTitle: '申请已提交',
-        successMessage: '俱乐部申请已经成功发送到后端。',
-        fallbackTitle: '申请需要人工确认',
-        fallbackMessage: '这次申请未能完全确认，请稍后刷新状态。',
-      });
-      onApplicationUpdated?.(result.application.status);
-      onOpenChange(false);
-    } catch (error) {
-      notifyWarning(
-        '申请提交失败',
-        error instanceof Error ? error.message : '无法提交当前俱乐部申请。',
-      );
-    }
-  }
-
-  async function handleWithdraw() {
-    if (!state) {
-      return;
-    }
-
-    try {
-      const result = await withdrawClubApplication(state);
-      setState((current) =>
-        current
-          ? {
-              ...current,
-              application: {
-                application: result.application,
-                source: result.source,
-                warning: result.warning,
-              },
-            }
-          : current,
-      );
-      notifyMutationResult(result, {
-        successTitle: '申请已撤回',
-        successMessage: '撤回请求已经处理完成。',
-        fallbackTitle: '撤回需要人工确认',
-        fallbackMessage: '这次撤回未能完全确认，请稍后刷新状态。',
-      });
-      onApplicationUpdated?.(result.application.status);
-    } catch (error) {
-      notifyWarning(
-        '撤回失败',
-        error instanceof Error ? error.message : '无法撤回当前申请。',
-      );
-    }
   }
 
   return {

@@ -1,4 +1,4 @@
-import { TournamentOverviewPanel } from './TournamentDetailPanels';
+import { TournamentOverviewPanel } from './TournamentOverviewPanel';
 import { detailShellClassNames } from '../../detailShell.styles';
 import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
 

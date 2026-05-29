@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 
 import { ListPlayersAPI } from '@/api/player';
-import { mapPlayerProfile, type PlayerProfile } from '@/pages/objects/player';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
+
+import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
 
 export function useTournamentPlayerOptions(session: AuthSession | null) {
   const [availablePlayers, setAvailablePlayers] = useState<PlayerProfile[]>([]);
@@ -22,8 +24,10 @@ export function useTournamentPlayerOptions(session: AuthSession | null) {
       return;
     }
 
-    void sendAPI(new ListPlayersAPI({ status: 'Active', limit: 100, offset: 0 }))
-      .then((envelope) => mapEnvelope(envelope, mapPlayerProfile))
+    void sendAPI(
+      new ListPlayersAPI({ status: 'Active', limit: 100, offset: 0 }),
+    )
+      .then((envelope) => mapEnvelope(envelope, toPlayerProfile))
       .then((envelope) => {
         if (!cancelled) {
           setAvailablePlayers(envelope.items);

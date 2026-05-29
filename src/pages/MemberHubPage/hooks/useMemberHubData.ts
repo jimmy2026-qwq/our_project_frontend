@@ -1,11 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { getActiveOperator } from '../functions/getMemberHubOperator';
-import { loadClubApplicationInbox } from '../functions/loadMemberHubApplicationInbox';
-import {
-  loadClubDashboard,
-  loadPlayerDashboard,
-} from '../functions/loadMemberHubDashboard';
 import { normalizeMemberHubClubId } from '../functions/normalizeMemberHubClubId';
 import type {
   ApplicationInboxState,
@@ -13,12 +8,17 @@ import type {
   MemberHubOperatorDirectory,
   MemberHubState,
 } from '../objects/MemberHub.types';
+import { useMemberHubApplicationInboxLoader } from './useMemberHubApplicationInboxLoader';
+import { useMemberHubDashboardLoader } from './useMemberHubDashboardLoader';
 
 export function useMemberHubData(
   directory: MemberHubOperatorDirectory | null,
   state: MemberHubState,
   reloadKey = 0,
 ) {
+  const loadClubApplicationInbox = useMemberHubApplicationInboxLoader();
+  const { loadClubDashboard, loadPlayerDashboard } =
+    useMemberHubDashboardLoader();
   const [playerDashboardState, setPlayerDashboardState] =
     useState<DashboardLoadState | null>(null);
   const [clubDashboardState, setClubDashboardState] =
@@ -45,11 +45,7 @@ export function useMemberHubData(
       ] = await Promise.all([
         loadPlayerDashboard(state.playerId, state.operatorId),
         loadClubDashboard(clubId, state.operatorId),
-        loadClubApplicationInbox(
-          clubId,
-          state.operatorId,
-          activeOperator.role,
-        ),
+        loadClubApplicationInbox(clubId, state.operatorId, activeOperator.role),
       ]);
 
       if (!cancelled) {
@@ -63,7 +59,14 @@ export function useMemberHubData(
     return () => {
       cancelled = true;
     };
-  }, [directory, reloadKey, state]);
+  }, [
+    directory,
+    loadClubApplicationInbox,
+    loadClubDashboard,
+    loadPlayerDashboard,
+    reloadKey,
+    state,
+  ]);
 
   return {
     playerDashboardState,

@@ -1,5 +1,5 @@
 import type { AuthSession } from '@/providers/auth/AuthSession';
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
 import {
   EMPTY_MEMBER_HUB_OPERATOR,
@@ -57,4 +57,3 @@ export function getFallbackDirectory(
     source: 'api',
   };
 }
-

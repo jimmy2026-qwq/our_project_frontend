@@ -1,8 +1,4 @@
-import type {
-  PublicTournamentDetailView,
-  PublicTournamentStageView,
-  TournamentPaifuSummaryView,
-} from '@/objects';
+import type { TournamentPaifuSummaryView } from '@/objects';
 
 import type {
   PaifuAction,
@@ -51,7 +47,7 @@ function normalizeStringArray(value: unknown): string[] | undefined {
     : undefined;
 }
 
-export function mapPaifuSummary(
+export function toPaifuSummary(
   item: TournamentPaifuSummaryView | TablePaifuDetail,
 ): TablePaifuDetail {
   const legacy = item as Partial<TablePaifuDetail>;
@@ -74,19 +70,20 @@ export function mapPaifuSummary(
         stageId: summary.stageId ?? '',
         recordedAt: summary.recordedAt ?? '',
       }),
-      matchRecordId: normalizeOptionalString(
-        legacy.metadata?.matchRecordId ?? summary.matchRecordId,
-      ) ?? null,
+      matchRecordId:
+        normalizeOptionalString(
+          legacy.metadata?.matchRecordId ?? summary.matchRecordId,
+        ) ?? null,
     },
-    rounds: (legacy.rounds ?? []).map(mapPaifuRound),
+    rounds: (legacy.rounds ?? []).map(toPaifuRound),
     finalStandings: item.finalStandings ?? [],
   };
 }
 
-function mapPaifuRound(round: PaifuRoundSummary): PaifuRoundSummary {
+function toPaifuRound(round: PaifuRoundSummary): PaifuRoundSummary {
   return {
     ...round,
-    actions: round.actions.map(mapPaifuAction),
+    actions: round.actions.map(toPaifuAction),
     result: {
       ...round.result,
       winner: normalizeOptionalString(round.result.winner),
@@ -102,7 +99,7 @@ function mapPaifuRound(round: PaifuRoundSummary): PaifuRoundSummary {
   };
 }
 
-function mapPaifuAction(action: PaifuAction): PaifuAction {
+function toPaifuAction(action: PaifuAction): PaifuAction {
   return {
     ...action,
     actor: normalizeOptionalString(action.actor),
@@ -112,50 +109,4 @@ function mapPaifuAction(action: PaifuAction): PaifuAction {
     revealedTiles: normalizeStringArray(action.revealedTiles) ?? [],
     note: normalizeOptionalString(action.note),
   };
-}
-
-export function collectPaifuPlayerIds(paifu: TablePaifuDetail) {
-  const playerIds = new Set<string>();
-  const addPlayerId = (playerId?: string | null) => {
-    if (playerId) {
-      playerIds.add(playerId);
-    }
-  };
-
-  paifu.metadata.seats?.forEach((seat) => addPlayerId(seat.playerId));
-  paifu.finalStandings.forEach((standing) => addPlayerId(standing.playerId));
-  paifu.rounds.forEach((round) => {
-    Object.keys(round.initialHands).forEach(addPlayerId);
-    round.actions.forEach((action) => addPlayerId(action.actor));
-    addPlayerId(round.result.winner);
-    addPlayerId(round.result.target);
-    round.result.scoreChanges.forEach((change) => addPlayerId(change.playerId));
-    round.result.tenpaiPlayerIds?.forEach(addPlayerId);
-  });
-
-  return [...playerIds];
-}
-
-export function getStageDisplayName(
-  tournament: PublicTournamentDetailView,
-  stage?: PublicTournamentStageView,
-) {
-  const formatLabel = getStageFormatLabel(stage?.format);
-
-  if (formatLabel) {
-    return `${tournament.name} ${formatLabel}`;
-  }
-
-  return stage?.name ?? undefined;
-}
-
-function getStageFormatLabel(format?: string) {
-  switch (format) {
-    case 'Knockout':
-      return '淘汰赛';
-    case 'Swiss':
-      return '瑞士轮';
-    default:
-      return undefined;
-  }
 }

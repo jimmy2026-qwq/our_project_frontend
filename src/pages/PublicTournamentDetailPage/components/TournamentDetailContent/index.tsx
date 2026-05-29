@@ -1,15 +1,16 @@
 import { Alert } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { AppealSummary, TableDetail } from '@/pages/objects/tournament';
+import type {
+  AppealSummary,
+  TableDetail,
+} from '@/pages/objects/TournamentViews';
 
 import { TournamentDetailAppealsTab } from './components/TournamentDetailAppealsTab';
 import { TournamentDetailHomeTab } from './components/TournamentDetailHomeTab';
 import { TournamentDetailParticipantsTab } from './components/TournamentDetailParticipantsTab';
 import { TournamentDetailRulesTab } from './components/TournamentDetailRulesTab';
-import {
-  TournamentDetailManageTab,
-  TournamentDetailTablesTab,
-} from './components/TournamentDetailTableTabs';
+import { TournamentDetailManageTab } from './components/TournamentDetailTableTabs/TournamentDetailManageTab';
+import { TournamentDetailTablesTab } from './components/TournamentDetailTableTabs/TournamentDetailTablesTab';
 import { detailShellClassNames } from '../detailShell.styles';
 import type {
   TournamentDetailTableItem,
@@ -18,7 +19,7 @@ import type {
 import type {
   AppealDecisionType,
   TournamentDetailTab,
-} from '../../objects/TournamentDetail.view';
+} from '../../objects/TournamentDetailView.types';
 
 type TabItem = { id: TournamentDetailTab; label: string };
 
@@ -100,11 +101,7 @@ export function TournamentDetailContent({
         ))}
       </aside>
 
-      <div
-        className={cx(
-          detailShellClassNames.content,
-        )}
-      >
+      <div className={cx(detailShellClassNames.content)}>
         {workbench.tournamentActionError ? (
           <Alert variant="danger">{workbench.tournamentActionError}</Alert>
         ) : null}

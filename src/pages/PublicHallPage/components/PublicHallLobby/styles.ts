@@ -1,8 +1,7 @@
 export const lobbyClassNames = {
   portal:
     'relative z-[1] grid min-h-[calc(100vh-72px)] gap-7 overflow-hidden text-[#f2f7fb]',
-  glow:
-    'pointer-events-none absolute right-[18px] top-2.5 h-[200px] w-[200px] bg-[radial-gradient(circle,rgba(247,214,135,0.24),rgba(247,214,135,0)_68%)] blur-[10px]',
+  glow: 'pointer-events-none absolute right-[18px] top-2.5 h-[200px] w-[200px] bg-[radial-gradient(circle,rgba(247,214,135,0.24),rgba(247,214,135,0)_68%)] blur-[10px]',
   playerCard:
     'fixed left-5 top-5 z-[4] grid min-h-[116px] w-[min(268px,calc(100vw-28px))] grid-cols-[minmax(0,1fr)_auto] items-center overflow-hidden border-0 bg-[rgba(24,32,78,0.94)] bg-[linear-gradient(180deg,rgba(48,87,154,0.18),rgba(48,87,154,0)_24%),linear-gradient(180deg,rgba(25,38,88,0.96),rgba(24,32,78,0.94))] py-[14px] pl-6 pr-4 shadow-[0_16px_30px_rgba(7,12,20,0.18),inset_0_1px_0_rgba(255,240,209,0.16)] [clip-path:polygon(4%_0,96%_0,100%_14%,100%_86%,96%_100%,4%_100%,0_86%,0_14%)] max-[980px]:relative max-[980px]:left-auto max-[980px]:top-auto max-[980px]:w-full',
   playerCardOuter:
@@ -19,8 +18,7 @@ export const lobbyClassNames = {
     'relative z-[1] mr-2 inline-flex h-12 w-12 items-center justify-center rounded-[14px] border-2 !border-[rgba(220,176,100,0.92)] bg-[rgba(230,185,104,0.96)] bg-[linear-gradient(180deg,rgba(255,228,165,0.98),rgba(230,185,104,0.96))] no-underline shadow-[inset_0_1px_0_rgba(255,247,223,0.4),0_8px_14px_rgba(17,20,52,0.18)]',
   playerLogin:
     'relative z-[1] mr-2 inline-flex h-12 min-w-[86px] items-center justify-center rounded-[14px] border-2 !border-[rgba(220,176,100,0.92)] bg-[rgba(231,184,88,0.96)] bg-[linear-gradient(180deg,rgba(255,234,183,0.98),rgba(231,184,88,0.96))] px-[18px] text-[0.94rem] font-extrabold tracking-[0.08em] text-[rgba(105,50,35,0.98)] no-underline shadow-[inset_0_1px_0_rgba(255,247,223,0.4),0_8px_14px_rgba(17,20,52,0.18)]',
-  avatarIcon:
-    'relative block h-[22px] w-[22px] text-[rgba(123,74,75,0.96)]',
+  avatarIcon: 'relative block h-[22px] w-[22px] text-[rgba(123,74,75,0.96)]',
   avatarIconHead:
     'absolute left-1/2 top-0 h-3 w-3 -translate-x-1/2 rounded-full bg-current',
   avatarIconBody:

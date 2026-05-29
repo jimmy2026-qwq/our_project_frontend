@@ -101,4 +101,3 @@ export function useLoginPageForm() {
     shouldRedirect: isReady && hasRegisteredSession,
   };
 }
-

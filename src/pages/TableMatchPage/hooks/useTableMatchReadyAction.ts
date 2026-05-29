@@ -7,11 +7,11 @@ import type {
   TournamentTableView,
   UpdateOwnTableReadyStateRequest,
 } from '@/objects';
-import type { TableDetail } from '@/pages/objects/tournament';
-import { mapTableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
+import { toTableDetail } from '../functions/toTableDetail';
 import type { TableSeat } from '../objects/TableMatch.types';
 
 interface TableMatchReadyActionParams {
@@ -94,5 +94,5 @@ function updateOwnReadyState(
 ) {
   return sendAPI<TournamentTableView>(
     new TournamentTableUpdateOwnReadyAPI(tableId, payload),
-  ).then(mapTableDetail);
+  ).then(toTableDetail);
 }

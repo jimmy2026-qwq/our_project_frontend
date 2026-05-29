@@ -5,7 +5,7 @@ import { cx } from '@/components/ui/cx';
 
 import { getTournamentStatusLabel } from '../../../functions/formatClubDetail';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
-import { clubPanelClassNames } from './styles';
+import { clubPanelClassNames } from '../styles';
 
 export function ClubRecentTournamentsPanel({
   tournaments,

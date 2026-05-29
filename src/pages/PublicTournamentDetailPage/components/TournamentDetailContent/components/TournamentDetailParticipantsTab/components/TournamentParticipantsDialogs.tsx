@@ -12,7 +12,7 @@ import {
   SelectField,
 } from '@/components/ui';
 
-import { participantText } from '../objects/TournamentDetailParticipantsText';
+import { participantText } from '../functions/getTournamentDetailParticipantsText';
 
 export function InviteParticipantDialog({
   open,

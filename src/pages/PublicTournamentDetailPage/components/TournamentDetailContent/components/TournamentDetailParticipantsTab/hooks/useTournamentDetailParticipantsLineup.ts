@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
-import { mapPlayerProfile, type PlayerProfile } from '@/pages/objects/player';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
+import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
 
 export type LineupSubmission = NonNullable<
-  NonNullable<TournamentDetailWorkbenchState['profile']['stages']>[number]['lineupSubmissions']
+  NonNullable<
+    TournamentDetailWorkbenchState['profile']['stages']
+  >[number]['lineupSubmissions']
 >[number];
 
 export function useLineupPlayers({
@@ -20,9 +23,9 @@ export function useLineupPlayers({
   const [lineupPlayersById, setLineupPlayersById] = useState<
     Record<string, PlayerProfile>
   >({});
-  const [loadingLineupPlayerIds, setLoadingLineupPlayerIds] = useState<string[]>(
-    [],
-  );
+  const [loadingLineupPlayerIds, setLoadingLineupPlayerIds] = useState<
+    string[]
+  >([]);
 
   useEffect(() => {
     const missingPlayerIds = Array.from(
@@ -50,7 +53,7 @@ export function useLineupPlayers({
       missingPlayerIds.map(async (playerId) => {
         try {
           const player = await sendAPI(new GetPlayerAPI(playerId)).then(
-            mapPlayerProfile,
+            toPlayerProfile,
           );
           return [playerId, player] as const;
         } catch {

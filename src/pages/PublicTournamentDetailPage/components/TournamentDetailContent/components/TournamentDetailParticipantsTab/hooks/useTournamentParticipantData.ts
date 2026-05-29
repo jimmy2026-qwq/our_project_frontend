@@ -2,10 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { TournamentWhitelistListAPI } from '@/api/tournament';
-import { mapPlayerProfile, type PlayerProfile } from '@/pages/objects/player';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
-import type { DetailState, TournamentPublicProfile } from '../../../../../objects/PublicTournamentDetailPage.types';
+import type {
+  DetailState,
+  TournamentPublicProfile,
+} from '../../../../../objects/PublicTournamentDetailPage.types';
+import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
 
 export function useTournamentParticipantData({
   localProfile,
@@ -43,7 +47,7 @@ export function useTournamentParticipantData({
           .filter((playerId): playerId is string => !!playerId);
         const players = await Promise.all(
           Array.from(new Set(playerIds)).map((playerId) =>
-            sendAPI(new GetPlayerAPI(playerId)).then(mapPlayerProfile),
+            sendAPI(new GetPlayerAPI(playerId)).then(toPlayerProfile),
           ),
         );
 

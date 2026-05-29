@@ -1,13 +1,10 @@
-import type {
-  StageStatus,
-  TournamentStatus,
-} from '@/objects';
+import type { StageStatus, TournamentStatus } from '@/objects';
 import type {
   AdvancementRuleView,
   KnockoutRuleConfigView,
   SwissRuleConfigView,
 } from '@/objects/tournament';
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 
 export type DataSource = 'api' | 'mock';

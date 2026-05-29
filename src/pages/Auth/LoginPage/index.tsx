@@ -38,4 +38,3 @@ export function LoginPage() {
     </AuthScreenFrame>
   );
 }
-

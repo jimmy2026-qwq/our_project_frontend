@@ -1,4 +1,4 @@
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 export type TableSeat = TableDetail['seats'][number];
 

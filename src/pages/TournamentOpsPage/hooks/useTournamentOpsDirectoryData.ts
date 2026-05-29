@@ -7,16 +7,16 @@ import type {
   TournamentStageDirectoryEntry,
   TournamentSummaryView,
 } from '@/objects';
-import {
-  mapTournamentDirectoryEntry,
-  type TournamentDirectoryEntryView,
-} from '@/pages/objects/tournament';
 import { sendAPI } from '@/system/api';
 
 import type {
   TournamentContext,
   TournamentDirectoryState,
 } from '../objects/data';
+import {
+  toTournamentDirectoryEntry,
+  type TournamentDirectoryEntryView,
+} from '../objects/TournamentOps.mappers';
 
 export function useTournamentOpsDirectoryData(reloadKey = 0) {
   const [directory, setDirectory] = useState<TournamentDirectoryState | null>(
@@ -86,7 +86,7 @@ function getTournaments(filters = {}) {
   ).then(
     (envelope): ListEnvelope<TournamentDirectoryEntryView> => ({
       ...envelope,
-      items: envelope.items.map(mapTournamentDirectoryEntry),
+      items: envelope.items.map(toTournamentDirectoryEntry),
     }),
   );
 }

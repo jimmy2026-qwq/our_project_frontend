@@ -21,9 +21,7 @@ export function PublicHallPlayerCard({
         <p className={lobbyClassNames.playerMeta}>
           <span>{`ELO: ${eloText}`}</span>
         </p>
-        <strong className={lobbyClassNames.playerLink}>
-          {displayName}
-        </strong>
+        <strong className={lobbyClassNames.playerLink}>{displayName}</strong>
       </div>
       <Link
         to={showLoginEntry ? '/login' : '/me'}
@@ -38,10 +36,7 @@ export function PublicHallPlayerCard({
         {showLoginEntry ? (
           '登录'
         ) : (
-          <span
-            className={lobbyClassNames.avatarIcon}
-            aria-hidden="true"
-          >
+          <span className={lobbyClassNames.avatarIcon} aria-hidden="true">
             <span className={lobbyClassNames.avatarIconHead} />
             <span className={lobbyClassNames.avatarIconBody} />
           </span>

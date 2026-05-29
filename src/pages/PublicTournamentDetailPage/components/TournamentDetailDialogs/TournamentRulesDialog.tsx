@@ -14,7 +14,7 @@ import {
   TextInputField,
 } from '@/components/ui';
 import type { TournamentFormat } from '@/objects/tournament';
-import type { TournamentStageRuleDraft } from '../../objects/TournamentDetail.rules';
+import type { TournamentStageRuleDraft } from '../../objects/TournamentDetailRule.types';
 
 export function TournamentRulesDialog({
   open,
@@ -39,7 +39,9 @@ export function TournamentRulesDialog({
         <DialogOverlay />
         <DialogSurface className="text-[#f2f7fb] [&_option]:bg-[rgba(8,18,29,0.98)] [&_option]:text-[#f2f7fb] [&_[data-slot=dialog-title]]:text-[#f2f7fb] [&_[data-slot=input]]:text-[#f2f7fb] [&_[data-slot=select]]:text-[#f2f7fb]">
           <DialogHeader className="border-b border-[rgba(176,223,229,0.14)] px-6 py-5">
-            <DialogTitle>{hasStage ? '修改当前阶段规则' : '创建当前阶段规则'}</DialogTitle>
+            <DialogTitle>
+              {hasStage ? '修改当前阶段规则' : '创建当前阶段规则'}
+            </DialogTitle>
             <DialogDescription>
               选择赛制并设置晋级人数。创建赛事时当前只开放瑞士轮和淘汰赛，这里保持同一套入口。
             </DialogDescription>
@@ -86,7 +88,10 @@ export function TournamentRulesDialog({
             >
               取消
             </Button>
-            <Button onClick={onSubmit} disabled={isSubmitting || draft.advanceCount < 1}>
+            <Button
+              onClick={onSubmit}
+              disabled={isSubmitting || draft.advanceCount < 1}
+            >
               {isSubmitting ? '保存中...' : '保存规则'}
             </Button>
           </DialogFooter>

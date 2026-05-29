@@ -106,4 +106,3 @@ export function useRegisterPageForm() {
     shouldRedirect: isReady && hasRegisteredSession,
   };
 }
-

@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import type { PlayerLeaderboardEntry } from '../../objects/PublicHallPage.types';
 import { getLeaderboardStatusLabel } from '../../functions/getPublicHallLabels';
 
@@ -24,10 +24,7 @@ export function LeaderboardRow({
     clubs.find((club) => club.name === item.clubName);
 
   return (
-    <article
-      key={item.playerId}
-      className={hallSectionClassNames.row}
-    >
+    <article key={item.playerId} className={hallSectionClassNames.row}>
       <div className={hallSectionClassNames.rowMain}>
         <strong>{item.nickname}</strong>
         <span>{`俱乐部：${item.clubName || '--'}`}</span>

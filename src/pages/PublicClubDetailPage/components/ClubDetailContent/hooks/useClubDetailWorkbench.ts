@@ -10,7 +10,7 @@ import type {
 
 import { useClubDetailActions } from './useClubDetailActions';
 import { useClubDetailData } from './useClubDetailData';
-import { buildClubDetailWorkbench } from '../objects/ClubDetailWorkbench';
+import { buildClubDetailWorkbench } from '../functions/buildClubDetailWorkbench';
 
 interface UseClubDetailWorkbenchParams {
   state: DetailState<ClubPublicProfile> | null;

@@ -1,8 +1,5 @@
-import {
-  normalizeTournamentOpsState,
-  type TournamentContext,
-  type TournamentOpsState,
-} from '../objects/data';
+import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
+import type { TournamentContext, TournamentOpsState } from '../objects/data';
 import { useTournamentAppealsData } from './useTournamentAppealsData';
 import { useTournamentRecordsData } from './useTournamentRecordsData';
 import { useTournamentTablesData } from './useTournamentTablesData';
@@ -16,7 +13,11 @@ export function useTournamentOpsPanelData(
   const effectiveState = hasTournament
     ? normalizeTournamentOpsState(tournaments, state)
     : state;
-  const tables = useTournamentTablesData(effectiveState, reloadKey, hasTournament);
+  const tables = useTournamentTablesData(
+    effectiveState,
+    reloadKey,
+    hasTournament,
+  );
   const records = useTournamentRecordsData(
     effectiveState,
     reloadKey,

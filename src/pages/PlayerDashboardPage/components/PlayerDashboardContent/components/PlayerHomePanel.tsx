@@ -13,7 +13,7 @@ import { cx } from '@/components/ui/cx';
 import type {
   PlayerClubLink,
   PlayerDashboardData,
-} from '../../../functions/loadPlayerDashboardData';
+} from '../../../objects/PlayerDashboard.types';
 import { getPlayerStatusLabel } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 
@@ -27,9 +27,7 @@ function ShellDetailCard({
   return (
     <article className={detailShellClassNames.card}>
       <div className={detailShellClassNames.cardHeader}>
-        <h3 className={cx('m-0', detailShellClassNames.cardTitle)}>
-          {title}
-        </h3>
+        <h3 className={cx('m-0', detailShellClassNames.cardTitle)}>{title}</h3>
       </div>
       <div className={detailShellClassNames.cardContent}>{children}</div>
     </article>

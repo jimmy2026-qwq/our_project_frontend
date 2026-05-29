@@ -8,7 +8,7 @@ import {
 } from '@/api/tournament';
 import { sendAPI } from '@/system/api';
 
-import { getNextStageMissingLineupClubNames } from '../../../objects/TournamentDetail.workbench';
+import { getNextStageMissingLineupClubNames } from '../../../functions/getNextStageLineup';
 import type {
   RefreshTournamentProfile,
   UseTournamentDetailActionsParams,

@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { Badge, Button, StatusPill } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import {
   getTableStatusLabel,

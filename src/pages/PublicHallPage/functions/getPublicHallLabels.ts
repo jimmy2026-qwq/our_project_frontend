@@ -1,8 +1,5 @@
-import type {
-  StageStatus,
-  TournamentStatus,
-} from '@/objects';
-import type { ClubSummary } from '@/pages/objects/club';
+import type { StageStatus, TournamentStatus } from '@/objects';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
 import type { PlayerLeaderboardEntry } from '../objects/PublicHallPage.types';
 

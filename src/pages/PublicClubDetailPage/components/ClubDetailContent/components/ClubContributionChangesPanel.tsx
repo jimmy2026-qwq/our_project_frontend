@@ -7,7 +7,7 @@ import {
   formatDateTime,
   formatNumber,
 } from '../../../functions/formatClubDetail';
-import { clubPanelClassNames } from './styles';
+import { clubPanelClassNames } from '../styles';
 
 export function ClubContributionChangesPanel({
   isLoading,
@@ -40,7 +40,8 @@ export function ClubContributionChangesPanel({
             const playerId = change.playerId ?? '';
             const delta = change.delta ?? '--';
             const contribution = change.contribution ?? '--';
-            const playerName = memberNamesById.get(playerId) ?? (playerId || '--');
+            const playerName =
+              memberNamesById.get(playerId) ?? (playerId || '--');
             const rankLabel = memberRanksById.get(playerId) ?? '--';
             const deltaValue = Number(delta);
             const contributionValue = Number(contribution);

@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 
 import { Button, StatusPill } from '@/components/ui';
-import type { PlayerProfile } from '@/pages/objects/player';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import {
   getPlayerStatusLabel,
   getRankLabel,
   participantText,
-} from '../objects/TournamentDetailParticipantsText';
+} from '../functions/getTournamentDetailParticipantsText';
 
 export function ToggleArrow({
   expanded,
@@ -100,7 +100,9 @@ export function PlayerRow({ player }: { player: PlayerProfile }) {
           {getRankLabel(player)} / {participantText.elo} {player.elo ?? 0}
         </span>
       </div>
-      <StatusPill tone={player.playerStatus === 'Active' ? 'success' : 'warning'}>
+      <StatusPill
+        tone={player.playerStatus === 'Active' ? 'success' : 'warning'}
+      >
         {getPlayerStatusLabel(player.playerStatus)}
       </StatusPill>
     </article>
@@ -132,9 +134,7 @@ export function LineupRoster({
     missingPlayerIds.length === 0
   ) {
     return (
-      <p className="m-0 text-sm text-[#9ab0c1]">
-        {participantText.noMembers}
-      </p>
+      <p className="m-0 text-sm text-[#9ab0c1]">{participantText.noMembers}</p>
     );
   }
 

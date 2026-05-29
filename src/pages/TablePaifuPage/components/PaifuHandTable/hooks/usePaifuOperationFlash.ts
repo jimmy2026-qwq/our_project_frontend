@@ -2,14 +2,18 @@ import { useEffect, useState } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuAction, PaifuRoundSummary, TablePaifuDetail } from '../../../types';
+import type {
+  PaifuAction,
+  PaifuRoundSummary,
+  TablePaifuDetail,
+} from '../../../types';
 import {
   getOperationText,
   getPlayerSeat,
   isAbortiveDrawAction,
   isWinningAction,
-} from '../../../objects/replay';
-import type { ActiveOperation } from '../components/PaifuOverlays';
+} from '../../../functions/getReplay';
+import type { ActiveOperation } from '../components/PaifuOverlays/PaifuOverlays.types';
 
 export function usePaifuOperationFlash({
   isExhaustiveDrawResult,

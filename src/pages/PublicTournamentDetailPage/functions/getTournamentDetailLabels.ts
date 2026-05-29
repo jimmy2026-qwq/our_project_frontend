@@ -1,7 +1,4 @@
-import type {
-  StageStatus,
-  TournamentStatus,
-} from '@/objects';
+import type { StageStatus, TournamentStatus } from '@/objects';
 
 const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
   Draft: '未发布',
@@ -29,9 +26,9 @@ export function formatDateTime(value: string) {
 }
 
 export function getTournamentStatusLabel(status: TournamentStatus | '') {
-  return status ? TOURNAMENT_STATUS_LABELS[status] ?? status : status;
+  return status ? (TOURNAMENT_STATUS_LABELS[status] ?? status) : status;
 }
 
 export function getStageStatusLabel(status: StageStatus | '') {
-  return status ? STAGE_STATUS_LABELS[status] ?? status : status;
+  return status ? (STAGE_STATUS_LABELS[status] ?? status) : status;
 }

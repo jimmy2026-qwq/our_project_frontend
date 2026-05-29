@@ -1,5 +1,5 @@
 import type { TournamentStatus } from '@/objects';
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
 const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
   Draft: '未发布',
@@ -27,5 +27,5 @@ export function getRelationLabel(relation: ClubSummary['relations'][number]) {
 }
 
 export function getTournamentStatusLabel(status: TournamentStatus | '') {
-  return status ? TOURNAMENT_STATUS_LABELS[status] ?? status : status;
+  return status ? (TOURNAMENT_STATUS_LABELS[status] ?? status) : status;
 }

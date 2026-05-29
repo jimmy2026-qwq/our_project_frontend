@@ -54,11 +54,13 @@ export function PendingStartConfirmationDialog({
           </DialogHeader>
           <DialogBody className="grid gap-4 px-6 py-5">
             <div className="grid gap-2 rounded-[20px] border border-[rgba(236,197,122,0.22)] bg-[rgba(236,197,122,0.08)] p-4">
-              {pendingStartConfirmation?.unreadyPlayerNames.map((playerName) => (
-                <span key={playerName} className="text-sm text-[#c7d6e2]">
-                  {playerName}
-                </span>
-              ))}
+              {pendingStartConfirmation?.unreadyPlayerNames.map(
+                (playerName) => (
+                  <span key={playerName} className="text-sm text-[#c7d6e2]">
+                    {playerName}
+                  </span>
+                ),
+              )}
             </div>
           </DialogBody>
           <DialogFooter className="border-t border-[rgba(176,223,229,0.14)] px-6 py-5">
@@ -70,7 +72,9 @@ export function PendingStartConfirmationDialog({
               {'\u518d\u7b49\u7b49'}
             </Button>
             <Button onClick={onForceStart} disabled={isSubmittingTableAction}>
-              {isSubmittingTableAction ? '\u5904\u7406\u4e2d...' : '\u5f3a\u5236\u5f00\u684c'}
+              {isSubmittingTableAction
+                ? '\u5904\u7406\u4e2d...'
+                : '\u5f3a\u5236\u5f00\u684c'}
             </Button>
           </DialogFooter>
         </DialogSurface>

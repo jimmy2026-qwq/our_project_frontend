@@ -1,8 +1,6 @@
-import {
-  TablePaifuBackButton,
-  TablePaifuEmpty,
-  TablePaifuLoading,
-} from './components';
+import { TablePaifuBackButton } from './components/TablePaifuBackButton';
+import { TablePaifuEmpty } from './components/TablePaifuEmpty';
+import { TablePaifuLoading } from './components/TablePaifuLoading';
 import { PaifuHandTable } from './components/PaifuHandTable';
 import { useTablePaifuPage } from './hooks/useTablePaifuPage';
 

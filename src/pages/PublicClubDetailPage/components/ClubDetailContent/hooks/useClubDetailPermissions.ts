@@ -33,8 +33,7 @@ export function useClubDetailPermissions({
     baseClubPermissions.canManageMembership || hasApproveRosterPrivilege;
   const canRemoveMembers = canReviewApplications;
   const canAssignAdmins = baseClubPermissions.canAssignAdmins;
-  const canAdjustContributions =
-    baseClubPermissions.canAdjustContributions;
+  const canAdjustContributions = baseClubPermissions.canAdjustContributions;
   const canEditTitles = baseClubPermissions.canEditTitles;
 
   useEffect(() => {
@@ -74,8 +73,7 @@ export function useClubDetailPermissions({
           permission,
           clubId: profile.id,
         }),
-      )
-        .catch(() => false);
+      ).catch(() => false);
 
     void Promise.all([
       check('AssignClubAdmin'),

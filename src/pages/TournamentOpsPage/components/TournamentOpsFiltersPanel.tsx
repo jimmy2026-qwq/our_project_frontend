@@ -1,13 +1,10 @@
 import { WorkbenchContextPanel } from '@/components/ui';
 import { SelectField, TextInputField } from '@/components/ui';
 import type { TableStatus } from '@/objects';
-import type { AppealSummary } from '@/pages/objects/tournament';
+import type { AppealSummary } from '@/pages/objects/TournamentViews';
 
-import {
-  getActiveTournament,
-  type TournamentContext,
-  type TournamentOpsState,
-} from '../objects/data';
+import { getActiveTournament } from '../functions/getTournamentOpsState';
+import type { TournamentContext, TournamentOpsState } from '../objects/data';
 
 interface TournamentOpsFiltersPanelProps {
   tournaments: TournamentContext[];
@@ -58,7 +55,9 @@ export function TournamentOpsFiltersPanel({
       <SelectField
         label="阶段"
         value={state.stageId}
-        onChange={(event) => onStateChange({ stageId: event.currentTarget.value })}
+        onChange={(event) =>
+          onStateChange({ stageId: event.currentTarget.value })
+        }
       >
         {activeTournament.stages.map((stage) => (
           <option key={stage.id} value={stage.id}>

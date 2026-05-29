@@ -50,16 +50,15 @@ export function buildContributionTitleFields(
     ]),
   );
   const observedLabelsByCode = new Map(
-    members
-      .flatMap((member) => {
-        const label = normalizeTitle(member.rankLabel);
+    members.flatMap((member) => {
+      const label = normalizeTitle(member.rankLabel);
 
-        if (!member.rankCode || !label || isLegacyMemberTitle(label)) {
-          return [];
-        }
+      if (!member.rankCode || !label || isLegacyMemberTitle(label)) {
+        return [];
+      }
 
-        return [[member.rankCode, label] as const];
-      }),
+      return [[member.rankCode, label] as const];
+    }),
   );
   const rankTreeByCode = new Map(
     rankTree

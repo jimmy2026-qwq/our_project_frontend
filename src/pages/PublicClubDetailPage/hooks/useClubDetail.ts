@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import {
-  ListClubTournamentsAPI,
-} from '@/api/club';
+import { ListClubTournamentsAPI } from '@/api/club';
 import { GetPublicClubAPI } from '@/api/club';
 import { GetCurrentPlayerAPI } from '@/api/player/GetCurrentPlayerAPI';
 import type {
@@ -13,7 +11,7 @@ import type {
 } from '../objects/PublicClubDetailPage.types';
 import { sendAPI } from '@/system/api';
 
-import { mapPublicClubDetail } from '../functions/mapClubDetail';
+import { toPublicClubDetail } from '../objects/ClubDetailClub.mappers';
 
 async function resolveClubViewerId(
   fallbackViewerId?: string,
@@ -70,7 +68,7 @@ async function loadClubDetail(
 ): Promise<ClubDetailState> {
   try {
     const [item, activeTournaments] = await Promise.all([
-      sendAPI(new GetPublicClubAPI(clubId)).then(mapPublicClubDetail),
+      sendAPI(new GetPublicClubAPI(clubId)).then(toPublicClubDetail),
       loadClubTournaments(clubId, viewerId),
     ]);
     return {

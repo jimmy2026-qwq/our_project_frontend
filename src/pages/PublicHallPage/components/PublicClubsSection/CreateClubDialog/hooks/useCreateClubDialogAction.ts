@@ -4,8 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { CreateClubAPI } from '@/api/club';
 import { useAuth } from '@/app/auth/useAuth';
 import { useNotice } from '@/app/feedback/useNotice';
-import { mapClub } from '@/pages/objects/club';
 import { sendAPI } from '@/system/api';
+
+import { toPublicClubSummary } from '../../../../objects/PublicHall.mappers';
 
 export function useCreateClubDialogAction({
   open,
@@ -64,7 +65,7 @@ export function useCreateClubDialogAction({
           name: trimmedName,
           creatorId: operatorId,
         }),
-      ).then(mapClub);
+      ).then(toPublicClubSummary);
       notifySuccess(
         '俱乐部已创建',
         `${created.name} 已创建，当前账号已被设为俱乐部管理员。`,

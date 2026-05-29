@@ -6,13 +6,13 @@ import {
   getRoundPlayerId,
   isPlayerTenpai,
   seatLabels,
-} from '../../../../objects/replay';
+} from '../../../../functions/getReplay';
 import { HandBackTile, HandTile } from '../TileViews';
 import {
   getDisplayTiles,
   handPositionClasses,
   labelPositionClasses,
-} from '../../objects/paifuTableLayout';
+} from '../../functions/getPaifuTableLayout';
 
 export function PlayerHand({
   drawnTileIndex,
@@ -30,7 +30,7 @@ export function PlayerHand({
   seat: SeatWind;
 }) {
   const playerId = getRoundPlayerId(paifu, seat);
-  const tiles = playerId ? hands[playerId] ?? [] : [];
+  const tiles = playerId ? (hands[playerId] ?? []) : [];
   const displayTiles = getDisplayHandTiles({ drawnTileIndex, seat, tiles });
   const playerName = playerId ? getPlayerDisplayName(paifu, playerId) : '';
   const shouldShowBacks =
@@ -43,9 +43,10 @@ export function PlayerHand({
   return (
     <>
       <div
-        className={['absolute z-[3] grid gap-1', labelPositionClasses[seat]].join(
-          ' ',
-        )}
+        className={[
+          'absolute z-[3] grid gap-1',
+          labelPositionClasses[seat],
+        ].join(' ')}
       >
         <span className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-[#ecc57a]">
           {seatLabels[seat]}
@@ -55,9 +56,10 @@ export function PlayerHand({
         </strong>
       </div>
       <div
-        className={['absolute z-[4] flex items-end gap-0 [backface-visibility:hidden] [transform-style:preserve-3d]', handPositionClasses[seat]].join(
-          ' ',
-        )}
+        className={[
+          'absolute z-[4] flex items-end gap-0 [backface-visibility:hidden] [transform-style:preserve-3d]',
+          handPositionClasses[seat],
+        ].join(' ')}
       >
         {displayTiles.map(({ isDrawnTile, tile }, index) =>
           shouldShowBacks ? (

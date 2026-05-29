@@ -2,10 +2,10 @@ import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { ClubSummary } from '@/pages/objects/club';
-import type { PlayerProfile } from '@/pages/objects/player';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
-import { participantText } from '../objects/TournamentDetailParticipantsText';
+import { participantText } from '../functions/getTournamentDetailParticipantsText';
 import { LineupRoster, ToggleArrow } from './TournamentParticipantsShared';
 import type { LineupSubmission } from '../hooks/useTournamentDetailParticipantsLineup';
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
@@ -107,7 +107,9 @@ export function ClubParticipantList({
   onToggleClubRoster: (club: ClubSummary) => void;
 }) {
   if (workbench.invitedClubs.length === 0) {
-    return <EmptyState asListItem={false}>{participantText.noClubs}</EmptyState>;
+    return (
+      <EmptyState asListItem={false}>{participantText.noClubs}</EmptyState>
+    );
   }
 
   return (

@@ -3,8 +3,8 @@ import {
   getRoundPlayerId,
   isPlayerTenpai,
   seatOrder,
-} from '../../../../objects/replay';
-import { operationPositionClasses } from '../../objects/paifuTableLayout';
+} from '../../../../functions/getReplay';
+import { operationPositionClasses } from '../../functions/getPaifuTableLayout';
 
 export function ExhaustiveDrawStatusMarkers({
   paifu,

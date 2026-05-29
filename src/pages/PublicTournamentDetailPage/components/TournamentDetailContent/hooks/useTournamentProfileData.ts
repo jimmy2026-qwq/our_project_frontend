@@ -5,18 +5,23 @@ import { TournamentGetAPI } from '@/api/tournament';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 
-import { mapTournamentDetailFromAdminView } from '../../../functions/loadTournamentAdminDetail';
-import { mapPublicTournamentDetail } from '../../../functions/mapTournamentDetail';
-import type { DetailState, TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
+import type {
+  DetailState,
+  TournamentPublicProfile,
+} from '../../../objects/PublicTournamentDetailPage.types';
+import {
+  toPublicTournamentDetail,
+  toTournamentDetailFromAdminView,
+} from '../../../objects/TournamentDetailTournament.mappers';
 
 export async function loadTournamentProfileForWorkbench(tournamentId: string) {
   try {
     return await sendAPI(new GetPublicTournamentAPI(tournamentId)).then(
-      mapPublicTournamentDetail,
+      toPublicTournamentDetail,
     );
   } catch {
     const adminView = await sendAPI(new TournamentGetAPI(tournamentId));
-    return mapTournamentDetailFromAdminView(adminView);
+    return toTournamentDetailFromAdminView(adminView);
   }
 }
 
@@ -81,7 +86,7 @@ export function useTournamentProfileData({
     void sendAPI(new TournamentGetAPI(currentProfile.id))
       .then((detail) => {
         if (!cancelled) {
-          const adminProfile = mapTournamentDetailFromAdminView(detail);
+          const adminProfile = toTournamentDetailFromAdminView(detail);
           setLocalProfile((current) =>
             mergeTournamentProfiles(adminProfile, current ?? currentProfile),
           );

@@ -1,6 +1,9 @@
-import type { ClubApplication, ClubApplicationView } from '@/pages/objects/club';
+import type {
+  ClubApplication,
+  ClubApplicationView,
+} from '@/pages/objects/ClubApplicationViews';
 import type { ClubContributionAuditEntry } from '@/objects';
-import type { PlayerProfile } from '@/pages/objects/player';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import type { ClubPublicProfile } from './PublicClubDetailPage.types';
 
 export interface ClubAdminMemberEntry extends PlayerProfile {

@@ -1,8 +1,9 @@
 import { DataTablePanel } from '@/components/ui';
 import { TableCell, TableRow } from '@/components/ui';
-import type { MatchRecordSummary } from '@/pages/objects/tournament';
+import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
 
-import { formatDateTime, type LoadState } from '../objects/data';
+import { formatDateTime } from '../functions/formatTournamentOpsDateTime';
+import type { LoadState } from '../objects/data';
 
 export function RecordsPanel({
   payload,

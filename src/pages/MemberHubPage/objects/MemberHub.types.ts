@@ -1,6 +1,7 @@
 import type { Role } from '@/objects';
-import type { ClubApplicationView, ClubSummary } from '@/pages/objects/club';
-import type { DashboardSummary } from '@/pages/objects/opsanalytics';
+import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { DashboardSummary } from '@/pages/objects/OpsAnalyticsDashboard';
 
 export type DataSource = 'api' | 'mock';
 
@@ -14,6 +15,18 @@ export interface ApplicationInboxState {
   items: ClubApplicationView[];
   source: DataSource;
   warning?: string;
+}
+
+export interface MemberHubApplicationInboxItem {
+  id: string;
+  clubId: string;
+  clubName: string;
+  operatorId: string;
+  applicantName: string;
+  message: string;
+  status: 'Pending' | 'Approved' | 'Rejected' | 'Withdrawn';
+  submittedAt: string;
+  source: DataSource;
 }
 
 export interface MemberHubOperator {
@@ -56,4 +69,3 @@ export const DEFAULT_MEMBER_HUB_DIRECTORY: MemberHubOperatorDirectory = {
   clubsById: {},
   source: 'api',
 };
-

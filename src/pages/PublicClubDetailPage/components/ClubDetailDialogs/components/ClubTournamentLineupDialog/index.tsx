@@ -10,8 +10,8 @@ import {
   ClubTournamentLineupBody,
   ClubTournamentLineupFooter,
   ClubTournamentLineupHeader,
-} from './ClubTournamentLineupDialog.panels';
-import type { ClubTournamentItem } from './types';
+} from './components/ClubTournamentLineupDialog.panels';
+import type { ClubTournamentItem } from './objects/ClubTournamentItem';
 
 export function ClubTournamentLineupDialog({
   clubId,

@@ -1,15 +1,60 @@
 import type { Dispatch, SetStateAction } from 'react';
 
+import { ReviewClubApplicationAPI } from '@/api/club/ReviewClubApplicationAPI';
 import { useDialog } from '@/app/dialog/useDialog';
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import { useNotice } from '@/app/feedback/useNotice';
+import type {
+  ClubMembershipApplicationView,
+  ReviewClubApplicationRequest,
+} from '@/objects';
+import { sendAPI } from '@/system/api';
 
 import { getActiveOperator } from '../functions/getMemberHubOperator';
-import { reviewMemberHubApplication } from '../functions/reviewMemberHubApplication';
+import { upsertMemberHubApplicationInboxItem } from '../functions/getMemberHubApplicationInboxBridge';
+import { toClubApplicationView } from '../objects/MemberHub.mappers';
 import type {
   MemberHubOperatorDirectory,
   MemberHubState,
 } from '../objects/MemberHub.types';
+
+function reviewClubApplication(
+  clubId: string,
+  membershipId: string,
+  payload: ReviewClubApplicationRequest,
+) {
+  return sendAPI<ClubMembershipApplicationView>(
+    new ReviewClubApplicationAPI(clubId, membershipId, payload),
+  ).then(toClubApplicationView);
+}
+
+async function reviewMemberHubApplication(
+  clubId: string,
+  applicationId: string,
+  operatorId: string,
+  decision: 'approve' | 'reject',
+) {
+  const application = await reviewClubApplication(clubId, applicationId, {
+    operatorId,
+    decision,
+    note: `${decision}d from member hub`,
+  });
+  upsertMemberHubApplicationInboxItem({
+    id: application.applicationId,
+    clubId: application.clubId,
+    clubName: application.clubName,
+    operatorId:
+      application.applicant.playerId ||
+      application.applicant.applicantUserId ||
+      '',
+    applicantName: application.applicant.displayName,
+    message: application.message,
+    status: application.status,
+    submittedAt: application.submittedAt,
+    source: 'api',
+  });
+  return { source: 'api' as const };
+}
 
 export function useMemberHubActions(
   directory: MemberHubOperatorDirectory,

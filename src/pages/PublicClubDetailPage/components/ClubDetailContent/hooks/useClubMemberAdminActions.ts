@@ -1,11 +1,8 @@
-﻿import {
-  AssignClubAdminAPI,
-  RemoveClubMemberAPI,
-} from '@/api/club';
-import { upsertClubAdminOverride } from '@/pages/objects/club';
-import type { PlayerProfile } from '@/pages/objects/player';
+﻿import { AssignClubAdminAPI, RemoveClubMemberAPI } from '@/api/club';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
+import { upsertClubAdminOverride } from '../../../functions/getClubAdminOverrides';
 import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
 import type { ClubDetailActionContext } from './useClubDetailActions.types';
 
@@ -17,11 +14,7 @@ export function useClubMemberAdminActions({
   profile,
   workbench,
 }: ClubDetailActionContext) {
-  const {
-    canAssignAdmins,
-    canRemoveMembers,
-    refreshClubMembers,
-  } = data;
+  const { canAssignAdmins, canRemoveMembers, refreshClubMembers } = data;
 
   async function handleAssignAdmin(member: PlayerProfile) {
     if (!profile?.id || !workbench?.operatorId || !canAssignAdmins) {

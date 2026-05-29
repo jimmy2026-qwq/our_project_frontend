@@ -1,6 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import {
   formatNumber,
   getRelationLabel,
@@ -10,10 +10,7 @@ import { hallSectionClassNames } from '../PublicHallSection.styles';
 
 export function ClubRow({ club }: { club: ClubSummary }) {
   return (
-    <article
-      key={club.id}
-      className={hallSectionClassNames.row}
-    >
+    <article key={club.id} className={hallSectionClassNames.row}>
       <div className={hallSectionClassNames.rowMain}>
         <strong>{club.name}</strong>
         <span>{`战力值：${club.powerRating}`}</span>

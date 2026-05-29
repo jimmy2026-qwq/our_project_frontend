@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import { getAppealButtonText } from '../../objects/TableMatch.labels';
 import type { TableSeat } from '../../objects/TableMatch.types';

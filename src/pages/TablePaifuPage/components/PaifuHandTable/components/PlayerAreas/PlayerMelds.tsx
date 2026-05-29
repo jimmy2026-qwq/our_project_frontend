@@ -2,7 +2,10 @@ import type { CSSProperties } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
 
-import type { MeldGroup, MeldTile } from '../../../../objects/replay';
+import type {
+  MeldGroup,
+  MeldTile,
+} from '../../../../objects/ReplaySnapshot.types';
 import { TileImage } from '../TileViews';
 import {
   meldPositionClasses,
@@ -12,7 +15,7 @@ import {
   riverTileImageWidth,
   riverTileTopCrop,
   riverTileVisibleHeight,
-} from '../../objects/paifuTableLayout';
+} from '../../functions/getPaifuTableLayout';
 
 export function PlayerMelds({
   melds,

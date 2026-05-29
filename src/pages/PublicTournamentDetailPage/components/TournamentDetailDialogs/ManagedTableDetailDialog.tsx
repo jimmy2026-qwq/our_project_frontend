@@ -11,14 +11,14 @@ import {
   DialogTitle,
   StatusPill,
 } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import { detailShellClassNames } from '../detailShell.styles';
 import type { TournamentDetailTableItem } from '../../objects/TournamentDetail.types';
 import {
   getSeatStatusLabel,
   getSeatStatusTone,
-} from '../../objects/TournamentDetail.view';
+} from '../../functions/getTournamentDetailView';
 
 export function ManagedTableDetailDialog({
   selectedManageTable,
@@ -91,7 +91,8 @@ export function ManagedTableDetailDialog({
             <Button
               variant="outline"
               onClick={() =>
-                selectedManageTable && onStartTable(selectedManageTable, tableDetail)
+                selectedManageTable &&
+                onStartTable(selectedManageTable, tableDetail)
               }
               disabled={!selectedManageTable || isSubmittingTableAction}
             >

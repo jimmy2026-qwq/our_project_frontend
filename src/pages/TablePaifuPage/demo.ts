@@ -1,5 +1,5 @@
 import type { SeatWind } from '@/objects/tournament';
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import type { TablePaifuDetail } from './types';
 
 const demoSeats = [
@@ -245,7 +245,9 @@ const roundThreeInitialHands = {
   'player-north': northManzuHand,
 };
 
-const eastAfterDiscardingRedFive = eastNineTerminals.filter((tile) => tile !== '0p');
+const eastAfterDiscardingRedFive = eastNineTerminals.filter(
+  (tile) => tile !== '0p',
+);
 
 const southWinningHand = [...southNineGatesTenpai, '0p'];
 
@@ -477,7 +479,9 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
           settlement: {
             riichiSticksDelta: 0,
             honbaPayment: 0,
-            notes: ['Nine terminals abortive draw. Dealer repeats into East 1 honba 1.'],
+            notes: [
+              'Nine terminals abortive draw. Dealer repeats into East 1 honba 1.',
+            ],
           },
         },
       },
@@ -597,7 +601,9 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
   };
 }
 
-export function createDemoTablePaifuForTable(table: TableDetail): TablePaifuDetail {
+export function createDemoTablePaifuForTable(
+  table: TableDetail,
+): TablePaifuDetail {
   const demoPaifu = createDemoTablePaifu(table.id);
   const tableSeatByWind = Object.fromEntries(
     table.seats.map((seat) => [seat.seat, seat]),
@@ -615,14 +621,14 @@ export function createDemoTablePaifuForTable(table: TableDetail): TablePaifuDeta
     ]),
   );
 
-  function mapPlayerId(playerId: string) {
+  function toDemoPlayerId(playerId: string) {
     return playerIdMap[playerId] ?? playerId;
   }
 
-  function mapInitialHands(initialHands: Record<string, string[]>) {
+  function toDemoInitialHands(initialHands: Record<string, string[]>) {
     return Object.fromEntries(
       Object.entries(initialHands).map(([playerId, tiles]) => [
-        mapPlayerId(playerId),
+        toDemoPlayerId(playerId),
         [...tiles],
       ]),
     );
@@ -653,7 +659,7 @@ export function createDemoTablePaifuForTable(table: TableDetail): TablePaifuDeta
 
       return {
         ...standing,
-        playerId: mapPlayerId(standing.playerId),
+        playerId: toDemoPlayerId(standing.playerId),
         seat,
         finalPoints:
           (tableSeat?.initialPoints ?? 25000) + (standing.finalPoints - 25000),
@@ -661,24 +667,24 @@ export function createDemoTablePaifuForTable(table: TableDetail): TablePaifuDeta
     }),
     rounds: demoPaifu.rounds.map((round) => ({
       ...round,
-      initialHands: mapInitialHands(round.initialHands),
+      initialHands: toDemoInitialHands(round.initialHands),
       actions: round.actions.map((action) => ({
         ...action,
-        actor: action.actor ? mapPlayerId(action.actor) : undefined,
+        actor: action.actor ? toDemoPlayerId(action.actor) : undefined,
       })),
       result: {
         ...round.result,
         winner: round.result.winner
-          ? mapPlayerId(round.result.winner)
+          ? toDemoPlayerId(round.result.winner)
           : undefined,
         target: round.result.target
-          ? mapPlayerId(round.result.target)
+          ? toDemoPlayerId(round.result.target)
           : undefined,
         scoreChanges: round.result.scoreChanges.map((change) => ({
           ...change,
-          playerId: mapPlayerId(change.playerId),
+          playerId: toDemoPlayerId(change.playerId),
         })),
-        tenpaiPlayerIds: round.result.tenpaiPlayerIds?.map(mapPlayerId),
+        tenpaiPlayerIds: round.result.tenpaiPlayerIds?.map(toDemoPlayerId),
       },
     })),
   };

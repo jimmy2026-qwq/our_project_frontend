@@ -18,7 +18,9 @@ interface DashboardPlaceholderProps extends DashboardPanelProps {
   roleNote: string;
 }
 
-function DashboardMetrics({ loadState }: Pick<DashboardPanelProps, 'loadState'>) {
+function DashboardMetrics({
+  loadState,
+}: Pick<DashboardPanelProps, 'loadState'>) {
   if (!loadState.dashboard) {
     return <EmptyState>No dashboard data is currently available.</EmptyState>;
   }
@@ -69,7 +71,11 @@ export function DashboardPlaceholder({
   );
 }
 
-export function DashboardPanel({ title, path, loadState }: DashboardPanelProps) {
+export function DashboardPanel({
+  title,
+  path,
+  loadState,
+}: DashboardPanelProps) {
   return (
     <DashboardPanelShell
       title={title}

@@ -12,12 +12,10 @@ import {
   DialogTitle,
   Textarea,
 } from '@/components/ui';
-import type { AppealSummary } from '@/pages/objects/tournament';
+import type { AppealSummary } from '@/pages/objects/TournamentViews';
 
-import {
-  type AppealDecisionType,
-  getAppealDecisionLabel,
-} from '../../objects/TournamentDetail.view';
+import type { AppealDecisionType } from '../../objects/TournamentDetailView.types';
+import { getAppealDecisionLabel } from '../../functions/getTournamentDetailView';
 
 export function AppealDecisionDialog({
   selectedAppealAction,

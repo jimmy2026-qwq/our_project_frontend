@@ -1,11 +1,10 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
 import { TournamentTableGetAPI } from '@/api/tournament/TournamentTableGetAPI';
-import {
-  mapTableDetail,
-  type TableDetail,
-} from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
+
+import { toTableDetail } from '../../../objects/TournamentOps.mappers';
 
 export function useTournamentTableDetailData(
   reloadKey: number,
@@ -25,7 +24,7 @@ export function useTournamentTableDetailData(
     async function loadTableDetail() {
       try {
         const table = await sendAPI(new TournamentTableGetAPI(selectedTableId));
-        const detail = mapTableDetail(table);
+        const detail = toTableDetail(table);
 
         if (!cancelled) {
           setTableDetail(detail);

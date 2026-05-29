@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { TournamentTableSummary } from '@/pages/objects/tournament';
+import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
 
 import type { LoadState } from '../objects/data';
 

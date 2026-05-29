@@ -1,9 +1,7 @@
-import type {
-  TournamentPublicProfile,
-} from './PublicTournamentDetailPage.types';
-import type { ClubSummary } from '@/pages/objects/club';
-import type { PlayerProfile } from '@/pages/objects/player';
-import type { TournamentStageRuleDraft } from './TournamentDetail.rules';
+import type { TournamentPublicProfile } from './PublicTournamentDetailPage.types';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { TournamentStageRuleDraft } from './TournamentDetailRule.types';
 
 export interface TournamentDetailTableItem {
   id: string;
@@ -14,13 +12,11 @@ export interface TournamentDetailTableItem {
   playerIds: string[];
 }
 
-export type TournamentHeaderStageAction =
-  | {
-      kind: 'scheduleStage' | 'completeStage' | 'settleTournament';
-      label: string;
-      stageId: string;
-    }
-  | null;
+export type TournamentHeaderStageAction = {
+  kind: 'scheduleStage' | 'completeStage' | 'settleTournament';
+  label: string;
+  stageId: string;
+} | null;
 
 export interface TournamentDetailWorkbenchState {
   profile: TournamentPublicProfile;

@@ -7,7 +7,7 @@ import { useDialog } from '@/app/dialog/useDialog';
 import type {
   TableDetail,
   TournamentTableSummary,
-} from '@/pages/objects/tournament';
+} from '@/pages/objects/TournamentViews';
 import type { SeatWind } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 import { useTableActionRunner } from './useTableActionRunner';
@@ -58,7 +58,8 @@ export function useTournamentTableActions({
     }
 
     const succeeded = await runTableAction(
-      () => sendAPI(new TournamentTableStartAPI(selectedTable.id, { operatorId })),
+      () =>
+        sendAPI(new TournamentTableStartAPI(selectedTable.id, { operatorId })),
       {
         successTitle: 'Table started',
         successMessage: `${selectedTable.tableCode} has entered the match flow.`,
@@ -101,7 +102,10 @@ export function useTournamentTableActions({
     }
 
     await runTableAction(
-      () => sendAPI(new TournamentTableResetAPI(selectedTable.id, { operatorId, note })),
+      () =>
+        sendAPI(
+          new TournamentTableResetAPI(selectedTable.id, { operatorId, note }),
+        ),
       {
         successTitle: 'Table reset',
         successMessage: `${selectedTable.tableCode} was reset successfully.`,

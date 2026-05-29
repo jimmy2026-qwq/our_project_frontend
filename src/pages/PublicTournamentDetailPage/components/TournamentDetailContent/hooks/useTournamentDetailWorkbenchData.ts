@@ -1,6 +1,9 @@
 import type { AuthSession } from '@/providers/auth/AuthSession';
 
-import type { DetailState, TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
+import type {
+  DetailState,
+  TournamentPublicProfile,
+} from '../../../objects/PublicTournamentDetailPage.types';
 import {
   loadTournamentProfileForWorkbench,
   useTournamentProfileData,
@@ -23,12 +26,8 @@ export function useTournamentDetailWorkbenchData({
     state,
     session,
   });
-  const {
-    availableClubs,
-    invitedClubs,
-    selectedClubId,
-    setSelectedClubId,
-  } = useTournamentClubOptions({ localProfile, session, state });
+  const { availableClubs, invitedClubs, selectedClubId, setSelectedClubId } =
+    useTournamentClubOptions({ localProfile, session, state });
   const { participantPlayers, setParticipantPlayers } =
     useTournamentParticipantData({ localProfile, state });
   const { availablePlayers, selectedPlayerId, setSelectedPlayerId } =

@@ -1,10 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 
 import { ListClubContributionAuditsAPI } from '@/api/club';
-import type {
-  ClubContributionAuditEntry,
-  ListEnvelope,
-} from '@/objects';
+import type { ClubContributionAuditEntry, ListEnvelope } from '@/objects';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 
@@ -73,7 +70,12 @@ export function useClubContributionChanges({
     return () => {
       cancelled = true;
     };
-  }, [canViewContributionChanges, contributionChangesRefreshKey, profile, session]);
+  }, [
+    canViewContributionChanges,
+    contributionChangesRefreshKey,
+    profile,
+    session,
+  ]);
 
   return {
     contributionChanges,

@@ -4,7 +4,7 @@ import { cx } from '@/components/ui/cx';
 import { detailShellClassNames } from '../../../detailShell.styles';
 import { InviteParticipantDialog } from './components/TournamentParticipantsDialogs';
 import { ClubParticipantList } from './components/TournamentParticipantsPanel';
-import { participantText } from './objects/TournamentDetailParticipantsText';
+import { participantText } from './functions/getTournamentDetailParticipantsText';
 import {
   ParticipantSection,
   PlayerRow,

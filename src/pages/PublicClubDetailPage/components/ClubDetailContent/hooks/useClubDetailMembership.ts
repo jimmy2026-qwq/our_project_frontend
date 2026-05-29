@@ -1,18 +1,13 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { GetClubAPI } from '@/api/club';
 import type { AuthSession } from '@/providers/auth/AuthSession';
-import {
-  hasClubAdminOverride,
-  type ClubApplication,
-} from '@/pages/objects/club';
-import type { PlayerProfile } from '@/pages/objects/player';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
-import {
-  loadPlayerContext,
-} from '../../../functions/loadClubApplicationData';
-import { loadTrackedApplication } from '../../../functions/loadTrackedClubApplication';
+import { hasClubAdminOverride } from '../../../functions/getClubAdminOverrides';
+import { useClubApplicationLoaders } from '../../../hooks/useClubApplicationLoaders';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 interface UseClubDetailMembershipParams {
@@ -21,10 +16,7 @@ interface UseClubDetailMembershipParams {
   isApplicationDialogOpen: boolean;
 }
 
-async function resolveClubAdminAccess(
-  clubId: string,
-  playerId: string,
-) {
+async function resolveClubAdminAccess(clubId: string, playerId: string) {
   try {
     const club = await sendAPI(new GetClubAPI(clubId));
 
@@ -43,6 +35,8 @@ export function useClubDetailMembership({
   session,
   isApplicationDialogOpen,
 }: UseClubDetailMembershipParams) {
+  const { loadPlayerContext, loadTrackedApplication } =
+    useClubApplicationLoaders();
   const [isCurrentMember, setIsCurrentMember] = useState(false);
   const [isCurrentClubAdmin, setIsCurrentClubAdmin] = useState(false);
   const [currentPlayerProfile, setCurrentPlayerProfile] =
@@ -75,10 +69,7 @@ export function useClubDetailMembership({
 
     const refreshMembershipStatus = () => {
       void (async () => {
-        const playerContext = await loadPlayerContext(
-          operatorId,
-          session.user.displayName,
-        );
+        const playerContext = await loadPlayerContext(operatorId);
 
         if (cancelled) {
           return;
@@ -128,7 +119,13 @@ export function useClubDetailMembership({
       cancelled = true;
       window.removeEventListener('focus', refreshMembershipStatus);
     };
-  }, [isApplicationDialogOpen, profile, session]);
+  }, [
+    isApplicationDialogOpen,
+    loadPlayerContext,
+    loadTrackedApplication,
+    profile,
+    session,
+  ]);
 
   return {
     isCurrentMember,

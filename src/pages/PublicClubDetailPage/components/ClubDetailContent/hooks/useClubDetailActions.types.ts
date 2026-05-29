@@ -8,7 +8,9 @@ import type { ClubDetailData } from './useClubDetailData';
 export interface ClubDetailActionContext {
   confirmDanger: ReturnType<typeof useDialog>['confirmDanger'];
   data: ClubDetailData;
-  notifyMutationResult: ReturnType<typeof useMutationNotice>['notifyMutationResult'];
+  notifyMutationResult: ReturnType<
+    typeof useMutationNotice
+  >['notifyMutationResult'];
   onRefreshDetail?: () => void;
   profile: ClubPublicProfile | null;
   workbench: ClubDetailWorkbenchState | null;

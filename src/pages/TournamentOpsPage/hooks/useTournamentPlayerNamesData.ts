@@ -1,11 +1,11 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
 import { GetPlayerAPI } from '@/api/player/GetPlayerAPI';
-import { mapPlayerProfile } from '@/pages/objects/player';
-import type { TournamentTableSummary } from '@/pages/objects/tournament';
+import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 
 import type { LoadState } from '../objects/data';
+import { toPlayerProfile } from '../objects/TournamentOps.mappers';
 
 export function useTournamentPlayerNamesData(
   tables: LoadState<TournamentTableSummary> | null,
@@ -36,7 +36,7 @@ export function useTournamentPlayerNamesData(
         missingPlayerIds.map(async (playerId) => {
           try {
             const profile = await sendAPI(new GetPlayerAPI(playerId)).then(
-              mapPlayerProfile,
+              toPlayerProfile,
             );
             return [playerId, profile.displayName] as const;
           } catch {

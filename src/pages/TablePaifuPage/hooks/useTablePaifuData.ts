@@ -13,12 +13,12 @@ import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
 import { createDemoTablePaifu } from '../demo';
-import { getInitialRoundIndex } from '../objects/replay';
+import { getInitialRoundIndex } from '../functions/getReplay';
 import {
   collectPaifuPlayerIds,
   getStageDisplayName,
-  mapPaifuSummary,
-} from '../objects/TablePaifuData.mappers';
+} from '../functions/getTablePaifuMetadata';
+import { toPaifuSummary } from '../objects/TablePaifuData.mappers';
 import type { TablePaifuDetail } from '../types';
 
 export function useTablePaifuData(tableId: string) {
@@ -90,7 +90,7 @@ export async function loadTablePaifus(
   return {
     ...envelope,
     items: await Promise.all(
-      envelope.items.map(mapPaifuSummary).map(enrichPaifu),
+      envelope.items.map(toPaifuSummary).map(enrichPaifu),
     ),
   };
 }

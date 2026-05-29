@@ -8,7 +8,7 @@ import {
   createRuleDraftFromStage,
   getDefaultRoundCount,
   normalizeKnockoutBracketSize,
-} from '../../../../../objects/TournamentDetail.rules';
+} from '../../../../../functions/getTournamentDetailRules';
 import type {
   RefreshTournamentProfile,
   UseTournamentDetailActionsParams,
@@ -75,22 +75,22 @@ export function useTournamentRulesActions({
               schedulingPoolSize: currentRuleStage.schedulingPoolSize ?? 4,
               pairingMethod: isKnockout
                 ? undefined
-                : currentRuleStage.swissRule?.pairingMethod ?? 'balanced-elo',
+                : (currentRuleStage.swissRule?.pairingMethod ?? 'balanced-elo'),
               carryOverPoints: isKnockout
                 ? undefined
-                : currentRuleStage.swissRule?.carryOverPoints ?? true,
+                : (currentRuleStage.swissRule?.carryOverPoints ?? true),
               maxRounds: isKnockout
                 ? undefined
-                : currentRuleStage.swissRule?.maxRounds ??
-                  currentRuleStage.roundCount,
+                : (currentRuleStage.swissRule?.maxRounds ??
+                  currentRuleStage.roundCount),
               thirdPlaceMatch: isKnockout
-                ? currentRuleStage.knockoutRule?.thirdPlaceMatch ?? false
+                ? (currentRuleStage.knockoutRule?.thirdPlaceMatch ?? false)
                 : undefined,
               repechageEnabled: isKnockout
-                ? currentRuleStage.knockoutRule?.repechageEnabled ?? false
+                ? (currentRuleStage.knockoutRule?.repechageEnabled ?? false)
                 : undefined,
               seedingPolicy: isKnockout
-                ? currentRuleStage.knockoutRule?.seedingPolicy ?? 'rating'
+                ? (currentRuleStage.knockoutRule?.seedingPolicy ?? 'rating')
                 : undefined,
             },
           ),

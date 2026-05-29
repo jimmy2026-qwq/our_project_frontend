@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
-import type { TournamentDetailTab } from '../../../objects/TournamentDetail.view';
+import type { TournamentDetailTab } from '../../../objects/TournamentDetailView.types';
 
 export function useTournamentRuntimeTabs({
   operatorId,

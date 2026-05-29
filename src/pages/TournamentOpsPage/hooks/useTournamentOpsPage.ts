@@ -3,12 +3,9 @@ import type {
   AppealSummary,
   MatchRecordSummary,
   TournamentTableSummary,
-} from '@/pages/objects/tournament';
-import {
-  getActiveTournament,
-  type LoadState,
-  type TournamentOpsState,
-} from '../objects/data';
+} from '@/pages/objects/TournamentViews';
+import { type LoadState, type TournamentOpsState } from '../objects/data';
+import { getActiveTournament } from '../functions/getTournamentOpsState';
 import {
   useTournamentOpsData,
   useTournamentOpsState,
@@ -23,8 +20,7 @@ export function useTournamentOpsPage() {
     !!session?.user.roles.isRegisteredPlayer &&
     (session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin);
   const shouldRedirectToPublic =
-    !session?.user.roles.isSuperAdmin &&
-    !session?.user.roles.isTournamentAdmin;
+    !session?.user.roles.isSuperAdmin && !session?.user.roles.isTournamentAdmin;
 
   const { state, setState } = useTournamentOpsState();
   const workbench = useTournamentOpsWorkbenchState();

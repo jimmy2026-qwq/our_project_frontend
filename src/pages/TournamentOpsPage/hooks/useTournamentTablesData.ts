@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 
 import { TournamentStageTablesAPI } from '@/api/tournament/TournamentStageTablesAPI';
-import type { ListEnvelope, TableListQuery, TournamentTableView } from '@/objects';
-import {
-  mapTournamentTable,
-  type TournamentTableSummary,
-} from '@/pages/objects/tournament';
+import type {
+  ListEnvelope,
+  TableListQuery,
+  TournamentTableView,
+} from '@/objects';
+import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 
 import type { LoadState, TournamentOpsState } from '../objects/data';
+import { toTournamentTableSummary } from '../objects/TournamentOps.mappers';
 
 export function useTournamentTablesData(
   state: TournamentOpsState,
@@ -84,7 +86,7 @@ function getTournamentTables(
     new TournamentStageTablesAPI(tournamentId, stageId, filters),
   ).then((envelope) => ({
     ...envelope,
-    items: envelope.items.map(mapTournamentTable),
+    items: envelope.items.map(toTournamentTableSummary),
   }));
 }
 

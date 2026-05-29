@@ -1,7 +1,4 @@
-﻿import {
-  AcceptClubTournamentAPI,
-  DeclineClubTournamentAPI,
-} from '@/api/club';
+﻿import { AcceptClubTournamentAPI, DeclineClubTournamentAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';

@@ -1,7 +1,7 @@
 import type { SeatWind } from '@/objects/tournament';
 
 import type { PaifuRoundSummary, TablePaifuDetail } from '../../../../types';
-import { seatOrder } from '../../../../objects/replay';
+import { seatOrder } from '../../../../functions/getReplay';
 import { CenterPoint } from './CenterPoint';
 import { CenterTableInfo } from './CenterTableInfo';
 import type {
@@ -9,7 +9,10 @@ import type {
   TableStickDisplay,
 } from './CenterTable.types';
 
-export type { CenterScoreDisplay, TableStickDisplay } from './CenterTable.types';
+export type {
+  CenterScoreDisplay,
+  TableStickDisplay,
+} from './CenterTable.types';
 export { RoundPicker } from './RoundPicker';
 
 interface CenterTableProps {

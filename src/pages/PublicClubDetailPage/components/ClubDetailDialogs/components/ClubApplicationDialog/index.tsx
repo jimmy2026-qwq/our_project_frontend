@@ -1,5 +1,3 @@
-import { useMemo } from 'react';
-
 import { FieldGroup, TextInputField, TextareaField } from '@/components/ui';
 import { ActionButton } from '@/components/ui';
 import {
@@ -12,44 +10,12 @@ import {
   DialogPortal,
   DialogSurface,
   DialogTitle,
-  StatusPill,
 } from '@/components/ui';
-import type {
-  ClubApplication,
-  ClubSummary,
-} from '@/pages/objects/club';
-import {
-  formatDateTime,
-} from '../../../../functions/getClubApplicationHelpers';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
+import { ClubApplicationSummaryCard } from './ClubApplicationSummaryCard';
 import { useClubApplicationDialog } from './hooks/useClubApplicationDialog';
-
-function getApplicationTone(status?: ClubApplication['status']) {
-  if (status === 'Approved') {
-    return 'success' as const;
-  }
-
-  if (status === 'Rejected' || status === 'Withdrawn') {
-    return 'danger' as const;
-  }
-
-  return 'warning' as const;
-}
-
-function getApplicationStatusLabel(status?: ClubApplication['status']) {
-  switch (status) {
-    case 'Pending':
-      return '待处理';
-    case 'Approved':
-      return '已通过';
-    case 'Rejected':
-      return '已拒绝';
-    case 'Withdrawn':
-      return '已撤回';
-    default:
-      return status ?? '--';
-  }
-}
 
 export function ClubApplicationDialog({
   club,
@@ -71,25 +37,6 @@ export function ClubApplicationDialog({
     onMembershipConfirmed,
   });
 
-  const summaryItems = useMemo(
-    () =>
-      dialog.application
-        ? [
-            {
-              label: '状态',
-              value: getApplicationStatusLabel(dialog.application.status),
-            },
-            { label: '申请编号', value: dialog.application.id },
-            {
-              label: '提交时间',
-              value: formatDateTime(dialog.application.createdAt),
-            },
-            { label: '备注', value: dialog.application.message || '--' },
-          ]
-        : [],
-    [dialog.application],
-  );
-
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
@@ -104,9 +51,7 @@ export function ClubApplicationDialog({
 
           <DialogBody className="px-6 py-5">
             {dialog.isLoading || !dialog.state ? (
-              <p className="m-0 text-[#9ab0c1]">
-                正在加载申请状态...
-              </p>
+              <p className="m-0 text-[#9ab0c1]">正在加载申请状态...</p>
             ) : (
               <div className="grid gap-5">
                 <FieldGroup>
@@ -132,28 +77,9 @@ export function ClubApplicationDialog({
                 ) : null}
 
                 {dialog.application ? (
-                  <div className="grid gap-3 rounded-[22px] border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] p-4">
-                    <div className="flex items-center justify-between gap-3">
-                      <strong>当前申请</strong>
-                      <StatusPill
-                        tone={getApplicationTone(dialog.application.status)}
-                      >
-                        {getApplicationStatusLabel(dialog.application.status)}
-                      </StatusPill>
-                    </div>
-                    <dl className="m-0 grid gap-2">
-                      {summaryItems.map((item) => (
-                        <div key={item.label} className="grid gap-1">
-                          <dt className="text-[0.82rem] text-[#9ab0c1]">
-                            {item.label}
-                          </dt>
-                          <dd className="m-0 text-[#f2f7fb]">
-                            {item.value}
-                          </dd>
-                        </div>
-                      ))}
-                    </dl>
-                  </div>
+                  <ClubApplicationSummaryCard
+                    application={dialog.application}
+                  />
                 ) : (
                   <p className="m-0 rounded-[18px] border border-dashed border-[rgba(176,223,229,0.14)] px-4 py-3 text-[#9ab0c1]">
                     当前还没有这家俱乐部的申请记录。
@@ -165,9 +91,7 @@ export function ClubApplicationDialog({
 
           <DialogFooter className="border-t border-[rgba(176,223,229,0.14)] px-6 py-5">
             <div className="grid w-full gap-3 sm:grid-cols-2">
-              <ActionButton
-                onClick={() => void dialog.refreshCurrentState()}
-              >
+              <ActionButton onClick={() => void dialog.refreshCurrentState()}>
                 {dialog.isRefreshing ? '刷新中...' : '刷新状态'}
               </ActionButton>
               <ActionButton

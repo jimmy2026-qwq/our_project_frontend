@@ -1,15 +1,15 @@
 import { Alert, Button, EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { AppealSummary } from '@/pages/objects/tournament';
+import type { AppealSummary } from '@/pages/objects/TournamentViews';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
 import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
+import type { AppealDecisionType } from '../../../../objects/TournamentDetailView.types';
 import {
-  type AppealDecisionType,
   formatDateTime,
   getAppealStatusLabel,
   getAppealStatusTone,
-} from '../../../../objects/TournamentDetail.view';
+} from '../../../../functions/getTournamentDetailView';
 
 export function TournamentDetailAppealsTab({
   appeals,

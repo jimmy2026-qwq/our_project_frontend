@@ -57,16 +57,12 @@ export function PublicHallLobbyMenu({
             !
           </span>
           <span className={lobbyClassNames.menuCopy}>
-            <span className={lobbyClassNames.menuEyebrow}>
-              {entry.label}
-            </span>
+            <span className={lobbyClassNames.menuEyebrow}>{entry.label}</span>
             <strong className={lobbyClassNames.menuTitle}>
               {entry.heading}
             </strong>
           </span>
-          <small className={lobbyClassNames.menuTag}>
-            {entry.detail}
-          </small>
+          <small className={lobbyClassNames.menuTag}>{entry.detail}</small>
         </button>
       ))}
     </div>

@@ -5,12 +5,10 @@ import {
 } from './components/PublicTournamentDetailFrame';
 import { detailShellClassNames } from './components/detailShell.styles';
 import { TournamentDetailContent } from './components/TournamentDetailContent';
-import {
-  AppealDecisionDialog,
-  ManagedTableDetailDialog,
-  PendingStartConfirmationDialog,
-  PublishBlockedDialog,
-} from './components/TournamentDetailDialogs';
+import { AppealDecisionDialog } from './components/TournamentDetailDialogs/AppealDecisionDialog';
+import { ManagedTableDetailDialog } from './components/TournamentDetailDialogs/ManagedTableDetailDialog';
+import { PendingStartConfirmationDialog } from './components/TournamentDetailDialogs/PendingStartConfirmationDialog';
+import { PublishBlockedDialog } from './components/TournamentDetailDialogs/PublishBlockedDialog';
 import { TournamentDetailHeader } from './components/TournamentDetailHeader';
 import { TournamentRulesDialog } from './components/TournamentDetailDialogs/TournamentRulesDialog';
 import { usePublicTournamentDetailPage } from './hooks/usePublicTournamentDetailPage';
@@ -62,9 +60,7 @@ export function PublicTournamentDetailPage() {
           waitingTables={page.content.waitingTables}
           workbench={page.workbench}
           onActiveTabChange={page.content.onActiveTabChange}
-          onAssignAppeal={(appeal) =>
-            void page.content.onAssignAppeal(appeal)
-          }
+          onAssignAppeal={(appeal) => void page.content.onAssignAppeal(appeal)}
           onInviteClub={page.content.onInviteClub}
           onInvitePlayer={page.content.onInvitePlayer}
           onOpenRulesDialog={page.content.onOpenRulesDialog}

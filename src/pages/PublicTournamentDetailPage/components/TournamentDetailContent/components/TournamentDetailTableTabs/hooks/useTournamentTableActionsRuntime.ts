@@ -5,12 +5,12 @@ import {
   TournamentTableStartAPI,
   TournamentTableUploadPaifuAPI,
 } from '@/api/tournament';
-import type { TableDetail } from '@/pages/objects/tournament';
-import { mapTableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { createDemoTablePaifuForTable } from '@/pages/TablePaifuPage/demo';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
+import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
 
 export function useTournamentTableActionsRuntime({
   operatorId,
@@ -30,7 +30,8 @@ export function useTournamentTableActionsRuntime({
   setTableDetailError: (message: string) => void;
 }) {
   const [isSubmittingTableAction, setIsSubmittingTableAction] = useState(false);
-  const [uploadingDemoPaifuTableId, setUploadingDemoPaifuTableId] = useState('');
+  const [uploadingDemoPaifuTableId, setUploadingDemoPaifuTableId] =
+    useState('');
   const [pendingStartConfirmation, setPendingStartConfirmation] = useState<{
     tableId: string;
     tableCode: string;
@@ -73,7 +74,7 @@ export function useTournamentTableActionsRuntime({
       const detail: TableDetail =
         knownDetail ??
         (await sendAPI(new TournamentTableGetAPI(table.id)).then(
-          mapTableDetail,
+          toTableDetail,
         ));
       const unreadyPlayerNames = detail.seats
         .filter((seat) => !seat.ready)
@@ -121,7 +122,7 @@ export function useTournamentTableActionsRuntime({
       setUploadingDemoPaifuTableId(table.id);
       setTableDetailError('');
       const detail = await sendAPI(new TournamentTableGetAPI(table.id)).then(
-        mapTableDetail,
+        toTableDetail,
       );
       const paifu = createDemoTablePaifuForTable(detail);
       await sendAPI(
@@ -129,7 +130,7 @@ export function useTournamentTableActionsRuntime({
           operatorId,
           paifu,
         }),
-      ).then(mapTableDetail);
+      ).then(toTableDetail);
       onScheduleSuccess?.();
     } catch (error) {
       setTableDetailError(

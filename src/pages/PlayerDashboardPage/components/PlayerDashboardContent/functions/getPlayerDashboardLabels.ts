@@ -1,4 +1,7 @@
-import type { AppealSummary, TournamentTableSummary } from '@/pages/objects/tournament';
+import type {
+  AppealSummary,
+  TournamentTableSummary,
+} from '@/pages/objects/TournamentViews';
 
 import type { PlayerDetailTab } from '../objects/PlayerDashboardContent.types';
 

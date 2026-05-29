@@ -1,24 +1,24 @@
 import { useEffect, useState } from 'react';
 
-import {
-  GetPublicClubAPI,
-  ListPublicClubsAPI,
-  ListClubsAPI,
-} from '@/api/club';
-import { mapClub, type ClubSummary } from '@/pages/objects/club';
+import { GetPublicClubAPI, ListPublicClubsAPI, ListClubsAPI } from '@/api/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import {
-  mapPublicClub,
-  mapPublicClubDetail,
-} from '../../../../../functions/mapTournamentDetail';
-import type { DetailState, TournamentPublicProfile } from '../../../../../objects/PublicTournamentDetailPage.types';
+  toClubSummary,
+  toPublicClubDetail,
+  toPublicClubSummary,
+} from '../../../../../objects/TournamentDetailClub.mappers';
+import type {
+  DetailState,
+  TournamentPublicProfile,
+} from '../../../../../objects/PublicTournamentDetailPage.types';
 import {
   createFallbackClubSummary,
-  mapClubPublicProfileToSummary,
-} from '../../../../../objects/TournamentDetail.workbench';
+  toClubPublicProfileSummary,
+} from '../../../../../functions/getTournamentClubSummary';
 
 export function useTournamentClubOptions({
   localProfile,
@@ -41,10 +41,10 @@ export function useTournamentClubOptions({
 
     const loadClubs = canManageTournament
       ? sendAPI(new ListClubsAPI({ limit: 100, offset: 0 })).then((envelope) =>
-          mapEnvelope(envelope, mapClub),
+          mapEnvelope(envelope, toClubSummary),
         )
       : sendAPI(new ListPublicClubsAPI({ limit: 100, offset: 0 })).then(
-          (envelope) => mapEnvelope(envelope, mapPublicClub),
+          (envelope) => mapEnvelope(envelope, toPublicClubSummary),
         );
 
     void loadClubs
@@ -84,9 +84,9 @@ export function useTournamentClubOptions({
       clubIds.map(async (clubId) => {
         try {
           const profile = await sendAPI(new GetPublicClubAPI(clubId)).then(
-            mapPublicClubDetail,
+            toPublicClubDetail,
           );
-          return mapClubPublicProfileToSummary(profile);
+          return toClubPublicProfileSummary(profile);
         } catch {
           return createFallbackClubSummary(clubId);
         }

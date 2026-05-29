@@ -95,20 +95,20 @@ export function useCreateTournamentDialogForm({
       setIsSubmitting(true);
       const tournament = await sendAPI(
         new TournamentCreateAPI({
-        name: trimmedName,
-        organizer: session.user.displayName || 'RiichiNexus',
-        startsAt: startsAt.toISOString(),
-        endsAt: endsAt.toISOString(),
-        adminId: operatorId,
-        stages: [
-          {
-            name: getDefaultStageName(trimmedName, format),
-            format,
-            order: 1,
-            roundCount: getDefaultRoundCount(format),
-            schedulingPoolSize: 4,
-          },
-        ],
+          name: trimmedName,
+          organizer: session.user.displayName || 'RiichiNexus',
+          startsAt: startsAt.toISOString(),
+          endsAt: endsAt.toISOString(),
+          adminId: operatorId,
+          stages: [
+            {
+              name: getDefaultStageName(trimmedName, format),
+              format,
+              order: 1,
+              roundCount: getDefaultRoundCount(format),
+              schedulingPoolSize: 4,
+            },
+          ],
         }),
       );
       const created = {

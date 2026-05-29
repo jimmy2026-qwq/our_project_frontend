@@ -1,4 +1,4 @@
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
 import { AppealDialog } from './AppealDialog';

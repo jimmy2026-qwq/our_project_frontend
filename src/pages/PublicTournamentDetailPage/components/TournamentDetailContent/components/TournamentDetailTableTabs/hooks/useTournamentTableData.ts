@@ -2,14 +2,17 @@ import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { TournamentStageTablesAPI } from '@/api/tournament';
-import { mapPlayerProfile } from '@/pages/objects/player';
-import { mapTournamentTable } from '@/pages/objects/tournament';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { getTournamentFormatLabel } from '../../../../../objects/TournamentDetail.rules';
+import { getTournamentFormatLabel } from '../../../../../functions/getTournamentDetailRules';
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
-import type { DetailState, TournamentPublicProfile } from '../../../../../objects/PublicTournamentDetailPage.types';
+import type {
+  DetailState,
+  TournamentPublicProfile,
+} from '../../../../../objects/PublicTournamentDetailPage.types';
+import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
+import { toTournamentTableSummary } from '../../../../../objects/TournamentDetailTable.mappers';
 
 export function useTournamentTableData({
   localProfile,
@@ -44,7 +47,7 @@ export function useTournamentTableData({
                 offset: 0,
               }),
             ).then((tableEnvelope) =>
-              mapEnvelope(tableEnvelope, mapTournamentTable),
+              mapEnvelope(tableEnvelope, toTournamentTableSummary),
             );
 
             const stageDisplayName = `${currentProfile.name} ${getTournamentFormatLabel(stage.format)}`;
@@ -97,7 +100,7 @@ export function useTournamentTableData({
         missingIds.map(async (playerId) => {
           try {
             const player = await sendAPI(new GetPlayerAPI(playerId)).then(
-              mapPlayerProfile,
+              toPlayerProfile,
             );
             return [playerId, player.displayName] as const;
           } catch {

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { TournamentTableGetAPI } from '@/api/tournament';
-import type { TableDetail } from '@/pages/objects/tournament';
-import { mapTableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
+import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
 
 export function useTournamentManagedTableDetail() {
   const [selectedManageTable, setSelectedManageTable] =
@@ -25,7 +25,7 @@ export function useTournamentManagedTableDetail() {
     setIsLoadingTableDetail(true);
 
     void sendAPI(new TournamentTableGetAPI(selectedManageTable.id))
-      .then(mapTableDetail)
+      .then(toTableDetail)
       .then((detail) => {
         if (!cancelled) {
           setTableDetail(detail);

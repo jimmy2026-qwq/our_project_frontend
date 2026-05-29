@@ -8,11 +8,11 @@ import type { DetailState } from '../../../objects/PublicTournamentDetailPage.ty
 import {
   createRuleDraftFromStage,
   getCurrentRuleStage,
-} from '../../../objects/TournamentDetail.rules';
-import type { TournamentStageRuleDraft } from '../../../objects/TournamentDetail.rules';
+} from '../../../functions/getTournamentDetailRules';
+import type { TournamentStageRuleDraft } from '../../../objects/TournamentDetailRule.types';
 import { useTournamentDetailActions } from './useTournamentDetailActions';
 import { useTournamentDetailWorkbenchData } from './useTournamentDetailWorkbenchData';
-import { buildTournamentDetailWorkbench } from '../../../objects/TournamentDetailWorkbenchState';
+import { buildTournamentDetailWorkbench } from '../../../functions/buildTournamentDetailWorkbench';
 
 interface UseTournamentDetailWorkbenchParams {
   state: DetailState<TournamentPublicProfile>;

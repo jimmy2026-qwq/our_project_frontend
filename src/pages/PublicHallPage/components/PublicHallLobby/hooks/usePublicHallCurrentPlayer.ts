@@ -1,8 +1,8 @@
 import { GetCurrentPlayerAPI } from '@/api/player';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
-import { mapPlayerProfile } from '@/pages/objects/player';
 import { sendAPI } from '@/system/api';
 import type { PublicHallViewerContext } from '../../../objects/PublicHallPage.types';
+import { toPlayerProfile } from '../../../objects/PublicHall.mappers';
 
 export function usePublicHallCurrentPlayer(
   session: PublicHallViewerContext['session'],
@@ -13,8 +13,6 @@ export function usePublicHallCurrentPlayer(
       return null;
     }
 
-    return sendAPI(new GetCurrentPlayerAPI(operatorId)).then(
-      mapPlayerProfile,
-    );
+    return sendAPI(new GetCurrentPlayerAPI(operatorId)).then(toPlayerProfile);
   }, [operatorId, session?.user.roles.isRegisteredPlayer]);
 }

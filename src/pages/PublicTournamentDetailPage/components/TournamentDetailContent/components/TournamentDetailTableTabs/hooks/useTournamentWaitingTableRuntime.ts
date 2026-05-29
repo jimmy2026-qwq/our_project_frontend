@@ -4,11 +4,11 @@ import {
   TournamentTableGetAPI,
   TournamentTableUpdateOwnReadyAPI,
 } from '@/api/tournament';
-import type { TableDetail } from '@/pages/objects/tournament';
-import { mapTableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
+import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
 
 export function useTournamentWaitingTableRuntime({
   operatorId,
@@ -47,7 +47,7 @@ export function useTournamentWaitingTableRuntime({
         try {
           const detail = await sendAPI(
             new TournamentTableGetAPI(table.id),
-          ).then(mapTableDetail);
+          ).then(toTableDetail);
           return [table.id, detail] as const;
         } catch {
           return [table.id, null] as const;
@@ -84,7 +84,7 @@ export function useTournamentWaitingTableRuntime({
           operatorId,
           ready: !isReady,
         }),
-      ).then(mapTableDetail);
+      ).then(toTableDetail);
       setParticipantWaitingTableDetails((current) => ({
         ...current,
         [tableId]: nextDetail,

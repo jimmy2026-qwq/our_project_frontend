@@ -6,8 +6,11 @@ import {
   getReplaySnapshot,
   getReplayStepCount,
   isExhaustiveDrawResultStep,
-} from '../../../objects/replay';
-import { createScoreDisplays, createTableSticks } from '../objects/PaifuHandTableReplay.helpers';
+} from '../../../functions/getReplay';
+import {
+  createScoreDisplays,
+  createTableSticks,
+} from '../functions/getPaifuHandTableReplay';
 import { usePaifuOperationFlash } from './usePaifuOperationFlash';
 import { usePaifuSettlementAnimation } from './usePaifuSettlementAnimation';
 
@@ -32,7 +35,8 @@ export function usePaifuHandTableReplay({
     [paifu, replayStep, round],
   );
   const hasRoundScoreDelta = useMemo(
-    () => round.result.scoreChanges.some((scoreChange) => scoreChange.delta !== 0),
+    () =>
+      round.result.scoreChanges.some((scoreChange) => scoreChange.delta !== 0),
     [round],
   );
   const settlement = usePaifuSettlementAnimation({
@@ -79,7 +83,13 @@ export function usePaifuHandTableReplay({
         selectedRoundIndex,
         settlementProgress: settlement.settlementProgress,
       }),
-    [replayStep, round, rounds, selectedRoundIndex, settlement.settlementProgress],
+    [
+      replayStep,
+      round,
+      rounds,
+      selectedRoundIndex,
+      settlement.settlementProgress,
+    ],
   );
 
   useEffect(() => {

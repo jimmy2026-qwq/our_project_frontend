@@ -5,11 +5,7 @@ import { SectionIntro } from '@/components/ui';
 const tournamentOpsSectionClassName =
   'grid gap-[22px] rounded-[32px] bg-[rgba(9,21,33,0.86)] px-[30px] py-7';
 
-export function TournamentOpsPageFrame({
-  children,
-}: {
-  children: ReactNode;
-}) {
+export function TournamentOpsPageFrame({ children }: { children: ReactNode }) {
   return (
     <section className={tournamentOpsSectionClassName}>
       <SectionIntro

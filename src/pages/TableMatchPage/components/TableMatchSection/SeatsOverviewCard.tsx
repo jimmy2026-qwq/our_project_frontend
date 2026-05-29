@@ -6,7 +6,7 @@ import {
   CardTitle,
   StatusPill,
 } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/tournament';
+import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import {
   getSeatStatusLabel,
@@ -50,7 +50,9 @@ export function SeatsOverviewCard({
         {isRegisteredPlayer && ownSeat ? (
           <div className="flex flex-wrap items-center justify-between gap-3 rounded-[22px] border border-[rgba(236,197,122,0.22)] bg-[rgba(236,197,122,0.08)] px-4 py-3 text-sm text-[#c7d6e2]">
             <div className="grid gap-1">
-              <strong className="text-[#f2f7fb]">我的座位：{ownSeat.seat}</strong>
+              <strong className="text-[#f2f7fb]">
+                我的座位：{ownSeat.seat}
+              </strong>
               <span>
                 {ownSeat.disconnected
                   ? '当前座位已标记为断线，暂时不能在这里修改准备状态。'

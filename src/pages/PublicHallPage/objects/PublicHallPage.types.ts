@@ -1,9 +1,5 @@
-import type {
-  ListEnvelope,
-  StageStatus,
-  TournamentStatus,
-} from '@/objects';
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ListEnvelope, StageStatus, TournamentStatus } from '@/objects';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 
 export type DataSource = 'api' | 'mock';

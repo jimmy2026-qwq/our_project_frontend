@@ -1,4 +1,4 @@
-import type { ClubSummary } from '@/pages/objects/club';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
 import type { HomeClubApplicationState } from '../objects/ClubApplication.types';
 

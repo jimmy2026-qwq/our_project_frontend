@@ -1,11 +1,9 @@
 ﻿import { ReviewClubApplicationAPI } from '@/api/club';
-import {
-  mapClubApplicationView,
-  type ClubApplication,
-} from '@/pages/objects/club';
-import { upsertClubApplicationInboxItem } from '@/pages/objects/club';
+import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
 import { sendAPI } from '@/system/api';
 
+import { upsertTrackedClubApplication } from '../../../functions/getClubApplicationTracker';
+import { toClubApplicationView } from '../../../objects/ClubDetailApplication.mappers';
 import type { ClubDetailActionContext } from './useClubDetailActions.types';
 
 export function useClubApplicationActions({
@@ -24,7 +22,11 @@ export function useClubApplicationActions({
     applicationId: string,
     decision: 'approve' | 'reject',
   ) {
-    if (!workbench?.profile.id || !workbench.operatorId || !canReviewApplications) {
+    if (
+      !workbench?.profile.id ||
+      !workbench.operatorId ||
+      !canReviewApplications
+    ) {
       return;
     }
 
@@ -55,9 +57,9 @@ export function useClubApplicationActions({
           : {}),
       }),
     )
-      .then(mapClubApplicationView)
+      .then(toClubApplicationView)
       .then((reviewedApplication) => {
-        upsertClubApplicationInboxItem({
+        upsertTrackedClubApplication({
           id: reviewedApplication.applicationId,
           clubId: reviewedApplication.clubId,
           clubName: reviewedApplication.clubName,

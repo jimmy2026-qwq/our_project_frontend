@@ -6,4 +6,3 @@ const memberHubPageClassName =
 export function MemberHubPageShell({ children }: { children: ReactNode }) {
   return <section className={memberHubPageClassName}>{children}</section>;
 }
-
