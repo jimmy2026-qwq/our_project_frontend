@@ -1,7 +1,7 @@
 import type { AppealAttachmentView } from './AppealAttachmentView';
 import type { AppealDecisionLogView } from './AppealDecisionLogView';
-import type { AppealPriority } from './AppealPriority';
-import type { AppealStatus } from './AppealStatus';
+import type { AppealPriority } from '../AppealPriority';
+import type { AppealStatus } from '../AppealStatus';
 
 export interface AppealTicketView {
   appealId: string;
@@ -21,4 +21,3 @@ export interface AppealTicketView {
   updatedAt: string;
   resolution: string | null;
 }
-

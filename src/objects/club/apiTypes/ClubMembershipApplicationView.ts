@@ -1,4 +1,4 @@
-import type { ClubApplicationStatus } from './ClubApplicationStatus';
+import type { ClubApplicationStatus } from '../ClubApplicationStatus';
 import type { ClubMembershipApplicantView } from './ClubMembershipApplicantView';
 
 export interface ClubMembershipApplicationView {

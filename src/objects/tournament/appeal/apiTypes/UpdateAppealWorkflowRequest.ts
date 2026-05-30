@@ -1,4 +1,4 @@
-import type { AppealPriority } from './AppealPriority';
+import type { AppealPriority } from '../AppealPriority';
 
 export interface UpdateAppealWorkflowRequest {
   operatorId: string;
@@ -9,4 +9,3 @@ export interface UpdateAppealWorkflowRequest {
   clearDueAt?: boolean;
   note?: string;
 }
-

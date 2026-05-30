@@ -1,5 +1,5 @@
 import type { RankSnapshotView } from '@/objects/tournament';
-import type { PlayerStatus } from './PlayerStatus';
+import type { PlayerStatus } from '../PlayerStatus';
 import type { PlayerRoleFlagsView } from './PlayerRoleFlagsView';
 
 export interface PlayerProfileView {

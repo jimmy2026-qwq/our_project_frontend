@@ -1,5 +1,5 @@
-import type { AppealDecisionType } from './AppealDecisionType';
-import type { AppealTableResolution } from './AppealTableResolution';
+import type { AppealDecisionType } from '../AppealDecisionType';
+import type { AppealTableResolution } from '../AppealTableResolution';
 
 export interface AdjudicateAppealRequest {
   operatorId: string;
@@ -8,4 +8,3 @@ export interface AdjudicateAppealRequest {
   tableResolution?: AppealTableResolution;
   note?: string;
 }
-

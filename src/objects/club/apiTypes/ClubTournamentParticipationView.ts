@@ -1,5 +1,5 @@
 import type { TournamentStatus } from '@/objects/tournament';
-import type { ClubTournamentParticipationStatus } from './ClubTournamentParticipationStatus';
+import type { ClubTournamentParticipationStatus } from '../ClubTournamentParticipationStatus';
 
 export interface ClubTournamentParticipationView {
   clubId: string;

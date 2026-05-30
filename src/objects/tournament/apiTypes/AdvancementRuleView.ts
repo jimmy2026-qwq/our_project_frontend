@@ -1,4 +1,4 @@
-import type { AdvancementRuleType } from './AdvancementRuleType';
+import type { AdvancementRuleType } from '../AdvancementRuleType';
 
 export interface AdvancementRuleView {
   ruleType: AdvancementRuleType;

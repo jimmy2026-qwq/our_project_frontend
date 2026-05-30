@@ -1,7 +1,7 @@
-import type { AdvancementRuleView } from '../AdvancementRuleView';
-import type { KnockoutRuleConfigView } from '../KnockoutRuleConfigView';
+import type { AdvancementRuleView } from './AdvancementRuleView';
+import type { KnockoutRuleConfigView } from './KnockoutRuleConfigView';
 import type { StageStatus } from '../StageStatus';
-import type { SwissRuleConfigView } from '../SwissRuleConfigView';
+import type { SwissRuleConfigView } from './SwissRuleConfigView';
 import type { TournamentFormat } from '../TournamentFormat';
 import type { TournamentLineupSubmissionView } from './TournamentLineupSubmissionView';
 

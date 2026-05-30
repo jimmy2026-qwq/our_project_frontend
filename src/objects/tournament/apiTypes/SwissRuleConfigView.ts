@@ -1,4 +1,4 @@
-import type { SwissPairingMethod } from './SwissPairingMethod';
+import type { SwissPairingMethod } from '../SwissPairingMethod';
 
 export interface SwissRuleConfigView {
   pairingMethod: SwissPairingMethod;

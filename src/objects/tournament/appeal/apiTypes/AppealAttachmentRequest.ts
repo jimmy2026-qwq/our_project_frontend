@@ -1,5 +1,5 @@
-import type { AppealAttachmentMediaKind } from './AppealAttachmentMediaKind';
-import type { AppealAttachmentStorageKind } from './AppealAttachmentStorageKind';
+import type { AppealAttachmentMediaKind } from '../AppealAttachmentMediaKind';
+import type { AppealAttachmentStorageKind } from '../AppealAttachmentStorageKind';
 
 export interface AppealAttachmentRequest {
   name: string;
@@ -13,4 +13,3 @@ export interface AppealAttachmentRequest {
   uploadedAt?: string | null;
   retentionUntil?: string | null;
 }
-

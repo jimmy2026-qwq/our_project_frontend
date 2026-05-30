@@ -1,4 +1,4 @@
-import type { KnockoutSeedingPolicy } from './KnockoutSeedingPolicy';
+import type { KnockoutSeedingPolicy } from '../KnockoutSeedingPolicy';
 
 export interface KnockoutRuleConfigView {
   bracketSize: number | null;

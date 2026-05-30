@@ -1,5 +1,5 @@
 import type { PlayerStatus } from '@/objects/player';
-import type { RankSnapshotView } from '../RankSnapshotView';
+import type { RankSnapshotView } from './RankSnapshotView';
 
 export interface TournamentParticipantPlayerView {
   playerId: string;
