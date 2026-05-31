@@ -1,20 +1,9 @@
-import type { SeatWind, TableSeat } from '@/objects/tournament';
-
-export type HandOutcome = 'Tsumo' | 'Ron' | 'ExhaustiveDraw' | 'AbortiveDraw';
-
-export type PaifuActionType =
-  | 'Draw'
-  | 'Discard'
-  | 'Chi'
-  | 'Pon'
-  | 'Kan'
-  | 'Riichi'
-  | 'DoraReveal'
-  | 'Win'
-  | 'DrawGame'
-  | 'AddedKan'
-  | 'ClosedKan'
-  | 'OpenKan';
+import type {
+  HandOutcome,
+  PaifuActionType,
+  SeatWind,
+  TableSeat,
+} from '@/objects/tournament';
 
 export interface PaifuYaku {
   name: string;

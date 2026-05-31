@@ -1,4 +1,4 @@
-import type { StageStatus, TournamentStatus } from '@/objects';
+import type { ClubPrivilegeCode, StageStatus, TournamentStatus } from '@/objects';
 import type {
   AdvancementRuleView,
   KnockoutRuleConfigView,
@@ -56,7 +56,7 @@ export interface ClubPublicProfile {
     status?: 'Active' | 'Inactive' | 'Banned';
     isAdmin?: boolean;
     internalTitle?: string | null;
-    privileges?: string[];
+    privileges?: ClubPrivilegeCode[];
   }>;
   recentMatches?: Array<{
     matchRecordId?: string;

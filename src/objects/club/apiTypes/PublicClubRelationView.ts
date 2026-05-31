@@ -1,3 +1,5 @@
+import type { ClubRelationKind } from '../ClubRelationKind';
+
 export interface PublicClubRelationView {
-  relation: 'Alliance' | 'Rivalry' | 'Neutral';
+  relation: ClubRelationKind;
 }

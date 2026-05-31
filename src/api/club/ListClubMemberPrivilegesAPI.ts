@@ -1,10 +1,15 @@
 import { APIMessage } from '@/system/api';
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
-import type { ClubMemberPrivilegeListQuery, ClubMemberPrivilegeSnapshotView, ListEnvelope } from '@/objects';
+import type {
+  ClubMemberPrivilegeListQuery,
+  ClubMemberPrivilegeSnapshotView,
+  ClubPrivilegeCode,
+  ListEnvelope,
+} from '@/objects';
 
 interface ClubMemberPrivilegeListQueryTransport {
   playerId: [] | [string];
-  privilege: [] | [string];
+  privilege: [] | [ClubPrivilegeCode];
   rankCode: [] | [string];
   limit: [] | [number];
   offset: [] | [number];

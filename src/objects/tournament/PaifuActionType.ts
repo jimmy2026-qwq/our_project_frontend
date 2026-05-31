@@ -1,4 +1,4 @@
-export type TournamentPaifuActionType =
+export type PaifuActionType =
   | 'Draw'
   | 'Discard'
   | 'Chi'

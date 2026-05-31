@@ -1,9 +1,9 @@
-import type { TournamentPaifuActionType } from './TournamentPaifuActionType';
+import type { PaifuActionType } from '../PaifuActionType';
 
 export interface TournamentPaifuActionView {
   sequenceNo: number;
   actor: string | null;
-  actionType: TournamentPaifuActionType | string;
+  actionType: PaifuActionType | string;
   tile: string | null;
   shantenAfterAction: number | null;
   handTilesAfterAction: string[] | null;

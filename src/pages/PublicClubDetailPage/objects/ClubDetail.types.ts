@@ -3,6 +3,7 @@ import type {
   ClubApplicationView,
 } from '@/pages/objects/ClubApplicationViews';
 import type { ClubContributionAuditEntry } from '@/objects';
+import type { ClubPrivilegeCode } from '@/objects/club';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import type { ClubPublicProfile } from './PublicClubDetailPage.types';
 
@@ -12,7 +13,7 @@ export interface ClubAdminMemberEntry extends PlayerProfile {
   contribution?: number;
   rankCode?: string;
   rankLabel?: string;
-  privileges?: string[];
+  privileges?: ClubPrivilegeCode[];
   internalTitle?: string | null;
 }
 
@@ -21,7 +22,7 @@ export interface ClubContributionTitleField {
   defaultLabel: string;
   displayLabel: string;
   minimumContribution?: number;
-  privileges?: string[];
+  privileges?: ClubPrivilegeCode[];
 }
 
 export interface ClubContributionTitleDraft {

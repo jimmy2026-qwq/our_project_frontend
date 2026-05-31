@@ -1,5 +1,6 @@
 export * from './ClubView';
 export * from './ClubApplicationStatus';
+export * from './ClubPrivilegeCode';
 export * from './ClubPrivilegeDefinition';
 export * from './ClubRankNodeView';
 export * from './ClubRelationView';

@@ -1,4 +1,4 @@
-import type { TournamentSettlementStatus } from './TournamentSettlementStatus';
+import type { TournamentSettlementStatus } from '../TournamentSettlementStatus';
 
 export interface TournamentSettlementQuery {
   stageId?: string;

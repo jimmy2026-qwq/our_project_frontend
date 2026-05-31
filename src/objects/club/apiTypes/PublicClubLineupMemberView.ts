@@ -1,4 +1,5 @@
 import type { PlayerStatus } from '@/objects/player';
+import type { ClubPrivilegeCode } from '../ClubPrivilegeCode';
 import type { RankSnapshotView } from '@/objects/tournament';
 
 export interface PublicClubLineupMemberView {
@@ -9,5 +10,5 @@ export interface PublicClubLineupMemberView {
   status: PlayerStatus;
   isAdmin: boolean;
   internalTitle: string | null;
-  privileges: string[];
+  privileges: ClubPrivilegeCode[];
 }

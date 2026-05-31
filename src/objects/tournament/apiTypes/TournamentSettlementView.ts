@@ -1,6 +1,6 @@
 import type { TournamentSettlementAdjustmentView } from './TournamentSettlementAdjustmentView';
 import type { TournamentSettlementEntryView } from './TournamentSettlementEntryView';
-import type { TournamentSettlementStatus } from './TournamentSettlementStatus';
+import type { TournamentSettlementStatus } from '../TournamentSettlementStatus';
 
 export interface TournamentSettlementView {
   settlementId: string;
@@ -21,4 +21,3 @@ export interface TournamentSettlementView {
   entries: TournamentSettlementEntryView[];
   summary: string;
 }
-

@@ -1,6 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 
 import { AuthCheckPermissionAPI } from '@/api/auth';
+import { ClubPrivilegeCodes, type ClubPrivilegeCode } from '@/objects/club';
 import type { Permission } from '@/objects/auth';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import { sendAPI } from '@/system/api';
@@ -10,7 +11,7 @@ import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.ty
 interface UseClubDetailPermissionsParams {
   profile: ClubPublicProfile | null;
   session: AuthSession | null;
-  currentMemberPrivileges: string[];
+  currentMemberPrivileges: ClubPrivilegeCode[];
 }
 
 export function useClubDetailPermissions({
@@ -28,7 +29,7 @@ export function useClubDetailPermissions({
   });
 
   const hasApproveRosterPrivilege =
-    currentMemberPrivileges.includes('approve-roster');
+    currentMemberPrivileges.includes(ClubPrivilegeCodes.ApproveRoster);
   const canReviewApplications =
     baseClubPermissions.canManageMembership || hasApproveRosterPrivilege;
   const canRemoveMembers = canReviewApplications;

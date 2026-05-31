@@ -1,5 +1,7 @@
+import type { ClubPrivilegeCode } from './ClubPrivilegeCode';
+
 export interface ClubPrivilegeDefinition {
-  code: string;
+  code: ClubPrivilegeCode;
   label: string;
   description: string;
   delegatedPermissions: string[];

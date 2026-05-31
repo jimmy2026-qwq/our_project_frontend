@@ -1,7 +1,7 @@
 import type { CurrentSessionGuestSessionView } from './CurrentSessionGuestSessionView';
 import type { CurrentSessionPlayerView } from './CurrentSessionPlayerView';
 import type { CurrentSessionRoleFlags } from './CurrentSessionRoleFlags';
-import type { SessionPrincipalKind } from './SessionPrincipalKind';
+import type { SessionPrincipalKind } from '../SessionPrincipalKind';
 
 export interface CurrentSessionView {
   principalKind: SessionPrincipalKind;

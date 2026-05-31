@@ -1,11 +1,11 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { ClubView, UpdateClubRelationRequest } from '@/objects/club';
+import type { ClubRelationKind, ClubView, UpdateClubRelationRequest } from '@/objects/club';
 
 export class UpdateClubRelationAPI extends APIMessage<ClubView> {
   readonly operatorId: string;
   readonly targetClubId: string;
-  readonly relation: string;
+  readonly relation: ClubRelationKind;
   readonly note: string[];
 
   constructor(

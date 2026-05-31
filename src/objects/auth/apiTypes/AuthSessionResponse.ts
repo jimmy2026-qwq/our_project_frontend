@@ -1,4 +1,4 @@
-import type { CurrentSessionRoleFlags } from '../CurrentSessionRoleFlags';
+import type { CurrentSessionRoleFlags } from './CurrentSessionRoleFlags';
 
 export interface AuthSessionResponse {
   userId: string;

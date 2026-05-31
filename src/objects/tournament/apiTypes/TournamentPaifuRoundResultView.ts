@@ -1,10 +1,10 @@
-import type { TournamentPaifuHandOutcome } from './TournamentPaifuHandOutcome';
+import type { HandOutcome } from '../HandOutcome';
 import type { TournamentPaifuRoundSettlementView } from './TournamentPaifuRoundSettlementView';
 import type { TournamentPaifuScoreChangeView } from './TournamentPaifuScoreChangeView';
 import type { TournamentPaifuYakuView } from './TournamentPaifuYakuView';
 
 export interface TournamentPaifuRoundResultView {
-  outcome: TournamentPaifuHandOutcome | string;
+  outcome: HandOutcome | string;
   winner: string | null;
   target: string | null;
   han: number | null;
