@@ -1,15 +1,15 @@
 import { APIMessage } from '@/system/api';
-import type { AdvanceKnockoutStageRequest, Table } from '@/objects';
+import type { TournamentTableView } from '@/objects';
 
-export class TournamentStageAdvanceAPI extends APIMessage<Table[]> {
+export class TournamentStageAdvanceAPI extends APIMessage<TournamentTableView[]> {
   readonly tournamentId: string;
   readonly stageId: string;
-  readonly request: AdvanceKnockoutStageRequest;
+  readonly operatorId?: string;
 
-  constructor(tournamentId: string, stageId: string, request: AdvanceKnockoutStageRequest) {
+  constructor(tournamentId: string, stageId: string, operatorId?: string) {
     super();
     this.tournamentId = tournamentId;
     this.stageId = stageId;
-    this.request = request;
+    this.operatorId = operatorId;
   }
 }

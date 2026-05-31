@@ -1,5 +1,5 @@
 import type { AppealAttachmentView } from './AppealAttachmentView';
-import type { AppealDecisionLogView } from './AppealDecisionLogView';
+import type { AppealDecisionLog } from '../AppealDecisionLog';
 import type { AppealPriority } from '../AppealPriority';
 import type { AppealStatus } from '../AppealStatus';
 
@@ -15,7 +15,7 @@ export interface AppealTicketView {
   assigneeId: string | null;
   dueAt: string | null;
   status: AppealStatus;
-  logs: AppealDecisionLogView[];
+  logs: AppealDecisionLog[];
   reopenCount: number;
   createdAt: string;
   updatedAt: string;

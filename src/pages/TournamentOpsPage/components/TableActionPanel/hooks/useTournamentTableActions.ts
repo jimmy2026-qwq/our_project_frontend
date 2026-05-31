@@ -59,7 +59,7 @@ export function useTournamentTableActions({
 
     const succeeded = await runTableAction(
       () =>
-        sendAPI(new TournamentTableStartAPI(selectedTable.id, { operatorId })),
+        sendAPI(new TournamentTableStartAPI(selectedTable.id, operatorId)),
       {
         successTitle: 'Table started',
         successMessage: `${selectedTable.tableCode} has entered the match flow.`,

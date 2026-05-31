@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { TournamentPaifuSummaryView } from '@/objects';
+import type { Paifu } from '@/objects';
 
-export class TournamentPaifuGetAPI extends APIMessage<TournamentPaifuSummaryView> {
+export class TournamentPaifuGetAPI extends APIMessage<Paifu> {
   readonly paifuId: string;
 
   constructor(paifuId: string) {

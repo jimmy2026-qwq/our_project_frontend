@@ -131,7 +131,7 @@ export function useTournamentLifecycleActions({
         new TournamentStageCompleteAPI(
           workbench.profile.id,
           workbench.headerStageAction.stageId,
-          { operatorId },
+          operatorId,
         ),
       );
       await refreshTournamentProfile(workbench.profile.id);

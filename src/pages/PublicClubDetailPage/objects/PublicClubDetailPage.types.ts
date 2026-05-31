@@ -1,8 +1,8 @@
 import type { ClubPrivilegeCode, StageStatus, TournamentStatus } from '@/objects';
 import type {
-  AdvancementRuleView,
-  KnockoutRuleConfigView,
-  SwissRuleConfigView,
+  AdvancementRule,
+  KnockoutRuleConfig,
+  SwissRuleConfig,
 } from '@/objects/tournament';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import type { AuthSession } from '@/providers/auth/AuthSession';
@@ -117,9 +117,9 @@ export interface TournamentPublicProfile {
     pendingTablePlanCount: number;
     standings?: unknown | null;
     bracket?: unknown | null;
-    advancementRule?: AdvancementRuleView;
-    swissRule?: SwissRuleConfigView | null;
-    knockoutRule?: KnockoutRuleConfigView | null;
+    advancementRule?: AdvancementRule;
+    swissRule?: SwissRuleConfig | null;
+    knockoutRule?: KnockoutRuleConfig | null;
     lineupSubmissions?: Array<{
       submissionId: string;
       clubId: string;

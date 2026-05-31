@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { ListEnvelope, TournamentWhitelistEntryView, TournamentWhitelistQuery } from '@/objects';
+import type { ListEnvelope, TournamentWhitelistEntry, TournamentWhitelistQuery } from '@/objects';
 
-export class TournamentWhitelistListAPI extends APIMessage<ListEnvelope<TournamentWhitelistEntryView>> {
+export class TournamentWhitelistListAPI extends APIMessage<ListEnvelope<TournamentWhitelistEntry>> {
   readonly tournamentId: string;
   readonly query: TournamentWhitelistQuery;
 

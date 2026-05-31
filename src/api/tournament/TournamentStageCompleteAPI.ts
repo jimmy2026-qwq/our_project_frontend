@@ -1,15 +1,15 @@
 import { APIMessage } from '@/system/api';
-import type { CompleteStageRequest, StageAdvancementSnapshot } from '@/objects';
+import type { StageAdvancementSnapshot } from '@/objects';
 
 export class TournamentStageCompleteAPI extends APIMessage<StageAdvancementSnapshot> {
   readonly tournamentId: string;
   readonly stageId: string;
-  readonly request: CompleteStageRequest;
+  readonly operatorId?: string;
 
-  constructor(tournamentId: string, stageId: string, request: CompleteStageRequest) {
+  constructor(tournamentId: string, stageId: string, operatorId?: string) {
     super();
     this.tournamentId = tournamentId;
     this.stageId = stageId;
-    this.request = request;
+    this.operatorId = operatorId;
   }
 }

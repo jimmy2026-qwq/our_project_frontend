@@ -1,7 +1,7 @@
-import type {
-  AdvancementRuleView,
-  KnockoutRuleConfigView,
-  SwissRuleConfigView,
+﻿import type {
+  AdvancementRule,
+  KnockoutRuleConfig,
+  SwissRuleConfig,
   TournamentFormat,
 } from '@/objects/tournament';
 import type {
@@ -135,11 +135,11 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
   return details;
 }
 
-function describeSwissPairing(rule?: SwissRuleConfigView | null) {
+function describeSwissPairing(rule?: SwissRuleConfig | null) {
   return rule?.pairingMethod === 'snake' ? '蛇形分组' : '均衡 ELO';
 }
 
-function describeKnockoutSeeding(rule?: KnockoutRuleConfigView | null) {
+function describeKnockoutSeeding(rule?: KnockoutRuleConfig | null) {
   switch (rule?.seedingPolicy) {
     case 'standings':
       return '按当前排名';
@@ -152,7 +152,7 @@ function describeKnockoutSeeding(rule?: KnockoutRuleConfigView | null) {
   }
 }
 
-export function getRuleSummaryLabel(rule?: AdvancementRuleView) {
+export function getRuleSummaryLabel(rule?: AdvancementRule) {
   if (!rule) {
     return '默认规则';
   }

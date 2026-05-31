@@ -1,0 +1,2 @@
+export type PaifuTile = string;
+

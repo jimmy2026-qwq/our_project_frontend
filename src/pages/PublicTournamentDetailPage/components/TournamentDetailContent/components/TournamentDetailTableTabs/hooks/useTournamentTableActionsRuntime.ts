@@ -7,6 +7,7 @@ import {
 } from '@/api/tournament';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
 import { createDemoTablePaifuForTable } from '@/pages/TablePaifuPage/demo';
+import { toBackendPaifu } from '@/pages/TablePaifuPage/objects/TablePaifuData.mappers';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
@@ -46,7 +47,7 @@ export function useTournamentTableActionsRuntime({
     try {
       setIsSubmittingTableAction(true);
       setTableDetailError('');
-      await sendAPI(new TournamentTableStartAPI(tableId, { operatorId }));
+      await sendAPI(new TournamentTableStartAPI(tableId, operatorId));
       onScheduleSuccess?.();
       if (selectedManageTable?.id === tableId) {
         setSelectedManageTable(null);
@@ -128,7 +129,7 @@ export function useTournamentTableActionsRuntime({
       await sendAPI(
         new TournamentTableUploadPaifuAPI(table.id, {
           operatorId,
-          paifu,
+          paifu: toBackendPaifu(paifu),
         }),
       ).then(toTableDetail);
       onScheduleSuccess?.();

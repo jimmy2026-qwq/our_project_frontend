@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { GetPublicTournamentAPI } from '@/api/tournament';
+import { TournamentPaifuGetAPI } from '@/api/tournament/TournamentPaifuGetAPI';
 import { TournamentPaifuListAPI } from '@/api/tournament/TournamentPaifuListAPI';
 import type {
   ListEnvelope,
+  Paifu,
+  PaifuSummary,
   PublicTournamentDetailView,
-  TournamentPaifuSummaryView,
 } from '@/objects';
 import type { PlayerProfileView } from '@/objects/player';
 import { sendAPI } from '@/system/api';
@@ -83,15 +85,18 @@ export function useTablePaifuData(tableId: string) {
 export async function loadTablePaifus(
   tableId: string,
 ): Promise<ListEnvelope<TablePaifuDetail>> {
-  const envelope = await sendAPI<ListEnvelope<TournamentPaifuSummaryView>>(
+  const envelope = await sendAPI<ListEnvelope<PaifuSummary>>(
     new TournamentPaifuListAPI({ tableId }),
+  );
+  const paifus = await Promise.all(
+    envelope.items.map((summary) =>
+      sendAPI<Paifu>(new TournamentPaifuGetAPI(summary.paifuId)),
+    ),
   );
 
   return {
     ...envelope,
-    items: await Promise.all(
-      envelope.items.map(toPaifuSummary).map(enrichPaifu),
-    ),
+    items: await Promise.all(paifus.map(toPaifuSummary).map(enrichPaifu)),
   };
 }
 

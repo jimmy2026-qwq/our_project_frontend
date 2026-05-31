@@ -1,13 +1,13 @@
 import { APIMessage } from '@/system/api';
-import type { StartTableRequest, TournamentTableView } from '@/objects';
+import type { TournamentTableView } from '@/objects';
 
 export class TournamentTableStartAPI extends APIMessage<TournamentTableView> {
   readonly tableId: string;
   readonly operatorId?: string;
 
-  constructor(tableId: string, payload: StartTableRequest = {}) {
+  constructor(tableId: string, operatorId?: string) {
     super();
     this.tableId = tableId;
-    this.operatorId = payload.operatorId;
+    this.operatorId = operatorId;
   }
 }
