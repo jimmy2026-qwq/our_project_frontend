@@ -1,6 +1,6 @@
 import type { ClubPrivilegeCode } from './ClubPrivilegeCode';
 
-export interface ClubRankNodeView {
+export interface ClubRankNode {
   code: string;
   label: string;
   minimumContribution: number;

@@ -1,4 +1,4 @@
-import type { ClubRankNodeView } from '@/objects';
+import type { ClubRankNode } from '@/objects';
 
 import type {
   ClubAdminMemberEntry,
@@ -41,7 +41,7 @@ function defaultRankCodeForContribution(contribution: number | undefined) {
 
 export function buildContributionTitleFields(
   members: ClubAdminMemberEntry[],
-  rankTree: ClubRankNodeView[],
+  rankTree: ClubRankNode[],
 ): ClubDetailWorkbenchState['contributionTitleFields'] {
   const defaultsByCode = new Map(
     DEFAULT_CONTRIBUTION_TITLE_FIELDS.map((field, index) => [

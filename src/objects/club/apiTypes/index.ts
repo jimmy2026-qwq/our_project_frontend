@@ -21,7 +21,6 @@ export * from './PublicClubLineupMemberView';
 export * from './PublicClubQuery';
 export * from './PublicClubRecentMatchSeatView';
 export * from './PublicClubRecentMatchView';
-export * from './PublicClubRelationView';
 export * from './AddClubMemberRequest';
 export * from './AdjustClubMemberContributionRequest';
 export * from './AdjustClubPointPoolRequest';

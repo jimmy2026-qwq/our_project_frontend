@@ -13,7 +13,7 @@ What is already aligned:
 - tournament read and mutation routes now return dedicated frontend-facing views instead of raw aggregates
 - club application responses are stable scalar-or-null fields rather than mixed array/scalar payloads
 - club tournament participation has a dedicated backend contract, including lifecycle actions
-- OpenAPI and Swagger endpoints are available and covered by contract tests
+- APIMessage request and response types are the source of truth for backend communication
 
 What is still mainly a frontend cleanup problem:
 

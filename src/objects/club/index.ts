@@ -2,7 +2,7 @@ export * from './ClubView';
 export * from './ClubApplicationStatus';
 export * from './ClubPrivilegeCode';
 export * from './ClubPrivilegeDefinition';
-export * from './ClubRankNodeView';
+export * from './ClubRankNode';
 export * from './ClubRelationView';
 export * from './ClubRelationKind';
 export * from './ClubTournamentParticipationStatus';

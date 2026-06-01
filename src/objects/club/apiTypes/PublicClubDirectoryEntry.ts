@@ -1,4 +1,4 @@
-import type { PublicClubRelationView } from './PublicClubRelationView';
+import type { ClubRelationView } from '../ClubRelationView';
 
 export interface PublicClubDirectoryEntry {
   clubId: string;
@@ -15,5 +15,5 @@ export interface PublicClubDirectoryEntry {
   strongestRivalClubId: string | null;
   strongestRivalPower: number | null;
   honorTitles: string[];
-  relations: PublicClubRelationView[];
+  relations: ClubRelationView[];
 }

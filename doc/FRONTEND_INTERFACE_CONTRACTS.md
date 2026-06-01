@@ -11,8 +11,11 @@ It is not meant to duplicate every backend route definition. Its job is to recor
 
 For generated backend docs, use:
 
-- `GET /openapi.json`
-- `GET /swagger`
+Frontend communication uses APIMessage endpoints:
+
+- `POST /api/<api-message-name>`
+
+The backend request and response types under each microservice `objects/apiTypes` directory are the source of truth.
 
 ## Source Of Truth
 
