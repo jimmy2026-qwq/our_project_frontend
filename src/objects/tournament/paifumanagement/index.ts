@@ -7,6 +7,7 @@ export * from './PaifuAction';
 export * from './FinalStanding';
 export * from './PaifuMetadata';
 export * from './PaifuHand';
+export * from './PaifuId';
 export * from './PaifuPlayerTrack';
 export * from './PaifuRoundPlayer';
 export * from './PaifuTimeline';

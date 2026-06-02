@@ -1,11 +1,10 @@
-import type { PlayerStatus } from '@/objects/player';
-import type { RankSnapshotView } from '@/objects/tournament';
+import type { PlayerStatus, RankSnapshot } from '@/objects/player';
 
 export interface PlayerLeaderboardEntry {
   playerId: string;
   nickname: string;
   elo: number;
-  currentRank: RankSnapshotView;
+  currentRank: RankSnapshot;
   normalizedRankScore: number | null;
   clubIds: string[];
   status: PlayerStatus;

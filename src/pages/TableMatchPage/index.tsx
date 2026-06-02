@@ -1,6 +1,8 @@
+import { useCallback } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
+import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 
 import {
   TableMatchError,
@@ -9,6 +11,7 @@ import {
 } from './components';
 import { useTableMatchAppealForm } from './hooks/useTableMatchAppealForm';
 import { useTableMatchData } from './hooks/useTableMatchData';
+import { useTableMatchMahjongState } from './hooks/useTableMatchMahjongState';
 import { useTableMatchReadyAction } from './hooks/useTableMatchReadyAction';
 import { useTableMatchSeatState } from './hooks/useTableMatchSeatState';
 
@@ -35,6 +38,18 @@ export function TableMatchPage() {
     setTable,
     setError,
   });
+  const mahjongState = useTableMatchMahjongState({
+    operatorId,
+    tableId,
+  });
+  const handleRefresh = useCallback(() => {
+    forceReload();
+    mahjongState.reload();
+  }, [forceReload, mahjongState]);
+  useRealtimeRefresh(
+    ['TournamentTableChanged', 'MahjongTableChanged', 'AppealChanged'],
+    handleRefresh,
+  );
   const appealForm = useTableMatchAppealForm({
     table,
     ownSeat,
@@ -66,17 +81,24 @@ export function TableMatchPage() {
       seatMap={seatMap}
       ownSeat={ownSeat}
       isRefreshing={isRefreshing}
+      isMahjongRefreshing={mahjongState.isRefreshing}
+      isMahjongLoading={mahjongState.isLoading}
+      mahjongError={mahjongState.error}
+      mahjongTable={mahjongState.mahjongTable}
       isRegisteredPlayer={isRegisteredPlayer}
       operatorId={operatorId}
       canUpdateOwnReady={canUpdateOwnReady}
       canFileAppeal={canFileAppeal}
       isUpdatingOwnReady={readyAction.isUpdatingOwnReady}
+      isSubmittingMahjongAction={mahjongState.isSubmittingAction}
+      mahjongActionError={mahjongState.actionError}
       isAppealDialogOpen={appealForm.isAppealDialogOpen}
       appealDescription={appealForm.appealDescription}
       appealError={appealForm.appealError}
       isSubmittingAppeal={appealForm.isSubmittingAppeal}
-      onRefresh={forceReload}
+      onRefresh={handleRefresh}
       onToggleOwnReady={() => void readyAction.handleToggleOwnReady()}
+      onSubmitMahjongAction={(action) => void mahjongState.submitAction(action)}
       onOpenAppeal={appealForm.openAppealDialog}
       onAppealOpenChange={appealForm.setAppealDialogOpen}
       onAppealDescriptionChange={appealForm.setAppealDescription}

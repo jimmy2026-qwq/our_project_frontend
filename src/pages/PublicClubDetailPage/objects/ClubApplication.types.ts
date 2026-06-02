@@ -27,7 +27,7 @@ export interface TrackedClubApplicationItem {
   id: string;
   clubId: string;
   clubName: string;
-  operatorId: string;
+  playerId: string;
   applicantName: string;
   message: string;
   status: ClubApplication['status'];

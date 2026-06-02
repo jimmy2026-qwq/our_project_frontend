@@ -1,4 +1,6 @@
 export type RiverDiscard = {
+  sequenceNo: number;
+  playerId: string;
   tile: string;
   sideways?: boolean;
 };

@@ -26,6 +26,8 @@ export interface PaifuAction {
   actor?: string;
   actionType: PaifuActionType | string;
   tile?: string;
+  fromPlayer?: string;
+  targetSequenceNo?: number;
   shantenAfterAction?: number;
   handTilesAfterAction?: string[];
   revealedTiles: string[];

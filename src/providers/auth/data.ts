@@ -10,15 +10,15 @@ import {
 import { GetCurrentPlayerAPI } from '@/api/player';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type {
-  ApiMessage,
-  AuthSessionResponse,
-  AuthSuccessResponse,
+  AuthSessionView,
+  AuthSuccessView,
   CreateGuestSessionRequest,
   CurrentSessionQuery,
   LoginRequest,
   RegisterAccountRequest,
   CurrentSessionView,
   GuestSessionResponse,
+  LogoutResponse,
 } from '@/objects/auth';
 import type { PlayerProfileView } from '@/objects/player';
 import { sendAPI } from '@/system/api';
@@ -32,16 +32,16 @@ interface StoredSessionRecord {
 
 const authApi = {
   login(payload: LoginRequest) {
-    return sendAPI<AuthSuccessResponse>(LoginAuthAPI.fromRequest(payload));
+    return sendAPI<AuthSuccessView>(LoginAuthAPI.fromRequest(payload));
   },
   register(payload: RegisterAccountRequest) {
-    return sendAPI<AuthSuccessResponse>(RegisterAuthAPI.fromRequest(payload));
+    return sendAPI<AuthSuccessView>(RegisterAuthAPI.fromRequest(payload));
   },
   getAuthSession(token: string) {
-    return sendAPI<AuthSessionResponse>(new RestoreAuthSessionAPI(token));
+    return sendAPI<AuthSessionView>(new RestoreAuthSessionAPI(token));
   },
   logout(token: string) {
-    return sendAPI<ApiMessage>(new LogoutAuthAPI(token));
+    return sendAPI<LogoutResponse>(new LogoutAuthAPI(token));
   },
   getSession(filters: CurrentSessionQuery) {
     return sendAPI<CurrentSessionView>(new CurrentSessionAuthAPI(filters));

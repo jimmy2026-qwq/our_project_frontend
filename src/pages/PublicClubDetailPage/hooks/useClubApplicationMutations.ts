@@ -30,7 +30,7 @@ export function useClubApplicationMutations() {
       const selectedPlayerName =
         state.playerContext.player?.displayName ?? getFallbackPlayerName(state);
       const message =
-        state.message.trim() || 'I would like to join next split.';
+        normalizeFormString(state.message) || '我想加入这个俱乐部，参与后续赛事安排。';
 
       try {
         const response = await sendAPI(
@@ -49,7 +49,7 @@ export function useClubApplicationMutations() {
           id: application.id,
           clubId: state.clubId,
           clubName: getSelectedClubName(state.clubId, state.clubs.items),
-          operatorId: state.operatorId,
+          playerId: response.playerId ?? state.operatorId,
           applicantName: selectedPlayerName,
           message: application.message,
           status: application.status,
@@ -92,7 +92,7 @@ export function useClubApplicationMutations() {
             id: provisionalApplication.id,
             clubId: state.clubId,
             clubName: getSelectedClubName(state.clubId, state.clubs.items),
-            operatorId: state.operatorId,
+            playerId: state.operatorId,
             applicantName: selectedPlayerName,
             message: provisionalApplication.message,
             status: provisionalApplication.status,
@@ -141,6 +141,17 @@ export function useClubApplicationMutations() {
         response,
       );
       updateTrackedClubApplicationStatus(application.id, application.status);
+      upsertTrackedClubApplication({
+        id: application.id,
+        clubId: state.clubId,
+        clubName: getSelectedClubName(state.clubId, state.clubs.items),
+        playerId: response.playerId ?? state.operatorId,
+        applicantName: application.applicantName,
+        message: application.message,
+        status: application.status,
+        submittedAt: application.createdAt,
+        source: 'api',
+      });
       return { application, source: 'api' as const, warning: undefined };
     },
     [],
@@ -150,4 +161,8 @@ export function useClubApplicationMutations() {
     submitClubApplication,
     withdrawClubApplication,
   };
+}
+
+function normalizeFormString(value: unknown): string {
+  return typeof value === 'string' ? value.trim() : '';
 }

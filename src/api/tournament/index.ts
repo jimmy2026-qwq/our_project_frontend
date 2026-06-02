@@ -5,6 +5,7 @@ export { AppealListAPI } from './appeal/AppealListAPI';
 export { AppealReopenAPI } from './appeal/AppealReopenAPI';
 export { AppealResolveAPI } from './appeal/AppealResolveAPI';
 export { AppealUpdateWorkflowAPI } from './appeal/AppealUpdateWorkflowAPI';
+export * from './mahjongcore';
 export { TournamentAssignAdminAPI } from './TournamentAssignAdminAPI';
 export { TournamentCreateAPI } from './TournamentCreateAPI';
 export { GetPublicTournamentAPI } from './GetPublicTournamentAPI';

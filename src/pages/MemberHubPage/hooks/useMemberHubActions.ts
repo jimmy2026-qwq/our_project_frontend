@@ -43,10 +43,7 @@ async function reviewMemberHubApplication(
     id: application.applicationId,
     clubId: application.clubId,
     clubName: application.clubName,
-    operatorId:
-      application.applicant.playerId ||
-      application.applicant.applicantUserId ||
-      '',
+    playerId: application.applicant.playerId,
     applicantName: application.applicant.displayName,
     message: application.message,
     status: application.status,

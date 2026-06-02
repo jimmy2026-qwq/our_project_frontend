@@ -21,7 +21,7 @@ export interface MemberHubApplicationInboxItem {
   id: string;
   clubId: string;
   clubName: string;
-  operatorId: string;
+  playerId: string;
   applicantName: string;
   message: string;
   status: 'Pending' | 'Approved' | 'Rejected' | 'Withdrawn';

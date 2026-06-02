@@ -2,7 +2,13 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 
-import { AppFeedbackProvider, AuthProvider, DialogProvider } from '@/providers';
+import {
+  AppFeedbackProvider,
+  AuthProvider,
+  DialogProvider,
+  NotificationProvider,
+  RealtimeProvider,
+} from '@/providers';
 import { router } from '@/router';
 
 import './index.css';
@@ -29,11 +35,15 @@ if (!container) {
 createRoot(container).render(
   <StrictMode>
     <AuthProvider>
-      <DialogProvider>
-        <AppFeedbackProvider>
-          <RouterProvider router={router} />
-        </AppFeedbackProvider>
-      </DialogProvider>
+      <RealtimeProvider>
+        <NotificationProvider>
+          <DialogProvider>
+            <AppFeedbackProvider>
+              <RouterProvider router={router} />
+            </AppFeedbackProvider>
+          </DialogProvider>
+        </NotificationProvider>
+      </RealtimeProvider>
     </AuthProvider>
   </StrictMode>,
 );

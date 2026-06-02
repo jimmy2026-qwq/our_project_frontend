@@ -72,9 +72,7 @@ async function loadClubMemberAdminEntries(
           hasClubAdminOverride(clubId, member.playerId),
         isCurrentUser:
           (!!currentPlayer && member.playerId === currentPlayer.playerId) ||
-          (!currentPlayer &&
-            !!member.applicantUserId &&
-            member.applicantUserId === currentOperatorId),
+          (!currentPlayer && member.playerId === currentOperatorId),
         contribution: privilegeSnapshot?.contribution,
         rankCode: privilegeSnapshot?.rankCode,
         rankLabel: privilegeSnapshot?.rankLabel,

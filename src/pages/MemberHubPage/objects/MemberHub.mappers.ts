@@ -19,7 +19,6 @@ function normalizeApplicant(
 ): ClubApplicationView['applicant'] {
   return {
     playerId: applicant.playerId ?? '',
-    applicantUserId: applicant.applicantUserId ?? undefined,
     displayName: applicant.displayName,
     playerStatus: applicant.playerStatus
       ? toPlayerStatus(applicant.playerStatus)
@@ -87,7 +86,7 @@ export function toClubApplicationViewFromInboxItem(
     clubId: item.clubId,
     clubName: item.clubName,
     applicant: {
-      playerId: item.operatorId,
+      playerId: item.playerId,
       displayName: item.applicantName,
     },
     submittedAt: item.submittedAt,

@@ -26,12 +26,27 @@ export function toClubApplicationMutationModel(
   fallbackApplicantName: string,
   application: ClubApplicationMutation,
 ): ClubApplication {
+  const displayName = normalizeBackendString(application.displayName);
+  const message = normalizeBackendString(application.message);
+
   return {
     id: application.id,
     clubId,
     status: application.status,
-    applicantName: application.displayName.trim() || fallbackApplicantName,
-    message: application.message?.trim() || '',
+    applicantName: displayName || fallbackApplicantName,
+    message,
     createdAt: application.submittedAt,
   };
+}
+
+function normalizeBackendString(value: unknown): string {
+  if (typeof value === 'string') {
+    return value.trim();
+  }
+
+  if (Array.isArray(value)) {
+    return normalizeBackendString(value[0]);
+  }
+
+  return '';
 }

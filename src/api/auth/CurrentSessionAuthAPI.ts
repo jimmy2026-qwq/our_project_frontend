@@ -1,8 +1,8 @@
 import { encodeBackendOption } from '@/system/api/backend-option.transport';
 import { APIMessage } from '@/system/api';
-import type { CurrentSessionQuery, CurrentSessionResponse } from '@/objects/auth';
+import type { CurrentSessionQuery, CurrentSessionView } from '@/objects/auth';
 
-export class CurrentSessionAuthAPI extends APIMessage<CurrentSessionResponse> {
+export class CurrentSessionAuthAPI extends APIMessage<CurrentSessionView> {
   readonly operatorId: string[];
   readonly guestSessionId: string[];
 

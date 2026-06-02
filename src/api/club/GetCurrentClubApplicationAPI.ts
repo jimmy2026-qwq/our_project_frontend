@@ -4,7 +4,6 @@ import type { ClubApplicationDetailQuery, ClubMembershipApplicationView } from '
 
 export class GetCurrentClubApplicationAPI extends APIMessage<ClubMembershipApplicationView> {
   readonly operatorId: string[];
-  readonly guestSessionId: string[];
 
   constructor(
     readonly clubId: string,
@@ -12,6 +11,5 @@ export class GetCurrentClubApplicationAPI extends APIMessage<ClubMembershipAppli
   ) {
     super();
     this.operatorId = encodeBackendOption(filters.operatorId);
-    this.guestSessionId = encodeBackendOption(filters.guestSessionId);
   }
 }

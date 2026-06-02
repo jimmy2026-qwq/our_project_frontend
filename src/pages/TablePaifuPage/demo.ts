@@ -349,6 +349,8 @@ const exhaustiveDrawActions = [
     actor: 'player-south',
     actionType: 'OpenKan',
     tile: '1z',
+    fromPlayer: 'player-east',
+    targetSequenceNo: 2,
     handTilesAfterAction: southAfterOpenKan,
     revealedTiles: ['1z', '1z', '1z', '1z'],
     note: 'South calls open kan on East double riichi discard.',
@@ -564,6 +566,8 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
             actor: 'player-south',
             actionType: 'Win',
             tile: '0p',
+            fromPlayer: 'player-east',
+            targetSequenceNo: 2,
             shantenAfterAction: -1,
             handTilesAfterAction: southWinningHand,
             revealedTiles: ['0p'],
@@ -671,6 +675,9 @@ export function createDemoTablePaifuForTable(
       actions: round.actions.map((action) => ({
         ...action,
         actor: action.actor ? toDemoPlayerId(action.actor) : undefined,
+        fromPlayer: action.fromPlayer
+          ? toDemoPlayerId(action.fromPlayer)
+          : undefined,
       })),
       result: {
         ...round.result,

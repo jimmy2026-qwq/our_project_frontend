@@ -1,6 +1,8 @@
+import type { MahjongLegalAction, MahjongTableView } from '@/objects';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
+import { MatchBoard } from '../MatchBoard';
 import { AppealDialog } from './AppealDialog';
 import { SeatsOverviewCard } from './SeatsOverviewCard';
 import { TableMatchHeader } from './TableMatchHeader';
@@ -11,17 +13,24 @@ interface TableMatchSectionProps {
   seatMap: TableSeatMap;
   ownSeat: TableSeat | null;
   isRefreshing: boolean;
+  isMahjongRefreshing: boolean;
+  isMahjongLoading: boolean;
+  mahjongError: string | null;
+  mahjongTable: MahjongTableView | null;
   isRegisteredPlayer: boolean;
   operatorId: string;
   canUpdateOwnReady: boolean;
   canFileAppeal: boolean;
   isUpdatingOwnReady: boolean;
+  isSubmittingMahjongAction: boolean;
+  mahjongActionError: string | null;
   isAppealDialogOpen: boolean;
   appealDescription: string;
   appealError: string | null;
   isSubmittingAppeal: boolean;
   onRefresh: () => void;
   onToggleOwnReady: () => void;
+  onSubmitMahjongAction: (action: MahjongLegalAction) => void;
   onOpenAppeal: () => void;
   onAppealOpenChange: (open: boolean) => void;
   onAppealDescriptionChange: (description: string) => void;
@@ -34,28 +43,37 @@ export function TableMatchSection({
   seatMap,
   ownSeat,
   isRefreshing,
+  isMahjongRefreshing,
+  isMahjongLoading,
+  mahjongError,
+  mahjongTable,
   isRegisteredPlayer,
   operatorId,
   canUpdateOwnReady,
   canFileAppeal,
   isUpdatingOwnReady,
+  isSubmittingMahjongAction,
+  mahjongActionError,
   isAppealDialogOpen,
   appealDescription,
   appealError,
   isSubmittingAppeal,
   onRefresh,
   onToggleOwnReady,
+  onSubmitMahjongAction,
   onOpenAppeal,
   onAppealOpenChange,
   onAppealDescriptionChange,
   onSubmitAppeal,
 }: TableMatchSectionProps) {
+  const shouldShowMatchBoard = Boolean(mahjongTable?.currentRound);
+
   return (
     <section className="grid gap-6">
       <TableMatchHeader
         table={table}
         backLink={backLink}
-        isRefreshing={isRefreshing}
+        isRefreshing={isRefreshing || isMahjongRefreshing}
         canUpdateOwnReady={canUpdateOwnReady}
         isUpdatingOwnReady={isUpdatingOwnReady}
         ownSeat={ownSeat}
@@ -63,15 +81,33 @@ export function TableMatchSection({
         onToggleOwnReady={onToggleOwnReady}
       />
 
-      <SeatsOverviewCard
-        table={table}
-        seatMap={seatMap}
-        ownSeat={ownSeat}
-        canFileAppeal={canFileAppeal}
-        isRegisteredPlayer={isRegisteredPlayer}
-        operatorId={operatorId}
-        onOpenAppeal={onOpenAppeal}
-      />
+      {shouldShowMatchBoard && mahjongTable ? (
+        <MatchBoard
+          actionError={mahjongActionError}
+          isRefreshing={isMahjongRefreshing}
+          isSubmittingAction={isSubmittingMahjongAction}
+          mahjongTable={mahjongTable}
+          onSubmitAction={onSubmitMahjongAction}
+          table={table}
+        />
+      ) : (
+        <>
+          <MahjongBridgeNotice
+            error={mahjongError}
+            isLoading={isMahjongLoading}
+            mahjongTable={mahjongTable}
+          />
+          <SeatsOverviewCard
+            table={table}
+            seatMap={seatMap}
+            ownSeat={ownSeat}
+            canFileAppeal={canFileAppeal}
+            isRegisteredPlayer={isRegisteredPlayer}
+            operatorId={operatorId}
+            onOpenAppeal={onOpenAppeal}
+          />
+        </>
+      )}
 
       <AppealDialog
         open={isAppealDialogOpen}
@@ -85,5 +121,33 @@ export function TableMatchSection({
         onSubmit={onSubmitAppeal}
       />
     </section>
+  );
+}
+
+function MahjongBridgeNotice({
+  error,
+  isLoading,
+  mahjongTable,
+}: {
+  error: string | null;
+  isLoading: boolean;
+  mahjongTable: MahjongTableView | null;
+}) {
+  if (mahjongTable?.currentRound) {
+    return null;
+  }
+
+  const message = error
+    ? `牌局引擎状态读取失败：${error}`
+    : isLoading
+      ? '正在读取牌局引擎状态...'
+      : mahjongTable
+        ? '牌局引擎已连接，等待开局。'
+        : '牌局引擎尚未返回状态，当前显示赛事桌候场信息。';
+
+  return (
+    <div className="rounded-[22px] border border-[rgba(176,223,229,0.16)] bg-[rgba(7,18,28,0.72)] px-5 py-4 text-sm font-semibold text-[#c7d6e2] shadow-[0_16px_44px_rgba(0,0,0,0.22)]">
+      {message}
+    </div>
   );
 }

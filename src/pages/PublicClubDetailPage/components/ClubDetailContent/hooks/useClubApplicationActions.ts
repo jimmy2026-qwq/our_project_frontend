@@ -43,56 +43,62 @@ export function useClubApplicationActions({
       return;
     }
 
-    const application = workbench.applicationInbox.find(
-      (item) => item.applicationId === applicationId,
-    );
+    try {
+      const result = await sendAPI(
+        new ReviewClubApplicationAPI(workbench.profile.id, applicationId, {
+          operatorId: workbench.operatorId,
+          decision,
+          note: `${decision}d from club detail`,
+        }),
+      )
+        .then(toClubApplicationView)
+        .then((reviewedApplication) => {
+          upsertTrackedClubApplication({
+            id: reviewedApplication.applicationId,
+            clubId: reviewedApplication.clubId,
+            clubName: reviewedApplication.clubName,
+            playerId: reviewedApplication.applicant.playerId,
+            applicantName: reviewedApplication.applicant.displayName,
+            message: reviewedApplication.message,
+            status: reviewedApplication.status,
+            submittedAt: reviewedApplication.submittedAt,
+            source: 'api',
+          });
 
-    const result = await sendAPI(
-      new ReviewClubApplicationAPI(workbench.profile.id, applicationId, {
-        operatorId: workbench.operatorId,
-        decision,
-        note: `${decision}d from club detail`,
-        ...(decision === 'approve' && application?.applicant.playerId
-          ? { playerId: application.applicant.playerId }
-          : {}),
-      }),
-    )
-      .then(toClubApplicationView)
-      .then((reviewedApplication) => {
-        upsertTrackedClubApplication({
-          id: reviewedApplication.applicationId,
-          clubId: reviewedApplication.clubId,
-          clubName: reviewedApplication.clubName,
-          operatorId:
-            reviewedApplication.applicant.playerId ||
-            reviewedApplication.applicant.applicantUserId ||
-            '',
-          applicantName: reviewedApplication.applicant.displayName,
-          message: reviewedApplication.message,
-          status: reviewedApplication.status,
-          submittedAt: reviewedApplication.submittedAt,
-          source: 'api',
+          return { source: 'api' as const };
         });
 
-        return { source: 'api' as const };
+      notifyMutationResult(result, {
+        successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
+        successMessage: '申请列表已经更新。',
+        fallbackTitle:
+          decision === 'approve'
+            ? '通过申请需要人工确认'
+            : '拒绝申请需要人工确认',
+        fallbackMessage: '后端处理这次申请时没有完全成功。',
       });
 
-    notifyMutationResult(result, {
-      successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
-      successMessage: '申请列表已经更新。',
-      fallbackTitle:
-        decision === 'approve'
-          ? '通过申请需要人工确认'
-          : '拒绝申请需要人工确认',
-      fallbackMessage: '后端处理这次申请时没有完全成功。',
-    });
+      setApplicationInbox((current) =>
+        current.filter((item) => item.applicationId !== applicationId),
+      );
 
-    setApplicationInbox((current) =>
-      current.filter((item) => item.applicationId !== applicationId),
-    );
-
-    if (decision === 'reject') {
-      setCurrentApplicationStatus('Rejected');
+      if (decision === 'reject') {
+        setCurrentApplicationStatus('Rejected');
+      }
+    } catch (error) {
+      notifyMutationResult(
+        {
+          warning:
+            error instanceof Error ? error.message : '审核申请时发生未知错误。',
+        },
+        {
+          successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
+          successMessage: '申请列表已经更新。',
+          fallbackTitle:
+            decision === 'approve' ? '无法通过申请' : '无法拒绝申请',
+          fallbackMessage: '请检查当前账号权限和申请状态后再试。',
+        },
+      );
     }
   }
 

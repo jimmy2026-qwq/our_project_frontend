@@ -6,3 +6,4 @@ export * from './AppealPriority';
 export * from './AppealStatus';
 export * from './AppealTableResolution';
 export * from './apiTypes';
+export * from './ticketmanagement';

@@ -8,7 +8,6 @@ export interface ClubApplication {
   applicantName: string;
   message: string;
   createdAt: string;
-  guestSessionId?: string;
 }
 
 export interface ClubApplicationView {

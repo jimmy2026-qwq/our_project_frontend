@@ -8,7 +8,7 @@ import type {
 import { getPlayerSeat, removeFirstTile } from './getReplayCore';
 import { getAddedTileIndex } from './getReplaySnapshotHands';
 import {
-  claimLastDiscard,
+  claimDiscard,
   getClosedKanTiles,
   getOpenMeldTiles,
   isCallAction,
@@ -56,6 +56,7 @@ export function applySnapshotAction({
     action,
     actorSeat,
     melds,
+    paifu,
     pendingRiichiSideways,
     rivers,
   });
@@ -124,24 +125,39 @@ function applyRiverSnapshot({
     : removeFirstTile(hands[action.actor] ?? [], action.tile);
   drawnTileIndexes[action.actor] = undefined;
   pendingRiichiSideways[actorSeat] = false;
-  rivers[actorSeat] = [...rivers[actorSeat], { tile: action.tile, sideways }];
+  rivers[actorSeat] = [
+    ...rivers[actorSeat],
+    {
+      sequenceNo: action.sequenceNo,
+      playerId: action.actor,
+      tile: action.tile,
+      sideways,
+    },
+  ];
 }
 
 function applyMeldSnapshot({
   action,
   actorSeat,
   melds,
+  paifu,
   pendingRiichiSideways,
   rivers,
 }: {
   action: PaifuAction;
   actorSeat: SeatWind;
   melds: Record<SeatWind, MeldGroup[]>;
+  paifu: TablePaifuDetail;
   pendingRiichiSideways: Record<SeatWind, boolean>;
   rivers: Record<SeatWind, RiverDiscard[]>;
 }) {
   if (isCallAction(action)) {
-    const claimed = claimLastDiscard(rivers, actorSeat, action.tile);
+    const claimed = claimDiscard({
+      action,
+      callerSeat: actorSeat,
+      paifu,
+      rivers,
+    });
 
     if (claimed?.discard.sideways) {
       pendingRiichiSideways[claimed.seat] = true;

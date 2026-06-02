@@ -1,4 +1,4 @@
 import { APIWithTokenMessage } from '@/system/api';
-import type { ApiMessage } from '@/objects/auth';
+import type { LogoutResponse } from '@/objects/auth';
 
-export class LogoutAuthAPI extends APIWithTokenMessage<ApiMessage> {}
+export class LogoutAuthAPI extends APIWithTokenMessage<LogoutResponse> {}

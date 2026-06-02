@@ -1,11 +1,11 @@
 import {
   isProvisionalClubApplicationId,
   readTrackedClubApplication,
-  readTrackedClubApplicationsByOperator,
+  readTrackedClubApplicationsByPlayer,
 } from './getClubApplicationTracker';
 
 export function getTrackedApplication(
-  operatorId: string,
+  playerId: string,
   clubId: string,
   applicationId?: string,
 ) {
@@ -18,7 +18,7 @@ export function getTrackedApplication(
   }
 
   return (
-    readTrackedClubApplicationsByOperator(operatorId)
+    readTrackedClubApplicationsByPlayer(playerId)
       .filter((item) => item.clubId === clubId)
       .sort((left, right) => {
         const leftProvisional = isProvisionalClubApplicationId(left.id);

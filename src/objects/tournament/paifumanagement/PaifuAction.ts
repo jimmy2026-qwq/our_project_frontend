@@ -6,6 +6,8 @@ export interface PaifuAction {
   actor: string | null;
   actionType: PaifuActionType | string;
   tile: PaifuTile | null;
+  fromPlayer?: string | null;
+  targetSequenceNo?: number | null;
   shantenAfterAction: number | null;
   handTilesAfterAction: PaifuTile[] | null;
   revealedTiles: PaifuTile[];

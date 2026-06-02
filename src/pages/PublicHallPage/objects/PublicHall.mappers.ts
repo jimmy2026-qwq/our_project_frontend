@@ -139,7 +139,6 @@ function toPlayerStatus(status: PlayerStatus): PlayerProfile['playerStatus'] {
 export function toPlayerProfile(item: PlayerProfileView): PlayerProfile {
   return {
     playerId: item.playerId,
-    applicantUserId: item.userId,
     displayName: item.nickname,
     playerStatus: toPlayerStatus(item.status),
     currentRank: item.currentRank,

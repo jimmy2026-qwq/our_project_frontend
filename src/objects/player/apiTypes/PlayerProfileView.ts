@@ -1,5 +1,4 @@
-import type { RankSnapshotView } from '@/objects/tournament';
-import type { PlayerStatus } from '../PlayerStatus';
+import type { PlayerStatus, RankSnapshot } from '@/objects/player';
 import type { PlayerRoleFlagsView } from './PlayerRoleFlagsView';
 
 export interface PlayerProfileView {
@@ -7,7 +6,7 @@ export interface PlayerProfileView {
   userId: string;
   nickname: string;
   registeredAt: string;
-  currentRank: RankSnapshotView;
+  currentRank: RankSnapshot;
   status: PlayerStatus;
   elo: number;
   clubId: string | null;

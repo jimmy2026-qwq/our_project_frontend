@@ -3,7 +3,6 @@ import { APIMessage } from '@/system/api';
 import type { ClubMembershipApplicationResponse, WithdrawClubApplicationRequest } from '@/objects/club';
 
 export class WithdrawClubApplicationAPI extends APIMessage<ClubMembershipApplicationResponse> {
-  readonly guestSessionId: string[];
   readonly operatorId: string[];
   readonly note: string[];
 
@@ -13,7 +12,6 @@ export class WithdrawClubApplicationAPI extends APIMessage<ClubMembershipApplica
     payload: WithdrawClubApplicationRequest = {},
   ) {
     super();
-    this.guestSessionId = encodeBackendOption(payload.guestSessionId);
     this.operatorId = encodeBackendOption(payload.operatorId);
     this.note = encodeBackendOption(payload.note);
   }

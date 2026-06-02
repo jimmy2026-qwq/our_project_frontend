@@ -8,9 +8,9 @@ export function isProvisionalClubApplicationId(id: string) {
 
 export function createProvisionalClubApplicationId(
   clubId: string,
-  operatorId: string,
+  playerId: string,
 ) {
-  return `pending:${clubId}:${operatorId}`;
+  return `pending:${clubId}:${playerId}`;
 }
 
 function canUseStorage() {
@@ -30,10 +30,51 @@ function readClubApplicationTracker(): TrackedClubApplicationItem[] {
   }
 
   try {
-    return JSON.parse(raw) as TrackedClubApplicationItem[];
+    return (JSON.parse(raw) as unknown[])
+      .map(normalizeTrackedClubApplicationItem)
+      .filter((item): item is TrackedClubApplicationItem => item !== null);
   } catch {
     return [];
   }
+}
+
+function normalizeTrackedClubApplicationItem(
+  value: unknown,
+): TrackedClubApplicationItem | null {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+
+  const item = value as Partial<TrackedClubApplicationItem> & {
+    operatorId?: string;
+  };
+  const playerId = item.playerId ?? item.operatorId;
+
+  if (
+    typeof item.id !== 'string' ||
+    typeof item.clubId !== 'string' ||
+    typeof item.clubName !== 'string' ||
+    typeof playerId !== 'string' ||
+    typeof item.applicantName !== 'string' ||
+    typeof item.message !== 'string' ||
+    typeof item.status !== 'string' ||
+    typeof item.submittedAt !== 'string' ||
+    typeof item.source !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    id: item.id,
+    clubId: item.clubId,
+    clubName: item.clubName,
+    playerId,
+    applicantName: item.applicantName,
+    message: item.message,
+    status: item.status,
+    submittedAt: item.submittedAt,
+    source: item.source,
+  };
 }
 
 function writeClubApplicationTracker(items: TrackedClubApplicationItem[]) {
@@ -56,7 +97,7 @@ export function upsertTrackedClubApplication(item: TrackedClubApplicationItem) {
 
       const sameClubAndOperator =
         existing.clubId === item.clubId &&
-        existing.operatorId === item.operatorId;
+        existing.playerId === item.playerId;
 
       if (!sameClubAndOperator) {
         return true;
@@ -93,8 +134,8 @@ export function readTrackedClubApplication(id: string) {
   return readClubApplicationTracker().find((item) => item.id === id) ?? null;
 }
 
-export function readTrackedClubApplicationsByOperator(operatorId: string) {
+export function readTrackedClubApplicationsByPlayer(playerId: string) {
   return readClubApplicationTracker().filter(
-    (item) => item.operatorId === operatorId,
+    (item) => item.playerId === playerId,
   );
 }

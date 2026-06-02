@@ -34,9 +34,7 @@ export function getVisibleLineupMembers({
   const withSelection: MemberListItem[] = filtered.map((member) => ({
     ...member,
     isSelected: selectedPlayerIds.includes(member.playerId),
-    isCurrentUser:
-      member.playerId === operatorId ||
-      (!!member.applicantUserId && member.applicantUserId === operatorId),
+    isCurrentUser: member.playerId === operatorId,
   }));
 
   return withSelection.sort((left, right) => {

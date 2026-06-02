@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
+import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 
 import { useTournamentDetailHeader } from '../components/TournamentDetailHeader/hooks/useTournamentDetailHeader';
 import { useTournamentDetail } from './useTournamentDetail';
@@ -14,6 +15,18 @@ export function usePublicTournamentDetailPage() {
   const navigate = useNavigate();
   const { session } = useAuth();
   const detail = useTournamentDetail(tournamentId);
+  const handleRealtimeRefresh = useCallback(() => {
+    detail.refresh();
+  }, [detail]);
+  useRealtimeRefresh(
+    [
+      'TournamentChanged',
+      'TournamentParticipantChanged',
+      'TournamentTableChanged',
+      'AppealChanged',
+    ],
+    handleRealtimeRefresh,
+  );
   const state = useMemo<TournamentDetailState>(
     () =>
       detail.state ?? {

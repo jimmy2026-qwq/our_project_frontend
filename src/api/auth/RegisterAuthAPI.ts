@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
-import type { AuthSuccessResponse, RegisterAccountRequest } from '@/objects/auth';
+import type { AuthSuccessView, RegisterAccountRequest } from '@/objects/auth';
 
-export class RegisterAuthAPI extends APIMessage<AuthSuccessResponse> {
+export class RegisterAuthAPI extends APIMessage<AuthSuccessView> {
   constructor(
     readonly username: string,
     readonly password: string,

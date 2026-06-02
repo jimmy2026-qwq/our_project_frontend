@@ -19,10 +19,51 @@ function readMemberHubApplicationInbox(): MemberHubApplicationInboxItem[] {
   }
 
   try {
-    return JSON.parse(raw) as MemberHubApplicationInboxItem[];
+    return (JSON.parse(raw) as unknown[])
+      .map(normalizeMemberHubApplicationInboxItem)
+      .filter((item): item is MemberHubApplicationInboxItem => item !== null);
   } catch {
     return [];
   }
+}
+
+function normalizeMemberHubApplicationInboxItem(
+  value: unknown,
+): MemberHubApplicationInboxItem | null {
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+
+  const item = value as Partial<MemberHubApplicationInboxItem> & {
+    operatorId?: string;
+  };
+  const playerId = item.playerId ?? item.operatorId;
+
+  if (
+    typeof item.id !== 'string' ||
+    typeof item.clubId !== 'string' ||
+    typeof item.clubName !== 'string' ||
+    typeof playerId !== 'string' ||
+    typeof item.applicantName !== 'string' ||
+    typeof item.message !== 'string' ||
+    typeof item.status !== 'string' ||
+    typeof item.submittedAt !== 'string' ||
+    typeof item.source !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    id: item.id,
+    clubId: item.clubId,
+    clubName: item.clubName,
+    playerId,
+    applicantName: item.applicantName,
+    message: item.message,
+    status: item.status,
+    submittedAt: item.submittedAt,
+    source: item.source,
+  };
 }
 
 function writeMemberHubApplicationInbox(

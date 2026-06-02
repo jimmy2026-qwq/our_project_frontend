@@ -1,6 +1,5 @@
 export interface PlayerProfile {
   playerId: string;
-  applicantUserId?: string;
   displayName: string;
   playerStatus?: 'Active' | 'Inactive' | 'Banned';
   currentRank?: {
