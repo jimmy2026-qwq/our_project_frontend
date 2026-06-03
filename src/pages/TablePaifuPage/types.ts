@@ -1,12 +1,13 @@
 import type {
   HandOutcome,
+  MahjongYakuKind,
   PaifuActionType,
   SeatWind,
   TableSeat,
 } from '@/objects/tournament';
 
 export interface PaifuYaku {
-  name: string;
+  kind: MahjongYakuKind;
   han: number;
 }
 

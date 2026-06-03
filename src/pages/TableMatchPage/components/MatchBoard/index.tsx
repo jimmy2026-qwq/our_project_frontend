@@ -1,15 +1,28 @@
-import type { MahjongLegalAction, MahjongTableView, SeatWind } from '@/objects';
+import type {
+  AgariResult,
+  MahjongLegalAction,
+  MahjongSeatView,
+  MahjongTableView,
+  SeatWind,
+} from '@/objects';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/CenterTable/CenterTable.types';
+import {
+  settlementAnimationDelayMs,
+  settlementAnimationDurationMs,
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuHandTableReplay';
 import type {
   MeldGroup,
   RiverDiscard,
 } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
-import { PlayerMelds } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PlayerAreas/PlayerMelds';
 import { PlayerRiver } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PlayerAreas/PlayerRiver';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import { MatchActionBar } from './MatchActionBar';
 import { MatchCenterTable } from './MatchCenterTable';
+import { MatchMeldArea } from './MatchMeldArea';
 import { MatchPlayerHand } from './MatchPlayerHand';
+import { MatchResultOverlay } from './MatchResultOverlay';
 
 const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
@@ -18,7 +31,10 @@ interface MatchBoardProps {
   isRefreshing: boolean;
   isSubmittingAction: boolean;
   mahjongTable: MahjongTableView;
+  onAdvanceRound: () => void | Promise<void>;
   onSubmitAction: (action: MahjongLegalAction) => void;
+  operatorId: string;
+  playerNames: Record<string, string>;
   table: TableDetail;
 }
 
@@ -27,15 +43,94 @@ export function MatchBoard({
   isRefreshing,
   isSubmittingAction,
   mahjongTable,
+  onAdvanceRound,
   onSubmitAction,
+  operatorId,
+  playerNames,
   table,
 }: MatchBoardProps) {
-  const seatMap = getMahjongSeatMap(mahjongTable);
-  const rivers = getRivers(mahjongTable);
-  const melds = getMelds(mahjongTable);
-  const discardActions = mahjongTable.legalActions.filter(
+  const seatRotation = getSeatRotation(mahjongTable, operatorId);
+  const seatMap = getMahjongSeatMap(mahjongTable, seatRotation);
+  const rivers = getRivers(mahjongTable, seatRotation);
+  const melds = getMelds(mahjongTable, seatRotation);
+  const discardActions = (mahjongTable.legalActions ?? []).filter(
     (action) => action.commandType === 'Discard',
   );
+  const resultKey = getResultKey(mahjongTable);
+  const [settlementAnimatingKey, setSettlementAnimatingKey] = useState<
+    string | null
+  >(null);
+  const [settlementProgress, setSettlementProgress] = useState<
+    number | undefined
+  >(undefined);
+  const advanceStartedKeyRef = useRef<string | null>(null);
+  const shouldShowResult = Boolean(
+    mahjongTable.currentRound?.result &&
+      resultKey &&
+      settlementAnimatingKey !== resultKey,
+  );
+  const scoreDisplays = useMemo(
+    () =>
+      createMatchScoreDisplays({
+        result: mahjongTable.currentRound?.result ?? null,
+        seatsByDisplaySeat: seatMap,
+        settlementProgress,
+      }),
+    [mahjongTable.currentRound?.result, seatMap, settlementProgress],
+  );
+  const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
+
+  useEffect(() => {
+    if (!resultKey) {
+      setSettlementAnimatingKey(null);
+      setSettlementProgress(undefined);
+      advanceStartedKeyRef.current = null;
+      return;
+    }
+
+    setSettlementAnimatingKey(null);
+    setSettlementProgress(undefined);
+
+    let animationFrame = 0;
+    const timer = window.setTimeout(() => {
+      setSettlementAnimatingKey(resultKey);
+      const startedAt = performance.now();
+
+      const animate = (now: number) => {
+        const elapsed = now - startedAt;
+        const progress = Math.min(
+          1,
+          Math.max(0, elapsed - settlementAnimationDelayMs) /
+            settlementAnimationDurationMs,
+        );
+
+        setSettlementProgress(progress);
+
+        if (
+          elapsed <
+          settlementAnimationDelayMs + settlementAnimationDurationMs
+        ) {
+          animationFrame = window.requestAnimationFrame(animate);
+          return;
+        }
+
+        setSettlementProgress(1);
+        if (advanceStartedKeyRef.current !== resultKey) {
+          advanceStartedKeyRef.current = resultKey;
+          void Promise.resolve(onAdvanceRound());
+        }
+      };
+
+      animationFrame = window.requestAnimationFrame(animate);
+    }, resultOverlayDelayMs);
+
+    return () => {
+      window.clearTimeout(timer);
+      if (animationFrame) {
+        window.cancelAnimationFrame(animationFrame);
+      }
+    };
+  }, [onAdvanceRound, resultKey]);
 
   return (
     <section className="grid gap-0">
@@ -58,14 +153,16 @@ export function MatchBoard({
           </span>
         </div>
 
-        <MatchCenterTable mahjongTable={mahjongTable} />
+        <MatchCenterTable
+          mahjongTable={mahjongTable}
+          scoreDisplays={scoreDisplays}
+          seatsByDisplaySeat={seatMap}
+        />
 
         {seatOrder.map((seat) => (
           <PlayerRiver key={`${seat}-river`} rivers={rivers} seat={seat} />
         ))}
-        {seatOrder.map((seat) => (
-          <PlayerMelds key={`${seat}-melds`} melds={melds} seat={seat} />
-        ))}
+        <MatchMeldArea melds={melds} />
         {seatOrder.map((seat) => (
           <MatchPlayerHand
             key={seat}
@@ -76,6 +173,11 @@ export function MatchBoard({
               seatMap[seat]?.playerId
             }
             onSubmitAction={onSubmitAction}
+            playerName={
+              seatMap[seat]?.playerId
+                ? playerNames[seatMap[seat].playerId]
+                : undefined
+            }
             seat={seat}
             seatView={seatMap[seat]}
           />
@@ -89,35 +191,124 @@ export function MatchBoard({
 
         <MatchActionBar
           actionError={actionError}
-          actions={mahjongTable.legalActions}
+          actions={mahjongTable.legalActions ?? []}
           isSubmitting={isSubmittingAction}
           onSubmitAction={onSubmitAction}
         />
+
+        {shouldShowResult ? (
+          <MatchResultOverlay
+            playerNames={playerNames}
+            result={mahjongTable.currentRound?.result ?? null}
+            seats={seats}
+          />
+        ) : null}
       </div>
     </section>
   );
 }
 
-function getMahjongSeatMap(mahjongTable: MahjongTableView) {
+const resultOverlayDelayMs = 3000;
+
+function getResultKey(mahjongTable: MahjongTableView) {
+  const result = mahjongTable.currentRound?.result;
+
+  if (!result) {
+    return null;
+  }
+
+  return [
+    mahjongTable.tableId,
+    mahjongTable.lastEventSequenceNo,
+    result.outcome,
+    result.winner,
+    result.target,
+    result.points,
+  ].join(':');
+}
+
+function createMatchScoreDisplays({
+  result,
+  seatsByDisplaySeat,
+  settlementProgress,
+}: {
+  result: AgariResult | null;
+  seatsByDisplaySeat: Record<SeatWind, MahjongSeatView | null>;
+  settlementProgress?: number;
+}) {
+  if (!result || settlementProgress === undefined) {
+    return undefined;
+  }
+
+  return Object.fromEntries(
+    seatOrder.map((seat) => {
+      const seatView = seatsByDisplaySeat[seat];
+      const delta =
+        result.scoreChanges.find((change) => change.playerId === seatView?.playerId)
+          ?.delta ?? 0;
+      const finalPoints = seatView?.points ?? 0;
+      const basePoints = finalPoints - delta;
+      const animatedDelta = normalizeZero(
+        Math.round(delta * (1 - settlementProgress)),
+      );
+      const hasScoreDelta = result.scoreChanges.some(
+        (change) => change.delta !== 0,
+      );
+
+      return [
+        seat,
+        {
+          delta: animatedDelta,
+          points: basePoints + Math.round(delta * settlementProgress),
+          showDelta:
+            isScoreSettlementOutcome(result.outcome) &&
+            hasScoreDelta &&
+            settlementProgress < 1,
+        },
+      ];
+    }),
+  ) as Record<SeatWind, CenterScoreDisplay>;
+}
+
+function normalizeZero(value: number) {
+  return Object.is(value, -0) ? 0 : value;
+}
+
+function isScoreSettlementOutcome(outcome: string) {
+  return outcome === 'Ron' || outcome === 'Tsumo' || outcome === 'ExhaustiveDraw';
+}
+
+function getMahjongSeatMap(
+  mahjongTable: MahjongTableView,
+  seatRotation: Record<SeatWind, SeatWind>,
+) {
   return seatOrder.reduce(
     (seatMap, seat) => ({
       ...seatMap,
-      [seat]: mahjongTable.seats.find((seatView) => seatView.seat === seat) ?? null,
+      [seat]:
+        (mahjongTable.seats ?? []).find(
+          (seatView) => seatRotation[seatView.seat] === seat,
+        ) ?? null,
     }),
-    {} as Record<SeatWind, MahjongTableView['seats'][number] | null>,
+    {} as Record<SeatWind, MahjongSeatView | null>,
   );
 }
 
-function getRivers(mahjongTable: MahjongTableView) {
-  return createSeatRecord((seat) => {
-    const seatView = mahjongTable.seats.find((item) => item.seat === seat);
+function getRivers(
+  mahjongTable: MahjongTableView,
+  seatRotation: Record<SeatWind, SeatWind>,
+) {
+  return createSeatRecord((displaySeat) => {
+    const seatView = (mahjongTable.seats ?? []).find(
+      (item) => seatRotation[item.seat] === displaySeat,
+    );
 
     return (
-      seatView?.river.map(
+      (seatView?.river ?? []).filter((discard) => !discard.calledBy).map(
         (discard): RiverDiscard => ({
           playerId: discard.playerId,
           sequenceNo: discard.sequenceNo,
-          sideways: discard.riichiDeclared || Boolean(discard.calledBy),
+          sideways: discard.riichiDeclared,
           tile: discard.tile,
         }),
       ) ?? []
@@ -125,23 +316,155 @@ function getRivers(mahjongTable: MahjongTableView) {
   });
 }
 
-function getMelds(mahjongTable: MahjongTableView) {
-  return createSeatRecord((seat) => {
-    const seatView = mahjongTable.seats.find((item) => item.seat === seat);
+function getMelds(
+  mahjongTable: MahjongTableView,
+  seatRotation: Record<SeatWind, SeatWind>,
+) {
+  return createSeatRecord((displaySeat) => {
+    const seatView = (mahjongTable.seats ?? []).find(
+      (item) => seatRotation[item.seat] === displaySeat,
+    );
+
+    if (!seatView) {
+      return [];
+    }
 
     return (
-      seatView?.melds.map(
-        (meld): MeldGroup => ({
+      (seatView.melds ?? []).map((meld): MeldGroup => {
+        const sourceTiles = meld.tiles ?? [];
+        const claimedActualSeat = (mahjongTable.seats ?? []).find(
+          (seat) => seat.playerId === meld.fromPlayer,
+        )?.seat;
+        const claimedDisplaySeat = claimedActualSeat
+          ? seatRotation[claimedActualSeat]
+          : undefined;
+        const sidewaysIndex = getMeldSidewaysIndex({
+          claimedSeat: claimedDisplaySeat,
+          meldType: meld.meldType,
+          seat: displaySeat,
+          tileCount: sourceTiles.length,
+        });
+        const tiles = getMeldDisplaySourceTiles(meld, sidewaysIndex);
+
+        return {
           actionType: meld.meldType,
-          tiles: meld.tiles.map((tile, index) => ({
-            concealed: meld.closed && (index === 0 || index === meld.tiles.length - 1),
-            sideways: !meld.closed && tile === meld.calledTile,
+          tiles: tiles.map((tile, index) => ({
+            concealed: meld.closed && (index === 0 || index === tiles.length - 1),
+            sideways: !meld.closed && index === sidewaysIndex,
             tile,
           })),
-        }),
-      ) ?? []
+        };
+      }) ?? []
     );
   });
+}
+
+function getMeldDisplaySourceTiles(
+  meld: MahjongSeatView['melds'][number],
+  sidewaysIndex?: number,
+) {
+  const tiles = meld.tiles ?? [];
+
+  if (!meld.calledTile || sidewaysIndex === undefined) {
+    return tiles;
+  }
+
+  const handTiles = removeFirstMatchingTile(tiles, meld.calledTile);
+
+  return [
+    ...handTiles.slice(0, sidewaysIndex),
+    meld.calledTile,
+    ...handTiles.slice(sidewaysIndex),
+  ];
+}
+
+function removeFirstMatchingTile(tiles: string[], tile: string) {
+  let removed = false;
+
+  return tiles.filter((item) => {
+    if (!removed && item === tile) {
+      removed = true;
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function getMeldSidewaysIndex({
+  claimedSeat,
+  meldType,
+  seat,
+  tileCount,
+}: {
+  claimedSeat?: SeatWind;
+  meldType: string;
+  seat: SeatWind;
+  tileCount: number;
+}) {
+  if (meldType === 'Chi') {
+    return 0;
+  }
+
+  if (!claimedSeat) {
+    return undefined;
+  }
+
+  return getSidewaysIndexByRelation(
+    getClaimRelation(seat, claimedSeat),
+    tileCount,
+  );
+}
+
+function getSidewaysIndexByRelation(relation: string, tileCount: number) {
+  if (tileCount >= 4) {
+    if (relation === 'upper') {
+      return 0;
+    }
+
+    if (relation === 'opposite') {
+      return 1;
+    }
+
+    if (relation === 'lower') {
+      return 3;
+    }
+  }
+
+  if (relation === 'upper') {
+    return 0;
+  }
+
+  if (relation === 'opposite') {
+    return 1;
+  }
+
+  if (relation === 'lower') {
+    return 2;
+  }
+
+  return undefined;
+}
+
+function getClaimRelation(callerSeat: SeatWind, claimedSeat: SeatWind) {
+  const callerIndex = seatOrder.indexOf(callerSeat);
+  const claimedIndex = seatOrder.indexOf(claimedSeat);
+  const relation =
+    (claimedIndex - callerIndex + seatOrder.length) % seatOrder.length;
+
+  if (relation === 3) {
+    return 'upper';
+  }
+
+  if (relation === 2) {
+    return 'opposite';
+  }
+
+  if (relation === 1) {
+    return 'lower';
+  }
+
+  return 'self';
 }
 
 function createSeatRecord<T>(factory: (seat: SeatWind) => T) {
@@ -151,5 +474,29 @@ function createSeatRecord<T>(factory: (seat: SeatWind) => T) {
       [seat]: factory(seat),
     }),
     {} as Record<SeatWind, T>,
+  );
+}
+
+function getSeatRotation(
+  mahjongTable: MahjongTableView,
+  operatorId: string,
+): Record<SeatWind, SeatWind> {
+  const viewerSeat =
+    (mahjongTable.seats ?? []).find((seat) => seat.playerId === operatorId)
+      ?.seat ?? 'East';
+
+  return createSeatRotation(viewerSeat);
+}
+
+function createSeatRotation(viewerSeat: SeatWind): Record<SeatWind, SeatWind> {
+  const viewerIndex = seatOrder.indexOf(viewerSeat);
+
+  return seatOrder.reduce(
+    (rotation, actualSeat, actualIndex) => ({
+      ...rotation,
+      [actualSeat]:
+        seatOrder[(actualIndex - viewerIndex + seatOrder.length) % seatOrder.length],
+    }),
+    {} as Record<SeatWind, SeatWind>,
   );
 }

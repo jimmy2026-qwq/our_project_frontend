@@ -580,7 +580,7 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
           target: 'player-east',
           han: 26,
           fu: 0,
-          yaku: [{ name: '纯正九莲宝灯', han: 26 }],
+          yaku: [{ kind: 'PureChuurenPoutou', han: 26 }],
           doraIndicators: fullDoraRow,
           uraDoraIndicators: fullUraDoraRow,
           uraDoraVisible: false,

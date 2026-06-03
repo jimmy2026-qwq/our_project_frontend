@@ -1,5 +1,8 @@
 import type { MahjongLegalAction, MahjongSeatView, SeatWind } from '@/objects';
-import { HandBackTile, HandTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
+import {
+  HandBackTile,
+  HandTile,
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 import {
   getDisplayTiles,
   handPositionClasses,
@@ -8,8 +11,8 @@ import {
 
 import {
   getSeatLabel,
-  getShortPlayerLabel,
   getSeatStateBadges,
+  getShortPlayerLabel,
 } from './matchBoardLabels';
 
 interface MatchPlayerHandProps {
@@ -17,6 +20,7 @@ interface MatchPlayerHandProps {
   isSubmitting: boolean;
   isTurnPlayer: boolean;
   onSubmitAction: (action: MahjongLegalAction) => void;
+  playerName?: string;
   seat: SeatWind;
   seatView: MahjongSeatView | null;
 }
@@ -26,6 +30,7 @@ export function MatchPlayerHand({
   isSubmitting,
   isTurnPlayer,
   onSubmitAction,
+  playerName,
   seat,
   seatView,
 }: MatchPlayerHandProps) {
@@ -37,6 +42,7 @@ export function MatchPlayerHand({
   const displayTiles =
     tiles.length > 0 ? getDisplayTiles(seat, tiles) : createBackTiles(seatView);
   const isOwnVisibleHand = tiles.length > 0;
+  const stateBadges = getSeatStateBadges(seatView);
 
   return (
     <>
@@ -47,19 +53,22 @@ export function MatchPlayerHand({
         ].join(' ')}
       >
         <span className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-[#ecc57a]">
-          {getSeatLabel(seat)}
+          {getSeatLabel(seatView.seat)}
           {seatView.isDealer ? ' 亲' : ''}
         </span>
         <strong className="block max-w-[18ch] truncate text-sm text-[#f2f7fb] [text-shadow:0_2px_10px_rgba(0,0,0,0.52)]">
-          {getShortPlayerLabel(seatView.playerId)}
+          {playerName?.trim() || getShortPlayerLabel(seatView.playerId)}
         </strong>
-        <span className="text-xs font-semibold text-[#c7d6e2]">
-          {seatView.points.toLocaleString()}
-          {isTurnPlayer ? ' / 当前手番' : ''}
-        </span>
-        <span className="text-[0.68rem] font-semibold text-[#8fe8e1]">
-          {getSeatStateBadges(seatView).join(' ')}
-        </span>
+        {isTurnPlayer ? (
+          <span className="text-xs font-semibold text-[#c7d6e2]">
+            轮到出牌
+          </span>
+        ) : null}
+        {stateBadges.length > 0 ? (
+          <span className="text-[0.68rem] font-semibold text-[#8fe8e1]">
+            {stateBadges.join(' ')}
+          </span>
+        ) : null}
       </div>
 
       <div
@@ -107,7 +116,7 @@ function DiscardTileButton({
       aria-label={`打出 ${tile}`}
       className={[
         'cursor-pointer border-0 bg-transparent p-0',
-        canDiscard ? '' : 'cursor-not-allowed opacity-70',
+        canDiscard ? '' : 'cursor-not-allowed',
       ].join(' ')}
       disabled={disabled || !canDiscard}
       onClick={() => {

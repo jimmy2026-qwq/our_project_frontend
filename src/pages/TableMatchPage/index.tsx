@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
@@ -12,6 +12,7 @@ import {
 import { useTableMatchAppealForm } from './hooks/useTableMatchAppealForm';
 import { useTableMatchData } from './hooks/useTableMatchData';
 import { useTableMatchMahjongState } from './hooks/useTableMatchMahjongState';
+import { useTableMatchPlayerNames } from './hooks/useTableMatchPlayerNames';
 import { useTableMatchReadyAction } from './hooks/useTableMatchReadyAction';
 import { useTableMatchSeatState } from './hooks/useTableMatchSeatState';
 
@@ -31,6 +32,7 @@ export function TableMatchPage() {
   } = useTableMatchData(tableId);
   const { seatMap, ownSeat, canUpdateOwnReady, canFileAppeal } =
     useTableMatchSeatState(table, operatorId, isRegisteredPlayer);
+  const matchPlayerId = ownSeat?.playerId ?? '';
   const readyAction = useTableMatchReadyAction({
     table,
     ownSeat,
@@ -39,13 +41,28 @@ export function TableMatchPage() {
     setError,
   });
   const mahjongState = useTableMatchMahjongState({
-    operatorId,
+    operatorId: matchPlayerId,
     tableId,
   });
+  const playerIds = useMemo(
+    () =>
+      Array.from(
+        new Set([
+          ...(table?.seats.map((seat) => seat.playerId) ?? []),
+          ...(mahjongState.mahjongTable?.seats.map((seat) => seat.playerId) ??
+            []),
+        ]),
+      ),
+    [mahjongState.mahjongTable, table],
+  );
+  const playerNames = useTableMatchPlayerNames(playerIds);
   const handleRefresh = useCallback(() => {
     forceReload();
     mahjongState.reload();
   }, [forceReload, mahjongState]);
+  const handleAdvanceRound = useCallback(() => {
+    void mahjongState.advanceRound();
+  }, [mahjongState.advanceRound]);
   useRealtimeRefresh(
     ['TournamentTableChanged', 'MahjongTableChanged', 'AppealChanged'],
     handleRefresh,
@@ -85,8 +102,9 @@ export function TableMatchPage() {
       isMahjongLoading={mahjongState.isLoading}
       mahjongError={mahjongState.error}
       mahjongTable={mahjongState.mahjongTable}
+      playerNames={playerNames}
       isRegisteredPlayer={isRegisteredPlayer}
-      operatorId={operatorId}
+      operatorId={matchPlayerId}
       canUpdateOwnReady={canUpdateOwnReady}
       canFileAppeal={canFileAppeal}
       isUpdatingOwnReady={readyAction.isUpdatingOwnReady}
@@ -98,6 +116,7 @@ export function TableMatchPage() {
       isSubmittingAppeal={appealForm.isSubmittingAppeal}
       onRefresh={handleRefresh}
       onToggleOwnReady={() => void readyAction.handleToggleOwnReady()}
+      onAdvanceRound={handleAdvanceRound}
       onSubmitMahjongAction={(action) => void mahjongState.submitAction(action)}
       onOpenAppeal={appealForm.openAppealDialog}
       onAppealOpenChange={appealForm.setAppealDialogOpen}

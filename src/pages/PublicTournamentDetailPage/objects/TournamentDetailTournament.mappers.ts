@@ -114,6 +114,15 @@ export function toPublicTournamentDetail(
       advancementRule: stage.advancementRule,
       swissRule: stage.swissRule ?? null,
       knockoutRule: stage.knockoutRule ?? null,
+      lineupSubmissions: stage.lineupSubmissions?.map((submission) => ({
+        submissionId: submission.submissionId,
+        clubId: submission.clubId,
+        submittedBy: submission.submittedBy,
+        submittedAt: submission.submittedAt,
+        activePlayerIds: submission.activePlayerIds ?? [],
+        reservePlayerIds: submission.reservePlayerIds ?? [],
+        note: submission.note ?? null,
+      })),
     })),
   };
 }

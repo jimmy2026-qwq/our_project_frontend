@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import {
+  MahjongCoreAdvanceRoundAPI,
   MahjongCoreGetTableAPI,
   MahjongCoreSubmitActionAPI,
 } from '@/api/tournament/mahjongcore';
@@ -125,8 +126,25 @@ export function useTableMatchMahjongState({
     },
     [operatorId, tableId],
   );
+  const advanceRound = useCallback(async () => {
+    try {
+      setIsRefreshing(true);
+      setActionError(null);
+
+      const response = await sendAPI<MahjongTableView>(
+        new MahjongCoreAdvanceRoundAPI(tableId),
+      );
+      setMahjongTable(response);
+    } catch (advanceError) {
+      setActionError(getMahjongErrorMessage(advanceError));
+      reload();
+    } finally {
+      setIsRefreshing(false);
+    }
+  }, [tableId]);
 
   return {
+    advanceRound,
     actionError,
     error,
     isLoading,

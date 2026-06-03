@@ -8,6 +8,7 @@ import {
 interface SeatCardProps {
   wind: string;
   playerId: string;
+  playerName: string;
   ready: boolean;
   disconnected: boolean;
   className?: string;
@@ -16,6 +17,7 @@ interface SeatCardProps {
 export function SeatCard({
   wind,
   playerId,
+  playerName,
   ready,
   disconnected,
   className = '',
@@ -36,7 +38,9 @@ export function SeatCard({
         </StatusPill>
       </div>
       <div className="grid gap-2 text-sm text-[#c7d6e2]">
-        <span className="font-medium text-[#f2f7fb]">{playerId}</span>
+        <span className="font-medium text-[#f2f7fb]" title={playerId}>
+          {playerName}
+        </span>
         <span>准备状态：{ready ? '已准备' : '未准备'}</span>
         <span>连接状态：{disconnected ? '已断开' : '正常'}</span>
       </div>

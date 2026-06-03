@@ -1,4 +1,6 @@
+import type { MahjongYakuKind } from './MahjongYakuKind';
+
 export interface Yaku {
-  name: string;
+  kind: MahjongYakuKind;
   han: number;
 }

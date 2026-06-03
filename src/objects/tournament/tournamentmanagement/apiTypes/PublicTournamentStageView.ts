@@ -7,6 +7,7 @@ import type {
   SwissRuleConfig,
   TournamentFormat,
 } from '@/objects/tournament';
+import type { TournamentLineupSubmissionView } from '../../lineupmanagement/apiTypes/TournamentLineupSubmissionView';
 
 export interface PublicTournamentStageView {
   stageId: string;
@@ -25,4 +26,5 @@ export interface PublicTournamentStageView {
   advancementRule: AdvancementRule;
   swissRule: SwissRuleConfig | null;
   knockoutRule: KnockoutRuleConfig | null;
+  lineupSubmissions?: TournamentLineupSubmissionView[];
 }

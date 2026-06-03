@@ -21,6 +21,7 @@ interface SeatsOverviewCardProps {
   table: TableDetail;
   seatMap: TableSeatMap;
   ownSeat: TableSeat | null;
+  playerNames: Record<string, string>;
   canFileAppeal: boolean;
   isRegisteredPlayer: boolean;
   operatorId: string;
@@ -31,6 +32,7 @@ export function SeatsOverviewCard({
   table,
   seatMap,
   ownSeat,
+  playerNames,
   canFileAppeal,
   isRegisteredPlayer,
   operatorId,
@@ -66,7 +68,12 @@ export function SeatsOverviewCard({
             </StatusPill>
           </div>
         ) : null}
-        <SeatsLayout table={table} seatMap={seatMap} allReady={allReady} />
+        <SeatsLayout
+          table={table}
+          seatMap={seatMap}
+          allReady={allReady}
+          playerNames={playerNames}
+        />
         <TableMatchAppealAction
           status={table.status}
           ownSeat={ownSeat}
@@ -84,16 +91,19 @@ function SeatsLayout({
   table,
   seatMap,
   allReady,
+  playerNames,
 }: {
   table: TableDetail;
   seatMap: TableSeatMap;
   allReady: boolean;
+  playerNames: Record<string, string>;
 }) {
   return (
     <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_minmax(0,1fr)] md:grid-rows-[auto_auto_auto]">
       <SeatCard
         wind="North"
         playerId={seatMap.North?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(seatMap.North?.playerId, playerNames)}
         ready={seatMap.North?.ready ?? false}
         disconnected={seatMap.North?.disconnected ?? false}
         className="md:col-start-2 md:row-start-1"
@@ -101,6 +111,7 @@ function SeatsLayout({
       <SeatCard
         wind="West"
         playerId={seatMap.West?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(seatMap.West?.playerId, playerNames)}
         ready={seatMap.West?.ready ?? false}
         disconnected={seatMap.West?.disconnected ?? false}
         className="md:col-start-1 md:row-start-2"
@@ -118,6 +129,7 @@ function SeatsLayout({
       <SeatCard
         wind="East"
         playerId={seatMap.East?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(seatMap.East?.playerId, playerNames)}
         ready={seatMap.East?.ready ?? false}
         disconnected={seatMap.East?.disconnected ?? false}
         className="md:col-start-3 md:row-start-2"
@@ -125,10 +137,22 @@ function SeatsLayout({
       <SeatCard
         wind="South"
         playerId={seatMap.South?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(seatMap.South?.playerId, playerNames)}
         ready={seatMap.South?.ready ?? false}
         disconnected={seatMap.South?.disconnected ?? false}
         className="md:col-start-2 md:row-start-3"
       />
     </div>
   );
+}
+
+function getSeatPlayerName(
+  playerId: string | undefined,
+  playerNames: Record<string, string>,
+) {
+  if (!playerId) {
+    return 'Unassigned';
+  }
+
+  return playerNames[playerId] ?? playerId;
 }

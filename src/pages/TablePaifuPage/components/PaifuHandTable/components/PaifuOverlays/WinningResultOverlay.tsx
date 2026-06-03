@@ -1,4 +1,5 @@
 import type { PaifuAction, PaifuRoundSummary } from '../../../../types';
+import { getMahjongYakuLabel } from '@/objects';
 import {
   formatPoints,
   formatYakuValue,
@@ -74,10 +75,10 @@ export function WinningResultOverlay({
           </div>
           {round.result.yaku.map((yaku) => (
             <div
-              key={`${yaku.name}-${yaku.han}`}
+              key={`${yaku.kind}-${yaku.han}`}
               className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-3 text-xl"
             >
-              <span>{yaku.name}</span>
+              <span>{getMahjongYakuLabel(yaku.kind)}</span>
               <span className="text-[#ffd98a]">
                 {formatYakuValue(yaku.han)}
               </span>

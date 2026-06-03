@@ -17,6 +17,7 @@ interface TableMatchSectionProps {
   isMahjongLoading: boolean;
   mahjongError: string | null;
   mahjongTable: MahjongTableView | null;
+  playerNames: Record<string, string>;
   isRegisteredPlayer: boolean;
   operatorId: string;
   canUpdateOwnReady: boolean;
@@ -30,6 +31,7 @@ interface TableMatchSectionProps {
   isSubmittingAppeal: boolean;
   onRefresh: () => void;
   onToggleOwnReady: () => void;
+  onAdvanceRound: () => void;
   onSubmitMahjongAction: (action: MahjongLegalAction) => void;
   onOpenAppeal: () => void;
   onAppealOpenChange: (open: boolean) => void;
@@ -47,6 +49,7 @@ export function TableMatchSection({
   isMahjongLoading,
   mahjongError,
   mahjongTable,
+  playerNames,
   isRegisteredPlayer,
   operatorId,
   canUpdateOwnReady,
@@ -60,6 +63,7 @@ export function TableMatchSection({
   isSubmittingAppeal,
   onRefresh,
   onToggleOwnReady,
+  onAdvanceRound,
   onSubmitMahjongAction,
   onOpenAppeal,
   onAppealOpenChange,
@@ -87,7 +91,10 @@ export function TableMatchSection({
           isRefreshing={isMahjongRefreshing}
           isSubmittingAction={isSubmittingMahjongAction}
           mahjongTable={mahjongTable}
+          onAdvanceRound={onAdvanceRound}
           onSubmitAction={onSubmitMahjongAction}
+          operatorId={operatorId}
+          playerNames={playerNames}
           table={table}
         />
       ) : (
@@ -101,6 +108,7 @@ export function TableMatchSection({
             table={table}
             seatMap={seatMap}
             ownSeat={ownSeat}
+            playerNames={playerNames}
             canFileAppeal={canFileAppeal}
             isRegisteredPlayer={isRegisteredPlayer}
             operatorId={operatorId}
