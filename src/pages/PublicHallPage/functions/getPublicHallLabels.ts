@@ -58,6 +58,10 @@ export function getRelationLabel(relation: ClubSummary['relations'][number]) {
   return relation === 'Alliance' ? '联盟' : '对抗';
 }
 
+export function formatRelationList(relations: ClubSummary['relations']) {
+  return relations.map(getRelationLabel).join(' / ') || '暂无关系';
+}
+
 export function getLeaderboardStatusLabel(
   status: PlayerLeaderboardEntry['status'] | '',
 ) {

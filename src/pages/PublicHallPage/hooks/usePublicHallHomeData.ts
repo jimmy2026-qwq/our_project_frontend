@@ -62,7 +62,7 @@ export function usePublicHallHomeData(
           setError(
             loadError instanceof Error
               ? loadError.message
-              : 'Public hall failed to render.',
+              : '公共大厅加载失败。',
           );
         }
       })

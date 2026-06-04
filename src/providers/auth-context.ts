@@ -1,11 +1,16 @@
 import { createContext, useContext } from 'react';
 
-import type { LoginRequest, RegisterAccountRequest } from '@/objects/auth';
+import type {
+  BootstrapSuperAdminRequest,
+  LoginRequest,
+  RegisterAccountRequest,
+} from '@/objects/auth';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 
 export interface AuthContextValue {
   isReady: boolean;
   session: AuthSession | null;
+  bootstrapSuperAdmin: (payload: BootstrapSuperAdminRequest) => Promise<AuthSession>;
   login: (payload: LoginRequest) => Promise<AuthSession>;
   register: (payload: RegisterAccountRequest) => Promise<AuthSession>;
   enterGuestMode: (displayName?: string) => Promise<AuthSession>;

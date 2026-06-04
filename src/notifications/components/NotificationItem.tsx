@@ -1,3 +1,5 @@
+import { Link } from 'react-router-dom';
+
 import { Badge } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { Notification } from '@/objects/notification';
@@ -43,33 +45,30 @@ export function NotificationItem({
     notificationCenterClassNames.item,
     isUnread && notificationCenterClassNames.unreadItem,
   );
+  const handleActivate = () => {
+    if (isUnread) {
+      void onMarkRead(notification.id);
+    }
+  };
 
   if (notification.actionUrl) {
+    if (notification.actionUrl.startsWith('/')) {
+      return (
+        <Link className={className} to={notification.actionUrl} onClick={handleActivate}>
+          {content}
+        </Link>
+      );
+    }
+
     return (
-      <a
-        className={className}
-        href={notification.actionUrl}
-        onClick={() => {
-          if (isUnread) {
-            void onMarkRead(notification.id);
-          }
-        }}
-      >
+      <a className={className} href={notification.actionUrl} onClick={handleActivate}>
         {content}
       </a>
     );
   }
 
   return (
-    <button
-      type="button"
-      className={className}
-      onClick={() => {
-        if (isUnread) {
-          void onMarkRead(notification.id);
-        }
-      }}
-    >
+    <button type="button" className={className} onClick={handleActivate}>
       {content}
     </button>
   );

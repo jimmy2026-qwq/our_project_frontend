@@ -6,10 +6,10 @@ import type {
 } from '../../../objects/ClubDetail.types';
 
 const DEFAULT_CONTRIBUTION_TITLE_FIELDS = [
-  { rankCode: 'rookie', defaultLabel: '萌新', minimumContribution: 0 },
-  { rankCode: 'member', defaultLabel: '同伴', minimumContribution: 500 },
-  { rankCode: 'core', defaultLabel: '主力', minimumContribution: 1500 },
-  { rankCode: 'ace', defaultLabel: '王牌', minimumContribution: 3000 },
+  { rankCode: 'rookie', defaultLabel: '见习雀士', minimumContribution: 0 },
+  { rankCode: 'member', defaultLabel: '正式队员', minimumContribution: 500 },
+  { rankCode: 'core', defaultLabel: '主力队员', minimumContribution: 1500 },
+  { rankCode: 'ace', defaultLabel: '王牌队员', minimumContribution: 3000 },
 ] satisfies Array<{
   rankCode: string;
   defaultLabel: string;
@@ -17,6 +17,12 @@ const DEFAULT_CONTRIBUTION_TITLE_FIELDS = [
 }>;
 
 const LEGACY_MEMBER_TITLE = '成员';
+const LEGACY_LABELS_BY_RANK_CODE = new Map<string, Set<string>>([
+  ['rookie', new Set(['Rookie', '萌新', '新手'])],
+  ['member', new Set(['Member', '同伴', '成员'])],
+  ['core', new Set(['Core', '主力'])],
+  ['ace', new Set(['Ace', '王牌'])],
+]);
 
 function normalizeTitle(value: string | null | undefined) {
   return value?.trim() ?? '';
@@ -24,6 +30,24 @@ function normalizeTitle(value: string | null | undefined) {
 
 function isLegacyMemberTitle(value: string | null | undefined) {
   return normalizeTitle(value) === LEGACY_MEMBER_TITLE;
+}
+
+function normalizeContributionLabel(
+  rankCode: string,
+  value: string | null | undefined,
+  fallback: string,
+) {
+  const label = normalizeTitle(value);
+
+  if (!label) {
+    return fallback;
+  }
+
+  if (LEGACY_LABELS_BY_RANK_CODE.get(rankCode)?.has(label)) {
+    return fallback;
+  }
+
+  return label;
 }
 
 function defaultRankCodeForContribution(contribution: number | undefined) {
@@ -81,10 +105,15 @@ export function buildContributionTitleFields(
         defaultField?.defaultLabel ??
         observedLabelsByCode.get(rankCode) ??
         rankCode;
-      const displayLabel =
+      const rawDisplayLabel =
         rankTreeField?.label?.trim() ||
         observedLabelsByCode.get(rankCode) ||
         defaultLabel;
+      const displayLabel = normalizeContributionLabel(
+        rankCode,
+        rawDisplayLabel,
+        defaultLabel,
+      );
 
       return {
         rankCode,

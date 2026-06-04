@@ -12,6 +12,7 @@ import {
   DialogSurface,
   DialogTitle,
   FieldGroup,
+  SelectField,
   TextInputField,
 } from '@/components/ui';
 
@@ -19,6 +20,43 @@ import type {
   ClubContributionTitleDraft,
   ClubContributionTitleField,
 } from '../../../objects/ClubDetail.types';
+
+const CONTRIBUTION_TITLE_PRESETS = [
+  {
+    id: 'standard',
+    label: '标准梯队',
+    labels: {
+      rookie: '见习雀士',
+      member: '正式队员',
+      core: '主力队员',
+      ace: '王牌队员',
+    },
+  },
+  {
+    id: 'ranked',
+    label: '段位风格',
+    labels: {
+      rookie: '初巡新人',
+      member: '牌桌常客',
+      core: '上桌主将',
+      ace: '雀坛王牌',
+    },
+  },
+  {
+    id: 'club',
+    label: '俱乐部风格',
+    labels: {
+      rookie: '预备成员',
+      member: '正式成员',
+      core: '核心成员',
+      ace: '明星成员',
+    },
+  },
+] satisfies Array<{
+  id: string;
+  label: string;
+  labels: Record<string, string>;
+}>;
 
 export function ClubContributionTitlesDialog({
   open,
@@ -67,6 +105,27 @@ export function ClubContributionTitlesDialog({
     );
   }, [fields, open]);
 
+  function applyPreset(presetId: string) {
+    const preset = CONTRIBUTION_TITLE_PRESETS.find((item) => item.id === presetId);
+
+    if (!preset) {
+      return;
+    }
+
+    const labels = preset.labels as Record<string, string>;
+
+    setDraftLabels((current) => ({
+      ...current,
+      ...Object.fromEntries(
+        fields.flatMap((field) => {
+          const nextLabel = labels[field.rankCode];
+
+          return nextLabel ? [[field.rankCode, nextLabel] as const] : [];
+        }),
+      ),
+    }));
+  }
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogPortal>
@@ -75,12 +134,30 @@ export function ClubContributionTitlesDialog({
           <DialogHeader className="border-b border-[rgba(176,223,229,0.14)] px-6 py-5">
             <DialogTitle>通用贡献头衔</DialogTitle>
             <DialogDescription>
-              这些头衔由成员贡献值对应的等级计算得出，会用于成员列表里的通用头衔显示。
+              阈值由当前俱乐部等级树决定，这里只调整每个贡献等级显示出来的中文头衔。
             </DialogDescription>
           </DialogHeader>
 
           <DialogBody className="max-h-[min(64vh,620px)] overflow-y-auto px-6 py-5">
-            <div className="grid gap-3">
+            <div className="grid gap-4">
+              {canManage ? (
+                <FieldGroup>
+                  <SelectField
+                    label="头衔预设"
+                    value=""
+                    onChange={(event) => applyPreset(event.currentTarget.value)}
+                    disabled={isSubmitting}
+                  >
+                    <option value="">选择一套预设</option>
+                    {CONTRIBUTION_TITLE_PRESETS.map((preset) => (
+                      <option key={preset.id} value={preset.id}>
+                        {preset.label}
+                      </option>
+                    ))}
+                  </SelectField>
+                </FieldGroup>
+              ) : null}
+
               {fields.map((field) => (
                 <div
                   key={field.rankCode}
@@ -91,13 +168,13 @@ export function ClubContributionTitlesDialog({
                       {field.displayLabel}
                     </strong>
                     <span className="text-sm leading-6 text-[#9ab0c1]">
-                      字段 {field.rankCode}
+                      等级 {field.rankCode}
                       {typeof field.minimumContribution === 'number'
-                        ? ` / 贡献值 ≥ ${field.minimumContribution}`
+                        ? ' / 贡献值 ≥ ' + field.minimumContribution
                         : ''}
                     </span>
                     <span className="text-sm leading-6 text-[#c7d6e2]">
-                      默认值为 {field.defaultLabel}
+                      默认显示为 {field.defaultLabel}
                     </span>
                   </div>
 
@@ -129,7 +206,7 @@ export function ClubContributionTitlesDialog({
                           }))
                         }
                       >
-                        填入默认值
+                        恢复默认
                       </ActionButton>
                     </FieldGroup>
                   ) : null}

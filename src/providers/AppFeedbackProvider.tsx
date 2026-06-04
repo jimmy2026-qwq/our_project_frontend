@@ -32,7 +32,7 @@ function NoticeStack({
   onDismiss: (id: number) => void;
 }) {
   return (
-    <div className="app-notice-stack fixed bottom-[18px] right-[18px] z-20 grid w-[min(360px,calc(100vw-24px))] gap-3" aria-live="polite" aria-label="Application notices">
+    <div className="app-notice-stack fixed bottom-[18px] right-[18px] z-20 grid w-[min(360px,calc(100vw-24px))] gap-3" aria-live="polite" aria-label="应用通知">
       {notices.map((notice) => (
         <Alert
           key={notice.id}
@@ -49,9 +49,9 @@ function NoticeStack({
             variant="ghost"
             size="sm"
             onClick={() => onDismiss(notice.id)}
-            aria-label="Dismiss notice"
+            aria-label="关闭通知"
           >
-            Dismiss
+            关闭
           </Button>
         </Alert>
       ))}

@@ -19,6 +19,7 @@ export function getNotificationBadgeLabel(notification: Notification) {
     case 'ClubTitleAssigned':
       return '俱乐部';
     case 'TournamentClubInvited':
+    case 'TournamentPlayerInvited':
     case 'TournamentLineupSelected':
     case 'TournamentSettlementFinalized':
       return '赛事';

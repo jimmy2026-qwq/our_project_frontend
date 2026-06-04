@@ -1,8 +1,20 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 
-import type { LoginRequest, RegisterAccountRequest } from '@/objects/auth';
+import type {
+  BootstrapSuperAdminRequest,
+  LoginRequest,
+  RegisterAccountRequest,
+} from '@/objects/auth';
 import type { AuthSession } from '@/providers/auth/AuthSession';
-import { enterGuestMode, loginUser, logoutUser, readPersistedSession, registerUser, restoreSession } from '@/providers/auth/data';
+import {
+  bootstrapSuperAdminUser,
+  enterGuestMode,
+  loginUser,
+  logoutUser,
+  readPersistedSession,
+  registerUser,
+  restoreSession,
+} from '@/providers/auth/data';
 import { AuthContext } from '@/providers/auth-context';
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -46,6 +58,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  async function bootstrapSuperAdmin(payload: BootstrapSuperAdminRequest) {
+    const nextSession = await bootstrapSuperAdminUser(payload);
+    setSession(nextSession);
+    return nextSession;
+  }
+
   async function login(payload: LoginRequest) {
     const nextSession = await loginUser(payload);
     setSession(nextSession);
@@ -76,6 +94,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     () => ({
       isReady,
       session,
+      bootstrapSuperAdmin,
       login,
       register,
       enterGuestMode: loginAsGuest,

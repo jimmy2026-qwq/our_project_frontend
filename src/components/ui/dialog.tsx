@@ -58,7 +58,14 @@ export const DialogTitle = forwardRef<
   ElementRef<typeof DialogPrimitive.Title>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
 >(function DialogTitle({ className, ...props }, ref) {
-  return <DialogPrimitive.Title ref={ref} data-slot="dialog-title" className={cx('m-0', className)} {...props} />;
+  return (
+    <DialogPrimitive.Title
+      ref={ref}
+      data-slot="dialog-title"
+      className={cx('m-0 text-[#f2f7fb]', className)}
+      {...props}
+    />
+  );
 });
 
 export const DialogDescription = forwardRef<

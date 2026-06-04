@@ -1,13 +1,18 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import { AppShell } from '@/app/AppShell';
+import { RouteErrorFallback } from '@/app/RouteErrorFallback';
 import { RequireAuth } from '@/pages/Auth/RequireAuth';
 import { RequireRegisteredUser } from '@/pages/Auth/RequireRegisteredUser';
+import { PublicClubDetailPage } from '@/pages/PublicClubDetailPage';
+
+const routeErrorElement = <RouteErrorFallback />;
 
 const demoRoutes = import.meta.env.DEV
   ? [
       {
         path: '/demo/tables/:tableId/paifu',
+        errorElement: routeErrorElement,
         lazy: async () => {
           const { TablePaifuPage } = await import('@/pages/TablePaifuPage');
           return { Component: TablePaifuPage };
@@ -20,6 +25,7 @@ export const router = createBrowserRouter([
   ...demoRoutes,
   {
     path: '/login',
+    errorElement: routeErrorElement,
     lazy: async () => {
       const { LoginPage } = await import('@/pages/Auth/LoginPage');
       return { Component: LoginPage };
@@ -27,17 +33,28 @@ export const router = createBrowserRouter([
   },
   {
     path: '/register',
+    errorElement: routeErrorElement,
     lazy: async () => {
       const { RegisterPage } = await import('@/pages/Auth/RegisterPage');
       return { Component: RegisterPage };
     },
   },
   {
+    path: '/setup-superadmin',
+    errorElement: routeErrorElement,
+    lazy: async () => {
+      const { SuperAdminSetupPage } = await import('@/pages/Auth/SuperAdminSetupPage');
+      return { Component: SuperAdminSetupPage };
+    },
+  },
+  {
     element: <RequireAuth />,
+    errorElement: routeErrorElement,
     children: [
       {
         path: '/',
         element: <AppShell />,
+        errorElement: routeErrorElement,
         children: [
           {
             index: true,
@@ -45,6 +62,7 @@ export const router = createBrowserRouter([
           },
           {
             path: 'public',
+            errorElement: routeErrorElement,
             children: [
               {
                 index: true,
@@ -62,15 +80,13 @@ export const router = createBrowserRouter([
               },
               {
                 path: 'clubs/:clubId',
-                lazy: async () => {
-                  const { PublicClubDetailPage } = await import('@/pages/PublicClubDetailPage');
-                  return { Component: PublicClubDetailPage };
-                },
+                element: <PublicClubDetailPage />,
               },
             ],
           },
           {
             element: <RequireRegisteredUser />,
+            errorElement: routeErrorElement,
             children: [
               {
                 path: 'member-hub',

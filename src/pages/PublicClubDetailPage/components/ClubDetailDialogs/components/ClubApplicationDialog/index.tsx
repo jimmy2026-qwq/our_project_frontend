@@ -43,7 +43,9 @@ export function ClubApplicationDialog({
         <DialogOverlay />
         <DialogSurface>
           <DialogHeader className="border-b border-[rgba(176,223,229,0.14)] px-6 py-5">
-            <DialogTitle>申请加入 {club.name}</DialogTitle>
+            <DialogTitle className="text-[1.18rem] font-semibold text-[#f2f7fb]">
+              申请加入 {club.name}
+            </DialogTitle>
             <DialogDescription>
               你可以在这里查看当前申请状态、修改备注，并提交或撤回申请。
             </DialogDescription>

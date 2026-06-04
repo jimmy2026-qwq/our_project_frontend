@@ -134,14 +134,26 @@ export function useTableMatchMahjongState({
       const response = await sendAPI<MahjongTableView>(
         new MahjongCoreAdvanceRoundAPI(tableId),
       );
-      setMahjongTable(response);
+
+      if (!operatorId) {
+        setMahjongTable(response);
+        return;
+      }
+
+      const viewerTable = await sendAPI<MahjongTableView>(
+        new MahjongCoreGetTableAPI(tableId, {
+          includeLegalActions: true,
+          viewerPlayerId: operatorId,
+        }),
+      );
+      setMahjongTable(viewerTable);
     } catch (advanceError) {
       setActionError(getMahjongErrorMessage(advanceError));
       reload();
     } finally {
       setIsRefreshing(false);
     }
-  }, [tableId]);
+  }, [operatorId, tableId]);
 
   return {
     advanceRound,

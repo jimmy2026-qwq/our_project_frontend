@@ -111,9 +111,13 @@ function AuthScreenActions({
   secondaryAction,
   extraActions,
 }: Pick<AuthScreenProps, 'secondaryAction' | 'extraActions'>) {
-  if (secondaryAction) {
-    return (
-      <div className="grid gap-3">
+  if (!secondaryAction && !extraActions) {
+    return null;
+  }
+
+  return (
+    <div className="grid gap-3 sm:grid-cols-2">
+      {secondaryAction ? (
         <button
           type="button"
           className={outlineButtonClassName}
@@ -122,13 +126,8 @@ function AuthScreenActions({
         >
           {secondaryAction.label}
         </button>
-      </div>
-    );
-  }
-
-  if (extraActions) {
-    return <div className="grid gap-3">{extraActions}</div>;
-  }
-
-  return null;
+      ) : null}
+      {extraActions}
+    </div>
+  );
 }

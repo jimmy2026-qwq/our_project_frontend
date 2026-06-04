@@ -20,7 +20,7 @@ function clampProgress(value: number) {
 
 export function LoadingProgress({
   className,
-  label = 'Loading',
+  label = '加载中',
   message,
   value = 64,
   indeterminate = false,

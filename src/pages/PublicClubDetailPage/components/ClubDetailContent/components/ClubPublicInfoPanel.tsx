@@ -2,7 +2,7 @@ import { DetailCard, MetricCard, MetricGrid } from '@/components/ui';
 
 import {
   formatNumber,
-  getRelationLabel,
+  formatRelationList,
 } from '../../../functions/formatClubDetail';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
@@ -42,7 +42,7 @@ export function ClubPublicInfoPanel({
             label="关系"
             value={
               <span className="text-[#ecc57a]">
-                {profile.relations.map(getRelationLabel).join(' / ') || '--'}
+                {formatRelationList(profile.relations)}
               </span>
             }
           />

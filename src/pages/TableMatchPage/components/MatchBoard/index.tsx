@@ -53,9 +53,8 @@ export function MatchBoard({
   const seatMap = getMahjongSeatMap(mahjongTable, seatRotation);
   const rivers = getRivers(mahjongTable, seatRotation);
   const melds = getMelds(mahjongTable, seatRotation);
-  const discardActions = (mahjongTable.legalActions ?? []).filter(
-    (action) => action.commandType === 'Discard',
-  );
+  const legalActions = mahjongTable.legalActions ?? [];
+  const turnActionDelayKey = getTurnActionDelayKey(mahjongTable, operatorId);
   const resultKey = getResultKey(mahjongTable);
   const [settlementAnimatingKey, setSettlementAnimatingKey] = useState<
     string | null
@@ -63,6 +62,9 @@ export function MatchBoard({
   const [settlementProgress, setSettlementProgress] = useState<
     number | undefined
   >(undefined);
+  const [delayedTurnActionKey, setDelayedTurnActionKey] = useState<
+    string | null
+  >(null);
   const advanceStartedKeyRef = useRef<string | null>(null);
   const shouldShowResult = Boolean(
     mahjongTable.currentRound?.result &&
@@ -79,6 +81,35 @@ export function MatchBoard({
     [mahjongTable.currentRound?.result, seatMap, settlementProgress],
   );
   const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
+  const isTurnActionDelayActive = Boolean(
+    turnActionDelayKey && delayedTurnActionKey === turnActionDelayKey,
+  );
+  const visibleLegalActions = isTurnActionDelayActive ? [] : legalActions;
+  const displayedTurnPlayerId = isTurnActionDelayActive
+    ? null
+    : mahjongTable.currentRound?.turnPlayerId;
+  const discardActions = visibleLegalActions.filter(
+    (action) => action.commandType === 'Discard',
+  );
+  const hasCallResponseActions = legalActions.some(isCallResponseAction);
+
+  useEffect(() => {
+    if (!turnActionDelayKey) {
+      setDelayedTurnActionKey(null);
+      return;
+    }
+
+    setDelayedTurnActionKey(turnActionDelayKey);
+    const timer = window.setTimeout(() => {
+      setDelayedTurnActionKey((currentKey) =>
+        currentKey === turnActionDelayKey ? null : currentKey,
+      );
+    }, getCallMaskDelayMs());
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [turnActionDelayKey]);
 
   useEffect(() => {
     if (!resultKey) {
@@ -168,10 +199,7 @@ export function MatchBoard({
             key={seat}
             discardActions={discardActions}
             isSubmitting={isSubmittingAction}
-            isTurnPlayer={
-              mahjongTable.currentRound?.turnPlayerId ===
-              seatMap[seat]?.playerId
-            }
+            isTurnPlayer={displayedTurnPlayerId === seatMap[seat]?.playerId}
             onSubmitAction={onSubmitAction}
             playerName={
               seatMap[seat]?.playerId
@@ -183,15 +211,15 @@ export function MatchBoard({
           />
         ))}
 
-        {mahjongTable.currentRound?.pendingCall ? (
+        {mahjongTable.currentRound?.pendingCall && hasCallResponseActions ? (
           <div className="absolute left-1/2 top-[calc(50%+92px)] z-[16] -translate-x-1/2 rounded-2xl border border-[rgba(236,197,122,0.26)] bg-[rgba(7,18,28,0.78)] px-4 py-2 text-sm font-semibold text-[#ecc57a] shadow-[0_12px_30px_rgba(0,0,0,0.25)] backdrop-blur">
-            等待鸣牌：{mahjongTable.currentRound.pendingCall.tile}
+            可鸣牌：{mahjongTable.currentRound.pendingCall.tile}
           </div>
         ) : null}
 
         <MatchActionBar
           actionError={actionError}
-          actions={mahjongTable.legalActions ?? []}
+          actions={visibleLegalActions}
           isSubmitting={isSubmittingAction}
           onSubmitAction={onSubmitAction}
         />
@@ -209,6 +237,56 @@ export function MatchBoard({
 }
 
 const resultOverlayDelayMs = 3000;
+const callMaskDelayMinMs = 650;
+const callMaskDelayRangeMs = 1350;
+
+function getTurnActionDelayKey(
+  mahjongTable: MahjongTableView,
+  operatorId: string,
+) {
+  const round = mahjongTable.currentRound;
+
+  if (
+    !operatorId ||
+    !round ||
+    round.phase !== 'PlayerTurn' ||
+    round.turnPlayerId !== operatorId
+  ) {
+    return null;
+  }
+
+  const actions = mahjongTable.legalActions ?? [];
+
+  if (
+    !actions.some((action) => action.commandType === 'Discard') ||
+    actions.some(isCallResponseAction)
+  ) {
+    return null;
+  }
+
+  return [
+    mahjongTable.tableId,
+    round.descriptor.roundWind,
+    round.descriptor.handNumber,
+    round.descriptor.honba,
+    mahjongTable.lastEventSequenceNo,
+    operatorId,
+  ].join(':');
+}
+
+function isCallResponseAction(action: MahjongLegalAction) {
+  return (
+    action.commandType === 'Chi' ||
+    action.commandType === 'Pon' ||
+    action.commandType === 'OpenKan' ||
+    action.commandType === 'Ron' ||
+    action.commandType === 'Pass'
+  );
+}
+
+function getCallMaskDelayMs() {
+  return callMaskDelayMinMs + Math.floor(Math.random() * callMaskDelayRangeMs);
+}
 
 function getResultKey(mahjongTable: MahjongTableView) {
   const result = mahjongTable.currentRound?.result;

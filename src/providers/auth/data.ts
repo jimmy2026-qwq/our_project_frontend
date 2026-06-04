@@ -1,4 +1,5 @@
 import {
+  BootstrapSuperAdminAuthAPI,
   CreateGuestSessionAuthAPI,
   CurrentSessionAuthAPI,
   LoginAuthAPI,
@@ -12,6 +13,7 @@ import type { AuthSession } from '@/providers/auth/AuthSession';
 import type {
   AuthSessionView,
   AuthSuccessView,
+  BootstrapSuperAdminRequest,
   CreateGuestSessionRequest,
   CurrentSessionQuery,
   LoginRequest,
@@ -31,6 +33,9 @@ interface StoredSessionRecord {
 }
 
 const authApi = {
+  bootstrapSuperAdmin(payload: BootstrapSuperAdminRequest) {
+    return sendAPI<AuthSuccessView>(BootstrapSuperAdminAuthAPI.fromRequest(payload));
+  },
   login(payload: LoginRequest) {
     return sendAPI<AuthSuccessView>(LoginAuthAPI.fromRequest(payload));
   },
@@ -64,7 +69,7 @@ type BackendAuthResponse = Awaited<ReturnType<typeof authApi.login>>;
 type BackendSessionResponse = Awaited<ReturnType<typeof authApi.getAuthSession>>;
 
 function createGuestToken(guestSessionId: string) {
-  return `guest:${guestSessionId}`;
+  return 'guest:' + guestSessionId;
 }
 
 function readGuestSessionId(token: string) {
@@ -174,6 +179,16 @@ export async function restoreSession(token: string) {
   const session = await mapBackendAuthSession(
     await authApi.getAuthSession(token),
     token,
+  );
+  persistSession(session);
+  return session;
+}
+
+export async function bootstrapSuperAdminUser(payload: BootstrapSuperAdminRequest) {
+  const bootstrapResult = await authApi.bootstrapSuperAdmin(payload);
+  const session = await mapBackendAuthSession(
+    await authApi.getAuthSession(bootstrapResult.token),
+    bootstrapResult.token,
   );
   persistSession(session);
   return session;

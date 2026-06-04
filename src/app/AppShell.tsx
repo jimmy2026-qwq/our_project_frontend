@@ -1,5 +1,7 @@
 import { Outlet, useLocation } from 'react-router-dom';
 
+import { NotificationProvider } from '@/notifications';
+
 const appShellClassNames = {
   root: 'relative mx-auto min-h-screen w-[min(1280px,calc(100%_-_32px))] px-0 pb-16 pt-[26px] [font-family:"JetBrains_Sans","Segoe_UI",sans-serif] [&_button]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif] [&_input]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif] [&_select]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif] [&_textarea]:[font-family:"JetBrains_Sans","Segoe_UI",sans-serif]',
   scene:
@@ -12,17 +14,19 @@ export function AppShell() {
   const location = useLocation();
 
   return (
-    <div className={appShellClassNames.root}>
-      <div className={appShellClassNames.scene} aria-hidden="true" />
+    <NotificationProvider>
+      <div className={appShellClassNames.root}>
+        <div className={appShellClassNames.scene} aria-hidden="true" />
 
-      <main className={appShellClassNames.content}>
-        <section
-          key={`${location.pathname}${location.search}`}
-          className={appShellClassNames.routeStage}
-        >
-          <Outlet />
-        </section>
-      </main>
-    </div>
+        <main className={appShellClassNames.content}>
+          <section
+            key={location.pathname + location.search}
+            className={appShellClassNames.routeStage}
+          >
+            <Outlet />
+          </section>
+        </main>
+      </div>
+    </NotificationProvider>
   );
 }

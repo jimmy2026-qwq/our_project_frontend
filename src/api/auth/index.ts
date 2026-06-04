@@ -1,3 +1,4 @@
+export { BootstrapSuperAdminAuthAPI } from './BootstrapSuperAdminAuthAPI';
 export { CreateGuestSessionAuthAPI } from './CreateGuestSessionAuthAPI';
 export { AuthCheckPermissionAPI } from './AuthCheckPermissionAPI';
 export { CurrentSessionAuthAPI } from './CurrentSessionAuthAPI';

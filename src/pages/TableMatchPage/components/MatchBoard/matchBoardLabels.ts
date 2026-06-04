@@ -32,7 +32,7 @@ export function getMahjongStatusLabel(status: MahjongTableStatus) {
     InProgress: '进行中',
     NotStarted: '未开始',
     RoundEnded: '本局结束',
-    WaitingCallDecision: '等待副露选择',
+    WaitingCallDecision: '等待牌局推进',
     WaitingPlayerAction: '等待出牌',
   };
 
@@ -41,7 +41,7 @@ export function getMahjongStatusLabel(status: MahjongTableStatus) {
 
 export function getMahjongPhaseLabel(phase: MahjongRoundPhase) {
   const labels: Record<MahjongRoundPhase, string> = {
-    CallDecision: '鸣牌判断',
+    CallDecision: '牌局推进中',
     Finished: '本局完成',
     InitialDeal: '配牌',
     PlayerTurn: '手番',

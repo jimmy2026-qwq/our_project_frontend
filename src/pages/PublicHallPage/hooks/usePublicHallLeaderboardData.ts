@@ -52,7 +52,7 @@ export function usePublicHallLeaderboardData(
           setError(
             loadError instanceof Error
               ? loadError.message
-              : 'Leaderboard failed to render.',
+              : '排行榜加载失败。',
           );
         }
       })

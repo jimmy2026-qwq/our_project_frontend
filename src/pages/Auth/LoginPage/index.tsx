@@ -1,8 +1,9 @@
-import { Navigate } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 
 import { AuthScreenCard } from '../components/AuthScreen/AuthScreenCard';
 import { AuthScreenFrame } from '../components/AuthScreen/AuthScreenFrame';
 import { AuthScreenIntro } from '../components/AuthScreen/AuthScreenIntro';
+import { outlineButtonClassName } from '../components/AuthScreen/AuthScreen.styles';
 import { useLoginPageForm } from './hooks/useLoginPageForm';
 
 export function LoginPage() {
@@ -33,6 +34,11 @@ export function LoginPage() {
           disabled: form.isSubmitting,
           onClick: () => void form.handleGuestEnter(),
         }}
+        extraActions={
+          <Link className={outlineButtonClassName} to="/setup-superadmin">
+            初始化超管
+          </Link>
+        }
         fields={form.fields}
       />
     </AuthScreenFrame>

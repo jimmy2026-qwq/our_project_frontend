@@ -36,6 +36,8 @@ export function useSystemNotifications() {
       ]);
       setNotifications(items);
       setUnreadCount(unread.unreadCount);
+    } catch (error) {
+      console.error('Notification refresh failed.', error);
     } finally {
       setIsLoading(false);
     }
@@ -47,7 +49,13 @@ export function useSystemNotifications() {
         return;
       }
 
-      await sendAPI(new MarkNotificationReadAPI(notificationId, operatorId));
+      try {
+        await sendAPI(new MarkNotificationReadAPI(notificationId, operatorId));
+      } catch (error) {
+        console.error('Mark notification read failed.', error);
+        return;
+      }
+
       setNotifications((current) =>
         current.map((item) =>
           item.id === notificationId
@@ -65,7 +73,13 @@ export function useSystemNotifications() {
       return;
     }
 
-    await sendAPI(new MarkAllNotificationsReadAPI(operatorId));
+    try {
+      await sendAPI(new MarkAllNotificationsReadAPI(operatorId));
+    } catch (error) {
+      console.error('Mark all notifications read failed.', error);
+      return;
+    }
+
     const readAt = new Date().toISOString();
     setNotifications((current) =>
       current.map((item) => ({ ...item, readAt: item.readAt ?? readAt })),

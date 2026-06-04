@@ -38,8 +38,8 @@ export function useLineupSubmission({
       selectedPlayerIds.length === 0
     ) {
       notifyWarning(
-        'Lineup is incomplete',
-        'Select a stage and at least one player before submitting the lineup.',
+        '参赛名单未完成',
+        '请选择阶段，并至少选择一名选手后再提交参赛名单。',
       );
       return false;
     }
@@ -54,16 +54,16 @@ export function useLineupSubmission({
         }),
       );
       notifySuccess(
-        'Lineup submitted',
-        'The tournament lineup has been submitted.',
+        '参赛名单已提交',
+        '本场赛事的参赛名单已经提交。',
       );
       return true;
     } catch (error) {
       notifyWarning(
-        'Unable to submit lineup',
+        '参赛名单提交失败',
         error instanceof Error
           ? error.message
-          : 'The lineup submission did not complete.',
+          : '参赛名单提交未完成，请稍后重试。',
       );
       return false;
     } finally {

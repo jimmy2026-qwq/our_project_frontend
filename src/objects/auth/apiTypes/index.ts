@@ -1,5 +1,6 @@
 export * from './AuthSessionView';
 export * from './AuthSuccessView';
+export * from './BootstrapSuperAdminRequest';
 export * from './CreateGuestSessionRequest';
 export * from './CurrentSessionGuestSessionView';
 export * from './CurrentSessionPlayerView';

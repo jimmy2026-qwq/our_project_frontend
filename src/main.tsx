@@ -2,11 +2,11 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 
+import { AppErrorBoundary } from '@/app/AppErrorBoundary';
 import {
   AppFeedbackProvider,
   AuthProvider,
   DialogProvider,
-  NotificationProvider,
   RealtimeProvider,
 } from '@/providers';
 import { router } from '@/router';
@@ -34,16 +34,16 @@ if (!container) {
 
 createRoot(container).render(
   <StrictMode>
-    <AuthProvider>
-      <RealtimeProvider>
-        <NotificationProvider>
+    <AppErrorBoundary>
+      <AuthProvider>
+        <RealtimeProvider>
           <DialogProvider>
             <AppFeedbackProvider>
               <RouterProvider router={router} />
             </AppFeedbackProvider>
           </DialogProvider>
-        </NotificationProvider>
-      </RealtimeProvider>
-    </AuthProvider>
+        </RealtimeProvider>
+      </AuthProvider>
+    </AppErrorBoundary>
   </StrictMode>,
 );
