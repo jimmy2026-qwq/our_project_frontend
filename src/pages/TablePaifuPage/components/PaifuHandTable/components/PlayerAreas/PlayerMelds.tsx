@@ -8,14 +8,24 @@ import type {
 } from '../../../../objects/ReplaySnapshot.types';
 import { TileImage } from '../TileViews';
 import {
-  meldPositionClasses,
   riverRowSize,
-  riverTileFaceClasses,
   riverTileImageHeight,
   riverTileImageWidth,
   riverTileTopCrop,
   riverTileVisibleHeight,
 } from '../../functions/getPaifuTableLayout';
+
+const meldBoxPositionClasses: Record<SeatWind, string> = {
+  East: 'bottom-[126px] right-[18%]',
+  South: 'right-[126px] top-[20%] rotate-90',
+  West: 'left-[18%] top-[150px] rotate-180',
+  North: 'left-[126px] bottom-[20%] -rotate-90',
+};
+const meldBoxMinWidth = 176;
+const meldBoxMaxWidth = 286;
+const meldBoxHorizontalPadding = 16;
+const meldBoxVerticalPadding = 16;
+const meldBoxRowGap = 4;
 
 export function PlayerMelds({
   melds,
@@ -31,36 +41,78 @@ export function PlayerMelds({
   return (
     <div
       className={[
-        'absolute z-[4] flex items-end gap-2',
-        meldPositionClasses[seat],
+        'pointer-events-none absolute z-[4] grid content-end gap-1 overflow-visible rounded-[10px] border border-[rgba(236,197,122,0.14)] bg-transparent p-2',
+        meldBoxPositionClasses[seat],
       ].join(' ')}
+      style={getMeldBoxStyle(melds[seat])}
     >
-      {melds[seat].map((meld, meldIndex) => {
-        const displayTiles = getMeldDisplayTiles(seat, meld);
+      {melds[seat].map((meld, meldIndex) => (
+        <MeldRow
+          key={`${seat}-meld-${meld.actionType}-${meldIndex}`}
+          meld={meld}
+          meldIndex={meldIndex}
+          seat={seat}
+        />
+      ))}
+    </div>
+  );
+}
 
-        return (
-          <div
-            key={`${seat}-meld-${meld.actionType}-${meldIndex}`}
-            className="relative shrink-0"
-            style={{
-              height: riverRowSize,
-              width: displayTiles.reduce(
-                (total, tile) => total + getMeldTileWidth(tile),
-                0,
-              ),
-            }}
-          >
-            {displayTiles.map((meldTile, tileIndex) => (
-              <MeldTileView
-                key={`${seat}-meld-${meldIndex}-${meldTile.tile}-${tileIndex}`}
-                meldTile={meldTile}
-                seat={seat}
-                style={getMeldTileStyle(tileIndex, displayTiles)}
-              />
-            ))}
-          </div>
-        );
-      })}
+export function getMeldBoxStyle(melds: MeldGroup[]): CSSProperties {
+  const rowWidths = melds.map((meld) =>
+    meld.tiles.reduce((total, tile) => total + getMeldTileWidth(tile), 0),
+  );
+  const contentWidth = Math.max(0, ...rowWidths);
+
+  return {
+    height: getMeldBoxHeight(melds.length),
+    width: Math.min(
+      meldBoxMaxWidth,
+      Math.max(meldBoxMinWidth, contentWidth + meldBoxHorizontalPadding),
+    ),
+  };
+}
+
+export function getMeldBoxHeight(meldCount: number) {
+  const rowCount = Math.max(1, meldCount);
+
+  return (
+    meldBoxVerticalPadding +
+    rowCount * riverRowSize +
+    Math.max(0, rowCount - 1) * meldBoxRowGap
+  );
+}
+
+function MeldRow({
+  meld,
+  meldIndex,
+  seat,
+}: {
+  meld: MeldGroup;
+  meldIndex: number;
+  seat: SeatWind;
+}) {
+  const displayTiles = getMeldDisplayTiles(seat, meld);
+
+  return (
+    <div
+      className="relative shrink-0 justify-self-end"
+      style={{
+        height: riverRowSize,
+        width: displayTiles.reduce(
+          (total, tile) => total + getMeldTileWidth(tile),
+          0,
+        ),
+      }}
+    >
+      {displayTiles.map((meldTile, tileIndex) => (
+        <MeldTileView
+          key={`${seat}-meld-${meldIndex}-${meldTile.tile}-${tileIndex}`}
+          meldTile={meldTile}
+          seat={seat}
+          style={getMeldTileStyle(tileIndex, displayTiles, seat)}
+        />
+      ))}
     </div>
   );
 }
@@ -101,7 +153,7 @@ function MeldTileView({
           }}
         >
           <TileImage
-            className={['block select-none', riverTileFaceClasses[seat]].join(
+            className={['block select-none', getMeldTileFaceClass(seat)].join(
               ' ',
             )}
             tile={meldTile.tile}
@@ -134,7 +186,11 @@ function MeldBackTile({ style }: { style: CSSProperties }) {
   );
 }
 
-function getMeldTileStyle(index: number, tiles: MeldTile[]): CSSProperties {
+function getMeldTileStyle(
+  index: number,
+  tiles: MeldTile[],
+  seat: SeatWind,
+): CSSProperties {
   const left = tiles
     .slice(0, index)
     .reduce((total, tile) => total + getMeldTileWidth(tile), 0);
@@ -145,13 +201,31 @@ function getMeldTileStyle(index: number, tiles: MeldTile[]): CSSProperties {
     height: isSideways ? riverTileImageWidth : riverRowSize,
     left,
     position: 'absolute',
-    top: 0,
+    top: isSideways ? getSidewaysTileTopOffset(seat) : 0,
     width: tile ? getMeldTileWidth(tile) : riverTileImageWidth,
   };
 }
 
+function getSidewaysTileTopOffset(seat: SeatWind) {
+  const bottomAlignedOffset = riverRowSize - riverTileImageWidth;
+
+  return seat === 'South' || seat === 'North'
+    ? bottomAlignedOffset / 2
+    : bottomAlignedOffset;
+}
+
+function getMeldTileFaceClass(seat: SeatWind) {
+  if (seat === 'South' || seat === 'North') {
+    return 'rotate-180';
+  }
+
+  return '';
+}
+
 function getMeldDisplayTiles(seat: SeatWind, meld: MeldGroup) {
-  return seat === 'South' ? [...meld.tiles].reverse() : meld.tiles;
+  return seat === 'South' || seat === 'North'
+    ? [...meld.tiles].reverse()
+    : meld.tiles;
 }
 
 function getMeldTileWidth(tile: MeldTile) {

@@ -22,8 +22,8 @@ export function applySnapshotAction({
   melds,
   paifu,
   pendingRiichiSideways,
-  rivers,
   round,
+  rivers,
 }: {
   action: PaifuAction;
   drawnTileIndexes: Record<string, number | undefined>;
@@ -31,8 +31,8 @@ export function applySnapshotAction({
   melds: Record<SeatWind, MeldGroup[]>;
   paifu: TablePaifuDetail;
   pendingRiichiSideways: Record<SeatWind, boolean>;
-  rivers: Record<SeatWind, RiverDiscard[]>;
   round: PaifuRoundSummary;
+  rivers: Record<SeatWind, RiverDiscard[]>;
 }) {
   if (!action.actor) {
     return;
@@ -43,7 +43,7 @@ export function applySnapshotAction({
     return;
   }
 
-  applyHandSnapshot(action, round, hands, drawnTileIndexes);
+  applyHandSnapshot(action, hands, drawnTileIndexes, round);
   applyRiverSnapshot({
     action,
     actorSeat,
@@ -68,9 +68,9 @@ export function applySnapshotAction({
 
 function applyHandSnapshot(
   action: PaifuAction,
-  round: PaifuRoundSummary,
   hands: Record<string, string[]>,
   drawnTileIndexes: Record<string, number | undefined>,
+  round: PaifuRoundSummary,
 ) {
   if (!action.actor) {
     return;
@@ -86,12 +86,36 @@ function applyHandSnapshot(
       beforeTiles,
       preferredTile: action.tile,
     });
-  } else if (
-    action.handTilesAfterAction &&
-    shouldApplyHandSnapshot(action, round)
-  ) {
-    hands[action.actor] = [...action.handTilesAfterAction];
+  } else if (action.handTilesAfterAction) {
+    hands[action.actor] = getVisibleHandTilesAfterAction({
+      action,
+      currentTiles: hands[action.actor] ?? [],
+      round,
+    });
   }
+}
+
+function getVisibleHandTilesAfterAction({
+  action,
+  currentTiles,
+  round,
+}: {
+  action: PaifuAction;
+  currentTiles: string[];
+  round: PaifuRoundSummary;
+}) {
+  const afterTiles = [...(action.handTilesAfterAction ?? [])];
+
+  if (
+    action.actionType !== 'Win' ||
+    round.result.outcome !== 'Ron' ||
+    !action.tile ||
+    afterTiles.length <= currentTiles.length
+  ) {
+    return afterTiles;
+  }
+
+  return removeFirstTile(afterTiles, action.tile);
 }
 
 function applyRiverSnapshot({
@@ -192,11 +216,4 @@ function applyMeldSnapshot({
       },
     ];
   }
-}
-
-function shouldApplyHandSnapshot(
-  action: PaifuAction,
-  round: PaifuRoundSummary,
-) {
-  return !(action.actionType === 'Win' && round.result.outcome === 'Ron');
 }

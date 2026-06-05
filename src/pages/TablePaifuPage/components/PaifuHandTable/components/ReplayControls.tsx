@@ -1,16 +1,38 @@
 export function ReplayControls({
+  handVisibilityLabel,
+  onCyclePerspective,
   maxReplayStep,
   onBackward,
   onForward,
+  onToggleHandVisibility,
+  perspectiveLabel,
   replayStep,
 }: {
+  handVisibilityLabel: string;
   maxReplayStep: number;
   onBackward: () => void;
+  onCyclePerspective: () => void;
   onForward: () => void;
+  onToggleHandVisibility: () => void;
+  perspectiveLabel: string;
   replayStep: number;
 }) {
   return (
     <div className="absolute bottom-[36px] right-[34px] z-[10] grid gap-2">
+      <button
+        className="min-h-[38px] rounded-2xl border border-[rgba(176,223,229,0.18)] bg-[rgba(7,18,28,0.74)] px-4 py-2 text-sm font-medium text-[#f2f7fb] transition-[border-color,background-color,color] duration-200 hover:border-[rgba(114,216,209,0.36)] hover:bg-[rgba(114,216,209,0.1)]"
+        onClick={onCyclePerspective}
+        type="button"
+      >
+        {perspectiveLabel}
+      </button>
+      <button
+        className="min-h-[38px] rounded-2xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-2 text-sm font-medium text-[#ffd98a] transition-[border-color,background-color,color] duration-200 hover:border-[rgba(236,197,122,0.58)] hover:bg-[rgba(236,197,122,0.2)]"
+        onClick={onToggleHandVisibility}
+        type="button"
+      >
+        {handVisibilityLabel}
+      </button>
       <button
         className={[
           'min-h-[38px] rounded-2xl border px-4 py-2 text-sm font-medium transition-[border-color,background-color,color,opacity] duration-200',

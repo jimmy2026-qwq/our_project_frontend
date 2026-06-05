@@ -98,6 +98,19 @@ function WinningResultContent({
 }) {
   const headline = getWinHeadline(result, step, playerNames);
 
+  if (step.kind === 'win') {
+    return (
+      <div className="grid h-full grid-rows-[minmax(0,1fr)_auto] gap-6">
+        <SingleWinPanel
+          headline={headline}
+          result={result}
+          seats={seats}
+          win={step.win}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="grid h-full grid-rows-[auto_1fr_auto] gap-6">
       <div className="grid justify-items-center gap-3">
@@ -115,15 +128,7 @@ function WinningResultContent({
       </div>
 
       <div className="grid content-center gap-5 overflow-auto">
-        {step.kind === 'win' ? (
-          <SingleWinPanel
-            result={result}
-            seats={seats}
-            win={step.win}
-          />
-        ) : (
-          <ScoreSettlementPanel playerNames={playerNames} result={result} />
-        )}
+        <ScoreSettlementPanel playerNames={playerNames} result={result} />
       </div>
 
       {step.kind === 'score' ? (
@@ -136,10 +141,12 @@ function WinningResultContent({
 }
 
 function SingleWinPanel({
+  headline,
   result,
   seats,
   win,
 }: {
+  headline: ReturnType<typeof getWinHeadline>;
   result: AgariResult;
   seats: MahjongSeatView[];
   win: MahjongResultWinLike;
@@ -155,10 +162,11 @@ function SingleWinPanel({
       : targetId && result.scoreChanges.length > 0
         ? findWinningTileFromTarget(seats, targetId)
         : winnerHand[winnerHand.length - 1];
-  const displayHand =
-    result.outcome === 'Tsumo' && winningTile && winnerHand.length > 0
-      ? removeFirstTile(winnerHand, winningTile)
-      : winnerHand;
+  const displayHand = getResultDisplayHand({
+    result,
+    tile: winningTile,
+    winnerHand,
+  });
   const winLabel = getWinLabel(result, win);
   const yakuList = getWinYaku(result, win);
   const pointText =
@@ -168,41 +176,68 @@ function SingleWinPanel({
 
   return (
     <>
-      <div className="flex items-end justify-center gap-0">
-        {displayHand.map((tile, index) => (
-          <ResultTile key={`${win.winner}-result-${tile}-${index}`} tile={tile} />
-        ))}
-        {winnerMelds.length > 0 ? (
-          <div className="ml-6 flex items-end gap-3 border-l border-[rgba(255,255,255,0.18)] pl-5">
-            {winnerMelds.map((meld, meldIndex) => (
-              <div
-                key={`${win.winner}-result-meld-${meld.meldType}-${meldIndex}`}
-                className="flex items-end gap-0"
-              >
-                {(meld.tiles ?? []).map((tile, tileIndex) => (
-                  <ResultTile
-                    key={`${win.winner}-result-meld-${meldIndex}-${tile}-${tileIndex}`}
-                    tile={tile}
-                  />
-                ))}
-              </div>
-            ))}
-          </div>
+      <div className="grid content-start gap-5 overflow-auto">
+        <div className="flex items-end justify-center gap-0">
+          {displayHand.map((tile, index) => (
+            <ResultTile key={`${win.winner}-result-${tile}-${index}`} tile={tile} />
+          ))}
+          {winnerMelds.length > 0 ? (
+            <div className="ml-6 flex items-end gap-3 border-l border-[rgba(255,255,255,0.18)] pl-5">
+              {winnerMelds.map((meld, meldIndex) => (
+                <div
+                  key={`${win.winner}-result-meld-${meld.meldType}-${meldIndex}`}
+                  className="flex items-end gap-0"
+                >
+                  {(meld.tiles ?? []).map((tile, tileIndex) => (
+                    <ResultTile
+                      key={`${win.winner}-result-meld-${meldIndex}-${tile}-${tileIndex}`}
+                      tile={tile}
+                    />
+                  ))}
+                </div>
+              ))}
+            </div>
+          ) : null}
+          {winningTile ? <WinningTile label={winLabel} tile={winningTile} /> : null}
+        </div>
+
+        {yakuList.length > 0 ? (
+          <YakuList className="mx-auto w-[min(680px,88%)]" yaku={yakuList} />
         ) : null}
-        {winningTile ? <WinningTile label={winLabel} tile={winningTile} /> : null}
       </div>
 
-      {yakuList.length > 0 ? (
-        <YakuList className="mx-auto w-[min(680px,88%)]" yaku={yakuList} />
-      ) : null}
-
-      <div className="grid justify-items-end gap-1 justify-self-end text-right">
-        <span className="block text-sm uppercase tracking-[0.2em] text-[#9ab0c1]">
-          点数
-        </span>
-        <strong className="text-[2rem] text-[#ffd98a]">{pointText}</strong>
+      <div className="flex flex-wrap items-end justify-between gap-4 self-end pb-1">
+        <WinHeadlinePanel headline={headline} />
+        <div className="grid justify-items-end gap-1 justify-self-end text-right">
+          <span className="block text-sm uppercase tracking-[0.2em] text-[#9ab0c1]">
+            点数
+          </span>
+          <strong className="text-[2rem] text-[#ffd98a]">{pointText}</strong>
+        </div>
       </div>
     </>
+  );
+}
+
+function WinHeadlinePanel({
+  headline,
+}: {
+  headline: ReturnType<typeof getWinHeadline>;
+}) {
+  return (
+    <div className="grid max-w-[min(360px,58%)] justify-items-start gap-2 text-left">
+      <span className="rounded-xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#ffd98a]">
+        {headline.badge}
+      </span>
+      <strong className="max-w-full truncate text-2xl text-[#f2f7fb]">
+        {headline.title}
+      </strong>
+      {headline.subtitle ? (
+        <span className="max-w-full truncate text-sm font-semibold text-[#c7d6e2]">
+          {headline.subtitle}
+        </span>
+      ) : null}
+    </div>
   );
 }
 
@@ -450,6 +485,22 @@ function removeFirstTile(tiles: string[], tile: string) {
 
     return true;
   });
+}
+
+function getResultDisplayHand({
+  result,
+  tile,
+  winnerHand,
+}: {
+  result: AgariResult;
+  tile?: string;
+  winnerHand: string[];
+}) {
+  if (result.outcome === 'Tsumo' && tile) {
+    return removeFirstTile(winnerHand, tile);
+  }
+
+  return winnerHand;
 }
 
 function findWinningTileFromTarget(seats: MahjongSeatView[], target: string) {

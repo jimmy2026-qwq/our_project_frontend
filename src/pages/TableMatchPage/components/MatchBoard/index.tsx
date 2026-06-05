@@ -1,6 +1,7 @@
 import type {
   AgariResult,
   MahjongLegalAction,
+  MahjongPublicEventView,
   MahjongSeatView,
   MahjongTableView,
   SeatWind,
@@ -11,13 +12,22 @@ import {
   settlementAnimationDelayMs,
   settlementAnimationDurationMs,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuHandTableReplay';
-import { isWinOutcome } from '@/pages/shared/mahjongResultSequence';
+import {
+  getResultWins,
+  isWinOutcome,
+} from '@/pages/shared/mahjongResultSequence';
 import { useMahjongTileImagePreload } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileImagePreload';
 import type {
   MeldGroup,
   RiverDiscard,
 } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
 import { PlayerRiver } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PlayerAreas/PlayerRiver';
+import { OperationFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/OperationFlash';
+import type {
+  ActiveOperation,
+  WinningCallFlashView,
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/PaifuOverlays.types';
+import { WinningCallFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/WinningCallFlash';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import { MatchActionBar } from './MatchActionBar';
@@ -32,6 +42,7 @@ interface MatchBoardProps {
   actionError: string | null;
   isRefreshing: boolean;
   isSubmittingAction: boolean;
+  mahjongAcceptedEvent: MahjongPublicEventView | null;
   mahjongTable: MahjongTableView;
   onAdvanceRound: () => void | Promise<void>;
   onSubmitAction: (action: MahjongLegalAction) => void;
@@ -44,6 +55,7 @@ export function MatchBoard({
   actionError,
   isRefreshing,
   isSubmittingAction,
+  mahjongAcceptedEvent,
   mahjongTable,
   onAdvanceRound,
   onSubmitAction,
@@ -69,19 +81,28 @@ export function MatchBoard({
   const [resultSequenceCompletedKey, setResultSequenceCompletedKey] = useState<
     string | null
   >(null);
+  const [resultOverlayReadyKey, setResultOverlayReadyKey] = useState<
+    string | null
+  >(null);
+  const [resultHandRevealReadyKey, setResultHandRevealReadyKey] = useState<
+    string | null
+  >(null);
+  const [resultWinningCallRemovedKey, setResultWinningCallRemovedKey] =
+    useState<string | null>(null);
   const [delayedTurnActionKey, setDelayedTurnActionKey] = useState<
     string | null
   >(null);
   const advanceStartedKeyRef = useRef<string | null>(null);
-  const shouldShowResult = Boolean(
-    mahjongTable.currentRound?.result &&
-      resultKey &&
-      resultSequenceCompletedKey !== resultKey &&
-      settlementAnimatingKey !== resultKey,
-  );
   const winResultNeedsSequence = Boolean(
     mahjongTable.currentRound?.result &&
       isWinOutcome(mahjongTable.currentRound.result.outcome),
+  );
+  const shouldShowResult = Boolean(
+    mahjongTable.currentRound?.result &&
+      resultKey &&
+      (!winResultNeedsSequence || resultOverlayReadyKey === resultKey) &&
+      resultSequenceCompletedKey !== resultKey &&
+      settlementAnimatingKey !== resultKey,
   );
   const scoreDisplays = useMemo(
     () =>
@@ -109,6 +130,33 @@ export function MatchBoard({
     (action) => action.commandType === 'Discard',
   );
   const hasCallResponseActions = legalActions.some(isCallResponseAction);
+  const activeOperation = useMemo(
+    () =>
+      createMatchActiveOperation({
+        event: mahjongAcceptedEvent,
+        result: mahjongTable.currentRound?.result ?? null,
+        seatRotation,
+        seats,
+      }),
+    [mahjongAcceptedEvent, mahjongTable.currentRound?.result, seatRotation, seats],
+  );
+  const winningCallFlash = useMemo(
+    () =>
+      createMatchWinningCallFlash({
+        result: mahjongTable.currentRound?.result ?? null,
+        resultKey,
+        resultWinningCallRemovedKey,
+        seatRotation,
+        seats,
+      }),
+    [
+      mahjongTable.currentRound?.result,
+      resultKey,
+      resultWinningCallRemovedKey,
+      seatRotation,
+      seats,
+    ],
+  );
 
   useEffect(() => {
     if (!turnActionDelayKey) {
@@ -132,6 +180,9 @@ export function MatchBoard({
     if (!resultKey) {
       setSettlementAnimatingKey(null);
       setResultSequenceCompletedKey(null);
+      setResultHandRevealReadyKey(null);
+      setResultOverlayReadyKey(null);
+      setResultWinningCallRemovedKey(null);
       setSettlementProgress(undefined);
       advanceStartedKeyRef.current = null;
       return;
@@ -139,8 +190,35 @@ export function MatchBoard({
 
     setSettlementAnimatingKey(null);
     setResultSequenceCompletedKey(null);
+    setResultHandRevealReadyKey(null);
+    setResultOverlayReadyKey(null);
+    setResultWinningCallRemovedKey(null);
     setSettlementProgress(undefined);
   }, [resultKey]);
+
+  useEffect(() => {
+    if (!resultKey || !winResultNeedsSequence) {
+      setResultHandRevealReadyKey(resultKey);
+      setResultOverlayReadyKey(resultKey);
+      setResultWinningCallRemovedKey(resultKey);
+      return;
+    }
+
+    setResultHandRevealReadyKey(resultKey);
+    setResultOverlayReadyKey(null);
+    setResultWinningCallRemovedKey(null);
+    const flashTimer = window.setTimeout(() => {
+      setResultWinningCallRemovedKey(resultKey);
+    }, winningCallVisibleMs);
+    const overlayTimer = window.setTimeout(() => {
+      setResultOverlayReadyKey(resultKey);
+    }, resultRevealDelayMs);
+
+    return () => {
+      window.clearTimeout(flashTimer);
+      window.clearTimeout(overlayTimer);
+    };
+  }, [resultKey, winResultNeedsSequence]);
 
   useEffect(() => {
     if (!resultKey) {
@@ -232,6 +310,12 @@ export function MatchBoard({
           <PlayerRiver key={`${seat}-river`} rivers={rivers} seat={seat} />
         ))}
         <MatchMeldArea melds={melds} />
+        <OperationFlash
+          operation={
+            winningCallFlash || winResultNeedsSequence ? undefined : activeOperation
+          }
+        />
+        <WinningCallFlash flash={winningCallFlash} />
         {seatOrder.map((seat) => (
           <MatchPlayerHand
             key={seat}
@@ -247,6 +331,13 @@ export function MatchBoard({
             }
             seat={seat}
             seatView={seatMap[seat]}
+            shouldForceBacks={shouldHideWinningHand({
+              result: mahjongTable.currentRound?.result ?? null,
+              resultHandRevealReadyKey,
+              resultKey,
+              seatView: seatMap[seat],
+              winResultNeedsSequence,
+            })}
           />
         ))}
 
@@ -286,6 +377,10 @@ export function MatchBoard({
 }
 
 const resultOverlayDelayMs = 3000;
+const winningCallAnimationMs = 500;
+const winningCallVisibleMs = 1500;
+const winningCallSettlementWaitMs = 1500;
+const resultRevealDelayMs = winningCallAnimationMs + winningCallSettlementWaitMs;
 const callMaskDelayMinMs = 650;
 const callMaskDelayRangeMs = 1350;
 
@@ -368,6 +463,121 @@ function getResultCompletionLabel(
   return mahjongTable.ruleset.gameLength === 'OneKyoku'
     ? '完成牌桌'
     : '进入下一局';
+}
+
+function createMatchActiveOperation({
+  event,
+  result,
+  seatRotation,
+  seats,
+}: {
+  event: MahjongPublicEventView | null;
+  result: AgariResult | null;
+  seatRotation: Record<SeatWind, SeatWind>;
+  seats: MahjongSeatView[];
+}): ActiveOperation | undefined {
+  if (!event?.actor) {
+    return undefined;
+  }
+
+  const seat = seats.find((seatView) => seatView.playerId === event.actor)?.seat;
+  const label = getMatchOperationLabel(event, result);
+
+  if (!seat || !label) {
+    return undefined;
+  }
+
+  return {
+    key: event.sequenceNo,
+    label,
+    seat: seatRotation[seat],
+  };
+}
+
+function createMatchWinningCallFlash({
+  result,
+  resultKey,
+  resultWinningCallRemovedKey,
+  seatRotation,
+  seats,
+}: {
+  result: AgariResult | null;
+  resultKey: string | null;
+  resultWinningCallRemovedKey: string | null;
+  seatRotation: Record<SeatWind, SeatWind>;
+  seats: MahjongSeatView[];
+}): WinningCallFlashView | undefined {
+  if (
+    !result ||
+    !resultKey ||
+    resultWinningCallRemovedKey === resultKey ||
+    !isWinOutcome(result.outcome)
+  ) {
+    return undefined;
+  }
+
+  const winnerId = getResultWins(result)[0]?.winner ?? result.winner;
+  const seat = seats.find((seatView) => seatView.playerId === winnerId)?.seat;
+
+  if (!seat) {
+    return undefined;
+  }
+
+  return {
+    animationMs: winningCallAnimationMs,
+    key: resultKey,
+    label: result.outcome === 'Tsumo' ? '\u81ea\u6478' : '\u548c',
+    seat: seatRotation[seat],
+  };
+}
+
+function shouldHideWinningHand({
+  result,
+  resultHandRevealReadyKey,
+  resultKey,
+  seatView,
+  winResultNeedsSequence,
+}: {
+  result: AgariResult | null;
+  resultHandRevealReadyKey: string | null;
+  resultKey: string | null;
+  seatView: MahjongSeatView | null;
+  winResultNeedsSequence: boolean;
+}) {
+  if (
+    !result ||
+    !resultKey ||
+    !seatView?.playerId ||
+    !winResultNeedsSequence ||
+    resultHandRevealReadyKey === resultKey
+  ) {
+    return false;
+  }
+
+  return getResultWins(result).some((win) => win.winner === seatView.playerId);
+}
+
+function getMatchOperationLabel(
+  event: MahjongPublicEventView,
+  result: AgariResult | null,
+) {
+  switch (event.actionType) {
+    case 'Chi':
+      return '吃';
+    case 'Pon':
+      return '碰';
+    case 'Kan':
+    case 'OpenKan':
+    case 'ClosedKan':
+    case 'AddedKan':
+      return '杠';
+    case 'Riichi':
+      return '立直';
+    case 'Win':
+      return result?.outcome === 'Tsumo' ? '自摸' : '荣';
+    default:
+      return undefined;
+  }
 }
 
 function createMatchScoreDisplays({

@@ -1,4 +1,8 @@
-import type { MahjongLegalAction, MahjongTableView } from '@/objects';
+import type {
+  MahjongLegalAction,
+  MahjongPublicEventView,
+  MahjongTableView,
+} from '@/objects';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
@@ -17,6 +21,7 @@ interface TableMatchSectionProps {
   isMahjongLoading: boolean;
   mahjongError: string | null;
   mahjongTable: MahjongTableView | null;
+  mahjongAcceptedEvent: MahjongPublicEventView | null;
   playerNames: Record<string, string>;
   isRegisteredPlayer: boolean;
   operatorId: string;
@@ -49,6 +54,7 @@ export function TableMatchSection({
   isMahjongLoading,
   mahjongError,
   mahjongTable,
+  mahjongAcceptedEvent,
   playerNames,
   isRegisteredPlayer,
   operatorId,
@@ -91,6 +97,7 @@ export function TableMatchSection({
           isRefreshing={isMahjongRefreshing}
           isSubmittingAction={isSubmittingMahjongAction}
           mahjongTable={mahjongTable}
+          mahjongAcceptedEvent={mahjongAcceptedEvent}
           onAdvanceRound={onAdvanceRound}
           onSubmitAction={onSubmitMahjongAction}
           operatorId={operatorId}

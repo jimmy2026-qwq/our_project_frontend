@@ -24,6 +24,7 @@ interface MatchPlayerHandProps {
   playerName?: string;
   seat: SeatWind;
   seatView: MahjongSeatView | null;
+  shouldForceBacks?: boolean;
 }
 
 export function MatchPlayerHand({
@@ -35,6 +36,7 @@ export function MatchPlayerHand({
   playerName,
   seat,
   seatView,
+  shouldForceBacks = false,
 }: MatchPlayerHandProps) {
   if (!seatView) {
     return null;
@@ -42,7 +44,7 @@ export function MatchPlayerHand({
 
   const tiles = seatView.handTiles ?? [];
   const displayTiles =
-    tiles.length > 0
+    tiles.length > 0 && !shouldForceBacks
       ? getMatchDisplayHandTiles({
           drawTile: seatView.drawTile,
           seat,
@@ -52,7 +54,7 @@ export function MatchPlayerHand({
           isDrawnTile: false,
           tile,
         }));
-  const isOwnVisibleHand = tiles.length > 0;
+  const isOwnVisibleHand = tiles.length > 0 && !shouldForceBacks;
   const stateBadges = getSeatStateBadges(seatView);
 
   return (

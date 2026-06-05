@@ -1,8 +1,17 @@
+import { useEffect, useMemo, useState } from 'react';
+import type { SeatWind } from '@/objects/tournament';
+
 import type { PaifuRoundSummary, TablePaifuDetail } from '../../types';
-import { getRoundPlayerId, seatOrder } from '../../functions/getReplay';
+import {
+  getPlayerDisplayName,
+  getRoundPlayerId,
+  isPlayerTenpai,
+  seatOrder,
+} from '../../functions/getReplay';
 import { CenterTable, RoundPicker } from './components/CenterTable';
 import { ExhaustiveDrawStatusMarkers } from './components/PaifuOverlays/ExhaustiveDrawStatusMarkers';
 import { OperationFlash } from './components/PaifuOverlays/OperationFlash';
+import { WinningCallFlash } from './components/PaifuOverlays/WinningCallFlash';
 import { WinningResultOverlay } from './components/PaifuOverlays/WinningResultOverlay';
 import { PlayerHand } from './components/PlayerAreas/PlayerHand';
 import { PlayerMelds } from './components/PlayerAreas/PlayerMelds';
@@ -17,7 +26,10 @@ interface PaifuHandTableProps {
   round: PaifuRoundSummary;
   rounds: PaifuRoundSummary[];
   selectedRoundIndex: number;
+  viewerPlayerId: string;
 }
+
+type HandVisibilityMode = 'self' | 'all';
 
 export function PaifuHandTable({
   onSelectRound,
@@ -25,15 +37,34 @@ export function PaifuHandTable({
   round,
   rounds,
   selectedRoundIndex,
+  viewerPlayerId,
 }: PaifuHandTableProps) {
   useMahjongTileImagePreload();
+  const [handVisibilityMode, setHandVisibilityMode] =
+    useState<HandVisibilityMode>('self');
+  const [perspectiveSeat, setPerspectiveSeat] = useState<SeatWind>(() =>
+    getInitialPerspectiveSeat(paifu, viewerPlayerId),
+  );
+
+  useEffect(() => {
+    setPerspectiveSeat(getInitialPerspectiveSeat(paifu, viewerPlayerId));
+  }, [paifu.id, viewerPlayerId]);
+
+  const displayPaifu = useMemo(
+    () => createPerspectivePaifu(paifu, perspectiveSeat),
+    [paifu, perspectiveSeat],
+  );
 
   const replay = usePaifuHandTableReplay({
-    paifu,
+    paifu: displayPaifu,
     round,
     rounds,
     selectedRoundIndex,
   });
+  const selfPlayerId = getRoundPlayerId(displayPaifu, 'East');
+  const perspectiveLabel = selfPlayerId
+    ? `视角：${getPlayerDisplayName(displayPaifu, selfPlayerId)}`
+    : '视角：东家';
 
   return (
     <section className="grid gap-0">
@@ -61,7 +92,7 @@ export function PaifuHandTable({
           onToggleRoundPicker={() =>
             replay.setIsRoundPickerOpen((value) => !value)
           }
-          paifu={paifu}
+          paifu={displayPaifu}
           replayStep={replay.replayStep}
           round={round}
           scoreDisplays={replay.scoreDisplays}
@@ -83,9 +114,12 @@ export function PaifuHandTable({
           />
         ))}
         {replay.isExhaustiveDrawResult ? (
-          <ExhaustiveDrawStatusMarkers paifu={paifu} round={round} />
+          <ExhaustiveDrawStatusMarkers paifu={displayPaifu} round={round} />
         ) : (
-          <OperationFlash operation={replay.activeOperation} />
+          <>
+            <OperationFlash operation={replay.activeOperation} />
+            <WinningCallFlash flash={replay.activeWinningCall} />
+          </>
         )}
 
         {replay.isRoundPickerOpen ? (
@@ -100,15 +134,25 @@ export function PaifuHandTable({
         ) : null}
 
         <ReplayControls
+          handVisibilityLabel={
+            handVisibilityMode === 'self' ? '只亮自家' : '亮四家'
+          }
           maxReplayStep={replay.maxReplayStep}
           onBackward={() =>
             replay.setReplayStep((value) => Math.max(0, value - 1))
+          }
+          onCyclePerspective={() =>
+            setPerspectiveSeat((seat) => getNextPerspectiveSeat(paifu, seat))
           }
           onForward={() =>
             replay.setReplayStep((value) =>
               Math.min(replay.maxReplayStep, value + 1),
             )
           }
+          onToggleHandVisibility={() =>
+            setHandVisibilityMode((mode) => (mode === 'self' ? 'all' : 'self'))
+          }
+          perspectiveLabel={perspectiveLabel}
           replayStep={replay.replayStep}
         />
 
@@ -117,14 +161,20 @@ export function PaifuHandTable({
             key={seat}
             drawnTileIndex={
               replay.replaySnapshot.drawnTileIndexes[
-                getRoundPlayerId(paifu, seat)
+                getRoundPlayerId(displayPaifu, seat)
               ]
             }
-            isExhaustiveDrawResult={replay.isExhaustiveDrawResult}
             hands={replay.replaySnapshot.hands}
-            paifu={paifu}
-            round={round}
+            paifu={displayPaifu}
             seat={seat}
+            shouldRevealHand={shouldRevealPaifuHand({
+              handVisibilityMode,
+              isExhaustiveDrawResult: replay.isExhaustiveDrawResult,
+              playerId: getRoundPlayerId(displayPaifu, seat),
+              revealedWinningPlayerId: replay.revealedWinningPlayerId,
+              round,
+              selfPlayerId,
+            })}
           />
         ))}
 
@@ -132,10 +182,10 @@ export function PaifuHandTable({
           <WinningResultOverlay
             action={replay.winningAction}
             onConfirm={() => {
-              replay.setWinningAction(undefined);
+              replay.clearWinningAction();
               replay.startSettlementAnimation();
             }}
-            playerNames={paifu.metadata.playerNames ?? {}}
+            playerNames={displayPaifu.metadata.playerNames ?? {}}
             replaySnapshot={replay.replaySnapshot}
             replayStep={replay.replayStep}
             round={round}
@@ -143,5 +193,104 @@ export function PaifuHandTable({
         ) : null}
       </div>
     </section>
+  );
+}
+
+function shouldRevealPaifuHand({
+  handVisibilityMode,
+  isExhaustiveDrawResult,
+  playerId,
+  revealedWinningPlayerId,
+  round,
+  selfPlayerId,
+}: {
+  handVisibilityMode: HandVisibilityMode;
+  isExhaustiveDrawResult: boolean;
+  playerId: string;
+  revealedWinningPlayerId?: string;
+  round: PaifuRoundSummary;
+  selfPlayerId: string;
+}) {
+  if (!playerId) {
+    return false;
+  }
+
+  if (handVisibilityMode === 'all') {
+    return true;
+  }
+
+  return (
+    playerId === selfPlayerId ||
+    playerId === revealedWinningPlayerId ||
+    (isExhaustiveDrawResult && isPlayerTenpai(round, playerId))
+  );
+}
+
+function getInitialPerspectiveSeat(
+  paifu: TablePaifuDetail,
+  viewerPlayerId: string,
+): SeatWind {
+  const viewerSeat = paifu.metadata.seats?.find(
+    (seat) => seat.playerId === viewerPlayerId,
+  )?.seat;
+
+  return viewerSeat ?? firstOccupiedSeat(paifu) ?? 'East';
+}
+
+function getNextPerspectiveSeat(
+  paifu: TablePaifuDetail,
+  currentSeat: SeatWind,
+): SeatWind {
+  const occupiedSeats = seatOrder.filter((seat) =>
+    paifu.metadata.seats?.some((item) => item.seat === seat),
+  );
+  const selectableSeats = occupiedSeats.length > 0 ? occupiedSeats : seatOrder;
+  const currentIndex = selectableSeats.indexOf(currentSeat);
+
+  return selectableSeats[
+    (Math.max(0, currentIndex) + 1) % selectableSeats.length
+  ];
+}
+
+function firstOccupiedSeat(paifu: TablePaifuDetail) {
+  return seatOrder.find((seat) =>
+    paifu.metadata.seats?.some((item) => item.seat === seat),
+  );
+}
+
+function createPerspectivePaifu(
+  paifu: TablePaifuDetail,
+  perspectiveSeat: SeatWind,
+): TablePaifuDetail {
+  const seatRotation = createSeatRotation(perspectiveSeat);
+
+  return {
+    ...paifu,
+    metadata: {
+      ...paifu.metadata,
+      seats: paifu.metadata.seats?.map((seat) => ({
+        ...seat,
+        seat: seatRotation[seat.seat],
+      })),
+    },
+    finalStandings: paifu.finalStandings.map((standing) => ({
+      ...standing,
+      seat: seatRotation[standing.seat],
+    })),
+  };
+}
+
+function createSeatRotation(viewerSeat: SeatWind): Record<SeatWind, SeatWind> {
+  const viewerIndex = seatOrder.indexOf(viewerSeat);
+
+  return seatOrder.reduce(
+    (rotation, actualSeat, actualIndex) => ({
+      ...rotation,
+      [actualSeat]:
+        seatOrder[
+          (actualIndex - viewerIndex + seatOrder.length) % seatOrder.length
+        ],
+    }),
+    {} as Record<SeatWind, SeatWind>,
   );
 }

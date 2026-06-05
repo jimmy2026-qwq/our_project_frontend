@@ -1,5 +1,5 @@
 import type { TableId } from '../../tablemanagement';
-import type { MahjongLegalAction } from '../action';
+import type { MahjongLegalAction, MahjongPublicEventView } from '../action';
 import type { MahjongRoundView } from './MahjongRoundView';
 import type { MahjongRuleset } from './MahjongRuleset';
 import type { MahjongSeatView } from './MahjongSeatView';
@@ -14,5 +14,6 @@ export interface MahjongTableView {
   legalActions: MahjongLegalAction[];
   finishedRoundCount: number;
   lastEventSequenceNo: number;
+  lastEvent?: MahjongPublicEventView | null;
   version: number;
 }

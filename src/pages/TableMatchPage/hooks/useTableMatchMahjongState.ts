@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useReducer, useState } from 'react';
+import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 import {
   MahjongCoreAdvanceRoundAPI,
@@ -9,6 +9,7 @@ import {
 import type {
   MahjongActionResponse,
   MahjongLegalAction,
+  MahjongPublicEventView,
   MahjongTableView,
   SubmitMahjongActionRequest,
 } from '@/objects';
@@ -36,6 +37,9 @@ export function useTableMatchMahjongState({
   const [isSubmittingAction, setIsSubmittingAction] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+  const [acceptedEvent, setAcceptedEvent] =
+    useState<MahjongPublicEventView | null>(null);
+  const lastSeenEventSequenceNoRef = useRef(0);
   const [reloadKey, reload] = useReducer((value) => value + 1, 0);
 
   useEffect(() => {
@@ -60,6 +64,18 @@ export function useTableMatchMahjongState({
         );
 
         if (!cancelled) {
+          const previousSequenceNo = lastSeenEventSequenceNoRef.current;
+          const nextSequenceNo = payload.lastEventSequenceNo ?? 0;
+
+          if (
+            previousSequenceNo > 0 &&
+            payload.lastEvent &&
+            nextSequenceNo > previousSequenceNo
+          ) {
+            setAcceptedEvent(payload.lastEvent);
+          }
+
+          lastSeenEventSequenceNoRef.current = nextSequenceNo;
           setMahjongTable(payload);
         }
       } catch (loadError) {
@@ -121,6 +137,9 @@ export function useTableMatchMahjongState({
           new MahjongCoreSubmitActionAPI(tableId, request),
         );
 
+        setAcceptedEvent(response.acceptedEvent);
+        lastSeenEventSequenceNoRef.current =
+          response.table.lastEventSequenceNo ?? lastSeenEventSequenceNoRef.current;
         setMahjongTable(response.table);
       } catch (submitError) {
         setActionError(getMahjongErrorMessage(submitError));
@@ -131,6 +150,20 @@ export function useTableMatchMahjongState({
     },
     [tableId, viewerPlayerId],
   );
+  useEffect(() => {
+    if (!acceptedEvent) {
+      return;
+    }
+
+    const timer = window.setTimeout(() => {
+      setAcceptedEvent(null);
+    }, getAcceptedEventFlashDurationMs(acceptedEvent));
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [acceptedEvent]);
+
   const advanceRound = useCallback(async () => {
     try {
       setIsRefreshing(true);
@@ -178,9 +211,22 @@ export function useTableMatchMahjongState({
     isRefreshing,
     isSubmittingAction,
     mahjongTable,
+    acceptedEvent,
     reload,
     submitAction,
   };
+}
+
+function getAcceptedEventFlashDurationMs(event: MahjongPublicEventView) {
+  if (event.actionType === 'Win') {
+    return 1000;
+  }
+
+  if (event.actionType === 'Chi' || event.actionType === 'Pon') {
+    return 500;
+  }
+
+  return 1500;
 }
 
 function createMahjongTableQuery({

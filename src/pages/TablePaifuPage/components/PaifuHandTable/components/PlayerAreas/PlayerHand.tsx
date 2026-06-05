@@ -1,10 +1,9 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuRoundSummary, TablePaifuDetail } from '../../../../types';
+import type { TablePaifuDetail } from '../../../../types';
 import {
   getPlayerDisplayName,
   getRoundPlayerId,
-  isPlayerTenpai,
   seatLabels,
 } from '../../../../functions/getReplay';
 import { HandBackTile, HandTile } from '../TileViews';
@@ -16,25 +15,22 @@ import {
 
 export function PlayerHand({
   drawnTileIndex,
-  isExhaustiveDrawResult,
   hands,
   paifu,
-  round,
   seat,
+  shouldRevealHand,
 }: {
   drawnTileIndex?: number;
-  isExhaustiveDrawResult: boolean;
   hands: Record<string, string[]>;
   paifu: TablePaifuDetail;
-  round: PaifuRoundSummary;
   seat: SeatWind;
+  shouldRevealHand: boolean;
 }) {
   const playerId = getRoundPlayerId(paifu, seat);
   const tiles = playerId ? (hands[playerId] ?? []) : [];
   const displayTiles = getDisplayHandTiles({ drawnTileIndex, seat, tiles });
   const playerName = playerId ? getPlayerDisplayName(paifu, playerId) : '';
-  const shouldShowBacks =
-    isExhaustiveDrawResult && playerId && !isPlayerTenpai(round, playerId);
+  const shouldShowBacks = !shouldRevealHand;
 
   if (!playerId || tiles.length === 0) {
     return null;

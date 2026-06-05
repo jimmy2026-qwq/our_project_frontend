@@ -54,9 +54,9 @@ export const meldPositionClasses: Record<SeatWind, string> = {
 
 export const operationPositionClasses: Record<SeatWind, string> = {
   East: 'left-1/2 top-[calc(50%+116px)] -translate-x-1/2',
-  South: 'left-[calc(50%+200px)] top-1/2 -translate-y-1/2 -rotate-90',
+  South: 'left-[calc(50%+200px)] top-1/2 -translate-y-1/2',
   West: 'left-1/2 top-[calc(50%-174px)] -translate-x-1/2',
-  North: 'left-[calc(50%-272px)] top-1/2 -translate-y-1/2 rotate-90',
+  North: 'left-[calc(50%-272px)] top-1/2 -translate-y-1/2',
 };
 
 export const centerPointPositionClasses: Record<SeatWind, string> = {

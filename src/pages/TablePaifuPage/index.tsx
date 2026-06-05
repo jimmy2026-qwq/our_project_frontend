@@ -1,3 +1,5 @@
+import { useAuth } from '@/app/auth/useAuth';
+
 import { TablePaifuBackButton } from './components/TablePaifuBackButton';
 import { TablePaifuEmpty } from './components/TablePaifuEmpty';
 import { TablePaifuLoading } from './components/TablePaifuLoading';
@@ -6,6 +8,9 @@ import { useTablePaifuPage } from './hooks/useTablePaifuPage';
 
 export function TablePaifuPage() {
   const page = useTablePaifuPage();
+  const { session } = useAuth();
+  const viewerPlayerId =
+    session?.user.operatorId ?? session?.user.userId ?? '';
 
   if (page.isLoading) {
     return <TablePaifuLoading onBack={page.onBack} />;
@@ -24,6 +29,7 @@ export function TablePaifuPage() {
         round={page.replay.round}
         rounds={page.replay.rounds}
         selectedRoundIndex={page.replay.selectedRoundIndex}
+        viewerPlayerId={viewerPlayerId}
       />
     </section>
   );

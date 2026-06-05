@@ -103,6 +103,7 @@ export function TableMatchPage() {
       isMahjongLoading={mahjongState.isLoading}
       mahjongError={mahjongState.error}
       mahjongTable={mahjongState.mahjongTable}
+      mahjongAcceptedEvent={mahjongState.acceptedEvent}
       playerNames={playerNames}
       isRegisteredPlayer={isRegisteredPlayer}
       operatorId={matchPlayerId}

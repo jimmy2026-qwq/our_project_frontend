@@ -33,8 +33,8 @@ export function getReplaySnapshot(
         melds,
         paifu,
         pendingRiichiSideways,
-        rivers,
         round,
+        rivers,
       });
     });
 

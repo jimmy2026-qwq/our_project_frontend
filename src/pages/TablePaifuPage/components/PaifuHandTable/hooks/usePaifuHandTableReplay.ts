@@ -95,21 +95,25 @@ export function usePaifuHandTableReplay({
   useEffect(() => {
     setReplayStep(0);
     operation.setWinningAction(undefined);
-  }, [operation.setWinningAction, round]);
+    operation.clearWinningAction();
+  }, [operation.clearWinningAction, operation.setWinningAction, round]);
 
   return {
     activeOperation: operation.activeOperation,
+    activeWinningCall: operation.activeWinningCall,
     isExhaustiveDrawResult,
     isRoundPickerOpen,
     maxReplayStep,
     replaySnapshot,
     replayStep,
+    revealedWinningPlayerId: operation.revealedWinningPlayerId,
     scoreDisplays,
     setIsRoundPickerOpen,
     setReplayStep,
     startSettlementAnimation: settlement.startSettlementAnimation,
     tableSticks,
     winningAction: operation.winningAction,
+    clearWinningAction: operation.clearWinningAction,
     setWinningAction: operation.setWinningAction,
   };
 }

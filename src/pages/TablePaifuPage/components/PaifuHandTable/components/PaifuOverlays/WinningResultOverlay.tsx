@@ -87,7 +87,7 @@ export function WinningResultOverlay({
 
   const winnerHand =
     replaySnapshot.hands[winnerId] ?? round.initialHands[winnerId] ?? [];
-  const displayHand = winningTile
+  const displayHand = round.result.outcome === 'Tsumo' && winningTile
     ? removeFirstTile(winnerHand, winningTile)
     : winnerHand;
   const doraIndicators =
@@ -123,83 +123,87 @@ export function WinningResultOverlay({
       role="button"
       tabIndex={0}
     >
-      <div className="grid h-full grid-rows-[auto_1fr_auto] gap-6">
-        <div className="grid justify-items-center gap-3">
-          <span className="rounded-xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#ffd98a]">
-            {winLabel}
-          </span>
-          <strong className="max-w-full truncate text-2xl text-[#f2f7fb]">
-            {getPlayerName(winnerId, playerNames)}
-          </strong>
-          {resultWin?.target ? (
-            <span className="text-sm font-semibold text-[#c7d6e2]">
-              放铳：{getPlayerName(resultWin.target, playerNames)}
-              {step.totalWinCount > 1 ? ` / ${step.index + 1}/${step.totalWinCount}` : ''}
-            </span>
-          ) : step.totalWinCount > 1 ? (
-            <span className="text-sm font-semibold text-[#c7d6e2]">
-              {step.index + 1}/{step.totalWinCount}
-            </span>
-          ) : null}
-        </div>
-        <div className="flex items-end justify-center gap-0">
-          {displayHand.map((tile, index) => (
-            <ResultTile
-              key={`${winnerId}-result-${tile}-${index}`}
-              tile={tile}
-            />
-          ))}
-          {winningTile ? (
-            <WinningTile label={winLabel} tile={winningTile} />
-          ) : null}
-        </div>
-
-        <div className="mx-auto grid w-[min(680px,88%)] content-start gap-3 self-start">
-          <div className="mb-2 flex justify-center gap-3">
-            <IndicatorPanel
-              label={'\u8868\u5b9d\u724c'}
-              shownCount={doraIndicatorCount}
-              tiles={doraIndicators}
-            />
-            <IndicatorPanel
-              label={'\u91cc\u5b9d\u724c'}
-              shownCount={doraIndicatorCount}
-              tiles={uraDoraIndicators}
-              visible={uraDoraVisible}
-            />
+      <div className="grid h-full grid-rows-[minmax(0,1fr)_auto] gap-6">
+        <div className="grid content-start gap-5 overflow-auto">
+          <div className="flex items-end justify-center gap-0">
+            {displayHand.map((tile, index) => (
+              <ResultTile
+                key={`${winnerId}-result-${tile}-${index}`}
+                tile={tile}
+              />
+            ))}
+            {winningTile ? (
+              <WinningTile label={winLabel} tile={winningTile} />
+            ) : null}
           </div>
-          {yakuList.map((yaku, index) => (
-            <div
-              key={`${yaku.kind}-${yaku.han}-${index}`}
-              className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-3 text-xl"
-            >
-              <span>{getMahjongYakuLabel(yaku.kind)}</span>
-              <span className="text-[#ffd98a]">
-                {formatYakuValue(yaku.han)}
-              </span>
+
+          <div className="mx-auto grid w-[min(680px,88%)] content-start gap-3">
+            <div className="mb-2 flex justify-center gap-3">
+              <IndicatorPanel
+                label={'\u8868\u5b9d\u724c'}
+                shownCount={doraIndicatorCount}
+                tiles={doraIndicators}
+              />
+              <IndicatorPanel
+                label={'\u91cc\u5b9d\u724c'}
+                shownCount={doraIndicatorCount}
+                tiles={uraDoraIndicators}
+                visible={uraDoraVisible}
+              />
             </div>
-          ))}
+            {yakuList.map((yaku, index) => (
+              <div
+                key={`${yaku.kind}-${yaku.han}-${index}`}
+                className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-3 text-xl"
+              >
+                <span>{getMahjongYakuLabel(yaku.kind)}</span>
+                <span className="text-[#ffd98a]">
+                  {formatYakuValue(yaku.han)}
+                </span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="grid justify-items-end gap-4 self-end pb-1">
-          <div className="text-right">
-            <span className="block text-sm uppercase tracking-[0.2em] text-[#9ab0c1]">
-              {'\u70b9\u6570'}
+        <div className="flex flex-wrap items-end justify-between gap-4 self-end pb-1">
+          <div className="grid max-w-[min(360px,58%)] justify-items-start gap-2 text-left">
+            <span className="rounded-xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#ffd98a]">
+              {winLabel}
             </span>
-            <strong className="text-[2rem] text-[#ffd98a]">
-              {pointText}
+            <strong className="max-w-full truncate text-2xl text-[#f2f7fb]">
+              {getPlayerName(winnerId, playerNames)}
             </strong>
+            {resultWin?.target ? (
+              <span className="max-w-full truncate text-sm font-semibold text-[#c7d6e2]">
+                放铳：{getPlayerName(resultWin.target, playerNames)}
+                {step.totalWinCount > 1 ? ` / ${step.index + 1}/${step.totalWinCount}` : ''}
+              </span>
+            ) : step.totalWinCount > 1 ? (
+              <span className="max-w-full truncate text-sm font-semibold text-[#c7d6e2]">
+                {step.index + 1}/{step.totalWinCount}
+              </span>
+            ) : null}
           </div>
-          <button
-            className="min-h-[42px] rounded-2xl border border-[rgba(236,197,122,0.46)] bg-[rgba(236,197,122,0.16)] px-8 py-2 text-base font-semibold text-[#ffd98a]"
-            onClick={(event) => {
-              event.stopPropagation();
-              advanceStep();
-            }}
-            type="button"
-          >
-            继续
-          </button>
+          <div className="grid justify-items-end gap-4">
+            <div className="text-right">
+              <span className="block text-sm uppercase tracking-[0.2em] text-[#9ab0c1]">
+                {'\u70b9\u6570'}
+              </span>
+              <strong className="text-[2rem] text-[#ffd98a]">
+                {pointText}
+              </strong>
+            </div>
+            <button
+              className="min-h-[42px] rounded-2xl border border-[rgba(236,197,122,0.46)] bg-[rgba(236,197,122,0.16)] px-8 py-2 text-base font-semibold text-[#ffd98a]"
+              onClick={(event) => {
+                event.stopPropagation();
+                advanceStep();
+              }}
+              type="button"
+            >
+              继续
+            </button>
+          </div>
         </div>
       </div>
     </div>

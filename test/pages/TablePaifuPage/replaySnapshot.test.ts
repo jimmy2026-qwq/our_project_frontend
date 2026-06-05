@@ -161,4 +161,171 @@ describe('TablePaifuPage replay snapshot', () => {
       },
     ]);
   });
+
+  it('reveals the ron hand without moving the winning discard into it', () => {
+    const snapshot = getReplaySnapshot(paifu, ronRound, 1);
+
+    expect(snapshot.hands.south).toEqual([
+      '2m',
+      '3m',
+      '4m',
+      '2p',
+      '3p',
+      '4p',
+      '5s',
+      '6s',
+      '7s',
+      '7m',
+      '8m',
+      '9m',
+      '1z',
+    ]);
+  });
+
+  it('reveals the winning hand on a tsumo action before showing settlement', () => {
+    const snapshot = getReplaySnapshot(paifu, tsumoRound, 1);
+
+    expect(snapshot.hands.east).toEqual([
+      '1m',
+      '2m',
+      '3m',
+      '4p',
+      '5p',
+      '6p',
+      '7s',
+      '8s',
+      '9s',
+      '2z',
+      '2z',
+      '3z',
+      '3z',
+      '3z',
+    ]);
+  });
 });
+
+const ronRound: PaifuRoundSummary = {
+  descriptor: { roundWind: 'East', handNumber: 1, honba: 0 },
+  initialHands: {
+    east: ['1m', '2m', '3m'],
+    south: [
+      '2m',
+      '3m',
+      '4m',
+      '2p',
+      '3p',
+      '4p',
+      '5s',
+      '6s',
+      '7s',
+      '7m',
+      '8m',
+      '9m',
+      '1z',
+    ],
+    west: [],
+    north: [],
+  },
+  actions: [
+    {
+      sequenceNo: 1,
+      actor: 'south',
+      actionType: 'Win',
+      tile: '1z',
+      fromPlayer: 'east',
+      targetSequenceNo: 12,
+      handTilesAfterAction: [
+        '2m',
+        '3m',
+        '4m',
+        '2p',
+        '3p',
+        '4p',
+        '5s',
+        '6s',
+        '7s',
+        '7m',
+        '8m',
+        '9m',
+        '1z',
+        '1z',
+      ],
+      revealedTiles: [],
+    },
+  ],
+  result: {
+    outcome: 'Ron',
+    winner: 'south',
+    target: 'east',
+    yaku: [{ kind: 'Riichi', han: 1 }],
+    points: 1000,
+    scoreChanges: [
+      { playerId: 'east', delta: -1000 },
+      { playerId: 'south', delta: 1000 },
+      { playerId: 'west', delta: 0 },
+      { playerId: 'north', delta: 0 },
+    ],
+  },
+};
+
+const tsumoRound: PaifuRoundSummary = {
+  descriptor: { roundWind: 'East', handNumber: 1, honba: 0 },
+  initialHands: {
+    east: [
+      '1m',
+      '2m',
+      '3m',
+      '4p',
+      '5p',
+      '6p',
+      '7s',
+      '8s',
+      '9s',
+      '2z',
+      '2z',
+      '3z',
+      '3z',
+    ],
+    south: [],
+    west: [],
+    north: [],
+  },
+  actions: [
+    {
+      sequenceNo: 1,
+      actor: 'east',
+      actionType: 'Win',
+      tile: '3z',
+      handTilesAfterAction: [
+        '1m',
+        '2m',
+        '3m',
+        '4p',
+        '5p',
+        '6p',
+        '7s',
+        '8s',
+        '9s',
+        '2z',
+        '2z',
+        '3z',
+        '3z',
+        '3z',
+      ],
+      revealedTiles: [],
+    },
+  ],
+  result: {
+    outcome: 'Tsumo',
+    winner: 'east',
+    target: null,
+    yaku: [{ kind: 'MenzenTsumo', han: 1 }],
+    points: 1000,
+    scoreChanges: [
+      { playerId: 'east', delta: 3000 },
+      { playerId: 'south', delta: -1000 },
+      { playerId: 'west', delta: -1000 },
+      { playerId: 'north', delta: -1000 },
+    ],
+  },
+};
