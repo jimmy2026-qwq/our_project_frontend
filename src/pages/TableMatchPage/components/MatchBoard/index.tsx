@@ -97,6 +97,9 @@ export function MatchBoard({
     turnActionDelayKey && delayedTurnActionKey === turnActionDelayKey,
   );
   const visibleLegalActions = isTurnActionDelayActive ? [] : legalActions;
+  const hasVisibleButtonActions = visibleLegalActions.some(
+    (action) => action.commandType !== 'Discard',
+  );
   const displayedTurnPlayerId = isTurnActionDelayActive
     ? null
     : mahjongTable.currentRound?.turnPlayerId;
@@ -227,6 +230,7 @@ export function MatchBoard({
           <MatchPlayerHand
             key={seat}
             discardActions={discardActions}
+            hideLabel={seat === 'East' && hasVisibleButtonActions}
             isSubmitting={isSubmittingAction}
             isTurnPlayer={displayedTurnPlayerId === seatMap[seat]?.playerId}
             onSubmitAction={onSubmitAction}
@@ -240,9 +244,12 @@ export function MatchBoard({
           />
         ))}
 
-        {mahjongTable.currentRound?.pendingCall && hasCallResponseActions ? (
+        {isSubmittingAction ||
+        (mahjongTable.currentRound?.pendingCall && hasCallResponseActions) ? (
           <div className="absolute left-1/2 top-[calc(50%+92px)] z-[16] -translate-x-1/2 rounded-2xl border border-[rgba(236,197,122,0.26)] bg-[rgba(7,18,28,0.78)] px-4 py-2 text-sm font-semibold text-[#ecc57a] shadow-[0_12px_30px_rgba(0,0,0,0.25)] backdrop-blur">
-            可鸣牌：{mahjongTable.currentRound.pendingCall.tile}
+            {isSubmittingAction
+              ? '提交中'
+              : `可鸣牌：${mahjongTable.currentRound?.pendingCall?.tile ?? ''}`}
           </div>
         ) : null}
 

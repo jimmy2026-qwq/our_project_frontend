@@ -15,6 +15,8 @@ import type {
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
+const liveMahjongRefreshIntervalMs = 1000;
+
 interface UseTableMatchMahjongStateParams {
   operatorId: string;
   tableId: string;
@@ -89,7 +91,7 @@ export function useTableMatchMahjongState({
 
     const timer = window.setInterval(() => {
       reload();
-    }, 3000);
+    }, liveMahjongRefreshIntervalMs);
 
     return () => {
       window.clearInterval(timer);

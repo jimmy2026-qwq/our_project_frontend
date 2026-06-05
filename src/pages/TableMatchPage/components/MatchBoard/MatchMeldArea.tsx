@@ -21,11 +21,16 @@ interface MatchMeldAreaProps {
 const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
 const meldBoxPositionClasses: Record<SeatWind, string> = {
-  East: 'bottom-[150px] right-[18%]',
+  East: 'bottom-[126px] right-[18%]',
   South: 'right-[126px] top-[20%] rotate-90',
   West: 'left-[18%] top-[150px] rotate-180',
   North: 'left-[126px] bottom-[20%] -rotate-90',
 };
+const meldBoxMinWidth = 176;
+const meldBoxMaxWidth = 286;
+const meldBoxHorizontalPadding = 16;
+const meldBoxVerticalPadding = 16;
+const meldBoxRowGap = 4;
 
 export function MatchMeldArea({ melds }: MatchMeldAreaProps) {
   return (
@@ -51,9 +56,10 @@ function SeatMeldBox({
   return (
     <div
       className={[
-        'pointer-events-none absolute z-[7] grid max-h-[132px] w-[clamp(176px,14vw,286px)] content-end gap-1 overflow-hidden rounded-[10px] border border-[rgba(236,197,122,0.14)] bg-transparent p-2',
+        'pointer-events-none absolute z-[7] grid content-end gap-1 overflow-visible rounded-[10px] border border-[rgba(236,197,122,0.14)] bg-transparent p-2',
         meldBoxPositionClasses[seat],
       ].join(' ')}
+      style={getMeldBoxStyle(melds)}
     >
       {melds.map((meld, meldIndex) => (
         <MeldRow
@@ -64,6 +70,31 @@ function SeatMeldBox({
         />
       ))}
     </div>
+  );
+}
+
+export function getMeldBoxStyle(melds: MeldGroup[]): CSSProperties {
+  const rowWidths = melds.map((meld) =>
+    meld.tiles.reduce((total, tile) => total + getMeldTileWidth(tile), 0),
+  );
+  const contentWidth = Math.max(0, ...rowWidths);
+
+  return {
+    height: getMeldBoxHeight(melds.length),
+    width: Math.min(
+      meldBoxMaxWidth,
+      Math.max(meldBoxMinWidth, contentWidth + meldBoxHorizontalPadding),
+    ),
+  };
+}
+
+export function getMeldBoxHeight(meldCount: number) {
+  const rowCount = Math.max(1, meldCount);
+
+  return (
+    meldBoxVerticalPadding +
+    rowCount * riverRowSize +
+    Math.max(0, rowCount - 1) * meldBoxRowGap
   );
 }
 

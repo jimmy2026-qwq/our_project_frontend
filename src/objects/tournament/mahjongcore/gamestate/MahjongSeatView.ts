@@ -9,6 +9,7 @@ export interface MahjongSeatView {
   points: number;
   isDealer: boolean;
   handTiles: PaifuTile[] | null;
+  drawTile: PaifuTile | null;
   handTileCount: number;
   melds: MahjongMeld[];
   river: MahjongDiscard[];
