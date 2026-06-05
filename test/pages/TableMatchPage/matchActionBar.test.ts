@@ -67,6 +67,17 @@ describe('MatchActionBar', () => {
     expect(getVisibleButtonActions(actions)[1]?.localSkipTsumo).toBe(true);
   });
 
+  it('collapses multiple riichi discard choices into one riichi button', () => {
+    const actions = [
+      createAction('Riichi', 24, '3m', []),
+      createAction('Riichi', 24, '6m', []),
+    ];
+
+    expect(
+      getVisibleButtonActions(actions).map((action) => action.commandType),
+    ).toEqual(['Riichi']);
+  });
+
   it('hides the local self draw choice after skipping it', () => {
     const actions = [createAction('Tsumo', 24, '5m', ['5m'])];
     const dismissedTsumoKey = getTsumoActionKey(actions);

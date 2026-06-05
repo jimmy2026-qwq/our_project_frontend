@@ -17,6 +17,7 @@ import {
 
 interface MatchPlayerHandProps {
   discardActions: MahjongLegalAction[];
+  dimUnavailableTiles?: boolean;
   hideLabel?: boolean;
   isSubmitting: boolean;
   isTurnPlayer: boolean;
@@ -24,11 +25,13 @@ interface MatchPlayerHandProps {
   playerName?: string;
   seat: SeatWind;
   seatView: MahjongSeatView | null;
+  showPrivateState?: boolean;
   shouldForceBacks?: boolean;
 }
 
 export function MatchPlayerHand({
   discardActions,
+  dimUnavailableTiles = false,
   hideLabel = false,
   isSubmitting,
   isTurnPlayer,
@@ -36,6 +39,7 @@ export function MatchPlayerHand({
   playerName,
   seat,
   seatView,
+  showPrivateState = false,
   shouldForceBacks = false,
 }: MatchPlayerHandProps) {
   if (!seatView) {
@@ -55,7 +59,7 @@ export function MatchPlayerHand({
           tile,
         }));
   const isOwnVisibleHand = tiles.length > 0 && !shouldForceBacks;
-  const stateBadges = getSeatStateBadges(seatView);
+  const stateBadges = getSeatStateBadges(seatView, { showPrivateState });
 
   return (
     <>
@@ -80,7 +84,17 @@ export function MatchPlayerHand({
           ) : null}
           {stateBadges.length > 0 ? (
             <span className="text-[0.68rem] font-semibold text-[#8fe8e1]">
-              {stateBadges.join(' ')}
+              {stateBadges.map((badge, index) => (
+                <span
+                  className={
+                    badge.tone === 'danger' ? 'text-[#ff6b6b]' : undefined
+                  }
+                  key={`${badge.label}-${index}`}
+                >
+                  {index > 0 ? ' ' : ''}
+                  {badge.label}
+                </span>
+              ))}
             </span>
           ) : null}
         </div>
@@ -101,6 +115,7 @@ export function MatchPlayerHand({
                 displayIndex: index,
                 isDrawnTile,
               })}
+              dimUnavailable={dimUnavailableTiles}
               disabled={isSubmitting}
               onSubmitAction={onSubmitAction}
               seat={seat}
@@ -118,6 +133,7 @@ export function MatchPlayerHand({
 function DiscardTileButton({
   action,
   className,
+  dimUnavailable,
   disabled,
   onSubmitAction,
   seat,
@@ -125,6 +141,7 @@ function DiscardTileButton({
 }: {
   action: MahjongLegalAction | undefined;
   className?: string;
+  dimUnavailable: boolean;
   disabled: boolean;
   onSubmitAction: (action: MahjongLegalAction) => void;
   seat: SeatWind;
@@ -139,6 +156,7 @@ function DiscardTileButton({
         'cursor-pointer border-0 bg-transparent p-0',
         className,
         canDiscard ? '' : 'cursor-not-allowed',
+        !canDiscard && dimUnavailable ? 'opacity-35 grayscale' : '',
       ].join(' ')}
       disabled={disabled || !canDiscard}
       onClick={() => {

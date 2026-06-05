@@ -1,9 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { AgariResult, MahjongSeatView } from '@/objects';
 import { getMahjongYakuLabel } from '@/objects';
 import type { MahjongResultWinLike } from '@/pages/shared/mahjongResultSequence';
 import {
-  advanceResultSequenceStep,
   getResultSequenceStep,
   getResultWins,
   getWinYaku,
@@ -18,7 +17,6 @@ import {
 } from '@/pages/TablePaifuPage/functions/getReplay';
 
 interface MatchResultOverlayProps {
-  completionLabel?: string;
   playerNames: Record<string, string>;
   result: AgariResult | null;
   seats: MahjongSeatView[];
@@ -26,51 +24,74 @@ interface MatchResultOverlayProps {
 }
 
 export function MatchResultOverlay({
-  completionLabel = '进入下一局',
   onComplete,
   playerNames,
   result,
   seats,
 }: MatchResultOverlayProps) {
   const [stepIndex, setStepIndex] = useState(0);
+  const completedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  const hasResult = Boolean(result);
+  const resultResetKey = getOverlayResultKey(result);
+  const scoreStepIndex = useMemo(
+    () => (result && isWinOutcome(result.outcome) ? getResultWins(result).length : 1),
+    [result, resultResetKey],
+  );
+
+  useEffect(() => {
+    setStepIndex(0);
+    completedRef.current = false;
+  }, [resultResetKey]);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
+
+  const step = result ? getResultSequenceStep(result, stepIndex) : null;
+  const isScoreStep =
+    Boolean(result) &&
+    (step?.kind === 'score' || (!step && stepIndex >= scoreStepIndex));
+
+  useEffect(() => {
+    if (!hasResult) {
+      return;
+    }
+
+    const timer = window.setTimeout(
+      () => {
+        if (isScoreStep) {
+          if (!completedRef.current) {
+            completedRef.current = true;
+            onCompleteRef.current?.();
+          }
+          return;
+        }
+
+        setStepIndex((current) =>
+          Math.min(current + 1, scoreStepIndex),
+        );
+      },
+      isScoreStep ? scoreStepDisplayMs : resultDetailDisplayMs,
+    );
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [hasResult, isScoreStep, resultResetKey, scoreStepIndex, stepIndex]);
 
   if (!result) {
     return null;
   }
 
-  const step = getResultSequenceStep(result, stepIndex);
-
-  function handleSequenceClick() {
-    if (!result || !step) {
-      return;
-    }
-
-    if (step.kind === 'score') {
-      onComplete?.();
-      return;
-    }
-
-    setStepIndex((current) => advanceResultSequenceStep(result, current));
-  }
-
   return (
     <div
       className="absolute inset-[34px] z-[24] grid rounded-[28px] bg-[rgba(0,0,0,0.84)] p-8 text-[#f2f7fb] shadow-[0_30px_90px_rgba(0,0,0,0.58)]"
-      onClick={step ? handleSequenceClick : undefined}
-      onKeyDown={(event) => {
-        if (!step || (event.key !== 'Enter' && event.key !== ' ')) {
-          return;
-        }
-
-        event.preventDefault();
-        handleSequenceClick();
-      }}
-      role={step ? 'button' : undefined}
-      tabIndex={step ? 0 : undefined}
     >
-      {step ? (
+      {isScoreStep ? (
+        <ScoreResultContent playerNames={playerNames} result={result} />
+      ) : step ? (
         <WinningResultContent
-          completionLabel={completionLabel}
           playerNames={playerNames}
           result={result}
           seats={seats}
@@ -83,14 +104,34 @@ export function MatchResultOverlay({
   );
 }
 
+const resultDetailDisplayMs = 2000;
+const scoreStepDisplayMs = 1000;
+
+function getOverlayResultKey(result: AgariResult | null) {
+  if (!result) {
+    return 'none';
+  }
+
+  return [
+    result.outcome,
+    result.winner ?? '',
+    result.target ?? '',
+    result.points,
+    (result.wins ?? [])
+      .map((win) => `${win.winner}:${win.target ?? ''}:${win.points}`)
+      .join('|'),
+    result.scoreChanges
+      .map((change) => `${change.playerId}:${change.delta}`)
+      .join('|'),
+  ].join(':');
+}
+
 function WinningResultContent({
-  completionLabel,
   playerNames,
   result,
   seats,
   step,
 }: {
-  completionLabel: string;
   playerNames: Record<string, string>;
   result: AgariResult;
   seats: MahjongSeatView[];
@@ -112,7 +153,7 @@ function WinningResultContent({
   }
 
   return (
-    <div className="grid h-full grid-rows-[auto_1fr_auto] gap-6">
+    <div className="grid h-full grid-rows-[auto_1fr] gap-6">
       <div className="grid justify-items-center gap-3">
         <span className="rounded-xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#ffd98a]">
           {headline.badge}
@@ -130,12 +171,31 @@ function WinningResultContent({
       <div className="grid content-center gap-5 overflow-auto">
         <ScoreSettlementPanel playerNames={playerNames} result={result} />
       </div>
+    </div>
+  );
+}
 
-      {step.kind === 'score' ? (
-        <span className="justify-self-center rounded-xl border border-[rgba(236,197,122,0.36)] bg-[rgba(236,197,122,0.12)] px-5 py-2 text-sm font-bold text-[#ffd98a]">
-          {completionLabel}
+function ScoreResultContent({
+  playerNames,
+  result,
+}: {
+  playerNames: Record<string, string>;
+  result: AgariResult;
+}) {
+  return (
+    <div className="grid h-full grid-rows-[auto_1fr] gap-6">
+      <div className="grid justify-items-center gap-3">
+        <span className="rounded-xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#ffd98a]">
+          点数结算
         </span>
-      ) : null}
+        <strong className="max-w-full truncate text-2xl text-[#f2f7fb]">
+          本局总点数
+        </strong>
+      </div>
+
+      <div className="grid content-center gap-5 overflow-auto">
+        <ScoreSettlementPanel playerNames={playerNames} result={result} />
+      </div>
     </div>
   );
 }

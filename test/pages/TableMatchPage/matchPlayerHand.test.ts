@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 
 import { getMatchDisplayHandTiles } from '@/pages/TableMatchPage/components/MatchBoard/MatchPlayerHand.helpers';
+import { getSeatStateBadges } from '@/pages/TableMatchPage/components/MatchBoard/matchBoardLabels';
 
 describe('MatchPlayerHand', () => {
   it('moves the drawn tile to the right side for the bottom hand', () => {
@@ -67,5 +68,43 @@ describe('MatchPlayerHand', () => {
       { isDrawnTile: false, tile: '9m' },
       { isDrawnTile: false, tile: '1z' },
     ]);
+  });
+
+  it('shows riichi furiten instead of riichi tenpai', () => {
+    expect(
+      getSeatStateBadges({
+        furiten: true,
+        handTileCount: 13,
+        handTiles: null,
+        ippatsu: false,
+        isDealer: false,
+        melds: [],
+        playerId: 'south',
+        points: 25000,
+        riichi: true,
+        river: [],
+        seat: 'South',
+        tenpai: true,
+      }, { showPrivateState: true }),
+    ).toEqual([{ label: '立直' }, { label: '振听', tone: 'danger' }]);
+  });
+
+  it('hides furiten from other players', () => {
+    expect(
+      getSeatStateBadges({
+        furiten: true,
+        handTileCount: 13,
+        handTiles: null,
+        ippatsu: false,
+        isDealer: false,
+        melds: [],
+        playerId: 'south',
+        points: 25000,
+        riichi: true,
+        river: [],
+        seat: 'South',
+        tenpai: true,
+      }),
+    ).toEqual([{ label: '立直' }]);
   });
 });

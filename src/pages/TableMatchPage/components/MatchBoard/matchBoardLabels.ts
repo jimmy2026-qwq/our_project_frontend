@@ -103,11 +103,22 @@ export function getShortPlayerLabel(playerId: string) {
   return `${playerId.slice(0, 6)}...${playerId.slice(-4)}`;
 }
 
-export function getSeatStateBadges(seat: MahjongSeatView) {
+export type SeatStateBadge = {
+  label: string;
+  tone?: 'danger';
+};
+
+export function getSeatStateBadges(
+  seat: MahjongSeatView,
+  { showPrivateState = false }: { showPrivateState?: boolean } = {},
+): SeatStateBadge[] {
   return [
-    seat.riichi ? '立直' : '',
-    seat.ippatsu ? '一发' : '',
-    seat.furiten ? '振听' : '',
-    seat.tenpai === true ? '听牌' : '',
-  ].filter(Boolean);
+    seat.riichi ? { label: '立直' } : undefined,
+    seat.ippatsu ? { label: '一发' } : undefined,
+    seat.furiten && showPrivateState
+      ? { label: '振听', tone: 'danger' }
+      : seat.tenpai === true && !seat.furiten
+        ? { label: '听牌' }
+        : undefined,
+  ].filter((badge): badge is SeatStateBadge => Boolean(badge));
 }

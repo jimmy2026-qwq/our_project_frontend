@@ -12,7 +12,7 @@ export function getVisibleButtonActions(
   actions: MahjongLegalAction[],
   dismissedTsumoKey: string | null = null,
 ): DisplayActionButton[] {
-  const collapsedActions = collapseChiActions(actions);
+  const collapsedActions = collapsePickerActions(actions);
   const tsumoKey = getTsumoActionKey(actions);
   const shouldHideTsumo = Boolean(
     dismissedTsumoKey && dismissedTsumoKey === tsumoKey,
@@ -93,19 +93,29 @@ export function getChiActionKey(actions: MahjongLegalAction[]) {
   return actions.map(getActionIdentity).sort().join('|');
 }
 
-function collapseChiActions(actions: MahjongLegalAction[]) {
+function collapsePickerActions(actions: MahjongLegalAction[]) {
   let hasChi = false;
+  let hasRiichi = false;
 
   return actions.filter((action) => {
-    if (action.commandType !== 'Chi') {
+    if (action.commandType === 'Chi') {
+      if (hasChi) {
+        return false;
+      }
+
+      hasChi = true;
       return true;
     }
 
-    if (hasChi) {
-      return false;
+    if (action.commandType === 'Riichi') {
+      if (hasRiichi) {
+        return false;
+      }
+
+      hasRiichi = true;
+      return true;
     }
 
-    hasChi = true;
     return true;
   });
 }

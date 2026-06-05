@@ -14,14 +14,18 @@ import {
 interface MatchActionBarProps {
   actionError: string | null;
   actions: MahjongLegalAction[];
+  isRiichiSelectionActive?: boolean;
   isSubmitting: boolean;
+  onToggleRiichiSelection?: () => void;
   onSubmitAction: (action: MahjongLegalAction) => void;
 }
 
 export function MatchActionBar({
   actionError,
   actions,
+  isRiichiSelectionActive = false,
   isSubmitting,
+  onToggleRiichiSelection,
   onSubmitAction,
 }: MatchActionBarProps) {
   const [openChiActionKey, setOpenChiActionKey] = useState<string | null>(null);
@@ -66,7 +70,7 @@ export function MatchActionBar({
     }
   }, [dismissedTsumoKey, tsumoActionKey]);
 
-  if (visibleButtonActions.length === 0 && !actionError) {
+  if (visibleButtonActions.length === 0 && !actionError && !isRiichiSelectionActive) {
     return null;
   }
 
@@ -78,7 +82,20 @@ export function MatchActionBar({
         </div>
       ) : null}
 
-      {visibleButtonActions.length > 0 ? (
+      {isRiichiSelectionActive ? (
+        <div className="flex justify-center p-3">
+          <button
+            className={getActionButtonClassName('Pass')}
+            disabled={isSubmitting}
+            onClick={() => onToggleRiichiSelection?.()}
+            type="button"
+          >
+            <span className="pointer-events-none absolute left-1/2 top-0 -translate-x-1/2 -translate-y-[46%] whitespace-nowrap px-1 text-[2.15rem] font-black leading-[0.92] tracking-normal text-inherit drop-shadow-[0_8px_14px_rgba(0,0,0,0.42)]">
+              返回
+            </span>
+          </button>
+        </div>
+      ) : visibleButtonActions.length > 0 ? (
         <div className="grid justify-items-center gap-3">
           {isChiPickerOpen && chiActions.length > 1 ? (
             <ChiChoicePanel
@@ -95,7 +112,12 @@ export function MatchActionBar({
             {visibleButtonActions.map((button, index) => (
               <button
                 key={`${button.key}-${index}`}
-                className={getActionButtonClassName(button.commandType)}
+                className={[
+                  getActionButtonClassName(button.commandType),
+                  button.commandType === 'Riichi' && isRiichiSelectionActive
+                    ? 'ring-2 ring-[rgba(255,236,190,0.72)]'
+                    : '',
+                ].join(' ')}
                 disabled={isSubmitting}
                 onClick={() => {
                   if (button.localSkipTsumo) {
@@ -107,6 +129,11 @@ export function MatchActionBar({
                     setOpenChiActionKey((currentKey) =>
                       currentKey === chiActionKey ? null : chiActionKey,
                     );
+                    return;
+                  }
+
+                  if (button.commandType === 'Riichi') {
+                    onToggleRiichiSelection?.();
                     return;
                   }
 

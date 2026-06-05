@@ -21,22 +21,24 @@ export function PlayerRiver({
   rivers: Record<SeatWind, RiverDiscard[]>;
   seat: SeatWind;
 }) {
-  const rowCount = Math.max(2, Math.ceil(rivers[seat].length / 6));
+  const discards = rivers[seat];
+  const rowCount = Math.max(2, Math.ceil(discards.length / 6));
+  const anchorRowCount = getRiverAnchorRowCount(seat, rowCount);
 
   return (
     <div
       className={['absolute z-[3]', riverPositionClasses[seat]].join(' ')}
       style={{
-        height: rowCount * riverRowSize,
-        width: getRiverMaxRowWidth(rivers[seat], rowCount),
+        height: anchorRowCount * riverRowSize,
+        width: getRiverMaxRowWidth(discards, rowCount),
       }}
     >
-      {rivers[seat].map((discard, index) => (
+      {discards.map((discard, index) => (
         <RiverTile
           key={`${seat}-river-${discard.tile}-${index}`}
           discard={discard}
           seat={seat}
-          style={getRiverTileStyle(index, seat, rivers[seat])}
+          style={getRiverTileStyle(index, seat, discards, anchorRowCount)}
         />
       ))}
     </div>
@@ -86,6 +88,7 @@ function getRiverTileStyle(
   index: number,
   seat: SeatWind,
   discards: RiverDiscard[],
+  anchorRowCount: number,
 ): CSSProperties {
   const rowIndex = Math.floor(index / 6);
   const columnIndex = index % 6;
@@ -101,7 +104,7 @@ function getRiverTileStyle(
     ? maxRowWidth - previousWidth - tileWidth
     : previousWidth;
   const top = reverseFlow
-    ? (rowCount - rowIndex - 1) * riverRowSize
+    ? (anchorRowCount - rowIndex - 1) * riverRowSize
     : rowIndex * riverRowSize;
 
   return {
@@ -111,6 +114,10 @@ function getRiverTileStyle(
     top,
     width: tileWidth,
   };
+}
+
+function getRiverAnchorRowCount(seat: SeatWind, rowCount: number) {
+  return seat === 'East' ? rowCount : 2;
 }
 
 function getRiverTileWidth(discard: RiverDiscard) {

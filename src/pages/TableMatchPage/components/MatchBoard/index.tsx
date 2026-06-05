@@ -6,7 +6,7 @@ import type {
   MahjongTableView,
   SeatWind,
 } from '@/objects';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/CenterTable/CenterTable.types';
 import {
   settlementAnimationDelayMs,
@@ -92,6 +92,7 @@ export function MatchBoard({
   const [delayedTurnActionKey, setDelayedTurnActionKey] = useState<
     string | null
   >(null);
+  const [isRiichiSelectionActive, setIsRiichiSelectionActive] = useState(false);
   const advanceStartedKeyRef = useRef<string | null>(null);
   const winResultNeedsSequence = Boolean(
     mahjongTable.currentRound?.result &&
@@ -129,7 +130,18 @@ export function MatchBoard({
   const discardActions = visibleLegalActions.filter(
     (action) => action.commandType === 'Discard',
   );
+  const riichiActions = visibleLegalActions.filter(
+    (action) => action.commandType === 'Riichi',
+  );
+  const riichiSelectionPlayerId = mahjongTable.currentRound?.turnPlayerId;
   const hasCallResponseActions = legalActions.some(isCallResponseAction);
+  const submitActionAndClosePickers = useCallback(
+    (action: MahjongLegalAction) => {
+      setIsRiichiSelectionActive(false);
+      onSubmitAction(action);
+    },
+    [onSubmitAction],
+  );
   const activeOperation = useMemo(
     () =>
       createMatchActiveOperation({
@@ -175,6 +187,12 @@ export function MatchBoard({
       window.clearTimeout(timer);
     };
   }, [turnActionDelayKey]);
+
+  useEffect(() => {
+    if (riichiActions.length === 0) {
+      setIsRiichiSelectionActive(false);
+    }
+  }, [riichiActions.length]);
 
   useEffect(() => {
     if (!resultKey) {
@@ -225,7 +243,7 @@ export function MatchBoard({
       return;
     }
 
-    if (winResultNeedsSequence && resultSequenceCompletedKey !== resultKey) {
+    if (resultSequenceCompletedKey !== resultKey) {
       return;
     }
 
@@ -263,7 +281,7 @@ export function MatchBoard({
       };
 
       animationFrame = window.requestAnimationFrame(animate);
-    }, resultOverlayDelayMs);
+    }, settlementAnimationStartDelayMs);
 
     return () => {
       window.clearTimeout(timer);
@@ -276,7 +294,6 @@ export function MatchBoard({
     canAdvanceAfterSettlement,
     resultKey,
     resultSequenceCompletedKey,
-    winResultNeedsSequence,
   ]);
 
   return (
@@ -319,11 +336,18 @@ export function MatchBoard({
         {seatOrder.map((seat) => (
           <MatchPlayerHand
             key={seat}
-            discardActions={discardActions}
+            dimUnavailableTiles={isRiichiSelectionActive}
+            discardActions={
+              isRiichiSelectionActive
+                ? seatMap[seat]?.playerId === riichiSelectionPlayerId
+                  ? riichiActions
+                  : []
+                : discardActions
+            }
             hideLabel={seat === 'East' && hasVisibleButtonActions}
             isSubmitting={isSubmittingAction}
             isTurnPlayer={displayedTurnPlayerId === seatMap[seat]?.playerId}
-            onSubmitAction={onSubmitAction}
+            onSubmitAction={submitActionAndClosePickers}
             playerName={
               seatMap[seat]?.playerId
                 ? playerNames[seatMap[seat].playerId]
@@ -331,6 +355,7 @@ export function MatchBoard({
             }
             seat={seat}
             seatView={seatMap[seat]}
+            showPrivateState={seatMap[seat]?.playerId === operatorId}
             shouldForceBacks={shouldHideWinningHand({
               result: mahjongTable.currentRound?.result ?? null,
               resultHandRevealReadyKey,
@@ -353,13 +378,16 @@ export function MatchBoard({
         <MatchActionBar
           actionError={actionError}
           actions={visibleLegalActions}
+          isRiichiSelectionActive={isRiichiSelectionActive}
           isSubmitting={isSubmittingAction}
-          onSubmitAction={onSubmitAction}
+          onSubmitAction={submitActionAndClosePickers}
+          onToggleRiichiSelection={() =>
+            setIsRiichiSelectionActive((value) => !value)
+          }
         />
 
         {shouldShowResult ? (
           <MatchResultOverlay
-            completionLabel={getResultCompletionLabel(mahjongTable, table)}
             key={resultKey}
             onComplete={() => {
               if (resultKey) {
@@ -376,7 +404,7 @@ export function MatchBoard({
   );
 }
 
-const resultOverlayDelayMs = 3000;
+const settlementAnimationStartDelayMs = 0;
 const winningCallAnimationMs = 500;
 const winningCallVisibleMs = 1500;
 const winningCallSettlementWaitMs = 1500;
@@ -450,19 +478,6 @@ function getResultKey(mahjongTable: MahjongTableView) {
       .map((win) => `${win.winner}:${win.target ?? ''}:${win.points}`)
       .join('|'),
   ].join(':');
-}
-
-function getResultCompletionLabel(
-  mahjongTable: MahjongTableView,
-  table: TableDetail,
-) {
-  if (table.status === 'Archived' || mahjongTable.status === 'Archived') {
-    return '关闭结算';
-  }
-
-  return mahjongTable.ruleset.gameLength === 'OneKyoku'
-    ? '完成牌桌'
-    : '进入下一局';
 }
 
 function createMatchActiveOperation({
