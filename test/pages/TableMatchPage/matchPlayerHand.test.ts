@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getMatchDisplayHandTiles } from '@/pages/TableMatchPage/components/MatchBoard/MatchPlayerHand';
+import { getMatchDisplayHandTiles } from '@/pages/TableMatchPage/components/MatchBoard/MatchPlayerHand.helpers';
 
 describe('MatchPlayerHand', () => {
   it('moves the drawn tile to the right side for the bottom hand', () => {

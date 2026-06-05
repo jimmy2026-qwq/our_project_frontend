@@ -93,6 +93,8 @@ export function MatchBoard({
     [mahjongTable.currentRound?.result, seatMap, settlementProgress],
   );
   const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
+  const canAdvanceAfterSettlement =
+    table.status !== 'Archived' && mahjongTable.status !== 'Archived';
   const isTurnActionDelayActive = Boolean(
     turnActionDelayKey && delayedTurnActionKey === turnActionDelayKey,
   );
@@ -173,7 +175,10 @@ export function MatchBoard({
         }
 
         setSettlementProgress(1);
-        if (advanceStartedKeyRef.current !== resultKey) {
+        if (
+          canAdvanceAfterSettlement &&
+          advanceStartedKeyRef.current !== resultKey
+        ) {
           advanceStartedKeyRef.current = resultKey;
           void Promise.resolve(onAdvanceRound());
         }
@@ -190,6 +195,7 @@ export function MatchBoard({
     };
   }, [
     onAdvanceRound,
+    canAdvanceAfterSettlement,
     resultKey,
     resultSequenceCompletedKey,
     winResultNeedsSequence,
@@ -262,7 +268,7 @@ export function MatchBoard({
 
         {shouldShowResult ? (
           <MatchResultOverlay
-            completionLabel={getResultCompletionLabel(mahjongTable)}
+            completionLabel={getResultCompletionLabel(mahjongTable, table)}
             key={resultKey}
             onComplete={() => {
               if (resultKey) {
@@ -351,7 +357,14 @@ function getResultKey(mahjongTable: MahjongTableView) {
   ].join(':');
 }
 
-function getResultCompletionLabel(mahjongTable: MahjongTableView) {
+function getResultCompletionLabel(
+  mahjongTable: MahjongTableView,
+  table: TableDetail,
+) {
+  if (table.status === 'Archived' || mahjongTable.status === 'Archived') {
+    return '关闭结算';
+  }
+
   return mahjongTable.ruleset.gameLength === 'OneKyoku'
     ? '完成牌桌'
     : '进入下一局';

@@ -4,11 +4,11 @@ import {
   HandTile,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 import {
-  getDisplayTiles,
   handPositionClasses,
   labelPositionClasses,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
 
+import { getMatchDisplayHandTiles } from './MatchPlayerHand.helpers';
 import {
   getSeatLabel,
   getSeatStateBadges,
@@ -163,52 +163,6 @@ function createBackTiles(seatView: MahjongSeatView) {
   return Array.from({ length: seatView.handTileCount }, (_, index) =>
     String(index),
   );
-}
-
-export function getMatchDisplayHandTiles({
-  drawTile,
-  seat,
-  tiles,
-}: {
-  drawTile?: string | null;
-  seat: SeatWind;
-  tiles: string[];
-}) {
-  if (!drawTile) {
-    return getDisplayTiles(seat, tiles).map((tile) => ({
-      isDrawnTile: false,
-      tile,
-    }));
-  }
-
-  const baseTiles = removeFirstMatchingTile(tiles, drawTile);
-  const drawnDisplayTile = {
-    isDrawnTile: true,
-    tile: drawTile,
-  };
-  const baseDisplayTiles = getDisplayTiles(seat, baseTiles).map((tile) => ({
-    isDrawnTile: false,
-    tile,
-  }));
-
-  if (seat === 'South' || seat === 'North') {
-    return [drawnDisplayTile, ...baseDisplayTiles];
-  }
-
-  return [...baseDisplayTiles, drawnDisplayTile];
-}
-
-function removeFirstMatchingTile(tiles: string[], tile: string) {
-  let removed = false;
-
-  return tiles.filter((item) => {
-    if (!removed && item === tile) {
-      removed = true;
-      return false;
-    }
-
-    return true;
-  });
 }
 
 function getDrawnTileGapClassName({

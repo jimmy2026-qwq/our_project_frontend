@@ -158,6 +158,76 @@ test.describe('RiichiNexus browser UI smoke checks', () => {
 
     await expectPagePainted(page, testInfo, 'live-table');
   });
+
+  test('常用按钮巡检：消息、刷新、标签页、规则弹层和牌谱回放', async ({
+    guardedPage: page,
+  }, testInfo) => {
+    await loginRegistered(page, 'larry1', '12345678');
+
+    const notificationButton = page.getByRole('button', { name: '系统消息' });
+    await notificationButton.click();
+    await expect(page.locator('#notification-center')).toBeVisible();
+    await expect(page.getByRole('button', { name: '全部已读' })).toBeVisible();
+    await notificationButton.click();
+    await expect(page.locator('#notification-center')).toHaveCount(0);
+
+    await page.goto('/public');
+    await page.getByRole('button', { name: /俱乐部名录/ }).click();
+    await expect(page.getByText("larry's club")).toBeVisible();
+    await page.getByRole('button', { name: /赛事大厅/ }).click();
+    await expect(page.getByText('家庭纪念日大赛').first()).toBeVisible();
+    await page.getByRole('button', { name: '刷新' }).first().click();
+    await expect(page.getByText('公共大厅已刷新')).toBeVisible();
+
+    await page.goto('/member-hub');
+    await expect(page.getByRole('heading', { name: '会员工作台' })).toBeVisible();
+    await page.getByRole('button', { name: '刷新' }).first().click();
+    await expect(page.getByText('工作台范围')).toBeVisible();
+    await expect(page.getByText('个人数据看板').first()).toBeVisible();
+
+    await page.goto(`/public/tournaments/${tournamentId}`);
+    await expect(page.getByText('家庭纪念日大赛').first()).toBeVisible();
+    for (const tabName of ['赛事概览', '规则说明', '参赛名单', '赛事牌桌']) {
+      await page.getByRole('button', { name: tabName }).click();
+      await expectNoCriticalText(page);
+      await expectNoHorizontalOverflow(page);
+    }
+
+    await page.getByRole('button', { name: '规则说明' }).click();
+    const editRulesButton = page
+      .getByRole('button', { name: /修改规则|创建规则/ })
+      .first();
+    if ((await editRulesButton.count()) > 0) {
+      await editRulesButton.click();
+      await expect(
+        page.getByRole('dialog').getByText(/修改当前阶段规则|创建当前阶段规则/),
+      ).toBeVisible();
+      await expect(page.getByRole('button', { name: '一局战' })).toBeVisible();
+      await expect(page.getByRole('button', { name: '东风战' })).toBeVisible();
+      await expect(page.getByRole('button', { name: '半庄战' })).toBeVisible();
+      await page.getByRole('button', { name: '取消' }).click();
+      await expect(page.getByRole('dialog')).toHaveCount(0);
+    }
+
+    await page.goto(`/demo/tables/${tableId}/paifu`);
+    await expectTileImagesLoaded(page);
+    const roundButton = page.getByRole('button', { name: /东\d局\d本场/ }).first();
+    await expect(roundButton).toBeVisible();
+    await roundButton.click();
+    await expect(page.getByRole('button', { name: /东\d局\d本场/ })).toHaveCount(
+      await page.getByRole('button', { name: /东\d局\d本场/ }).count(),
+    );
+    await page.getByRole('button', { name: '向前一步' }).click();
+    await expect(page.getByRole('button', { name: '回退一步' })).toBeEnabled();
+    await page.getByRole('button', { name: '回退一步' }).click();
+    await expect(page.getByRole('button', { name: '回退一步' })).toBeDisabled();
+    await page.getByLabel('返回上一页').click();
+    await expect(page.locator('#root')).toBeVisible();
+
+    await expectNoCriticalText(page);
+    await expectNoHorizontalOverflow(page);
+    await expectPagePainted(page, testInfo, 'button-tour');
+  });
 });
 
 async function enterGuest(page: Page) {

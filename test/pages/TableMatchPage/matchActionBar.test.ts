@@ -7,7 +7,7 @@ import {
   getChiActionKey,
   getTsumoActionKey,
   getVisibleButtonActions,
-} from '@/pages/TableMatchPage/components/MatchBoard/MatchActionBar';
+} from '@/pages/TableMatchPage/components/MatchBoard/MatchActionBar.helpers';
 
 describe('MatchActionBar', () => {
   it('keeps the same chi action key across polling refreshes', () => {
