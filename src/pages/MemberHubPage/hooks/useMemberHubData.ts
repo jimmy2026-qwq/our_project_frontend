@@ -35,6 +35,17 @@ export function useMemberHubData(
     let cancelled = false;
 
     void (async () => {
+      const stateOperator = directory.items.find(
+        (operator) =>
+          operator.id === state.operatorId &&
+          operator.playerId === state.playerId,
+      );
+
+      if (!stateOperator) {
+        setIsLoading(true);
+        return;
+      }
+
       setIsLoading(true);
       const activeOperator = getActiveOperator(directory, state.operatorId);
       const clubId = normalizeMemberHubClubId(directory, state);

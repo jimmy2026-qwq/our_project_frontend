@@ -51,6 +51,47 @@ function normalizeStringArray(value: unknown): string[] | undefined {
     : undefined;
 }
 
+function normalizeResultWins(
+  value: unknown,
+): PaifuRoundSummary['result']['wins'] {
+  const normalized =
+    Array.isArray(value) && value.length === 1 && Array.isArray(value[0])
+      ? value[0]
+      : value;
+
+  if (!Array.isArray(normalized)) {
+    return undefined;
+  }
+
+  return normalized
+    .map((item) =>
+      item && typeof item === 'object'
+        ? normalizeResultWin(item as Record<string, unknown>)
+        : undefined,
+    )
+    .filter((item): item is NonNullable<typeof item> => Boolean(item));
+}
+
+function normalizeResultWin(item: Record<string, unknown>) {
+  const winner = normalizeOptionalString(item.winner);
+
+  if (!winner) {
+    return undefined;
+  }
+
+  return {
+    winner,
+    target: normalizeOptionalString(item.target),
+    han: normalizeOptionalNumber(item.han),
+    fu: normalizeOptionalNumber(item.fu),
+    yaku: Array.isArray(item.yaku) ? item.yaku : [],
+    doraIndicators: normalizeStringArray(item.doraIndicators),
+    uraDoraIndicators: normalizeStringArray(item.uraDoraIndicators),
+    uraDoraVisible: normalizeOptionalBoolean(item.uraDoraVisible),
+    points: normalizeOptionalNumber(item.points) ?? 0,
+  };
+}
+
 export function toPaifuSummary(
   item: BackendPaifu | TablePaifuDetail,
 ): TablePaifuDetail {
@@ -155,6 +196,7 @@ function toPaifuRound(round: PaifuRoundSummary | BackendPaifu['rounds'][number])
       uraDoraVisible: normalizeOptionalBoolean(round.result.uraDoraVisible),
       settlement: normalizeOptionalObject(round.result.settlement),
       tenpaiPlayerIds: normalizeStringArray(round.result.tenpaiPlayerIds),
+      wins: normalizeResultWins(round.result.wins),
     },
   };
 }
@@ -203,5 +245,22 @@ function toBackendAgariResult(result: PaifuRoundSummary['result']): BackendAgari
     scoreChanges: result.scoreChanges,
     settlement: normalizeOptionalObject(result.settlement) ?? null,
     tenpaiPlayerIds: normalizeStringArray(result.tenpaiPlayerIds) ?? null,
+    wins: (result.wins ?? []).map(toBackendAgariWinResult),
+  };
+}
+
+function toBackendAgariWinResult(
+  win: NonNullable<PaifuRoundSummary['result']['wins']>[number],
+) {
+  return {
+    winner: win.winner,
+    target: normalizeOptionalString(win.target) ?? null,
+    han: normalizeOptionalNumber(win.han) ?? null,
+    fu: normalizeOptionalNumber(win.fu) ?? null,
+    yaku: win.yaku,
+    doraIndicators: normalizeStringArray(win.doraIndicators) ?? null,
+    uraDoraIndicators: normalizeStringArray(win.uraDoraIndicators) ?? null,
+    uraDoraVisible: normalizeOptionalBoolean(win.uraDoraVisible) ?? null,
+    points: win.points,
   };
 }

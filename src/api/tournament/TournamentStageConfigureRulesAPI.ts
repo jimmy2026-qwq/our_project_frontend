@@ -34,6 +34,7 @@ export class TournamentStageConfigureRulesAPI extends APIMessage<TournamentSumma
       thirdPlaceMatch: request.thirdPlaceMatch === undefined ? emptyBackendOption<boolean>() : [request.thirdPlaceMatch],
       repechageEnabled: request.repechageEnabled === undefined ? emptyBackendOption<boolean>() : [request.repechageEnabled],
       seedingPolicy: request.seedingPolicy ? [request.seedingPolicy] : emptyBackendOption<KnockoutSeedingPolicy>(),
+      mahjongRuleset: request.mahjongRuleset ? [request.mahjongRuleset] : emptyBackendOption(),
       note: request.note ? [request.note] : emptyBackendOption<string>(),
     };
   }

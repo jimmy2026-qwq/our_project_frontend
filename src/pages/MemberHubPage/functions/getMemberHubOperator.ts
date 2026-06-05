@@ -39,12 +39,12 @@ export function getFallbackDirectory(
 ): MemberHubOperatorDirectory {
   const sessionOperatorId =
     session?.user.operatorId ?? session?.user.userId ?? '';
-  const sessionDisplayName = session?.user.displayName ?? 'Current User';
+  const sessionDisplayName = session?.user.displayName ?? '当前用户';
   const currentOperator =
     sessionOperatorId && session?.user.roles.isRegisteredPlayer
       ? {
           id: sessionOperatorId,
-          label: `${sessionDisplayName} / Registered Player`,
+          label: `${sessionDisplayName} / 注册选手`,
           role: 'RegisteredPlayer' as const,
           playerId: sessionOperatorId,
           managedClubIds: [],

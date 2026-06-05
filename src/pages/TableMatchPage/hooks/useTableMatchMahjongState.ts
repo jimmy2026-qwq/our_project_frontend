@@ -2,6 +2,7 @@ import { useCallback, useEffect, useReducer, useState } from 'react';
 
 import {
   MahjongCoreAdvanceRoundAPI,
+  MahjongCoreArchiveTableAPI,
   MahjongCoreGetTableAPI,
   MahjongCoreSubmitActionAPI,
 } from '@/api/tournament/mahjongcore';
@@ -17,11 +18,13 @@ import { ApiError } from '@/system/api/http';
 interface UseTableMatchMahjongStateParams {
   operatorId: string;
   tableId: string;
+  viewerPlayerId: string;
 }
 
 export function useTableMatchMahjongState({
   operatorId,
   tableId,
+  viewerPlayerId,
 }: UseTableMatchMahjongStateParams) {
   const [mahjongTable, setMahjongTable] = useState<MahjongTableView | null>(
     null,
@@ -48,10 +51,10 @@ export function useTableMatchMahjongState({
 
         setError(null);
         const payload = await sendAPI<MahjongTableView>(
-          new MahjongCoreGetTableAPI(tableId, {
-            includeLegalActions: true,
-            viewerPlayerId: operatorId || null,
-          }),
+          new MahjongCoreGetTableAPI(
+            tableId,
+            createMahjongTableQuery({ operatorId, viewerPlayerId }),
+          ),
         );
 
         if (!cancelled) {
@@ -77,7 +80,7 @@ export function useTableMatchMahjongState({
     return () => {
       cancelled = true;
     };
-  }, [operatorId, reloadKey, tableId]);
+  }, [operatorId, reloadKey, tableId, viewerPlayerId]);
 
   useEffect(() => {
     if (!mahjongTable || !isLiveMahjongStatus(mahjongTable.status)) {
@@ -95,7 +98,7 @@ export function useTableMatchMahjongState({
 
   const submitAction = useCallback(
     async (action: MahjongLegalAction) => {
-      if (!operatorId) {
+      if (!viewerPlayerId) {
         setActionError('需要登录到选手身份后才能操作牌局。');
         return;
       }
@@ -107,7 +110,7 @@ export function useTableMatchMahjongState({
         const request: SubmitMahjongActionRequest = {
           commandType: action.commandType,
           idempotencyKey: createIdempotencyKey(),
-          playerId: operatorId,
+          playerId: viewerPlayerId,
           targetSequenceNo: action.targetSequenceNo,
           tile: action.tile,
           tiles: action.tiles,
@@ -124,7 +127,7 @@ export function useTableMatchMahjongState({
         setIsSubmittingAction(false);
       }
     },
-    [operatorId, tableId],
+    [tableId, viewerPlayerId],
   );
   const advanceRound = useCallback(async () => {
     try {
@@ -134,17 +137,27 @@ export function useTableMatchMahjongState({
       const response = await sendAPI<MahjongTableView>(
         new MahjongCoreAdvanceRoundAPI(tableId),
       );
+      const resolvedTable =
+        response.status === 'Finished'
+          ? (
+              await sendAPI<MahjongActionResponse>(
+                new MahjongCoreArchiveTableAPI(tableId, {
+                  operatorId: operatorId || viewerPlayerId || null,
+                }),
+              )
+            ).table
+          : response;
 
-      if (!operatorId) {
-        setMahjongTable(response);
+      if (!operatorId && !viewerPlayerId) {
+        setMahjongTable(resolvedTable);
         return;
       }
 
       const viewerTable = await sendAPI<MahjongTableView>(
-        new MahjongCoreGetTableAPI(tableId, {
-          includeLegalActions: true,
-          viewerPlayerId: operatorId,
-        }),
+        new MahjongCoreGetTableAPI(
+          tableId,
+          createMahjongTableQuery({ operatorId, viewerPlayerId }),
+        ),
       );
       setMahjongTable(viewerTable);
     } catch (advanceError) {
@@ -153,7 +166,7 @@ export function useTableMatchMahjongState({
     } finally {
       setIsRefreshing(false);
     }
-  }, [operatorId, tableId]);
+  }, [operatorId, tableId, viewerPlayerId]);
 
   return {
     advanceRound,
@@ -165,6 +178,20 @@ export function useTableMatchMahjongState({
     mahjongTable,
     reload,
     submitAction,
+  };
+}
+
+function createMahjongTableQuery({
+  operatorId,
+  viewerPlayerId,
+}: {
+  operatorId: string;
+  viewerPlayerId: string;
+}) {
+  return {
+    includeLegalActions: true,
+    operatorId: operatorId || null,
+    viewerPlayerId: viewerPlayerId || null,
   };
 }
 

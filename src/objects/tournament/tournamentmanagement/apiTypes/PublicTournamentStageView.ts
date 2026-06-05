@@ -7,6 +7,7 @@ import type {
   SwissRuleConfig,
   TournamentFormat,
 } from '@/objects/tournament';
+import type { MahjongRuleset } from '../../mahjongcore/gamestate/MahjongRuleset';
 import type { TournamentLineupSubmissionView } from '../../lineupmanagement/apiTypes/TournamentLineupSubmissionView';
 
 export interface PublicTournamentStageView {
@@ -26,5 +27,6 @@ export interface PublicTournamentStageView {
   advancementRule: AdvancementRule;
   swissRule: SwissRuleConfig | null;
   knockoutRule: KnockoutRuleConfig | null;
+  mahjongRuleset?: MahjongRuleset;
   lineupSubmissions?: TournamentLineupSubmissionView[];
 }

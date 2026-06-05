@@ -22,7 +22,7 @@ function DashboardMetrics({
   loadState,
 }: Pick<DashboardPanelProps, 'loadState'>) {
   if (!loadState.dashboard) {
-    return <EmptyState>No dashboard data is currently available.</EmptyState>;
+    return <EmptyState>当前没有可用的看板数据。</EmptyState>;
   }
 
   return (
@@ -58,11 +58,7 @@ export function DashboardPlaceholder({
       fallback={
         <DashboardFallbackNotice>
           <>
-            <p>
-              This panel still keeps the current "show API dashboard when
-              available, otherwise fall back to an explanatory placeholder"
-              pattern so the page stays stable during the migration.
-            </p>
+            <p>接口数据不可用时，这里会保留说明占位，避免页面空白。</p>
             <p>{roleNote}</p>
           </>
         </DashboardFallbackNotice>

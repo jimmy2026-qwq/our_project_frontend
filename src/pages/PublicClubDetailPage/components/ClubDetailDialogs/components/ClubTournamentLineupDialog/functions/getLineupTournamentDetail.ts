@@ -4,6 +4,7 @@ import type {
   TournamentOperationsStageView,
   TournamentStageDirectoryEntry,
 } from '@/objects/tournament';
+import { DEFAULT_MAHJONG_RULESET } from '@/objects/tournament';
 
 import type { TournamentPublicProfile } from '../../../../../objects/PublicClubDetailPage.types';
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
@@ -77,6 +78,7 @@ export function toDetailStageFromStageDirectoryEntry(
     advancementRule: fallbackAdvancementRule,
     swissRule: null,
     knockoutRule: null,
+    mahjongRuleset: DEFAULT_MAHJONG_RULESET,
     lineupSubmissions: [],
   };
 }
@@ -98,6 +100,7 @@ export function toDetailStageFromPublicStage(
     advancementRule: stage.advancementRule ?? fallbackAdvancementRule,
     swissRule: stage.swissRule ?? null,
     knockoutRule: stage.knockoutRule ?? null,
+    mahjongRuleset: stage.mahjongRuleset ?? DEFAULT_MAHJONG_RULESET,
     lineupSubmissions:
       stage.lineupSubmissions?.map((submission) => ({
         ...submission,

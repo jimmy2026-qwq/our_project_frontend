@@ -2,6 +2,7 @@ import type { AdvancementRuleType } from '../stageprogression/AdvancementRuleTyp
 import type { KnockoutSeedingPolicy } from '../knockout/KnockoutSeedingPolicy';
 import type { SwissPairingMethod } from '../swiss/SwissPairingMethod';
 import type { TournamentFormat } from '../../tournamentmanagement/TournamentFormat';
+import type { MahjongRuleset } from '../../mahjongcore/gamestate/MahjongRuleset';
 
 export interface CreateTournamentStageRequest {
   id?: string;
@@ -23,5 +24,6 @@ export interface CreateTournamentStageRequest {
   thirdPlaceMatch?: boolean;
   repechageEnabled?: boolean;
   seedingPolicy?: KnockoutSeedingPolicy;
+  mahjongRuleset?: MahjongRuleset;
   schedulingPoolSize?: number;
 }

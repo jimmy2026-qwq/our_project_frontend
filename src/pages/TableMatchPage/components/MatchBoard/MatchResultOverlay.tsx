@@ -1,5 +1,15 @@
+import { useState } from 'react';
 import type { AgariResult, MahjongSeatView } from '@/objects';
 import { getMahjongYakuLabel } from '@/objects';
+import type { MahjongResultWinLike } from '@/pages/shared/mahjongResultSequence';
+import {
+  advanceResultSequenceStep,
+  getResultSequenceStep,
+  getResultWins,
+  getWinYaku,
+  isNagashiManganWin,
+  isWinOutcome,
+} from '@/pages/shared/mahjongResultSequence';
 import { WinningTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/WinningResultIndicators';
 import { ResultTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 import {
@@ -8,27 +18,63 @@ import {
 } from '@/pages/TablePaifuPage/functions/getReplay';
 
 interface MatchResultOverlayProps {
+  completionLabel?: string;
   playerNames: Record<string, string>;
   result: AgariResult | null;
   seats: MahjongSeatView[];
+  onComplete?: () => void;
 }
 
 export function MatchResultOverlay({
+  completionLabel = '进入下一局',
+  onComplete,
   playerNames,
   result,
   seats,
 }: MatchResultOverlayProps) {
+  const [stepIndex, setStepIndex] = useState(0);
+
   if (!result) {
     return null;
   }
 
+  const step = getResultSequenceStep(result, stepIndex);
+
+  function handleSequenceClick() {
+    if (!result || !step) {
+      return;
+    }
+
+    if (step.kind === 'score') {
+      onComplete?.();
+      return;
+    }
+
+    setStepIndex((current) => advanceResultSequenceStep(result, current));
+  }
+
   return (
-    <div className="absolute inset-[34px] z-[24] grid rounded-[28px] bg-[rgba(0,0,0,0.84)] p-8 text-[#f2f7fb] shadow-[0_30px_90px_rgba(0,0,0,0.58)]">
-      {isWinOutcome(result.outcome) && result.winner ? (
+    <div
+      className="absolute inset-[34px] z-[24] grid rounded-[28px] bg-[rgba(0,0,0,0.84)] p-8 text-[#f2f7fb] shadow-[0_30px_90px_rgba(0,0,0,0.58)]"
+      onClick={step ? handleSequenceClick : undefined}
+      onKeyDown={(event) => {
+        if (!step || (event.key !== 'Enter' && event.key !== ' ')) {
+          return;
+        }
+
+        event.preventDefault();
+        handleSequenceClick();
+      }}
+      role={step ? 'button' : undefined}
+      tabIndex={step ? 0 : undefined}
+    >
+      {step ? (
         <WinningResultContent
+          completionLabel={completionLabel}
           playerNames={playerNames}
           result={result}
           seats={seats}
+          step={step}
         />
       ) : (
         <DrawResultContent playerNames={playerNames} result={result} />
@@ -38,93 +84,150 @@ export function MatchResultOverlay({
 }
 
 function WinningResultContent({
+  completionLabel,
   playerNames,
   result,
   seats,
+  step,
 }: {
+  completionLabel: string;
   playerNames: Record<string, string>;
   result: AgariResult;
   seats: MahjongSeatView[];
+  step: NonNullable<ReturnType<typeof getResultSequenceStep>>;
 }) {
-  if (!result.winner) {
-    return null;
-  }
-
-  const winnerSeat = seats.find((seat) => seat.playerId === result.winner);
-  const winnerHand = winnerSeat?.handTiles ?? [];
-  const winnerMelds = winnerSeat?.melds ?? [];
-  const winningTile =
-    result.target && result.scoreChanges.length > 0
-      ? findWinningTileFromTarget(seats, result.target)
-      : winnerHand[winnerHand.length - 1];
-  const displayHand =
-    result.outcome === 'Tsumo' && winningTile && winnerHand.length > 0
-      ? removeFirstTile(winnerHand, winningTile)
-      : winnerHand;
-  const winLabel = result.outcome === 'Tsumo' ? '自摸' : '荣和';
+  const headline = getWinHeadline(result, step, playerNames);
 
   return (
     <div className="grid h-full grid-rows-[auto_1fr_auto] gap-6">
       <div className="grid justify-items-center gap-3">
         <span className="rounded-xl border border-[rgba(236,197,122,0.38)] bg-[rgba(236,197,122,0.14)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#ffd98a]">
-          {winLabel}
+          {headline.badge}
         </span>
         <strong className="max-w-full truncate text-2xl text-[#f2f7fb]">
-          {getPlayerName(result.winner, playerNames)}
+          {headline.title}
         </strong>
-        {result.target ? (
+        {headline.subtitle ? (
           <span className="text-sm font-semibold text-[#c7d6e2]">
-            放铳：{getPlayerName(result.target, playerNames)}
+            {headline.subtitle}
           </span>
         ) : null}
       </div>
 
-      <div className="grid content-start gap-5 overflow-auto">
-        <div className="flex items-end justify-center gap-0">
-          {displayHand.map((tile, index) => (
-            <ResultTile
-              key={`${result.winner}-result-${tile}-${index}`}
-              tile={tile}
-            />
-          ))}
-          {winnerMelds.length > 0 ? (
-            <div className="ml-6 flex items-end gap-3 border-l border-[rgba(255,255,255,0.18)] pl-5">
-              {winnerMelds.map((meld, meldIndex) => (
-                <div
-                  key={`${result.winner}-result-meld-${meld.meldType}-${meldIndex}`}
-                  className="flex items-end gap-0"
-                >
-                  {(meld.tiles ?? []).map((tile, tileIndex) => (
-                    <ResultTile
-                      key={`${result.winner}-result-meld-${meldIndex}-${tile}-${tileIndex}`}
-                      tile={tile}
-                    />
-                  ))}
-                </div>
-              ))}
-            </div>
-          ) : null}
-          {winningTile ? <WinningTile label={winLabel} tile={winningTile} /> : null}
-        </div>
+      <div className="grid content-center gap-5 overflow-auto">
+        {step.kind === 'win' ? (
+          <SingleWinPanel
+            result={result}
+            seats={seats}
+            win={step.win}
+          />
+        ) : (
+          <ScoreSettlementPanel playerNames={playerNames} result={result} />
+        )}
+      </div>
 
-        {result.yaku.length > 0 ? (
-          <div className="mx-auto grid w-[min(680px,88%)] content-start gap-3">
-            {result.yaku.map((yaku) => (
+      {step.kind === 'score' ? (
+        <span className="justify-self-center rounded-xl border border-[rgba(236,197,122,0.36)] bg-[rgba(236,197,122,0.12)] px-5 py-2 text-sm font-bold text-[#ffd98a]">
+          {completionLabel}
+        </span>
+      ) : null}
+    </div>
+  );
+}
+
+function SingleWinPanel({
+  result,
+  seats,
+  win,
+}: {
+  result: AgariResult;
+  seats: MahjongSeatView[];
+  win: MahjongResultWinLike;
+}) {
+  const winnerSeat = seats.find((seat) => seat.playerId === win.winner);
+  const winnerHand = winnerSeat?.handTiles ?? [];
+  const winnerMelds = winnerSeat?.melds ?? [];
+  const targetId = win.target ?? result.target;
+  const isNagashiMangan = isNagashiManganWin(win);
+  const winningTile =
+    isNagashiMangan
+      ? undefined
+      : targetId && result.scoreChanges.length > 0
+        ? findWinningTileFromTarget(seats, targetId)
+        : winnerHand[winnerHand.length - 1];
+  const displayHand =
+    result.outcome === 'Tsumo' && winningTile && winnerHand.length > 0
+      ? removeFirstTile(winnerHand, winningTile)
+      : winnerHand;
+  const winLabel = getWinLabel(result, win);
+  const yakuList = getWinYaku(result, win);
+  const pointText =
+    typeof win.han === 'number' && typeof win.fu === 'number'
+      ? `${formatPoints(win.points)} / ${win.han}番${win.fu}符`
+      : formatPoints(win.points);
+
+  return (
+    <>
+      <div className="flex items-end justify-center gap-0">
+        {displayHand.map((tile, index) => (
+          <ResultTile key={`${win.winner}-result-${tile}-${index}`} tile={tile} />
+        ))}
+        {winnerMelds.length > 0 ? (
+          <div className="ml-6 flex items-end gap-3 border-l border-[rgba(255,255,255,0.18)] pl-5">
+            {winnerMelds.map((meld, meldIndex) => (
               <div
-                key={`${yaku.kind}-${yaku.han}`}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-3 text-xl"
+                key={`${win.winner}-result-meld-${meld.meldType}-${meldIndex}`}
+                className="flex items-end gap-0"
               >
-                <span>{getMahjongYakuLabel(yaku.kind)}</span>
-                <span className="text-[#ffd98a]">
-                  {formatYakuValue(yaku.han)}
-                </span>
+                {(meld.tiles ?? []).map((tile, tileIndex) => (
+                  <ResultTile
+                    key={`${win.winner}-result-meld-${meldIndex}-${tile}-${tileIndex}`}
+                    tile={tile}
+                  />
+                ))}
               </div>
             ))}
           </div>
         ) : null}
+        {winningTile ? <WinningTile label={winLabel} tile={winningTile} /> : null}
       </div>
 
-      <ResultFooter playerNames={playerNames} result={result} />
+      {yakuList.length > 0 ? (
+        <YakuList className="mx-auto w-[min(680px,88%)]" yaku={yakuList} />
+      ) : null}
+
+      <div className="grid justify-items-end gap-1 justify-self-end text-right">
+        <span className="block text-sm uppercase tracking-[0.2em] text-[#9ab0c1]">
+          点数
+        </span>
+        <strong className="text-[2rem] text-[#ffd98a]">{pointText}</strong>
+      </div>
+    </>
+  );
+}
+
+function YakuList({
+  className,
+  compact = false,
+  yaku,
+}: {
+  className?: string;
+  compact?: boolean;
+  yaku: MahjongResultWinLike['yaku'];
+}) {
+  return (
+    <div className={`grid content-start gap-3 ${className ?? ''}`}>
+      {yaku.map((item, index) => (
+        <div
+          key={`${item.kind}-${item.han}-${index}`}
+          className={`grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] ${
+            compact ? 'py-2 text-sm' : 'py-3 text-xl'
+          }`}
+        >
+          <span>{getMahjongYakuLabel(item.kind)}</span>
+          <span className="text-[#ffd98a]">{formatYakuValue(item.han)}</span>
+        </div>
+      ))}
     </div>
   );
 }
@@ -179,10 +282,22 @@ function DrawResultContent({
 function ResultFooter({
   playerNames,
   result,
+  wins = getResultWins(result),
 }: {
   playerNames: Record<string, string>;
   result: AgariResult;
+  wins?: MahjongResultWinLike[];
 }) {
+  const primaryWin = wins[0];
+  const pointText =
+    wins.length > 1
+      ? formatPoints(result.points)
+      : `${formatPoints(primaryWin?.points ?? result.points)}${
+          typeof primaryWin?.han === 'number' && typeof primaryWin?.fu === 'number'
+            ? ` / ${primaryWin.han}番${primaryWin.fu}符`
+            : ''
+        }`;
+
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 self-end pb-1">
       <div className="grid gap-1 text-sm font-semibold text-[#c7d6e2]">
@@ -204,22 +319,15 @@ function ResultFooter({
       {isWinOutcome(result.outcome) ? (
         <div className="grid justify-items-end gap-1 text-right">
           <span className="block text-sm uppercase tracking-[0.2em] text-[#9ab0c1]">
-            点数
+            {wins.length > 1 ? '合计点数' : '点数'}
           </span>
           <strong className="text-[2rem] text-[#ffd98a]">
-            {formatPoints(result.points)}
-            {typeof result.han === 'number' && typeof result.fu === 'number'
-              ? ` / ${result.han}番${result.fu}符`
-              : ''}
+            {pointText}
           </strong>
         </div>
       ) : null}
     </div>
   );
-}
-
-function isWinOutcome(outcome: string) {
-  return outcome === 'Ron' || outcome === 'Tsumo';
 }
 
 function getDrawLabel(outcome: string) {
@@ -230,8 +338,93 @@ function getDrawLabel(outcome: string) {
   return '本局结束';
 }
 
+function getWinHeadline(
+  result: AgariResult,
+  step: NonNullable<ReturnType<typeof getResultSequenceStep>>,
+  playerNames: Record<string, string>,
+) {
+  if (step.kind === 'score') {
+    return {
+      badge: '点数结算',
+      title: '本局总点数',
+      subtitle: undefined,
+    };
+  }
+
+  const wins = getResultWins(result);
+  const win = step.win;
+
+  if (isNagashiManganWin(win)) {
+    return {
+      badge: '流局满贯',
+      title: getPlayerName(win.winner, playerNames),
+      subtitle: getStepSubtitle(step),
+    };
+  }
+
+  const multipleRonLabel =
+    result.outcome === 'Ron' && wins.length >= 3
+      ? '三家荣和'
+      : result.outcome === 'Ron' && wins.length === 2
+        ? '双响'
+        : getWinLabel(result, win);
+
+  const subtitleParts = [
+    getStepSubtitle(step),
+    win.target ? `放铳：${getPlayerName(win.target, playerNames)}` : undefined,
+  ].filter(Boolean);
+
+  return {
+    badge: multipleRonLabel,
+    title: getPlayerName(win.winner, playerNames),
+    subtitle: subtitleParts.join(' / ') || undefined,
+  };
+}
+
+function getWinLabel(result: AgariResult, win: MahjongResultWinLike) {
+  if (isNagashiManganWin(win)) {
+    return '流局满贯';
+  }
+
+  return result.outcome === 'Tsumo' ? '自摸' : '荣和';
+}
+
+function getStepSubtitle(step: NonNullable<ReturnType<typeof getResultSequenceStep>>) {
+  if (step.totalWinCount <= 1 || step.kind !== 'win') {
+    return undefined;
+  }
+
+  return `${step.index + 1}/${step.totalWinCount}`;
+}
+
 function getPlayerName(playerId: string, playerNames: Record<string, string>) {
   return playerNames[playerId] ?? playerId;
+}
+
+function ScoreSettlementPanel({
+  playerNames,
+  result,
+}: {
+  playerNames: Record<string, string>;
+  result: AgariResult;
+}) {
+  return (
+    <div className="mx-auto grid w-[min(680px,92%)] content-center gap-3">
+      {result.scoreChanges.map((change) => (
+        <div
+          key={change.playerId}
+          className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-4 text-2xl font-bold"
+        >
+          <span className="truncate text-[#f2f7fb]">
+            {getPlayerName(change.playerId, playerNames)}
+          </span>
+          <span className={change.delta >= 0 ? 'text-[#57e38d]' : 'text-[#ff6d6d]'}>
+            {formatDelta(change.delta)}
+          </span>
+        </div>
+      ))}
+    </div>
+  );
 }
 
 function formatDelta(value: number) {

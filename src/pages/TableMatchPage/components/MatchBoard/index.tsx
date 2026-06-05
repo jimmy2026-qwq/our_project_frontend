@@ -11,6 +11,8 @@ import {
   settlementAnimationDelayMs,
   settlementAnimationDurationMs,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuHandTableReplay';
+import { isWinOutcome } from '@/pages/shared/mahjongResultSequence';
+import { useMahjongTileImagePreload } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileImagePreload';
 import type {
   MeldGroup,
   RiverDiscard,
@@ -49,6 +51,8 @@ export function MatchBoard({
   playerNames,
   table,
 }: MatchBoardProps) {
+  useMahjongTileImagePreload();
+
   const seatRotation = getSeatRotation(mahjongTable, operatorId);
   const seatMap = getMahjongSeatMap(mahjongTable, seatRotation);
   const rivers = getRivers(mahjongTable, seatRotation);
@@ -62,6 +66,9 @@ export function MatchBoard({
   const [settlementProgress, setSettlementProgress] = useState<
     number | undefined
   >(undefined);
+  const [resultSequenceCompletedKey, setResultSequenceCompletedKey] = useState<
+    string | null
+  >(null);
   const [delayedTurnActionKey, setDelayedTurnActionKey] = useState<
     string | null
   >(null);
@@ -69,7 +76,12 @@ export function MatchBoard({
   const shouldShowResult = Boolean(
     mahjongTable.currentRound?.result &&
       resultKey &&
+      resultSequenceCompletedKey !== resultKey &&
       settlementAnimatingKey !== resultKey,
+  );
+  const winResultNeedsSequence = Boolean(
+    mahjongTable.currentRound?.result &&
+      isWinOutcome(mahjongTable.currentRound.result.outcome),
   );
   const scoreDisplays = useMemo(
     () =>
@@ -114,13 +126,25 @@ export function MatchBoard({
   useEffect(() => {
     if (!resultKey) {
       setSettlementAnimatingKey(null);
+      setResultSequenceCompletedKey(null);
       setSettlementProgress(undefined);
       advanceStartedKeyRef.current = null;
       return;
     }
 
     setSettlementAnimatingKey(null);
+    setResultSequenceCompletedKey(null);
     setSettlementProgress(undefined);
+  }, [resultKey]);
+
+  useEffect(() => {
+    if (!resultKey) {
+      return;
+    }
+
+    if (winResultNeedsSequence && resultSequenceCompletedKey !== resultKey) {
+      return;
+    }
 
     let animationFrame = 0;
     const timer = window.setTimeout(() => {
@@ -161,7 +185,12 @@ export function MatchBoard({
         window.cancelAnimationFrame(animationFrame);
       }
     };
-  }, [onAdvanceRound, resultKey]);
+  }, [
+    onAdvanceRound,
+    resultKey,
+    resultSequenceCompletedKey,
+    winResultNeedsSequence,
+  ]);
 
   return (
     <section className="grid gap-0">
@@ -226,6 +255,13 @@ export function MatchBoard({
 
         {shouldShowResult ? (
           <MatchResultOverlay
+            completionLabel={getResultCompletionLabel(mahjongTable)}
+            key={resultKey}
+            onComplete={() => {
+              if (resultKey) {
+                setResultSequenceCompletedKey(resultKey);
+              }
+            }}
             playerNames={playerNames}
             result={mahjongTable.currentRound?.result ?? null}
             seats={seats}
@@ -302,7 +338,16 @@ function getResultKey(mahjongTable: MahjongTableView) {
     result.winner,
     result.target,
     result.points,
+    (result.wins ?? [])
+      .map((win) => `${win.winner}:${win.target ?? ''}:${win.points}`)
+      .join('|'),
   ].join(':');
+}
+
+function getResultCompletionLabel(mahjongTable: MahjongTableView) {
+  return mahjongTable.ruleset.gameLength === 'OneKyoku'
+    ? '完成牌桌'
+    : '进入下一局';
 }
 
 function createMatchScoreDisplays({

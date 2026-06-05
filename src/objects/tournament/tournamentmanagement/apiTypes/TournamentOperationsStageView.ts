@@ -4,6 +4,7 @@ import type { StageStatus } from '../StageStatus';
 import type { SwissRuleConfig } from '../../rulesmanagement/swiss/SwissRuleConfig';
 import type { TournamentFormat } from '../TournamentFormat';
 import type { TournamentLineupSubmissionView } from '../../lineupmanagement/apiTypes/TournamentLineupSubmissionView';
+import type { MahjongRuleset } from '../../mahjongcore/gamestate/MahjongRuleset';
 
 export interface TournamentOperationsStageView {
   stageId: string;
@@ -19,5 +20,6 @@ export interface TournamentOperationsStageView {
   advancementRule: AdvancementRule;
   swissRule: SwissRuleConfig | null;
   knockoutRule: KnockoutRuleConfig | null;
+  mahjongRuleset?: MahjongRuleset;
   lineupSubmissions: TournamentLineupSubmissionView[];
 }

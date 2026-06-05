@@ -17,7 +17,7 @@ export function ClubHeroActions({
   onApply: () => void;
 }) {
   return (
-    <div className="flex flex-wrap items-center gap-3 pr-12 sm:pr-0">
+    <div className="flex flex-wrap items-center gap-3 pr-16 sm:pr-20">
       {isClubMember ? (
         <StatusPill tone="success" className={heroActionClassName}>
           已是俱乐部成员

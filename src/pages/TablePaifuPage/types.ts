@@ -16,6 +16,18 @@ export interface PaifuScoreChange {
   delta: number;
 }
 
+export interface PaifuRoundWinSummary {
+  winner: string;
+  target?: string;
+  han?: number;
+  fu?: number;
+  yaku: PaifuYaku[];
+  doraIndicators?: string[];
+  uraDoraIndicators?: string[];
+  uraDoraVisible?: boolean;
+  points: number;
+}
+
 export interface PaifuRoundSettlement {
   riichiSticksDelta: number;
   honbaPayment: number;
@@ -85,6 +97,7 @@ export interface PaifuRoundSummary {
      * child win and 96000 for a dealer win.
      */
     points: number;
+    wins?: PaifuRoundWinSummary[];
     scoreChanges: PaifuScoreChange[];
     settlement?: PaifuRoundSettlement;
     /**

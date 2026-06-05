@@ -32,12 +32,13 @@ export function MemberHubContextPanel({
   return (
     <WorkbenchContextPanel
       className="text-[#c7d6e2]"
-      title="Workspace Context"
-      description="Switch operator scope and dashboard targets without pushing that state back into the page shell."
+      title="工作台范围"
+      description="切换操作身份、个人看板和可管理俱乐部。"
       onReload={onReload}
+      reloadLabel="刷新"
     >
       <SelectField
-        label="Operator"
+        label="操作身份"
         value={state.operatorId}
         onChange={(event) => onChangeOperator(event.currentTarget.value)}
       >
@@ -48,7 +49,7 @@ export function MemberHubContextPanel({
         ))}
       </SelectField>
       <SelectField
-        label="Player dashboard"
+        label="个人看板"
         value={state.playerId}
         onChange={(event) => onChangePlayer(event.currentTarget.value)}
       >
@@ -59,7 +60,7 @@ export function MemberHubContextPanel({
         ))}
       </SelectField>
       <SelectField
-        label="Managed club"
+        label="管理俱乐部"
         value={state.clubId}
         onChange={(event) => onChangeClub(event.currentTarget.value)}
       >

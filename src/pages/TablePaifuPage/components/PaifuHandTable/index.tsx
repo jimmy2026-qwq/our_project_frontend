@@ -8,6 +8,7 @@ import { PlayerHand } from './components/PlayerAreas/PlayerHand';
 import { PlayerMelds } from './components/PlayerAreas/PlayerMelds';
 import { PlayerRiver } from './components/PlayerAreas/PlayerRiver';
 import { ReplayControls } from './components/ReplayControls';
+import { useMahjongTileImagePreload } from './components/TileImagePreload';
 import { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
 
 interface PaifuHandTableProps {
@@ -25,6 +26,8 @@ export function PaifuHandTable({
   rounds,
   selectedRoundIndex,
 }: PaifuHandTableProps) {
+  useMahjongTileImagePreload();
+
   const replay = usePaifuHandTableReplay({
     paifu,
     round,
@@ -132,6 +135,7 @@ export function PaifuHandTable({
               replay.setWinningAction(undefined);
               replay.startSettlementAnimation();
             }}
+            playerNames={paifu.metadata.playerNames ?? {}}
             replaySnapshot={replay.replaySnapshot}
             replayStep={replay.replayStep}
             round={round}

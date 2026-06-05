@@ -49,7 +49,7 @@ export function DashboardPanelShell({
 }
 
 export function DashboardFallbackNotice({
-  title = 'Fallback Placeholder',
+  title = '数据占位',
   children,
   className,
 }: {
@@ -151,6 +151,21 @@ function getApplicationStatusTone(status: string) {
   }
 }
 
+function getApplicationStatusLabel(status: string) {
+  switch (status) {
+    case 'Pending':
+      return '待处理';
+    case 'Approved':
+      return '已通过';
+    case 'Rejected':
+      return '已拒绝';
+    case 'Withdrawn':
+      return '已撤回';
+    default:
+      return status;
+  }
+}
+
 export function ClubApplicationList({
   items,
   emptyText,
@@ -177,7 +192,7 @@ export function ClubApplicationList({
           aside={
             <>
               <StatusPill tone={getApplicationStatusTone(item.status)}>
-                {item.status}
+                {getApplicationStatusLabel(item.status)}
               </StatusPill>
               {item.meta ? <span>{item.meta}</span> : null}
               {item.actions ? (

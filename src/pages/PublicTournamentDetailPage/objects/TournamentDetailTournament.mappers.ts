@@ -1,3 +1,4 @@
+import { DEFAULT_MAHJONG_RULESET } from '@/objects';
 import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
@@ -114,6 +115,7 @@ export function toPublicTournamentDetail(
       advancementRule: stage.advancementRule,
       swissRule: stage.swissRule ?? null,
       knockoutRule: stage.knockoutRule ?? null,
+      mahjongRuleset: stage.mahjongRuleset ?? DEFAULT_MAHJONG_RULESET,
       lineupSubmissions: stage.lineupSubmissions?.map((submission) => ({
         submissionId: submission.submissionId,
         clubId: submission.clubId,
@@ -184,6 +186,7 @@ export function toTournamentDetailFromAdminView(
       advancementRule: stage.advancementRule,
       swissRule: stage.swissRule ?? null,
       knockoutRule: stage.knockoutRule ?? null,
+      mahjongRuleset: stage.mahjongRuleset ?? DEFAULT_MAHJONG_RULESET,
       lineupSubmissions: stage.lineupSubmissions?.map((submission) => ({
         submissionId: submission.submissionId,
         clubId: submission.clubId,

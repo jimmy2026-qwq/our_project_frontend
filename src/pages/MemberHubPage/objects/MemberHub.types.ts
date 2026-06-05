@@ -52,7 +52,7 @@ export interface MemberHubState {
 
 export const EMPTY_MEMBER_HUB_OPERATOR: MemberHubOperator = {
   id: '',
-  label: 'No operator',
+  label: '无操作身份',
   role: 'RegisteredPlayer',
   playerId: '',
   managedClubIds: [],

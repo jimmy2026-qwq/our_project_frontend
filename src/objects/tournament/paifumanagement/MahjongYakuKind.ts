@@ -22,6 +22,7 @@ export type MahjongYakuKind =
   | 'RinshanKaihou'
   | 'HaiteiRaoyue'
   | 'HouteiRaoyui'
+  | 'NagashiMangan'
   | 'Tanyao'
   | 'YakuhaiHaku'
   | 'YakuhaiHatsu'
@@ -71,6 +72,7 @@ export const mahjongYakuLabels: Record<MahjongYakuKind, string> = {
   RinshanKaihou: '岭上开花',
   HaiteiRaoyue: '海底捞月',
   HouteiRaoyui: '河底捞鱼',
+  NagashiMangan: '流局满贯',
   Tanyao: '断幺九',
   YakuhaiHaku: '役牌:白',
   YakuhaiHatsu: '役牌:发',
@@ -93,7 +95,7 @@ export const mahjongYakuLabels: Record<MahjongYakuKind, string> = {
   Chanta: '混全带幺九',
   SanshokuDoukou: '三色同刻',
   Dora: '宝牌',
-  AkaDora: '红宝牌',
+  AkaDora: '赤宝牌',
   UraDora: '里宝牌',
 };
 

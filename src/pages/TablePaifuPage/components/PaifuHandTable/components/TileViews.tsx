@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
 
@@ -6,6 +6,10 @@ import {
   tileFaceClasses,
   tileSizeClasses,
 } from '../functions/getPaifuTableLayout';
+import {
+  getTileImageSrc,
+  maxTileImageRetryCount,
+} from './TileImagePreload';
 
 export function TileImage({
   className,
@@ -16,12 +20,38 @@ export function TileImage({
   style?: CSSProperties;
   tile: string;
 }) {
+  const [retryNonce, setRetryNonce] = useState(0);
+  const [hasFailed, setHasFailed] = useState(false);
+  const src = useMemo(
+    () => getTileImageSrc(tile, retryNonce),
+    [retryNonce, tile],
+  );
+
+  useEffect(() => {
+    setRetryNonce(0);
+    setHasFailed(false);
+  }, [tile]);
+
+  if (hasFailed) {
+    return (
+      <TileImageFallback className={className} style={style} tile={tile} />
+    );
+  }
+
   return (
     <img
       alt={tile}
       className={className}
       draggable={false}
-      src={`/mahjong-soul/tiles/individual/${tile}.png`}
+      onError={() => {
+        if (retryNonce < maxTileImageRetryCount) {
+          setRetryNonce((current) => current + 1);
+          return;
+        }
+
+        setHasFailed(true);
+      }}
+      src={src}
       style={style}
     />
   );
@@ -89,4 +119,32 @@ export function ResultBackTile({
       ].join(' ')}
     />
   );
+}
+
+function TileImageFallback({
+  className,
+  style,
+  tile,
+}: {
+  className: string;
+  style?: CSSProperties;
+  tile: string;
+}) {
+  return (
+    <span
+      aria-label={tile}
+      className={[
+        'grid aspect-[80/129] place-items-center rounded-[5px] border border-[#d6c59a] bg-[linear-gradient(180deg,#fbf8ef,#e6dbc2)] text-[0.58rem] font-bold leading-none text-[#22313d] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),inset_0_-3px_0_rgba(94,73,38,0.2)]',
+        className,
+      ].join(' ')}
+      style={style}
+      title={tile}
+    >
+      {formatTileFallbackLabel(tile)}
+    </span>
+  );
+}
+
+function formatTileFallbackLabel(tile: string) {
+  return tile.trim().toUpperCase();
 }

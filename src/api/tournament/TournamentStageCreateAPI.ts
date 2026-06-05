@@ -30,6 +30,7 @@ export class TournamentStageCreateAPI extends APIMessage<TournamentSummaryView> 
       thirdPlaceMatch: request.thirdPlaceMatch === undefined ? emptyBackendOption<boolean>() : [request.thirdPlaceMatch],
       repechageEnabled: request.repechageEnabled === undefined ? emptyBackendOption<boolean>() : [request.repechageEnabled],
       seedingPolicy: request.seedingPolicy ? [request.seedingPolicy] : emptyBackendOption<KnockoutSeedingPolicy>(),
+      mahjongRuleset: request.mahjongRuleset ? [request.mahjongRuleset] : emptyBackendOption(),
       schedulingPoolSize: request.schedulingPoolSize === undefined ? emptyBackendOption<number>() : [request.schedulingPoolSize],
     };
   }

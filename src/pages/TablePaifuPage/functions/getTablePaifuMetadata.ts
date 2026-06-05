@@ -20,6 +20,10 @@ export function collectPaifuPlayerIds(paifu: TablePaifuDetail) {
     round.actions.forEach((action) => addPlayerId(action.actor));
     addPlayerId(round.result.winner);
     addPlayerId(round.result.target);
+    round.result.wins?.forEach((win) => {
+      addPlayerId(win.winner);
+      addPlayerId(win.target);
+    });
     round.result.scoreChanges.forEach((change) => addPlayerId(change.playerId));
     round.result.tenpaiPlayerIds?.forEach(addPlayerId);
   });

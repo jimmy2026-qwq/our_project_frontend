@@ -2,6 +2,7 @@ import type { ClubPrivilegeCode, StageStatus, TournamentStatus } from '@/objects
 import type {
   AdvancementRule,
   KnockoutRuleConfig,
+  MahjongRuleset,
   SwissRuleConfig,
 } from '@/objects/tournament';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
@@ -120,6 +121,7 @@ export interface TournamentPublicProfile {
     advancementRule?: AdvancementRule;
     swissRule?: SwissRuleConfig | null;
     knockoutRule?: KnockoutRuleConfig | null;
+    mahjongRuleset?: MahjongRuleset;
     lineupSubmissions?: Array<{
       submissionId: string;
       clubId: string;

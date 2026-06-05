@@ -21,5 +21,3 @@ export function NotificationProvider({ children }: { children: ReactNode }) {
     </NotificationContext.Provider>
   );
 }
-
-export { useNotifications } from './hooks/useNotifications';

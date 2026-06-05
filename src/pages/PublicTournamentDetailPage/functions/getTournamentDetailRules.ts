@@ -1,9 +1,11 @@
 ﻿import type {
   AdvancementRule,
   KnockoutRuleConfig,
+  MahjongGameLength,
   SwissRuleConfig,
   TournamentFormat,
 } from '@/objects/tournament';
+import { normalizeMahjongRuleset } from '@/objects/tournament';
 import type {
   TournamentStageRuleDraft,
   TournamentStageWithRules,
@@ -75,6 +77,7 @@ export function createRuleDraftFromStage(
   return {
     format,
     advanceCount: getStageAdvanceCount(stage),
+    mahjongRuleset: normalizeMahjongRuleset(stage?.mahjongRuleset),
   };
 }
 
@@ -112,10 +115,22 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
     return ['点击创建规则后会自动创建首个赛段。'];
   }
 
+  const mahjongRuleset = normalizeMahjongRuleset(stage.mahjongRuleset);
   const details = [
     `赛制：${getTournamentFormatLabel(stage.format)}`,
     `轮数：${stage.roundCount}`,
     `排桌池：${stage.schedulingPoolSize ?? 4}`,
+    `牌局长度：${getMahjongGameLengthLabel(mahjongRuleset.gameLength)}`,
+    `初始点数：${mahjongRuleset.initialPoints}`,
+    `返还点/目标点：${mahjongRuleset.targetPoints}`,
+    `赤宝牌：${mahjongRuleset.akaDora ? `${mahjongRuleset.akaDoraCount} 张` : '关闭'}`,
+    `食断：${mahjongRuleset.openTanyao ? '开启' : '关闭'}`,
+    `双响：${mahjongRuleset.doubleRon ? '开启' : '关闭'}`,
+    `三家和流局：${mahjongRuleset.tripleRonAbortiveDraw ? '开启' : '关闭'}`,
+    `流局满贯：${mahjongRuleset.nagashiMangan ? '开启' : '关闭'}`,
+    `多倍役满：${mahjongRuleset.allowMultipleYakuman ? '开启' : '关闭'}`,
+    `击飞：${mahjongRuleset.bankruptcyEnd ? '开启' : '关闭'}`,
+    `番缚：${mahjongRuleset.minHan} 番`,
   ];
 
   if (stage.format === 'Swiss') {
@@ -133,6 +148,18 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
   }
 
   return details;
+}
+
+export function getMahjongGameLengthLabel(gameLength?: MahjongGameLength) {
+  switch (gameLength) {
+    case 'OneKyoku':
+      return '一局战';
+    case 'Tonpu':
+      return '东风战';
+    case 'Hanchan':
+    default:
+      return '半庄战';
+  }
 }
 
 function describeSwissPairing(rule?: SwissRuleConfig | null) {

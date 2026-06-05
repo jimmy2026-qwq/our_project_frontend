@@ -16,12 +16,14 @@ import { sendAPI } from '@/system/api';
 
 export function useSystemNotifications() {
   const { isReady, session } = useAuth();
-  const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
+  const operatorId = session?.user.roles.isRegisteredPlayer
+    ? (session.user.operatorId ?? session.user.userId)
+    : '';
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  const refresh = useCallback(async () => {
+  const refresh = useCallback(async (options?: { silentFailure?: boolean }) => {
     if (!operatorId) {
       setNotifications([]);
       setUnreadCount(0);
@@ -37,7 +39,9 @@ export function useSystemNotifications() {
       setNotifications(items);
       setUnreadCount(unread.unreadCount);
     } catch (error) {
-      console.error('Notification refresh failed.', error);
+      if (!options?.silentFailure) {
+        console.error('Notification refresh failed.', error);
+      }
     } finally {
       setIsLoading(false);
     }
@@ -92,7 +96,7 @@ export function useSystemNotifications() {
       return;
     }
 
-    void refresh();
+    void refresh({ silentFailure: true });
   }, [isReady, operatorId, refresh]);
 
   useEffect(() => {

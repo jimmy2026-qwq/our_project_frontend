@@ -17,6 +17,23 @@ import {
 } from '@/providers/auth/data';
 import { AuthContext } from '@/providers/auth-context';
 
+let pendingRestoreToken: string | null = null;
+let pendingRestorePromise: Promise<AuthSession | null> | null = null;
+
+function restoreSessionOnce(token: string) {
+  if (pendingRestorePromise && pendingRestoreToken === token) {
+    return pendingRestorePromise;
+  }
+
+  pendingRestoreToken = token;
+  pendingRestorePromise = restoreSession(token).finally(() => {
+    pendingRestoreToken = null;
+    pendingRestorePromise = null;
+  });
+
+  return pendingRestorePromise;
+}
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<AuthSession | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -35,7 +52,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           return;
         }
 
-        const nextSession = await restoreSession(persisted.token);
+        const nextSession = await restoreSessionOnce(persisted.token);
 
         if (isMounted) {
           setSession(nextSession);

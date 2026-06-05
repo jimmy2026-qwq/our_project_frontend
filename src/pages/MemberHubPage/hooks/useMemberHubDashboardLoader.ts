@@ -25,7 +25,7 @@ export function useMemberHubDashboardLoader() {
           warning:
             error instanceof Error
               ? error.message
-              : 'Unable to load player dashboard.',
+              : '个人看板加载失败。',
         };
       }
     },
@@ -46,7 +46,7 @@ export function useMemberHubDashboardLoader() {
           warning:
             error instanceof Error
               ? error.message
-              : 'Unable to load club dashboard.',
+              : '俱乐部看板加载失败。',
         };
       }
     },

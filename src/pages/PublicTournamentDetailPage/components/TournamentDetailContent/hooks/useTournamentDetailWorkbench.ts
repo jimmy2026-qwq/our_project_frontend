@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
+import { DEFAULT_MAHJONG_RULESET } from '@/objects';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
 import type { DetailState } from '../../../objects/PublicTournamentDetailPage.types';
@@ -50,6 +51,7 @@ export function useTournamentDetailWorkbench({
   const [ruleDraft, setRuleDraft] = useState<TournamentStageRuleDraft>({
     format: 'Swiss',
     advanceCount: 8,
+    mahjongRuleset: DEFAULT_MAHJONG_RULESET,
   });
   const [showMoreInfo, setShowMoreInfo] = useState(false);
 

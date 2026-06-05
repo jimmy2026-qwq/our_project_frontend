@@ -3,6 +3,7 @@ import type {
   PublicTournamentStageView,
   StageStatus,
 } from '@/objects';
+import { DEFAULT_MAHJONG_RULESET } from '@/objects';
 
 import type { TournamentPublicProfile } from './PublicClubDetailPage.types';
 
@@ -78,6 +79,7 @@ export function toPublicTournamentDetail(
       advancementRule: stage.advancementRule,
       swissRule: stage.swissRule ?? null,
       knockoutRule: stage.knockoutRule ?? null,
+      mahjongRuleset: stage.mahjongRuleset ?? DEFAULT_MAHJONG_RULESET,
     })),
   };
 }

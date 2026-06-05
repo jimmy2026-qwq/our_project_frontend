@@ -58,7 +58,7 @@ export function useMemberHubApplicationInboxLoader() {
           warning:
             error instanceof Error
               ? error.message
-              : 'Unable to load the live application inbox.',
+              : '申请收件箱加载失败。',
         };
       }
     },

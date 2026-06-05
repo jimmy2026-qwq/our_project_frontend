@@ -9,6 +9,24 @@ function formatDecimal(value: number) {
   return value.toFixed(2);
 }
 
+function formatDashboardTime(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat('zh-CN', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  }).format(date);
+}
+
 function toDashboardOwner(
   owner: DashboardOwner,
 ): Pick<DashboardSummary, 'ownerId' | 'ownerType'> {
@@ -28,29 +46,29 @@ function toDashboardOwner(
 export function toDashboardSummary(item: Dashboard): DashboardSummary {
   const { ownerId, ownerType } = toDashboardOwner(item.owner);
   const subjectLabel =
-    ownerType === 'player' ? 'Player dashboard' : 'Club dashboard';
+    ownerType === 'player' ? '个人数据看板' : '俱乐部数据看板';
 
   return {
     ownerId,
     ownerType,
-    headline: `${subjectLabel} updated at ${item.lastUpdatedAt}`,
+    headline: `${subjectLabel}更新于 ${formatDashboardTime(item.lastUpdatedAt)}`,
     metrics: [
       {
-        label: 'Samples',
+        label: '样本数',
         value: String(item.sampleSize),
         accent: 'gold',
       },
       {
-        label: 'Win rate',
+        label: '胜率',
         value: formatPercent(item.winRate),
         accent: 'teal',
       },
       {
-        label: 'Average placement',
+        label: '平均顺位',
         value: formatDecimal(item.averagePlacement || 0),
       },
       {
-        label: 'Riichi rate',
+        label: '立直率',
         value: formatPercent(item.riichiRate),
       },
     ],

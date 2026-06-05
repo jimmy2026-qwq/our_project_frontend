@@ -34,7 +34,7 @@ async function loadMemberHubOperatorDirectory(
 ): Promise<MemberHubOperatorDirectory> {
   const fallback = getFallbackDirectory(session);
   const currentOperatorId = session?.user.operatorId ?? session?.user.userId;
-  const currentDisplayName = session?.user.displayName ?? 'Current User';
+  const currentDisplayName = session?.user.displayName ?? '当前用户';
 
   try {
     const currentOperatorClubs = currentOperatorId
@@ -51,7 +51,7 @@ async function loadMemberHubOperatorDirectory(
       const isAdmin = currentOperatorClubs.items.length > 0;
       operators.push({
         id: currentOperatorId,
-        label: `${currentDisplayName} / ${isAdmin ? 'Club Admin' : 'Registered Player'}`,
+        label: `${currentDisplayName} / ${isAdmin ? '俱乐部管理员' : '注册选手'}`,
         role: isAdmin ? 'ClubAdmin' : 'RegisteredPlayer',
         playerId: currentOperatorId,
         managedClubIds: isAdmin
@@ -75,7 +75,7 @@ async function loadMemberHubOperatorDirectory(
       warning:
         error instanceof Error
           ? error.message
-          : 'Unable to load operator directory.',
+          : '操作身份加载失败。',
     };
   }
 }

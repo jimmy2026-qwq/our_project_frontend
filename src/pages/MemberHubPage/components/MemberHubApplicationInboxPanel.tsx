@@ -31,12 +31,11 @@ export function ApplicationInboxPanel({
   if (activeOperator.role !== 'ClubAdmin') {
     return (
       <DataPanel
-        title="Club Application Inbox"
-        description="Only club admins can review pending membership applications."
+        title="俱乐部申请收件箱"
+        description="只有俱乐部管理员可以审核待处理的入会申请。"
       >
         <EmptyState>
-          The current operator is not a club admin, so this panel stays in an
-          explanatory state.
+          当前操作身份不是俱乐部管理员，暂时没有可审核的申请。
         </EmptyState>
       </DataPanel>
     );
@@ -48,11 +47,11 @@ export function ApplicationInboxPanel({
 
   return (
     <DataPanel
-      title="Club Application Inbox"
-      description="Prefer the backend queue first, then fall back to the local inbox bridge if the API is unavailable."
+      title="俱乐部申请收件箱"
+      description="优先读取后端申请队列；接口不可用时保留本地占位。"
       source={inboxState.source}
       warning={inboxState.warning}
-      badgeLabel={`Pending ${pendingCount}`}
+      badgeLabel={`待处理 ${pendingCount}`}
     >
       <ClubApplicationList
         items={inboxState.items.map((item) => ({
@@ -68,17 +67,17 @@ export function ApplicationInboxPanel({
                 <ActionButton
                   onClick={() => onReview(item.applicationId, 'approve')}
                 >
-                  Approve
+                  通过
                 </ActionButton>
                 <ActionButton
                   onClick={() => onReview(item.applicationId, 'reject')}
                 >
-                  Reject
+                  拒绝
                 </ActionButton>
               </>
             ) : null,
         }))}
-        emptyText="No pending applications are available right now."
+        emptyText="当前没有待处理申请。"
       />
     </DataPanel>
   );

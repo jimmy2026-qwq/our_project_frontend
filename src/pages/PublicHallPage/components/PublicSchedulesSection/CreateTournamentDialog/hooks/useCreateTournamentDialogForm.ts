@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { TournamentCreateAPI } from '@/api/tournament';
 import { useAuth } from '@/app/auth/useAuth';
 import { useNotice } from '@/app/feedback/useNotice';
+import { DEFAULT_MAHJONG_RULESET } from '@/objects';
 import type { TournamentFormat } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 
@@ -106,6 +107,7 @@ export function useCreateTournamentDialogForm({
               format,
               order: 1,
               roundCount: getDefaultRoundCount(format),
+              mahjongRuleset: DEFAULT_MAHJONG_RULESET,
               schedulingPoolSize: 4,
             },
           ],

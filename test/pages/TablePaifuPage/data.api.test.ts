@@ -12,7 +12,7 @@ vi.mock('@/system/api', async (importOriginal) => {
 
 import { TournamentPaifuListAPI } from '@/api/tournament/TournamentPaifuListAPI';
 import { loadTablePaifus } from '@/pages/TablePaifuPage/data';
-import { mapPaifuSummary } from '@/pages/TablePaifuPage/objects/TablePaifuData.mappers';
+import { toPaifuSummary } from '@/pages/TablePaifuPage/objects/TablePaifuData.mappers';
 
 describe('TablePaifuPage data api integration', () => {
   beforeEach(() => {
@@ -50,6 +50,35 @@ describe('TablePaifuPage data api integration', () => {
       hasMore: false,
       appliedFilters: { tableId: 'table-1' },
     })
+      .mockResolvedValueOnce({
+        paifuId: 'paifu-1',
+        tableId: 'table-1',
+        tournamentId: 'tournament-1',
+        stageId: 'stage-1',
+        recordedAt: '2026-05-21T10:00:00Z',
+        source: 'manual',
+        matchRecordId: 'record-1',
+        metadata: {
+          recordedAt: '2026-05-21T10:00:00Z',
+          source: 'manual',
+          tableId: 'table-1',
+          tournamentId: 'tournament-1',
+          stageId: 'stage-1',
+          seats: [],
+          matchRecordId: 'record-1',
+        },
+        rounds: [],
+        finalStandings: [
+          {
+            playerId: 'player-east',
+            seat: 'East',
+            finalPoints: 42000,
+            placement: 1,
+            uma: 20,
+            oka: 0,
+          },
+        ],
+      })
       .mockResolvedValueOnce({
         tournamentId: 'tournament-1',
         name: 'Test Tournament',
@@ -106,7 +135,7 @@ describe('TablePaifuPage data api integration', () => {
   });
 
   it('normalizes backend option arrays before replay reads paifu fields', () => {
-    const paifu = mapPaifuSummary({
+    const paifu = toPaifuSummary({
       paifuId: 'paifu-1',
       tableId: 'table-1',
       tournamentId: 'tournament-1',
@@ -152,6 +181,19 @@ describe('TablePaifuPage data api integration', () => {
             uraDoraIndicators: [],
             uraDoraVisible: [true],
             points: 2000,
+            wins: [
+              {
+                winner: 'player-east',
+                target: ['player-south'],
+                han: [2],
+                fu: [30],
+                yaku: [{ kind: 'Riichi', han: 1 }],
+                doraIndicators: [['4z']],
+                uraDoraIndicators: [],
+                uraDoraVisible: [true],
+                points: 2000,
+              },
+            ],
             scoreChanges: [],
             settlement: [],
             tenpaiPlayerIds: [],
@@ -178,6 +220,19 @@ describe('TablePaifuPage data api integration', () => {
       uraDoraIndicators: [],
       uraDoraVisible: true,
       tenpaiPlayerIds: [],
+      wins: [
+        {
+          winner: 'player-east',
+          target: 'player-south',
+          han: 2,
+          fu: 30,
+          yaku: [{ kind: 'Riichi', han: 1 }],
+          doraIndicators: ['4z'],
+          uraDoraIndicators: [],
+          uraDoraVisible: true,
+          points: 2000,
+        },
+      ],
     });
   });
 });

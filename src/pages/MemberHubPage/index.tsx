@@ -37,12 +37,12 @@ export function MemberHubPage() {
     return (
       <MemberHubPageShell>
         <SectionIntro
-          eyebrow="Member Hub"
-          title="Member Workspace"
-          description="This workspace now depends on live backend operator and dashboard data."
+          eyebrow="会员中心"
+          title="会员工作台"
+          description="当前会话没有可用的会员操作身份。"
         />
         <EmptyState>
-          No member hub operator context is available for the current session.
+          暂时没有可用的会员操作身份。
         </EmptyState>
       </MemberHubPageShell>
     );
@@ -51,9 +51,9 @@ export function MemberHubPage() {
   return (
     <MemberHubPageShell>
       <SectionIntro
-        eyebrow="Member Hub"
-        title="Member Workspace"
-        description="This page now prefers backend-aligned operator context so the approval flow can follow the seeded club admin identity."
+        eyebrow="会员中心"
+        title="会员工作台"
+        description="按当前登录身份查看申请、个人看板和可管理俱乐部看板。"
       />
 
       <MemberHubContextPanel
@@ -79,16 +79,16 @@ export function MemberHubPage() {
         {playerDashboardState.source === 'api' &&
         playerDashboardState.dashboard ? (
           <DashboardPanel
-            title="Player Dashboard"
+            title="个人数据看板"
             path={`/dashboards/players/${state.playerId}?operatorId=${state.operatorId}`}
             loadState={playerDashboardState}
           />
         ) : (
           <DashboardPlaceholder
-            title="Player Dashboard"
+            title="个人数据看板"
             path={`/dashboards/players/${state.playerId}?operatorId=${state.operatorId}`}
             loadState={playerDashboardState}
-            roleNote="The player dashboard is still using a placeholder path whenever the API does not return a live dashboard yet."
+            roleNote="接口暂时没有返回可用的个人看板数据。"
           />
         )}
 
@@ -96,19 +96,19 @@ export function MemberHubPage() {
         clubDashboardState.source === 'api' &&
         clubDashboardState.dashboard ? (
           <DashboardPanel
-            title="Club Dashboard"
+            title="俱乐部数据看板"
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}
             loadState={clubDashboardState}
           />
         ) : (
           <DashboardPlaceholder
-            title="Club Dashboard"
+            title="俱乐部数据看板"
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}
             loadState={clubDashboardState}
             roleNote={
               activeOperator.role === 'ClubAdmin'
-                ? 'The club dashboard remains in placeholder mode until the API returns a live admin dashboard.'
-                : 'This dashboard stays hidden from non-admin operators and remains an explanatory placeholder.'
+                ? '接口暂时没有返回可用的俱乐部看板数据。'
+                : '只有俱乐部管理员可以查看俱乐部看板。'
             }
           />
         )}

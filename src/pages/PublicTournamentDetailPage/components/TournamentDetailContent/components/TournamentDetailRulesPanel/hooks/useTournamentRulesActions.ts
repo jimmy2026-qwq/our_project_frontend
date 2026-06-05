@@ -2,6 +2,7 @@ import {
   TournamentStageConfigureRulesAPI,
   TournamentStageCreateAPI,
 } from '@/api/tournament';
+import { normalizeMahjongRuleset } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import {
@@ -52,6 +53,7 @@ export function useTournamentRulesActions({
     const advanceCount = isKnockout
       ? normalizeKnockoutBracketSize(ruleDraft.advanceCount)
       : Math.max(1, Math.floor(ruleDraft.advanceCount || 0));
+    const mahjongRuleset = normalizeMahjongRuleset(ruleDraft.mahjongRuleset);
 
     try {
       setIsSubmittingTournamentAction(true);
@@ -92,6 +94,7 @@ export function useTournamentRulesActions({
               seedingPolicy: isKnockout
                 ? (currentRuleStage.knockoutRule?.seedingPolicy ?? 'rating')
                 : undefined,
+              mahjongRuleset,
             },
           ),
         );
@@ -117,6 +120,7 @@ export function useTournamentRulesActions({
             thirdPlaceMatch: isKnockout ? false : undefined,
             repechageEnabled: isKnockout ? false : undefined,
             seedingPolicy: isKnockout ? 'rating' : undefined,
+            mahjongRuleset,
             schedulingPoolSize: 4,
           }),
         );

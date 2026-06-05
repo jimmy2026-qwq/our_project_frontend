@@ -41,8 +41,9 @@ export function TableMatchPage() {
     setError,
   });
   const mahjongState = useTableMatchMahjongState({
-    operatorId: matchPlayerId,
+    operatorId,
     tableId,
+    viewerPlayerId: matchPlayerId,
   });
   const playerIds = useMemo(
     () =>
