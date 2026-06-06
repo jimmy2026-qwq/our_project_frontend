@@ -1,6 +1,8 @@
 import { useState } from 'react';
 
 import {
+  AppealFileAPI,
+  TournamentTableFinalizeArchiveAPI,
   TournamentTableGetAPI,
   TournamentTableStartAPI,
   TournamentTableUploadPaifuAPI,
@@ -33,6 +35,12 @@ export function useTournamentTableActionsRuntime({
   const [isSubmittingTableAction, setIsSubmittingTableAction] = useState(false);
   const [uploadingDemoPaifuTableId, setUploadingDemoPaifuTableId] =
     useState('');
+  const [finalizingArchiveTableId, setFinalizingArchiveTableId] = useState('');
+  const [selectedAppealTable, setSelectedAppealTable] =
+    useState<TournamentDetailTableItem | null>(null);
+  const [appealDescription, setAppealDescription] = useState('');
+  const [appealError, setAppealError] = useState<string | null>(null);
+  const [isSubmittingAppeal, setIsSubmittingAppeal] = useState(false);
   const [pendingStartConfirmation, setPendingStartConfirmation] = useState<{
     tableId: string;
     tableCode: string;
@@ -142,13 +150,89 @@ export function useTournamentTableActionsRuntime({
     }
   }
 
+  function openTableAppealDialog(table: TournamentDetailTableItem) {
+    setSelectedAppealTable(table);
+    setAppealDescription('');
+    setAppealError(null);
+  }
+
+  function setTableAppealDialogOpen(open: boolean) {
+    if (!open) {
+      setSelectedAppealTable(null);
+      setAppealError(null);
+    }
+  }
+
+  async function handleSubmitTableAppeal() {
+    if (!operatorId || !selectedAppealTable) {
+      return;
+    }
+
+    const description = appealDescription.trim();
+    if (!description) {
+      setAppealError('请先填写申诉说明。');
+      return;
+    }
+
+    try {
+      setIsSubmittingAppeal(true);
+      setAppealError(null);
+      setTableDetailError('');
+      await sendAPI(
+        new AppealFileAPI(selectedAppealTable.id, {
+          playerId: operatorId,
+          description,
+        }),
+      );
+      setSelectedAppealTable(null);
+      setAppealDescription('');
+      onScheduleSuccess?.();
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : '无法提交赛事申诉。';
+      setAppealError(message);
+      setTableDetailError(message);
+    } finally {
+      setIsSubmittingAppeal(false);
+    }
+  }
+
+  async function handleFinalizeArchive(table: Pick<TournamentDetailTableItem, 'id'>) {
+    if (!operatorId) {
+      return;
+    }
+
+    try {
+      setFinalizingArchiveTableId(table.id);
+      setTableDetailError('');
+      await sendAPI(new TournamentTableFinalizeArchiveAPI(table.id, operatorId));
+      onScheduleSuccess?.();
+    } catch (error) {
+      setTableDetailError(
+        error instanceof Error ? error.message : '无法确认归档牌桌。',
+      );
+    } finally {
+      setFinalizingArchiveTableId('');
+    }
+  }
+
   return {
+    appealDescription,
+    appealError,
+    finalizingArchiveTableId,
     isSubmittingTableAction,
+    isSubmittingAppeal,
     pendingStartConfirmation,
+    selectedAppealTable,
     uploadingDemoPaifuTableId,
+    handleFinalizeArchive,
     handleForceStartManagedTable,
     handleStartManagedTable,
+    handleSubmitTableAppeal,
     handleUploadDemoPaifu,
+    openTableAppealDialog,
+    setAppealDescription,
+    setTableAppealDialogOpen,
     setPendingStartConfirmation,
   };
 }

@@ -15,17 +15,13 @@ import {
 } from '../../objects/TableMatch.labels';
 import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
 import { SeatCard } from './SeatCard';
-import { TableMatchAppealAction } from './TableMatchAppealAction';
 
 interface SeatsOverviewCardProps {
   table: TableDetail;
   seatMap: TableSeatMap;
   ownSeat: TableSeat | null;
   playerNames: Record<string, string>;
-  canFileAppeal: boolean;
   isRegisteredPlayer: boolean;
-  operatorId: string;
-  onOpenAppeal: () => void;
 }
 
 export function SeatsOverviewCard({
@@ -33,10 +29,7 @@ export function SeatsOverviewCard({
   seatMap,
   ownSeat,
   playerNames,
-  canFileAppeal,
   isRegisteredPlayer,
-  operatorId,
-  onOpenAppeal,
 }: SeatsOverviewCardProps) {
   const allReady = table.seats.every((seat) => seat.ready);
 
@@ -73,14 +66,6 @@ export function SeatsOverviewCard({
           seatMap={seatMap}
           allReady={allReady}
           playerNames={playerNames}
-        />
-        <TableMatchAppealAction
-          status={table.status}
-          ownSeat={ownSeat}
-          operatorId={operatorId}
-          canFileAppeal={canFileAppeal}
-          isRegisteredPlayer={isRegisteredPlayer}
-          onOpenAppeal={onOpenAppeal}
         />
       </CardContent>
     </Card>

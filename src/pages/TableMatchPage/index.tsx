@@ -9,7 +9,6 @@ import {
   TableMatchLoading,
   TableMatchSection,
 } from './components';
-import { useTableMatchAppealForm } from './hooks/useTableMatchAppealForm';
 import { useTableMatchData } from './hooks/useTableMatchData';
 import { useTableMatchMahjongState } from './hooks/useTableMatchMahjongState';
 import { useTableMatchPlayerNames } from './hooks/useTableMatchPlayerNames';
@@ -30,7 +29,7 @@ export function TableMatchPage() {
     setError,
     forceReload,
   } = useTableMatchData(tableId);
-  const { seatMap, ownSeat, canUpdateOwnReady, canFileAppeal } =
+  const { seatMap, ownSeat, canUpdateOwnReady } =
     useTableMatchSeatState(table, operatorId, isRegisteredPlayer);
   const matchPlayerId = ownSeat?.playerId ?? '';
   const readyAction = useTableMatchReadyAction({
@@ -68,12 +67,6 @@ export function TableMatchPage() {
     ['TournamentTableChanged', 'MahjongTableChanged', 'AppealChanged'],
     handleRefresh,
   );
-  const appealForm = useTableMatchAppealForm({
-    table,
-    ownSeat,
-    operatorId,
-    forceReload,
-  });
   const backLink = table?.tournamentId
     ? `/public/tournaments/${table.tournamentId}`
     : '/public';
@@ -108,22 +101,13 @@ export function TableMatchPage() {
       isRegisteredPlayer={isRegisteredPlayer}
       operatorId={matchPlayerId}
       canUpdateOwnReady={canUpdateOwnReady}
-      canFileAppeal={canFileAppeal}
       isUpdatingOwnReady={readyAction.isUpdatingOwnReady}
       isSubmittingMahjongAction={mahjongState.isSubmittingAction}
       mahjongActionError={mahjongState.actionError}
-      isAppealDialogOpen={appealForm.isAppealDialogOpen}
-      appealDescription={appealForm.appealDescription}
-      appealError={appealForm.appealError}
-      isSubmittingAppeal={appealForm.isSubmittingAppeal}
       onRefresh={handleRefresh}
       onToggleOwnReady={() => void readyAction.handleToggleOwnReady()}
       onAdvanceRound={handleAdvanceRound}
       onSubmitMahjongAction={(action) => void mahjongState.submitAction(action)}
-      onOpenAppeal={appealForm.openAppealDialog}
-      onAppealOpenChange={appealForm.setAppealDialogOpen}
-      onAppealDescriptionChange={appealForm.setAppealDescription}
-      onSubmitAppeal={() => void appealForm.handleSubmitAppeal()}
     />
   );
 }

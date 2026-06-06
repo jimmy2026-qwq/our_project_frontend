@@ -108,6 +108,7 @@ export function usePaifuHandTableReplay({
     replayStep,
     revealedWinningPlayerId: operation.revealedWinningPlayerId,
     scoreDisplays,
+    isSettlementAnimating: settlement.settlementProgress !== undefined,
     setIsRoundPickerOpen,
     setReplayStep,
     startSettlementAnimation: settlement.startSettlementAnimation,

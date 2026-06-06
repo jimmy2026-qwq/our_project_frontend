@@ -48,15 +48,20 @@ export function PublicTournamentDetailPage() {
           appealsError={page.content.appealsError}
           canManageAppeals={page.content.canManageAppeals}
           isSubmittingTableAction={page.content.isSubmittingTableAction}
+          isSubmittingTableAppeal={page.content.isSubmittingTableAppeal}
           operatorId={page.content.operatorId}
           participantWaitingTableDetails={
             page.content.participantWaitingTableDetails
           }
+          selectedAppealTable={page.content.selectedAppealTable}
+          tableAppealDescription={page.content.tableAppealDescription}
+          tableAppealError={page.content.tableAppealError}
           submittingAppealId={page.content.submittingAppealId}
           tableDetailError={page.content.tableDetailError}
           tabItems={page.content.tabItems}
           updatingReadyTableId={page.content.updatingReadyTableId}
           uploadingDemoPaifuTableId={page.content.uploadingDemoPaifuTableId}
+          finalizingArchiveTableId={page.content.finalizingArchiveTableId}
           waitingTables={page.content.waitingTables}
           workbench={page.workbench}
           onActiveTabChange={page.content.onActiveTabChange}
@@ -65,6 +70,7 @@ export function PublicTournamentDetailPage() {
           onInvitePlayer={page.content.onInvitePlayer}
           onOpenRulesDialog={page.content.onOpenRulesDialog}
           onOpenAppealAction={page.content.onOpenAppealAction}
+          onOpenTableAppeal={page.content.onOpenTableAppeal}
           onSelectClubId={page.content.onSelectClubId}
           onSelectPlayerId={page.content.onSelectPlayerId}
           onSelectManageTable={page.content.onSelectManageTable}
@@ -73,6 +79,14 @@ export function PublicTournamentDetailPage() {
           }
           onToggleOwnReady={(tableId, isReady) =>
             void page.content.onToggleOwnReady(tableId, isReady)
+          }
+          onTableAppealOpenChange={page.content.onTableAppealOpenChange}
+          onTableAppealDescriptionChange={
+            page.content.onTableAppealDescriptionChange
+          }
+          onSubmitTableAppeal={() => void page.content.onSubmitTableAppeal()}
+          onFinalizeArchive={(table) =>
+            void page.content.onFinalizeArchive(table)
           }
           onUploadDemoPaifu={(table) =>
             void page.content.onUploadDemoPaifu(table)
@@ -120,9 +134,13 @@ export function PublicTournamentDetailPage() {
         selectedAppealAction={page.dialogs.selectedAppealAction}
         appealVerdict={page.dialogs.appealVerdict}
         appealActionError={page.dialogs.appealActionError}
+        shouldResetTableOnResolve={page.dialogs.shouldResetTableOnResolve}
         submittingAppealId={page.dialogs.submittingAppealId}
         onClose={page.dialogs.onCloseAppealDecisionDialog}
         onVerdictChange={page.dialogs.onAppealVerdictChange}
+        onShouldResetTableOnResolveChange={
+          page.dialogs.onShouldResetTableOnResolveChange
+        }
         onSubmit={() => void page.dialogs.onSubmitAppealDecision()}
       />
     </PublicTournamentDetailFrame>

@@ -59,7 +59,9 @@ export function useTournamentDetail(tournamentId: string | undefined) {
     }
 
     let cancelled = false;
-    setState(null);
+    setState((current) =>
+      current?.item?.id === tournamentId ? current : null,
+    );
     setIsLoading(true);
 
     void loadTournamentDetail(tournamentId)

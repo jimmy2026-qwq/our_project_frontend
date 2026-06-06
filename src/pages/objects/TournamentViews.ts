@@ -29,6 +29,13 @@ export interface TableDetail {
   seats: TableSeatState[];
 }
 
+export interface MatchRecordSeatResultSummary {
+  playerId: string;
+  placement: number;
+  finalPoints?: number;
+  scoreDelta?: number;
+}
+
 export interface MatchRecordSummary {
   id: string;
   tournamentId: string;
@@ -39,6 +46,7 @@ export interface MatchRecordSummary {
   recordedAt: string;
   winnerId: string;
   summary: string;
+  seatResults?: MatchRecordSeatResultSummary[];
 }
 
 export interface AppealSummary {

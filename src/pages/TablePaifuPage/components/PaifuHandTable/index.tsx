@@ -45,6 +45,7 @@ export function PaifuHandTable({
   const [perspectiveSeat, setPerspectiveSeat] = useState<SeatWind>(() =>
     getInitialPerspectiveSeat(paifu, viewerPlayerId),
   );
+  const [isRelativeScoreMode, setIsRelativeScoreMode] = useState(false);
 
   useEffect(() => {
     setPerspectiveSeat(getInitialPerspectiveSeat(paifu, viewerPlayerId));
@@ -54,6 +55,7 @@ export function PaifuHandTable({
     () => createPerspectivePaifu(paifu, perspectiveSeat),
     [paifu, perspectiveSeat],
   );
+  const roundKey = getPaifuRoundKey(round);
 
   const replay = usePaifuHandTableReplay({
     paifu: displayPaifu,
@@ -61,6 +63,17 @@ export function PaifuHandTable({
     rounds,
     selectedRoundIndex,
   });
+
+  useEffect(() => {
+    setIsRelativeScoreMode(false);
+  }, [perspectiveSeat, roundKey]);
+
+  useEffect(() => {
+    if (replay.isSettlementAnimating) {
+      setIsRelativeScoreMode(false);
+    }
+  }, [replay.isSettlementAnimating]);
+
   const selfPlayerId = getRoundPlayerId(displayPaifu, 'East');
   const perspectiveLabel = selfPlayerId
     ? `视角：${getPlayerDisplayName(displayPaifu, selfPlayerId)}`
@@ -88,7 +101,11 @@ export function PaifuHandTable({
 
         <CenterTable
           isExhaustiveDrawResult={replay.isExhaustiveDrawResult}
+          isRelativeScoreMode={isRelativeScoreMode}
           isRoundPickerOpen={replay.isRoundPickerOpen}
+          onToggleRelativeScoreMode={() =>
+            setIsRelativeScoreMode((value) => !value)
+          }
           onToggleRoundPicker={() =>
             replay.setIsRoundPickerOpen((value) => !value)
           }
@@ -293,4 +310,12 @@ function createSeatRotation(viewerSeat: SeatWind): Record<SeatWind, SeatWind> {
     }),
     {} as Record<SeatWind, SeatWind>,
   );
+}
+
+function getPaifuRoundKey(round: PaifuRoundSummary) {
+  return [
+    round.descriptor.roundWind,
+    round.descriptor.handNumber,
+    round.descriptor.honba,
+  ].join(':');
 }

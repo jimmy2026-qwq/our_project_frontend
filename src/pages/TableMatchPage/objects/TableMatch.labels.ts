@@ -7,7 +7,7 @@ export function getTableStatusLabel(status: TableDetail['status']) {
     case 'InProgress':
       return '进行中';
     case 'Scoring':
-      return '结算中';
+      return '等待申诉';
     case 'AppealInProgress':
       return '申诉处理中';
     case 'Archived':

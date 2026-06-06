@@ -35,7 +35,6 @@ export function useTableMatchSeatState(
       isRegisteredPlayer &&
       !!operatorId &&
       !!ownSeat &&
-      table?.status !== 'Archived' &&
-      table?.status !== 'AppealInProgress',
+      table?.status === 'Scoring',
   };
 }

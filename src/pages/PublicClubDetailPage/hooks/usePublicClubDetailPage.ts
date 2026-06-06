@@ -25,20 +25,28 @@ export function usePublicClubDetailPage() {
     onRefreshDetail: refresh,
   });
   const workbench = controls.workbench;
+  const profile = workbench?.profile ?? null;
   const clubSummary = useMemo(() => {
-    if (!workbench) {
+    if (!profile) {
       return null;
     }
 
     return {
-      id: workbench.profile.id,
-      name: workbench.profile.name,
-      memberCount: workbench.profile.memberCount,
-      powerRating: workbench.profile.powerRating,
-      treasury: workbench.profile.treasury,
-      relations: workbench.profile.relations,
+      id: profile.id,
+      name: profile.name,
+      memberCount: profile.memberCount,
+      powerRating: profile.powerRating,
+      treasury: profile.treasury,
+      relations: profile.relations,
     };
-  }, [workbench]);
+  }, [
+    profile?.id,
+    profile?.memberCount,
+    profile?.name,
+    profile?.powerRating,
+    profile?.relations,
+    profile?.treasury,
+  ]);
 
   return {
     state,

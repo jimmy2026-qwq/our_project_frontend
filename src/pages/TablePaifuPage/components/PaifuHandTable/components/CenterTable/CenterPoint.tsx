@@ -9,13 +9,35 @@ import { centerPointPositionClasses } from '../../functions/getPaifuTableLayout'
 import type { CenterScoreDisplay } from './CenterTable.types';
 
 interface CenterPointProps {
+  isRelativeScoreMode?: boolean;
+  onToggleRelativeScoreMode?: () => void;
   paifu: TablePaifuDetail;
+  referencePoints?: number;
   scoreDisplay?: CenterScoreDisplay;
   seat: SeatWind;
 }
 
-export function CenterPoint({ paifu, scoreDisplay, seat }: CenterPointProps) {
+export function CenterPoint({
+  isRelativeScoreMode = false,
+  onToggleRelativeScoreMode,
+  paifu,
+  referencePoints,
+  scoreDisplay,
+  seat,
+}: CenterPointProps) {
   const playerId = getRoundPlayerId(paifu, seat);
+  const canToggleScoreMode = seat === 'East' && Boolean(onToggleRelativeScoreMode);
+  const displayScore =
+    isRelativeScoreMode && typeof referencePoints === 'number'
+      ? (scoreDisplay?.points ?? 0) - referencePoints
+      : scoreDisplay?.points;
+  const scoreClassName = [
+    'rounded-lg bg-[rgba(2,12,20,0.48)] px-2 py-1 font-semibold',
+    getMainScoreClassName(isRelativeScoreMode, displayScore),
+  ].join(' ');
+  const scoreText = isRelativeScoreMode
+    ? formatRelativeScore(displayScore ?? 0)
+    : formatPoints(displayScore);
 
   if (!playerId) {
     return null;
@@ -28,9 +50,18 @@ export function CenterPoint({ paifu, scoreDisplay, seat }: CenterPointProps) {
         centerPointPositionClasses[seat],
       ].join(' ')}
     >
-      <span className="rounded-lg bg-[rgba(2,12,20,0.48)] px-2 py-1 text-[#f2f7fb]">
-        {formatPoints(scoreDisplay?.points)}
-      </span>
+      {canToggleScoreMode ? (
+        <button
+          aria-label="切换点数显示"
+          className={`${scoreClassName} cursor-pointer transition-colors hover:bg-[rgba(236,197,122,0.14)]`}
+          onClick={onToggleRelativeScoreMode}
+          type="button"
+        >
+          {scoreText}
+        </button>
+      ) : (
+        <span className={scoreClassName}>{scoreText}</span>
+      )}
       {scoreDisplay?.showDelta ? (
         <span
           className={[
@@ -45,6 +76,16 @@ export function CenterPoint({ paifu, scoreDisplay, seat }: CenterPointProps) {
   );
 }
 
+function formatRelativeScore(value: number) {
+  if (value === 0) {
+    return '+0';
+  }
+
+  return value > 0
+    ? `+${formatPoints(value)}`
+    : `-${formatPoints(Math.abs(value))}`;
+}
+
 function formatScoreDelta(value: number) {
   if (value === 0) {
     return '+0';
@@ -53,6 +94,14 @@ function formatScoreDelta(value: number) {
   return value > 0
     ? `+${formatPoints(value)}`
     : `-${formatPoints(Math.abs(value))}`;
+}
+
+function getMainScoreClassName(isRelativeScoreMode: boolean, value?: number) {
+  if (!isRelativeScoreMode) {
+    return 'text-[#f2f7fb]';
+  }
+
+  return getScoreDeltaClassName(value ?? 0);
 }
 
 function getScoreDeltaClassName(value: number) {
@@ -64,5 +113,5 @@ function getScoreDeltaClassName(value: number) {
     return 'text-[#ff6d6d]';
   }
 
-  return 'text-[#f2f7fb]';
+  return 'text-[#ffd98a]';
 }

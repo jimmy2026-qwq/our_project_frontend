@@ -20,18 +20,24 @@ export function TournamentDetailTablesTab({
   tableDetailError,
   updatingReadyTableId,
   uploadingDemoPaifuTableId,
+  finalizingArchiveTableId,
   workbench,
   onToggleOwnReady,
   onUploadDemoPaifu,
+  onOpenTableAppeal,
+  onFinalizeArchive,
 }: {
   operatorId: string;
   participantWaitingTableDetails: Record<string, TableDetail>;
   tableDetailError: string;
   updatingReadyTableId: string;
   uploadingDemoPaifuTableId: string;
+  finalizingArchiveTableId: string;
   workbench: TournamentDetailWorkbenchState;
   onToggleOwnReady: (tableId: string, isReady: boolean) => void;
   onUploadDemoPaifu: (table: TournamentDetailTableItem) => void;
+  onOpenTableAppeal: (table: TournamentDetailTableItem) => void;
+  onFinalizeArchive: (table: TournamentDetailTableItem) => void;
 }) {
   return (
     <div
@@ -52,7 +58,12 @@ export function TournamentDetailTablesTab({
                 .join(' / ');
               const isFinished = table.status === 'Archived';
               const isInProgress = table.status === 'InProgress';
+              const isScoring = table.status === 'Scoring';
+              const hasResult =
+                isFinished || isScoring || table.status === 'AppealInProgress';
               const isWaiting = table.status === 'WaitingPreparation';
+              const canFileAppeal =
+                isScoring && table.playerIds.includes(operatorId);
               const participantTableDetail =
                 participantWaitingTableDetails[table.id];
               const ownSeat =
@@ -109,6 +120,27 @@ export function TournamentDetailTablesTab({
                             : '默认牌谱结束'}
                         </button>
                       ) : null}
+                      {canFileAppeal ? (
+                        <button
+                          type="button"
+                          className={detailShellClassNames.action}
+                          onClick={() => onOpenTableAppeal(table)}
+                        >
+                          我要申诉
+                        </button>
+                      ) : null}
+                      {workbench.canManageTournament && isScoring ? (
+                        <button
+                          type="button"
+                          className={detailShellClassNames.action}
+                          onClick={() => onFinalizeArchive(table)}
+                          disabled={finalizingArchiveTableId === table.id}
+                        >
+                          {finalizingArchiveTableId === table.id
+                            ? '归档中...'
+                            : '确认归档'}
+                        </button>
+                      ) : null}
                       {isWaiting ? (
                         <span className={detailShellClassNames.actionDisabled}>
                           等待开桌
@@ -117,12 +149,12 @@ export function TournamentDetailTablesTab({
                         <Link
                           className={detailShellClassNames.action}
                           to={
-                            isFinished
+                            hasResult
                               ? `/tables/${table.id}/paifu`
                               : `/tables/${table.id}`
                           }
                         >
-                          {isFinished ? '查看牌谱' : '进入牌桌'}
+                          {hasResult ? '查看牌谱' : '进入牌桌'}
                         </Link>
                       )}
                     </div>

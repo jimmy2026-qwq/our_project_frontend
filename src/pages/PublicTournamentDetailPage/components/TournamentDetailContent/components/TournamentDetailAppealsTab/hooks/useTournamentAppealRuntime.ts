@@ -17,9 +17,11 @@ import { toAppealSummary } from '../../../../../objects/TournamentDetailAppeal.m
 export function useTournamentAppealRuntime({
   operatorId,
   workbench,
+  onAppealMutationSuccess,
 }: {
   operatorId: string;
   workbench: TournamentDetailWorkbenchState | null;
+  onAppealMutationSuccess?: () => void;
 }) {
   const [appeals, setAppeals] = useState<AppealSummary[]>([]);
   const [appealsError, setAppealsError] = useState('');
@@ -29,6 +31,8 @@ export function useTournamentAppealRuntime({
   } | null>(null);
   const [appealVerdict, setAppealVerdict] = useState('');
   const [appealActionError, setAppealActionError] = useState('');
+  const [shouldResetTableOnResolve, setShouldResetTableOnResolve] =
+    useState(true);
   const [submittingAppealId, setSubmittingAppealId] = useState('');
 
   useEffect(() => {
@@ -82,6 +86,7 @@ export function useTournamentAppealRuntime({
   ) {
     setSelectedAppealAction({ appeal, decision });
     setAppealActionError('');
+    setShouldResetTableOnResolve(decision === 'Resolve');
     setAppealVerdict(
       decision === 'Resolve'
         ? '已核实申诉内容，工单处理完成。'
@@ -140,12 +145,19 @@ export function useTournamentAppealRuntime({
           operatorId,
           decision: selectedAppealAction.decision,
           verdict,
+          tableResolution:
+            selectedAppealAction.decision === 'Resolve' &&
+            shouldResetTableOnResolve
+              ? 'ForceReset'
+              : undefined,
           note: `赛事管理员执行了${getAppealDecisionLabel(selectedAppealAction.decision)}操作。`,
         }),
       ).then(toAppealSummary);
       updateAppealLocally(nextAppeal);
       setSelectedAppealAction(null);
       setAppealVerdict('');
+      setShouldResetTableOnResolve(true);
+      onAppealMutationSuccess?.();
     } catch (error) {
       const message =
         error instanceof Error ? error.message : '无法处理申诉工单。';
@@ -160,6 +172,7 @@ export function useTournamentAppealRuntime({
     setSelectedAppealAction(null);
     setAppealVerdict('');
     setAppealActionError('');
+    setShouldResetTableOnResolve(true);
   }
 
   return {
@@ -168,11 +181,13 @@ export function useTournamentAppealRuntime({
     appeals,
     appealsError,
     selectedAppealAction,
+    shouldResetTableOnResolve,
     submittingAppealId,
     closeAppealDecisionDialog,
     handleAssignAppeal,
     handleSubmitAppealDecision,
     openAppealActionDialog,
     setAppealVerdict,
+    setShouldResetTableOnResolve,
   };
 }

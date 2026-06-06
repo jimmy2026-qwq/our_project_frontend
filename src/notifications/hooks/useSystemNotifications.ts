@@ -1,9 +1,10 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuth } from '@/app/auth/useAuth';
 import {
   realtimeBrowserEventName,
   type RealtimeBrowserEvent,
+  type RealtimeEvent,
 } from '@/app/realtime/RealtimeEvent';
 import {
   GetUnreadNotificationCountAPI,
@@ -22,15 +23,18 @@ export function useSystemNotifications() {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
+  const seenRealtimeNotificationIds = useRef(new Set<string>());
 
-  const refresh = useCallback(async (options?: { silentFailure?: boolean }) => {
+  const refresh = useCallback(async (options?: { silent?: boolean; silentFailure?: boolean }) => {
     if (!operatorId) {
       setNotifications([]);
       setUnreadCount(0);
       return;
     }
 
-    setIsLoading(true);
+    if (!options?.silent) {
+      setIsLoading(true);
+    }
     try {
       const [items, unread] = await Promise.all([
         sendAPI(new ListNotificationsAPI(operatorId, { limit: 40 })),
@@ -43,7 +47,9 @@ export function useSystemNotifications() {
         console.error('Notification refresh failed.', error);
       }
     } finally {
-      setIsLoading(false);
+      if (!options?.silent) {
+        setIsLoading(false);
+      }
     }
   }, [operatorId]);
 
@@ -111,7 +117,22 @@ export function useSystemNotifications() {
         realtimeEvent.eventType === 'NotificationCreated' &&
         realtimeEvent.recipientPlayerId === operatorId
       ) {
-        void refresh();
+        if (!seenRealtimeNotificationIds.current.has(realtimeEvent.id)) {
+          seenRealtimeNotificationIds.current.add(realtimeEvent.id);
+          setNotifications((current) => {
+            if (current.some((notification) => notification.id === realtimeEvent.id)) {
+              return current;
+            }
+
+            return [
+              notificationFromRealtimeEvent(realtimeEvent, operatorId),
+              ...current,
+            ].slice(0, 40);
+          });
+          setUnreadCount((current) => current + 1);
+        }
+
+        void refresh({ silent: true, silentFailure: true });
       }
     };
 
@@ -143,5 +164,27 @@ export function useSystemNotifications() {
     notifications,
     refresh,
     unreadCount,
+  };
+}
+
+function notificationFromRealtimeEvent(
+  event: RealtimeEvent,
+  recipientPlayerId: string,
+): Notification {
+  return {
+    id: event.id,
+    recipientPlayerId,
+    notificationType: event.sourceEventType,
+    title: event.title ?? '系统通知',
+    body: event.body ?? '',
+    severity: event.severity ?? 'info',
+    sourceService: 'realtime',
+    sourceType: event.aggregateType,
+    sourceId: event.aggregateId,
+    actionUrl: event.actionUrl,
+    readAt: null,
+    createdAt: event.occurredAt,
+    expiresAt: null,
+    objects: {},
   };
 }

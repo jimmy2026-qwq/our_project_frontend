@@ -51,17 +51,19 @@ export function NotificationItem({
     }
   };
 
-  if (notification.actionUrl) {
-    if (notification.actionUrl.startsWith('/')) {
+  const actionUrl = notificationActionUrl(notification);
+
+  if (actionUrl) {
+    if (actionUrl.startsWith('/')) {
       return (
-        <Link className={className} to={notification.actionUrl} onClick={handleActivate}>
+        <Link className={className} to={actionUrl} onClick={handleActivate}>
           {content}
         </Link>
       );
     }
 
     return (
-      <a className={className} href={notification.actionUrl} onClick={handleActivate}>
+      <a className={className} href={actionUrl} onClick={handleActivate}>
         {content}
       </a>
     );
@@ -72,4 +74,19 @@ export function NotificationItem({
       {content}
     </button>
   );
+}
+
+function notificationActionUrl(notification: Notification) {
+  const actionUrl = notification.actionUrl;
+
+  if (
+    notification.notificationType !== 'TournamentAppealFiled' ||
+    !actionUrl?.startsWith('/public/tournaments/')
+  ) {
+    return actionUrl;
+  }
+
+  const url = new URL(actionUrl, window.location.origin);
+  url.searchParams.set('tab', 'appeals');
+  return `${url.pathname}${url.search}${url.hash}`;
 }

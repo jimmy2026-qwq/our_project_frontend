@@ -56,7 +56,7 @@ export function ClubApplicationSummaryCard({
   return (
     <div className="grid gap-3 rounded-[22px] border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] p-4">
       <div className="flex items-center justify-between gap-3">
-        <strong>当前申请</strong>
+        <strong className="text-[#f2f7fb]">当前申请</strong>
         <StatusPill tone={getApplicationTone(application.status)}>
           {getApplicationStatusLabel(application.status)}
         </StatusPill>
