@@ -12,7 +12,7 @@ describe('TableMatch labels', () => {
   it('maps table statuses to Chinese labels and preserves unknown statuses', () => {
     expect(getTableStatusLabel('WaitingPreparation')).toBe('等待准备');
     expect(getTableStatusLabel('InProgress')).toBe('进行中');
-    expect(getTableStatusLabel('Scoring')).toBe('结算中');
+    expect(getTableStatusLabel('Scoring')).toBe('等待申诉');
     expect(getTableStatusLabel('AppealInProgress')).toBe('申诉处理中');
     expect(getTableStatusLabel('Archived')).toBe('已归档');
     expect(getTableStatusLabel('CustomStatus' as never)).toBe('CustomStatus');
