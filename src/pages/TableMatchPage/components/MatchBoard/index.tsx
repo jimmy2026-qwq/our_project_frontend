@@ -70,6 +70,7 @@ export function MatchBoard({
   const rivers = getRivers(mahjongTable, seatRotation);
   const melds = getMelds(mahjongTable, seatRotation);
   const legalActions = mahjongTable.legalActions ?? [];
+  const roundKey = getCurrentRoundKey(mahjongTable);
   const turnActionDelayKey = getTurnActionDelayKey(mahjongTable, operatorId);
   const resultKey = getResultKey(mahjongTable);
   const [settlementAnimatingKey, setSettlementAnimatingKey] = useState<
@@ -93,6 +94,7 @@ export function MatchBoard({
     string | null
   >(null);
   const [isRiichiSelectionActive, setIsRiichiSelectionActive] = useState(false);
+  const [isRelativeScoreMode, setIsRelativeScoreMode] = useState(false);
   const advanceStartedKeyRef = useRef<string | null>(null);
   const winResultNeedsSequence = Boolean(
     mahjongTable.currentRound?.result &&
@@ -193,6 +195,16 @@ export function MatchBoard({
       setIsRiichiSelectionActive(false);
     }
   }, [riichiActions.length]);
+
+  useEffect(() => {
+    setIsRelativeScoreMode(false);
+  }, [roundKey]);
+
+  useEffect(() => {
+    if (settlementProgress !== undefined) {
+      setIsRelativeScoreMode(false);
+    }
+  }, [settlementProgress]);
 
   useEffect(() => {
     if (!resultKey) {
@@ -318,7 +330,11 @@ export function MatchBoard({
         </div>
 
         <MatchCenterTable
+          isRelativeScoreMode={isRelativeScoreMode}
           mahjongTable={mahjongTable}
+          onToggleRelativeScoreMode={() =>
+            setIsRelativeScoreMode((value) => !value)
+          }
           scoreDisplays={scoreDisplays}
           seatsByDisplaySeat={seatMap}
         />
@@ -443,6 +459,21 @@ function getTurnActionDelayKey(
     round.descriptor.honba,
     mahjongTable.lastEventSequenceNo,
     operatorId,
+  ].join(':');
+}
+
+function getCurrentRoundKey(mahjongTable: MahjongTableView) {
+  const round = mahjongTable.currentRound;
+
+  if (!round) {
+    return 'no-round';
+  }
+
+  return [
+    mahjongTable.tableId,
+    round.descriptor.roundWind,
+    round.descriptor.handNumber,
+    round.descriptor.honba,
   ].join(':');
 }
 

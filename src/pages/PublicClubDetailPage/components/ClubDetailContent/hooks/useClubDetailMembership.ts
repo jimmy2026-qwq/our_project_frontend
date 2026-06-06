@@ -13,7 +13,6 @@ import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.ty
 interface UseClubDetailMembershipParams {
   profile: ClubPublicProfile | null;
   session: AuthSession | null;
-  isApplicationDialogOpen: boolean;
 }
 
 async function resolveClubAdminAccess(clubId: string, playerId: string) {
@@ -33,7 +32,6 @@ async function resolveClubAdminAccess(clubId: string, playerId: string) {
 export function useClubDetailMembership({
   profile,
   session,
-  isApplicationDialogOpen,
 }: UseClubDetailMembershipParams) {
   const { loadPlayerContext, loadTrackedApplication } =
     useClubApplicationLoaders();
@@ -120,7 +118,6 @@ export function useClubDetailMembership({
       window.removeEventListener('focus', refreshMembershipStatus);
     };
   }, [
-    isApplicationDialogOpen,
     loadPlayerContext,
     loadTrackedApplication,
     profile,

@@ -40,6 +40,7 @@ export { TournamentStageSubmitLineupAPI } from './TournamentStageSubmitLineupAPI
 export { TournamentStageTablesAPI } from './TournamentStageTablesAPI';
 export { TournamentStartAPI } from './TournamentStartAPI';
 export { TournamentTableGetAPI } from './TournamentTableGetAPI';
+export { TournamentTableFinalizeArchiveAPI } from './TournamentTableFinalizeArchiveAPI';
 export { TournamentTableListAPI } from './TournamentTableListAPI';
 export { TournamentTableResetAPI } from './TournamentTableResetAPI';
 export { TournamentTableStartAPI } from './TournamentTableStartAPI';

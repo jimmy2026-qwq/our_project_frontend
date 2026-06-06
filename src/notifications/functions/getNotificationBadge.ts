@@ -24,6 +24,9 @@ export function getNotificationBadgeLabel(notification: Notification) {
     case 'TournamentSettlementFinalized':
     case 'TournamentTableStarted':
       return '赛事';
+    case 'TournamentAppealFiled':
+    case 'TournamentAppealAdjudicated':
+      return '赛事申诉';
     case 'PlayerEloChanged':
       return 'ELO';
     default:

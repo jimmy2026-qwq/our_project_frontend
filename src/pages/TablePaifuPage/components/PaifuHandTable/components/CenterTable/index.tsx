@@ -17,7 +17,9 @@ export { RoundPicker } from './RoundPicker';
 
 interface CenterTableProps {
   isExhaustiveDrawResult: boolean;
+  isRelativeScoreMode: boolean;
   isRoundPickerOpen: boolean;
+  onToggleRelativeScoreMode: () => void;
   onToggleRoundPicker: () => void;
   paifu: TablePaifuDetail;
   replayStep: number;
@@ -28,7 +30,9 @@ interface CenterTableProps {
 
 export function CenterTable({
   isExhaustiveDrawResult,
+  isRelativeScoreMode,
   isRoundPickerOpen,
+  onToggleRelativeScoreMode,
   onToggleRoundPicker,
   paifu,
   replayStep,
@@ -36,12 +40,19 @@ export function CenterTable({
   scoreDisplays,
   tableSticks,
 }: CenterTableProps) {
+  const referencePoints = scoreDisplays.East?.points;
+
   return (
     <div className="absolute left-1/2 top-1/2 z-[8] grid h-[260px] w-[420px] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[24px] border border-[rgba(236,197,122,0.34)] bg-[rgba(6,17,26,0.78)] text-center shadow-[0_18px_48px_rgba(0,0,0,0.32)] backdrop-blur-[10px]">
       {seatOrder.map((seat) => (
         <CenterPoint
           key={`${seat}-center-point`}
+          isRelativeScoreMode={isRelativeScoreMode}
+          onToggleRelativeScoreMode={
+            seat === 'East' ? onToggleRelativeScoreMode : undefined
+          }
           paifu={paifu}
+          referencePoints={referencePoints}
           scoreDisplay={scoreDisplays[seat]}
           seat={seat}
         />

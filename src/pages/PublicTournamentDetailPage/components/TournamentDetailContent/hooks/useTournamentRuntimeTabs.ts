@@ -10,13 +10,39 @@ export function useTournamentRuntimeTabs({
   operatorId: string;
   workbench: TournamentDetailWorkbenchState | null;
 }) {
-  const [activeTab, setActiveTab] = useState<TournamentDetailTab>('home');
+  const [activeTab, setActiveTab] = useState<TournamentDetailTab>(() =>
+    resolveInitialTab(),
+  );
 
   useEffect(() => {
-    if (!workbench?.canManageTournament) {
+    if (!workbench) {
+      return;
+    }
+
+    if (!workbench.canManageTournament && isAdminOnlyTab(activeTab)) {
       setActiveTab('home');
     }
-  }, [workbench?.canManageTournament]);
+  }, [activeTab, workbench]);
+
+  useEffect(() => {
+    persistTabInUrl(activeTab);
+  }, [activeTab]);
+
+  useEffect(() => {
+    const handleLocationChange = () => {
+      const queryTab = resolveTab(new URLSearchParams(window.location.search).get('tab'));
+      if (queryTab) {
+        setActiveTab(queryTab);
+      }
+    };
+
+    window.addEventListener('popstate', handleLocationChange);
+    handleLocationChange();
+
+    return () => {
+      window.removeEventListener('popstate', handleLocationChange);
+    };
+  }, []);
 
   const waitingTables = useMemo(
     () =>
@@ -46,4 +72,47 @@ export function useTournamentRuntimeTabs({
     waitingTables,
     setActiveTab,
   };
+}
+
+function resolveInitialTab(): TournamentDetailTab {
+  if (typeof window === 'undefined') {
+    return 'home';
+  }
+
+  const tab = new URLSearchParams(window.location.search).get('tab');
+  return resolveTab(tab) ?? 'home';
+}
+
+function resolveTab(value: string | null): TournamentDetailTab | null {
+  switch (value) {
+    case 'home':
+    case 'rules':
+    case 'participants':
+    case 'tables':
+    case 'manage':
+    case 'appeals':
+      return value;
+    default:
+      return null;
+  }
+}
+
+function isAdminOnlyTab(tab: TournamentDetailTab): boolean {
+  return tab === 'manage' || tab === 'appeals';
+}
+
+function persistTabInUrl(tab: TournamentDetailTab): void {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const url = new URL(window.location.href);
+
+  if (tab === 'home') {
+    url.searchParams.delete('tab');
+  } else {
+    url.searchParams.set('tab', tab);
+  }
+
+  window.history.replaceState(window.history.state, '', url);
 }

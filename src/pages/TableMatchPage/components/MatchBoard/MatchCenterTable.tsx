@@ -13,25 +13,38 @@ import { getRoundLabel } from './matchBoardLabels';
 const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
 interface MatchCenterTableProps {
+  isRelativeScoreMode?: boolean;
   mahjongTable: MahjongTableView;
+  onToggleRelativeScoreMode?: () => void;
   scoreDisplays?: Record<SeatWind, CenterScoreDisplay>;
   seatsByDisplaySeat: Record<SeatWind, MahjongSeatView | null>;
 }
 
 export function MatchCenterTable({
+  isRelativeScoreMode = false,
   mahjongTable,
+  onToggleRelativeScoreMode,
   scoreDisplays,
   seatsByDisplaySeat,
 }: MatchCenterTableProps) {
   const round = mahjongTable.currentRound;
   const doraIndicators =
     round?.doraIndicators.slice(0, round.doraIndicatorVisibleCount) ?? [];
+  const referencePoints = getCenterPointPoints(
+    scoreDisplays?.East,
+    seatsByDisplaySeat.East,
+  );
 
   return (
     <div className="absolute left-1/2 top-1/2 z-[10] grid h-[260px] w-[min(88vw,420px)] -translate-x-1/2 -translate-y-1/2 place-items-center rounded-[24px] border border-[rgba(236,197,122,0.34)] bg-[rgba(6,17,26,0.78)] text-center shadow-[0_18px_48px_rgba(0,0,0,0.32)] backdrop-blur-[10px]">
       {seatOrder.map((seat) => (
         <MatchCenterPoint
           key={`${seat}-center-point`}
+          isRelativeScoreMode={isRelativeScoreMode}
+          onToggleRelativeScoreMode={
+            seat === 'East' ? onToggleRelativeScoreMode : undefined
+          }
+          referencePoints={referencePoints}
           scoreDisplay={scoreDisplays?.[seat]}
           seat={seat}
           seatView={seatsByDisplaySeat[seat]}
@@ -79,10 +92,16 @@ export function MatchCenterTable({
 }
 
 function MatchCenterPoint({
+  isRelativeScoreMode = false,
+  onToggleRelativeScoreMode,
+  referencePoints,
   scoreDisplay,
   seat,
   seatView,
 }: {
+  isRelativeScoreMode?: boolean;
+  onToggleRelativeScoreMode?: () => void;
+  referencePoints?: number;
   scoreDisplay?: CenterScoreDisplay;
   seat: SeatWind;
   seatView: MahjongSeatView | null;
@@ -91,6 +110,20 @@ function MatchCenterPoint({
     return null;
   }
 
+  const points = getCenterPointPoints(scoreDisplay, seatView);
+  const displayScore =
+    isRelativeScoreMode && typeof referencePoints === 'number'
+      ? points - referencePoints
+      : points;
+  const canToggleScoreMode = seat === 'East' && Boolean(onToggleRelativeScoreMode);
+  const scoreClassName = [
+    'rounded-lg bg-[rgba(2,12,20,0.48)] px-2 py-1 font-semibold',
+    getMainScoreClassName(isRelativeScoreMode, displayScore),
+  ].join(' ');
+  const scoreText = isRelativeScoreMode
+    ? formatRelativeScore(displayScore)
+    : formatPoints(displayScore);
+
   return (
     <div
       className={[
@@ -98,9 +131,18 @@ function MatchCenterPoint({
         centerPointPositionClasses[seat],
       ].join(' ')}
     >
-      <span className="rounded-lg bg-[rgba(2,12,20,0.48)] px-2 py-1 text-[#f2f7fb]">
-        {formatPoints(scoreDisplay?.points ?? seatView.points)}
-      </span>
+      {canToggleScoreMode ? (
+        <button
+          aria-label="切换点数显示"
+          className={`${scoreClassName} cursor-pointer transition-colors hover:bg-[rgba(236,197,122,0.14)]`}
+          onClick={onToggleRelativeScoreMode}
+          type="button"
+        >
+          {scoreText}
+        </button>
+      ) : (
+        <span className={scoreClassName}>{scoreText}</span>
+      )}
       {scoreDisplay?.showDelta ? (
         <span
           className={[
@@ -115,6 +157,23 @@ function MatchCenterPoint({
   );
 }
 
+function getCenterPointPoints(
+  scoreDisplay: CenterScoreDisplay | undefined,
+  seatView: MahjongSeatView | null,
+) {
+  return scoreDisplay?.points ?? seatView?.points ?? 0;
+}
+
+function formatRelativeScore(value: number) {
+  if (value === 0) {
+    return '+0';
+  }
+
+  return value > 0
+    ? `+${formatPoints(value)}`
+    : `-${formatPoints(Math.abs(value))}`;
+}
+
 function formatScoreDelta(value: number) {
   if (value === 0) {
     return '+0';
@@ -123,6 +182,14 @@ function formatScoreDelta(value: number) {
   return value > 0
     ? `+${formatPoints(value)}`
     : `-${formatPoints(Math.abs(value))}`;
+}
+
+function getMainScoreClassName(isRelativeScoreMode: boolean, value: number) {
+  if (!isRelativeScoreMode) {
+    return 'text-[#f2f7fb]';
+  }
+
+  return getScoreDeltaClassName(value);
 }
 
 function getScoreDeltaClassName(value: number) {
@@ -134,5 +201,5 @@ function getScoreDeltaClassName(value: number) {
     return 'text-[#ff6d6d]';
   }
 
-  return 'text-[#f2f7fb]';
+  return 'text-[#ffd98a]';
 }

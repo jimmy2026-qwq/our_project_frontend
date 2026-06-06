@@ -7,6 +7,7 @@ import type {
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import type {
   AppealSummary,
+  MatchRecordSeatResultSummary,
   MatchRecordSummary,
   TournamentTableSummary,
 } from '@/pages/objects/TournamentViews';
@@ -69,6 +70,14 @@ export function toMatchRecordSummary(
     (left, right) => left.placement - right.placement,
   );
   const winner = orderedResults.find((seat) => seat.placement === 1);
+  const seatResults: MatchRecordSeatResultSummary[] = orderedResults.map(
+    (seat) => ({
+      playerId: seat.playerId,
+      placement: seat.placement,
+      finalPoints: seat.finalPoints,
+      scoreDelta: seat.scoreDelta,
+    }),
+  );
   const summary =
     legacy.summary ??
     (orderedResults.length > 0
@@ -94,6 +103,7 @@ export function toMatchRecordSummary(
     recordedAt: legacy.recordedAt ?? record.generatedAt ?? '',
     winnerId: legacy.winnerId ?? winner?.playerId ?? '',
     summary,
+    seatResults,
   };
 }
 

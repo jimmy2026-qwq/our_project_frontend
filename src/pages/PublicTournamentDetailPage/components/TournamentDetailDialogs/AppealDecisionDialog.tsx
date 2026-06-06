@@ -21,9 +21,11 @@ export function AppealDecisionDialog({
   selectedAppealAction,
   appealVerdict,
   appealActionError,
+  shouldResetTableOnResolve,
   submittingAppealId,
   onClose,
   onVerdictChange,
+  onShouldResetTableOnResolveChange,
   onSubmit,
 }: {
   selectedAppealAction: {
@@ -32,11 +34,15 @@ export function AppealDecisionDialog({
   } | null;
   appealVerdict: string;
   appealActionError: string;
+  shouldResetTableOnResolve: boolean;
   submittingAppealId: string;
   onClose: () => void;
   onVerdictChange: (value: string) => void;
+  onShouldResetTableOnResolveChange: (value: boolean) => void;
   onSubmit: () => void;
 }) {
+  const isResolveAction = selectedAppealAction?.decision === 'Resolve';
+
   return (
     <Dialog
       open={!!selectedAppealAction}
@@ -86,6 +92,27 @@ export function AppealDecisionDialog({
                 maxLength={1000}
               />
             </label>
+            {isResolveAction ? (
+              <label className="flex items-start gap-3 rounded-[18px] border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] px-4 py-3 text-sm text-[#c7d6e2]">
+                <input
+                  type="checkbox"
+                  className="mt-1 h-4 w-4 accent-[#8fe8e1]"
+                  checked={shouldResetTableOnResolve}
+                  onChange={(event) =>
+                    onShouldResetTableOnResolveChange(event.target.checked)
+                  }
+                  disabled={!!submittingAppealId}
+                />
+                <span className="grid gap-1">
+                  <span className="font-semibold text-[#f2f7fb]">
+                    重置牌桌
+                  </span>
+                  <span>
+                    清除本桌牌谱和战绩，将牌桌恢复到等待准备状态。
+                  </span>
+                </span>
+              </label>
+            ) : null}
           </DialogBody>
           <DialogFooter className="border-t border-[rgba(176,223,229,0.14)] px-6 py-5 sm:grid-cols-[1fr_auto_auto] sm:items-center">
             <p className="m-0 text-sm text-[#9ab0c1]">

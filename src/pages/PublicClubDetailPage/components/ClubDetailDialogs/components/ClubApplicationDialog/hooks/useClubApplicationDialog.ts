@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useAuth } from '@/app/auth/useAuth';
 import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
@@ -26,12 +26,17 @@ export function useClubApplicationDialog({
   const [state, setState] = useState<HomeClubApplicationState | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isRefreshing, setIsRefreshing] = useState(false);
+  const onApplicationUpdatedRef = useRef(onApplicationUpdated);
   const { handleSubmit, handleWithdraw } = useClubApplicationDialogActions({
     onApplicationUpdated,
     onOpenChange,
     setState,
     state,
   });
+
+  useEffect(() => {
+    onApplicationUpdatedRef.current = onApplicationUpdated;
+  }, [onApplicationUpdated]);
 
   useEffect(() => {
     if (!session?.user.roles.isRegisteredPlayer) {
@@ -49,7 +54,9 @@ export function useClubApplicationDialog({
       const application = await loadTrackedApplication(operatorId, club.id);
 
       if (!cancelled) {
-        onApplicationUpdated?.(application.application?.status ?? null);
+        onApplicationUpdatedRef.current?.(
+          application.application?.status ?? null,
+        );
         setState({
           operatorId,
           operatorDisplayName: session.user.displayName,
@@ -71,10 +78,14 @@ export function useClubApplicationDialog({
       cancelled = true;
     };
   }, [
-    club,
+    club.id,
+    club.memberCount,
+    club.name,
+    club.powerRating,
+    club.relations,
+    club.treasury,
     loadPlayerContext,
     loadTrackedApplication,
-    onApplicationUpdated,
     session,
   ]);
 

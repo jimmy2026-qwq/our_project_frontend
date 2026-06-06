@@ -39,6 +39,10 @@ export function TournamentTablesPanel({
                 .map((playerId) => playerNames[playerId] ?? playerId)
                 .join(' / ');
               const isFinished = table.status === 'Archived';
+              const hasResult =
+                isFinished ||
+                table.status === 'Scoring' ||
+                table.status === 'AppealInProgress';
 
               return (
                 <DetailRow
@@ -53,12 +57,12 @@ export function TournamentTablesPanel({
                       <Link
                         className={tournamentPanelClassNames.link}
                         to={
-                          isFinished
+                          hasResult
                             ? `/tables/${table.id}/paifu`
                             : `/tables/${table.id}`
                         }
                       >
-                        {isFinished ? '查看牌谱' : '进入牌桌'}
+                        {hasResult ? '查看牌谱' : '进入牌桌'}
                       </Link>
                     </div>
                   }

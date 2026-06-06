@@ -21,7 +21,6 @@ export function useClubDetailData({
   const membership = useClubDetailMembership({
     profile,
     session,
-    isApplicationDialogOpen: dialogs.isApplicationDialogOpen,
   });
   const members = useClubDetailMembers({
     profile,

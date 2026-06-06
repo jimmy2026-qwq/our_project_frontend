@@ -9,6 +9,7 @@ import { TournamentDetailAppealsTab } from './components/TournamentDetailAppeals
 import { TournamentDetailHomeTab } from './components/TournamentDetailHomeTab';
 import { TournamentDetailParticipantsTab } from './components/TournamentDetailParticipantsTab';
 import { TournamentDetailRulesTab } from './components/TournamentDetailRulesTab';
+import { AppealDialog } from '@/pages/TableMatchPage/components/TableMatchSection/AppealDialog';
 import { TournamentDetailManageTab } from './components/TournamentDetailTableTabs/TournamentDetailManageTab';
 import { TournamentDetailTablesTab } from './components/TournamentDetailTableTabs/TournamentDetailTablesTab';
 import { detailShellClassNames } from '../detailShell.styles';
@@ -29,13 +30,18 @@ export function TournamentDetailContent({
   appealsError,
   canManageAppeals,
   isSubmittingTableAction,
+  isSubmittingTableAppeal,
   operatorId,
   participantWaitingTableDetails,
+  selectedAppealTable,
+  tableAppealDescription,
+  tableAppealError,
   submittingAppealId,
   tableDetailError,
   tabItems,
   updatingReadyTableId,
   uploadingDemoPaifuTableId,
+  finalizingArchiveTableId,
   waitingTables,
   workbench,
   onActiveTabChange,
@@ -44,11 +50,16 @@ export function TournamentDetailContent({
   onInvitePlayer,
   onOpenRulesDialog,
   onOpenAppealAction,
+  onOpenTableAppeal,
   onSelectClubId,
   onSelectPlayerId,
   onSelectManageTable,
   onStartManagedTable,
   onToggleOwnReady,
+  onTableAppealOpenChange,
+  onTableAppealDescriptionChange,
+  onSubmitTableAppeal,
+  onFinalizeArchive,
   onUploadDemoPaifu,
   onToggleShowMore,
 }: {
@@ -57,13 +68,18 @@ export function TournamentDetailContent({
   appealsError: string;
   canManageAppeals: boolean;
   isSubmittingTableAction: boolean;
+  isSubmittingTableAppeal: boolean;
   operatorId: string;
   participantWaitingTableDetails: Record<string, TableDetail>;
+  selectedAppealTable: TournamentDetailTableItem | null;
+  tableAppealDescription: string;
+  tableAppealError: string | null;
   submittingAppealId: string;
   tableDetailError: string;
   tabItems: TabItem[];
   updatingReadyTableId: string;
   uploadingDemoPaifuTableId: string;
+  finalizingArchiveTableId: string;
   waitingTables: TournamentDetailTableItem[];
   workbench: TournamentDetailWorkbenchState;
   onActiveTabChange: (tab: TournamentDetailTab) => void;
@@ -75,11 +91,16 @@ export function TournamentDetailContent({
     appeal: AppealSummary,
     decision: AppealDecisionType,
   ) => void;
+  onOpenTableAppeal: (table: TournamentDetailTableItem) => void;
   onSelectClubId: (clubId: string) => void;
   onSelectPlayerId: (playerId: string) => void;
   onSelectManageTable: (table: TournamentDetailTableItem) => void;
   onStartManagedTable: (table: TournamentDetailTableItem) => void;
   onToggleOwnReady: (tableId: string, isReady: boolean) => void;
+  onTableAppealOpenChange: (open: boolean) => void;
+  onTableAppealDescriptionChange: (description: string) => void;
+  onSubmitTableAppeal: () => void;
+  onFinalizeArchive: (table: TournamentDetailTableItem) => void;
   onUploadDemoPaifu: (table: TournamentDetailTableItem) => void;
   onToggleShowMore: () => void;
 }) {
@@ -137,9 +158,12 @@ export function TournamentDetailContent({
             tableDetailError={tableDetailError}
             updatingReadyTableId={updatingReadyTableId}
             uploadingDemoPaifuTableId={uploadingDemoPaifuTableId}
+            finalizingArchiveTableId={finalizingArchiveTableId}
             workbench={workbench}
             onToggleOwnReady={onToggleOwnReady}
             onUploadDemoPaifu={onUploadDemoPaifu}
+            onOpenTableAppeal={onOpenTableAppeal}
+            onFinalizeArchive={onFinalizeArchive}
           />
         ) : null}
 
@@ -164,6 +188,18 @@ export function TournamentDetailContent({
             onOpenAppealAction={onOpenAppealAction}
           />
         ) : null}
+
+        <AppealDialog
+          open={!!selectedAppealTable}
+          onOpenChange={onTableAppealOpenChange}
+          appealDescription={tableAppealDescription}
+          appealError={tableAppealError}
+          operatorId={operatorId}
+          canFileAppeal={!!selectedAppealTable}
+          isSubmittingAppeal={isSubmittingTableAppeal}
+          onDescriptionChange={onTableAppealDescriptionChange}
+          onSubmit={onSubmitTableAppeal}
+        />
       </div>
     </div>
   );

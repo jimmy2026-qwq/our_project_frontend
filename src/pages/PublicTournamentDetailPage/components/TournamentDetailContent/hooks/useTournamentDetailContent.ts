@@ -19,7 +19,11 @@ export function useTournamentDetailContent({
     workbench,
     onScheduleSuccess,
   });
-  const appeals = useTournamentAppealRuntime({ operatorId, workbench });
+  const appeals = useTournamentAppealRuntime({
+    operatorId,
+    workbench,
+    onAppealMutationSuccess: onScheduleSuccess,
+  });
 
   return {
     ...tabs,

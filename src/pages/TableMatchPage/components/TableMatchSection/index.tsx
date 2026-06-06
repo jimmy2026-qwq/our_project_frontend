@@ -7,7 +7,6 @@ import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
 import { MatchBoard } from '../MatchBoard';
-import { AppealDialog } from './AppealDialog';
 import { SeatsOverviewCard } from './SeatsOverviewCard';
 import { TableMatchHeader } from './TableMatchHeader';
 
@@ -26,22 +25,13 @@ interface TableMatchSectionProps {
   isRegisteredPlayer: boolean;
   operatorId: string;
   canUpdateOwnReady: boolean;
-  canFileAppeal: boolean;
   isUpdatingOwnReady: boolean;
   isSubmittingMahjongAction: boolean;
   mahjongActionError: string | null;
-  isAppealDialogOpen: boolean;
-  appealDescription: string;
-  appealError: string | null;
-  isSubmittingAppeal: boolean;
   onRefresh: () => void;
   onToggleOwnReady: () => void;
   onAdvanceRound: () => void;
   onSubmitMahjongAction: (action: MahjongLegalAction) => void;
-  onOpenAppeal: () => void;
-  onAppealOpenChange: (open: boolean) => void;
-  onAppealDescriptionChange: (description: string) => void;
-  onSubmitAppeal: () => void;
 }
 
 export function TableMatchSection({
@@ -59,22 +49,13 @@ export function TableMatchSection({
   isRegisteredPlayer,
   operatorId,
   canUpdateOwnReady,
-  canFileAppeal,
   isUpdatingOwnReady,
   isSubmittingMahjongAction,
   mahjongActionError,
-  isAppealDialogOpen,
-  appealDescription,
-  appealError,
-  isSubmittingAppeal,
   onRefresh,
   onToggleOwnReady,
   onAdvanceRound,
   onSubmitMahjongAction,
-  onOpenAppeal,
-  onAppealOpenChange,
-  onAppealDescriptionChange,
-  onSubmitAppeal,
 }: TableMatchSectionProps) {
   const shouldShowMatchBoard = Boolean(mahjongTable?.currentRound);
 
@@ -116,25 +97,10 @@ export function TableMatchSection({
             seatMap={seatMap}
             ownSeat={ownSeat}
             playerNames={playerNames}
-            canFileAppeal={canFileAppeal}
             isRegisteredPlayer={isRegisteredPlayer}
-            operatorId={operatorId}
-            onOpenAppeal={onOpenAppeal}
           />
         </>
       )}
-
-      <AppealDialog
-        open={isAppealDialogOpen}
-        onOpenChange={onAppealOpenChange}
-        appealDescription={appealDescription}
-        appealError={appealError}
-        operatorId={operatorId}
-        canFileAppeal={canFileAppeal}
-        isSubmittingAppeal={isSubmittingAppeal}
-        onDescriptionChange={onAppealDescriptionChange}
-        onSubmit={onSubmitAppeal}
-      />
     </section>
   );
 }
