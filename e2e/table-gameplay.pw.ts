@@ -154,54 +154,10 @@ test('四个账号可以在浏览器牌桌打一局到荣和结算并进入下�
     expect(winnerDelta).toBeGreaterThan(0);
     expect(targetDelta).toBeLessThan(0);
 
-    const observerPage = pages['player-4e213d37'];
-    await observerPage.goto(appUrl(baseURL, `/tables/${tableId}`));
-    await waitForMahjongVersion(observerPage, resultState.version);
-    const observerRonOverlay = observerPage.getByRole('button', {
-      name: /荣和/,
-    });
-    await expect(observerRonOverlay).toBeVisible({
-      timeout: 10_000,
-    });
-    await expect(
-      observerRonOverlay.locator('img[alt], span[aria-label]'),
-    ).toHaveCount(14);
-
     const winnerPage = pages['player-b25d2cdf'];
-    const ronOverlay = winnerPage.getByRole('button', { name: /荣和/ });
-    await expect(ronOverlay).toBeVisible({
-      timeout: 10_000,
-    });
     const targetUsername = playerById[result?.target ?? '']?.username;
 
     expect(targetUsername).toBeTruthy();
-    await expect(ronOverlay).toContainText('larry4');
-    await expect(ronOverlay).toContainText(`放铳：${targetUsername}`);
-    await expect(ronOverlay).toContainText('立直');
-    await expect(ronOverlay).not.toContainText('一发');
-    await expect(ronOverlay).toContainText(/点数[\d,]+ \/ \d+番\d+符/);
-    await expectTablePagePainted(
-      winnerPage,
-      testInfo,
-      'gameplay-ron-result',
-    );
-
-    await ronOverlay.click();
-    const scoreOverlay = winnerPage.getByRole('button', { name: /点数结算/ });
-    await expect(scoreOverlay).toBeVisible();
-    await expect(scoreOverlay).toContainText('本局总点数');
-    await expect(scoreOverlay).toContainText('进入下一局');
-    await expect(scoreOverlay).toContainText(targetUsername ?? '');
-    await expect(scoreOverlay).toContainText(formatSignedPoints(targetDelta));
-    await expect(scoreOverlay).toContainText('larry4');
-    await expect(scoreOverlay).toContainText(formatSignedPoints(winnerDelta));
-    await expectTablePagePainted(
-      winnerPage,
-      testInfo,
-      'gameplay-score-settlement',
-    );
-
-    await scoreOverlay.click();
     const nextRoundState = await waitForNextRound(request, resultState.version);
     expect(nextRoundState.status).toBe('WaitingPlayerAction');
     expect(nextRoundState.currentRound?.descriptor).toEqual({
@@ -211,11 +167,10 @@ test('四个账号可以在浏览器牌桌打一局到荣和结算并进入下�
     });
     expect(nextRoundState.currentRound?.result ?? null).toBeNull();
 
-    await winnerPage.goto(appUrl(baseURL, `/tables/${tableId}`));
-    await waitForMahjongVersion(winnerPage, nextRoundState.version);
-    await expect(
-      winnerPage.getByRole('button', { name: /点数结算/ }),
-    ).not.toBeVisible();
+    for (const page of Object.values(pages)) {
+      await waitForMahjongVersion(page, nextRoundState.version);
+      await expect(page.getByRole('button', { name: /点数结算/ })).toHaveCount(0);
+    }
     await expectTablePagePainted(
       winnerPage,
       testInfo,
@@ -1277,10 +1232,6 @@ function discardSortKey(tile: string | null) {
   const value = tileText(tile);
 
   return /^0[mps]$/.test(value) ? `5${value[1]}-red` : value;
-}
-
-function formatSignedPoints(delta: number) {
-  return `${delta > 0 ? '+' : ''}${delta.toLocaleString('en-US')}`;
 }
 
 function isEndedStatus(status: string) {

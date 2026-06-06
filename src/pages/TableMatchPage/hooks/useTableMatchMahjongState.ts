@@ -7,6 +7,7 @@ import {
   MahjongCoreSubmitActionAPI,
 } from '@/api/tournament/mahjongcore';
 import type {
+  AdvanceMahjongRoundRequest,
   MahjongActionResponse,
   MahjongLegalAction,
   MahjongPublicEventView,
@@ -179,11 +180,15 @@ export function useTableMatchMahjongState({
       setIsRefreshing(true);
       setActionError(null);
 
+      const request: AdvanceMahjongRoundRequest = {
+        showcaseMode,
+      };
+      if (viewerPlayerId) {
+        request.playerId = viewerPlayerId;
+      }
+
       const response = await sendAPI<MahjongTableView>(
-        new MahjongCoreAdvanceRoundAPI(tableId, {
-          playerId: viewerPlayerId || null,
-          showcaseMode,
-        }),
+        new MahjongCoreAdvanceRoundAPI(tableId, request),
       );
       if (response.status === 'Finished') {
         setFinalSettlementTable(response);
