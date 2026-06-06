@@ -174,7 +174,7 @@ export function YakumanTileBurstOverlay({
         @keyframes yakuman-burst-title {
           0% {
             opacity: 0;
-            transform: scale(0.72) translateY(18px);
+            transform: scale(0.54) translateY(18px);
             filter: blur(5px);
           }
           14% {
