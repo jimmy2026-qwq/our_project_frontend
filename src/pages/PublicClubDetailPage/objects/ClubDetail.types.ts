@@ -46,6 +46,8 @@ export interface ClubDetailWorkbenchState {
   isTitleSubmitting: boolean;
   isContributionTitleDialogOpen: boolean;
   isContributionTitleSubmitting: boolean;
+  isRelationDialogOpen: boolean;
+  isRelationSubmitting: boolean;
   contributionTitleFields: ClubContributionTitleField[];
   isCurrentMember: boolean;
   isCurrentClubAdmin: boolean;
@@ -60,6 +62,8 @@ export interface ClubDetailWorkbenchState {
   canAssignAdmins: boolean;
   canAdjustContributions: boolean;
   canEditTitles: boolean;
+  canManageRelations: boolean;
+  canRequestRelationChange: boolean;
   canRemoveMembers: boolean;
   clubMembers: ClubAdminMemberEntry[];
   isClubMembersLoading: boolean;

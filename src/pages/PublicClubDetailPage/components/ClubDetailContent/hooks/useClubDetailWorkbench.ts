@@ -52,6 +52,7 @@ export function useClubDetailWorkbench({
     setIsTitleDialogOpen: data.setIsTitleDialogOpen,
     setSelectedTitleMember: data.setSelectedTitleMember,
     setIsContributionTitleDialogOpen: data.setIsContributionTitleDialogOpen,
+    setIsRelationDialogOpen: data.setIsRelationDialogOpen,
     setIsCurrentMember: data.setIsCurrentMember,
     ...actions,
   };

@@ -2,6 +2,7 @@
 import { useClubContributionTitleActions } from './useClubContributionTitleActions';
 import type { ClubDetailActionContext } from './useClubDetailActions.types';
 import { useClubMemberAdminActions } from './useClubMemberAdminActions';
+import { useClubRelationActions } from './useClubRelationActions';
 import { useClubTournamentInvitationActions } from './useClubTournamentInvitationActions';
 
 export function useClubDetailActions({
@@ -26,11 +27,13 @@ export function useClubDetailActions({
   const memberAdminActions = useClubMemberAdminActions(actionContext);
   const contributionTitleActions =
     useClubContributionTitleActions(actionContext);
+  const relationActions = useClubRelationActions(actionContext);
 
   return {
     ...applicationActions,
     ...tournamentInvitationActions,
     ...memberAdminActions,
     ...contributionTitleActions,
+    ...relationActions,
   };
 }

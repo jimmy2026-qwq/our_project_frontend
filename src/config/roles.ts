@@ -20,7 +20,7 @@ export const roleCapabilities: RoleCapability[] = [
     description: 'Reviews club membership requests and manages club-facing actions directly from club and tournament detail pages.',
     landingRoute: '/public',
     canRead: ['Public club detail', 'Application inbox', 'Member overview'],
-    canWrite: ['Review applications', 'Submit tournament lineups', 'Maintain club operations info'],
+    canWrite: ['Review applications', 'Submit tournament lineups', 'Request club relation changes', 'Maintain club operations info'],
   },
   {
     role: 'TournamentAdmin',
@@ -34,6 +34,6 @@ export const roleCapabilities: RoleCapability[] = [
     description: 'Platform-level governance role with access to public workflows plus elevated administration.',
     landingRoute: '/public',
     canRead: ['Audit trail', 'Global operations view'],
-    canWrite: ['Review audits', 'Apply platform-level operations'],
+    canWrite: ['Review audits', 'Manage club relations', 'Apply platform-level operations'],
   },
 ];

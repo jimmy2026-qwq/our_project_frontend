@@ -1,4 +1,4 @@
-import { DetailCard, MetricCard, MetricGrid } from '@/components/ui';
+import { ActionButton, DetailCard, MetricCard, MetricGrid } from '@/components/ui';
 
 import {
   formatNumber,
@@ -9,10 +9,22 @@ import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.ty
 export function ClubPublicInfoPanel({
   profile,
   featuredPlayerNames,
+  canManageRelations,
+  canRequestRelationChange,
+  onOpenRelationDialog,
 }: {
   profile: ClubPublicProfile;
   featuredPlayerNames: string[];
+  canManageRelations: boolean;
+  canRequestRelationChange: boolean;
+  onOpenRelationDialog: () => void;
 }) {
+  const relationActionLabel = canManageRelations
+    ? '管理关系'
+    : canRequestRelationChange
+      ? '申请关系调整'
+      : '';
+
   return (
     <DetailCard title="俱乐部概览">
       <div className="grid gap-5">
@@ -45,8 +57,15 @@ export function ClubPublicInfoPanel({
                 {formatRelationList(profile.relations)}
               </span>
             }
-          />
-        </MetricGrid>
+            />
+          </MetricGrid>
+        {relationActionLabel ? (
+          <div className="flex justify-end">
+            <ActionButton onClick={onOpenRelationDialog}>
+              {relationActionLabel}
+            </ActionButton>
+          </div>
+        ) : null}
         <div className="rounded-[22px] border border-[color:rgba(134,151,176,0.28)] bg-[rgba(255,255,255,0.03)] px-6 py-5">
           <p className="m-0 text-[0.95rem] text-[#c7d6e2]">核心成员</p>
           <strong className="mt-3 block text-[1.02rem] leading-8 text-[#f2f7fb]">

@@ -23,6 +23,8 @@ export function useClubDetailDialogs() {
     useState(false);
   const [isContributionTitleSubmitting, setIsContributionTitleSubmitting] =
     useState(false);
+  const [isRelationDialogOpen, setIsRelationDialogOpen] = useState(false);
+  const [isRelationSubmitting, setIsRelationSubmitting] = useState(false);
 
   return {
     isApplicationDialogOpen,
@@ -47,5 +49,9 @@ export function useClubDetailDialogs() {
     setIsContributionTitleDialogOpen,
     isContributionTitleSubmitting,
     setIsContributionTitleSubmitting,
+    isRelationDialogOpen,
+    setIsRelationDialogOpen,
+    isRelationSubmitting,
+    setIsRelationSubmitting,
   };
 }

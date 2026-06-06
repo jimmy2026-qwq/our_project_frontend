@@ -117,6 +117,12 @@ export function MatchBoard({
   const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
   const canAdvanceAfterSettlement =
     table.status !== 'Archived' && mahjongTable.status !== 'Archived';
+  const scoreStepActionLabel =
+    table.status === 'Archived' || mahjongTable.status === 'Archived'
+      ? '关闭结算'
+      : shouldCompleteTableAfterCurrentResult(mahjongTable)
+        ? '完成牌桌'
+        : '进入下一局';
   const isTurnActionDelayActive = Boolean(
     turnActionDelayKey && delayedTurnActionKey === turnActionDelayKey,
   );
@@ -311,7 +317,10 @@ export function MatchBoard({
           <strong className="max-w-full truncate text-sm text-[#f2f7fb]">
             赛事桌 {String(table.tableNo).padStart(2, '0')}
           </strong>
-          <span className="max-w-full truncate text-xs font-semibold text-[#c7d6e2]">
+          <span
+            aria-label={`牌桌版本 v${mahjongTable.version}`}
+            className="max-w-full truncate text-xs font-semibold text-[#c7d6e2]"
+          >
             {table.stageId} / v{mahjongTable.version}
             {isRefreshing ? ' / 同步中' : ''}
           </span>
@@ -396,6 +405,7 @@ export function MatchBoard({
             }}
             playerNames={playerNames}
             result={mahjongTable.currentRound?.result ?? null}
+            scoreStepActionLabel={scoreStepActionLabel}
             seats={seats}
           />
         ) : null}
@@ -458,6 +468,95 @@ function isCallResponseAction(action: MahjongLegalAction) {
 
 function getCallMaskDelayMs() {
   return callMaskDelayMinMs + Math.floor(Math.random() * callMaskDelayRangeMs);
+}
+
+function shouldCompleteTableAfterCurrentResult(mahjongTable: MahjongTableView) {
+  const result = mahjongTable.currentRound?.result;
+
+  if (!result) {
+    return false;
+  }
+
+  if (
+    mahjongTable.status === 'Finished' ||
+    mahjongTable.status === 'Archived'
+  ) {
+    return true;
+  }
+
+  if (
+    mahjongTable.ruleset.bankruptcyEnd &&
+    mahjongTable.seats.some((seat) => seat.points < 0)
+  ) {
+    return true;
+  }
+
+  if (mahjongTable.ruleset.gameLength === 'OneKyoku') {
+    return true;
+  }
+
+  const descriptor = mahjongTable.currentRound?.descriptor;
+
+  if (!descriptor) {
+    return false;
+  }
+
+  return (
+    !doesDealerContinueAfterCurrentResult(mahjongTable) &&
+    isAtOrBeyondLastScheduledHand(
+      descriptor,
+      mahjongTable.ruleset.gameLength,
+    ) &&
+    mahjongTable.seats.some(
+      (seat) => seat.points >= mahjongTable.ruleset.targetPoints,
+    )
+  );
+}
+
+function doesDealerContinueAfterCurrentResult(mahjongTable: MahjongTableView) {
+  const result = mahjongTable.currentRound?.result;
+  const eastPlayerId = mahjongTable.seats.find(
+    (seat) => seat.seat === 'East',
+  )?.playerId;
+
+  if (!result || !eastPlayerId) {
+    return false;
+  }
+
+  if (isWinOutcome(result.outcome)) {
+    return getResultWins(result).some((win) => win.winner === eastPlayerId);
+  }
+
+  if (result.outcome === 'ExhaustiveDraw') {
+    return Boolean(result.tenpaiPlayerIds?.includes(eastPlayerId));
+  }
+
+  if (result.outcome === 'AbortiveDraw') {
+    return true;
+  }
+
+  return false;
+}
+
+function isAtOrBeyondLastScheduledHand(
+  descriptor: NonNullable<MahjongTableView['currentRound']>['descriptor'],
+  gameLength: MahjongTableView['ruleset']['gameLength'],
+) {
+  return (
+    descriptor.handNumber >= 4 &&
+    getRoundWindOrder(descriptor.roundWind) >=
+      getRoundWindOrder(getLastScheduledRoundWind(gameLength))
+  );
+}
+
+function getLastScheduledRoundWind(
+  gameLength: MahjongTableView['ruleset']['gameLength'],
+): SeatWind {
+  return gameLength === 'Hanchan' ? 'South' : 'East';
+}
+
+function getRoundWindOrder(seat: SeatWind) {
+  return seatOrder.indexOf(seat);
 }
 
 function getResultKey(mahjongTable: MahjongTableView) {

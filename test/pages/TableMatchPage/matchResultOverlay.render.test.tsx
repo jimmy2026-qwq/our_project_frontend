@@ -117,7 +117,8 @@ describe('MatchResultOverlay rendering', () => {
     expect(markup).toContain('荒牌流局');
     expect(markup).toContain('听牌：larry2');
     expect(markup).toContain('听牌：larry4');
-    expect(markup).not.toContain('role="button"');
+    expect(markup).toContain('<button');
+    expect(markup).toContain('继续');
   });
 });
 

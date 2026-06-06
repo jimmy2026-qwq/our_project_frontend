@@ -36,6 +36,9 @@ export function buildClubDetailWorkbench({
   const canManageLineup =
     !!session?.user.roles.isRegisteredPlayer &&
     actionableTournaments.length > 0;
+  const canManageRelations = !!session?.user.roles.isSuperAdmin;
+  const canRequestRelationChange =
+    !canManageRelations && data.isCurrentClubAdmin;
 
   return {
     profile,
@@ -51,6 +54,8 @@ export function buildClubDetailWorkbench({
     isTitleSubmitting: data.isTitleSubmitting,
     isContributionTitleDialogOpen: data.isContributionTitleDialogOpen,
     isContributionTitleSubmitting: data.isContributionTitleSubmitting,
+    isRelationDialogOpen: data.isRelationDialogOpen,
+    isRelationSubmitting: data.isRelationSubmitting,
     contributionTitleFields: data.contributionTitleFields,
     isCurrentMember: data.isCurrentMember,
     isCurrentClubAdmin: data.isCurrentClubAdmin,
@@ -65,6 +70,8 @@ export function buildClubDetailWorkbench({
     canAssignAdmins: data.canAssignAdmins,
     canAdjustContributions: data.canAdjustContributions,
     canEditTitles: data.canEditTitles,
+    canManageRelations,
+    canRequestRelationChange,
     canRemoveMembers: data.canRemoveMembers,
     clubMembers: data.clubMembers,
     isClubMembersLoading: data.isClubMembersLoading,

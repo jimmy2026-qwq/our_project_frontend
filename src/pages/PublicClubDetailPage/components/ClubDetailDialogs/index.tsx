@@ -3,6 +3,7 @@ import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
 import { ClubApplicationDialog } from './components/ClubApplicationDialog';
 import { ClubContributionDialog } from './components/ClubContributionDialog';
 import { ClubContributionTitlesDialog } from './components/ClubContributionTitlesDialog';
+import { ClubRelationDialog } from './components/ClubRelationDialog';
 import { ClubTitleDialog } from './components/ClubTitleDialog';
 import { ClubTournamentLineupDialog } from './components/ClubTournamentLineupDialog';
 import type { useClubDetailWorkbench } from '../ClubDetailContent/hooks/useClubDetailWorkbench';
@@ -101,6 +102,17 @@ export function ClubDetailDialogs({
         onOpenChange={controls.setIsContributionTitleDialogOpen}
         onSubmit={controls.handleUpdateContributionTitles}
       />
+
+      {workbench.canManageRelations || workbench.canRequestRelationChange ? (
+        <ClubRelationDialog
+          clubId={workbench.profile.id}
+          mode={workbench.canManageRelations ? 'manage' : 'request'}
+          open={workbench.isRelationDialogOpen}
+          isSubmitting={workbench.isRelationSubmitting}
+          onOpenChange={controls.setIsRelationDialogOpen}
+          onSubmit={controls.handleUpdateRelation}
+        />
+      ) : null}
     </>
   );
 }

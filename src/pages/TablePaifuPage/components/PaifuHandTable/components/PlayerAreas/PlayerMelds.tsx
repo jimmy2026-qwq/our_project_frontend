@@ -58,7 +58,7 @@ export function PlayerMelds({
   );
 }
 
-export function getMeldBoxStyle(melds: MeldGroup[]): CSSProperties {
+function getMeldBoxStyle(melds: MeldGroup[]): CSSProperties {
   const rowWidths = melds.map((meld) =>
     meld.tiles.reduce((total, tile) => total + getMeldTileWidth(tile), 0),
   );
@@ -73,7 +73,7 @@ export function getMeldBoxStyle(melds: MeldGroup[]): CSSProperties {
   };
 }
 
-export function getMeldBoxHeight(meldCount: number) {
+function getMeldBoxHeight(meldCount: number) {
   const rowCount = Math.max(1, meldCount);
 
   return (

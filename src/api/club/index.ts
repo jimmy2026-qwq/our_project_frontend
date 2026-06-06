@@ -30,6 +30,7 @@ export { ReviewClubApplicationAPI } from './ReviewClubApplicationAPI';
 export { RevokeClubAdminAPI } from './RevokeClubAdminAPI';
 export { RevokeClubHonorAPI } from './RevokeClubHonorAPI';
 export { SubmitClubApplicationAPI } from './SubmitClubApplicationAPI';
+export { SubmitClubRelationRequestAPI } from './SubmitClubRelationRequestAPI';
 export { UpdateClubRankTreeAPI } from './UpdateClubRankTreeAPI';
 export { UpdateClubRecruitmentPolicyAPI } from './UpdateClubRecruitmentPolicyAPI';
 export { UpdateClubRelationAPI } from './UpdateClubRelationAPI';

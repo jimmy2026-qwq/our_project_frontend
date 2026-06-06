@@ -61,6 +61,11 @@ export function ClubDetailContent({
             <ClubPublicInfoPanel
               profile={workbench.profile}
               featuredPlayerNames={workbench.featuredPlayerNames}
+              canManageRelations={workbench.canManageRelations}
+              canRequestRelationChange={workbench.canRequestRelationChange}
+              onOpenRelationDialog={() =>
+                controls.setIsRelationDialogOpen(true)
+              }
             />
           </PanelFrame>
         ) : null}
