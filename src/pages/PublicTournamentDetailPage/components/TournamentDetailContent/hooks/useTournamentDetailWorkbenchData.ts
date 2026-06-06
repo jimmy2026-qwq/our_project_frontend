@@ -32,7 +32,7 @@ export function useTournamentDetailWorkbenchData({
     useTournamentParticipantData({ localProfile, state });
   const { availablePlayers, selectedPlayerId, setSelectedPlayerId } =
     useTournamentPlayerOptions(session);
-  const { playerNames, tables } = useTournamentTableData({
+  const { playerNames, recordByTableId, tables } = useTournamentTableData({
     localProfile,
     state,
   });
@@ -44,6 +44,7 @@ export function useTournamentDetailWorkbenchData({
     availablePlayers,
     participantPlayers,
     playerNames,
+    recordByTableId,
     selectedClubId,
     selectedPlayerId,
     tables,

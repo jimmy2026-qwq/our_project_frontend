@@ -1,5 +1,6 @@
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
 
@@ -27,6 +28,7 @@ interface BuildTournamentDetailWorkbenchParams {
   playerNames: Record<string, string>;
   profile: TournamentPublicProfile | null;
   publishBlockedOpen: boolean;
+  recordByTableId: Record<string, MatchRecordSummary>;
   ruleDraft: TournamentStageRuleDraft;
   rulesDialogOpen: boolean;
   selectedClubId: string;
@@ -47,6 +49,7 @@ export function buildTournamentDetailWorkbench({
   playerNames,
   profile,
   publishBlockedOpen,
+  recordByTableId,
   ruleDraft,
   rulesDialogOpen,
   selectedClubId,
@@ -122,11 +125,13 @@ export function buildTournamentDetailWorkbench({
     missingLineupClubNames,
     submittedLineupClubIds,
     lineupSubmissionCounts,
+    recordByTableId,
     invitedClubs,
     selectableClubs,
     participantPlayers,
     selectablePlayers,
     selectedPlayerId,
+    operatorId,
     visibleTables,
   };
 }

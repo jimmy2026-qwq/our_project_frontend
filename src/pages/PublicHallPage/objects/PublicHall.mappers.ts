@@ -6,7 +6,10 @@ import type {
   TournamentSummaryView,
 } from '@/objects';
 import type { PlayerProfileView, PlayerStatus } from '@/objects/player';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import {
+  toClubSummaryRelation,
+  type ClubSummary,
+} from '@/pages/objects/ClubSummary';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import type {
@@ -51,9 +54,7 @@ export function toPublicClubSummary(
       memberCount: item.members.length,
       powerRating: item.powerRating,
       treasury: item.treasuryBalance ?? item.pointPool ?? item.totalPoints ?? 0,
-      relations: (item.relations ?? []).map((relation) =>
-        relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
-      ),
+      relations: (item.relations ?? []).map(toClubSummaryRelation),
     };
   }
 
@@ -72,9 +73,7 @@ export function toPublicClubSummary(
     strongestRivalClubId: item.strongestRivalClubId,
     strongestRivalPower: item.strongestRivalPower,
     honorTitles: item.honorTitles,
-    relations: item.relations.map((relation) =>
-      relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
-    ),
+    relations: item.relations.map(toClubSummaryRelation),
   };
 }
 

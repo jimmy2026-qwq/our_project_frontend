@@ -145,7 +145,7 @@ export function TournamentRulesDialog({
                     disabled={isSubmitting}
                   />
                   <TextInputField
-                    label="返还点/目标点"
+                    label="一位必要点数"
                     type="number"
                     min={1}
                     step={100}

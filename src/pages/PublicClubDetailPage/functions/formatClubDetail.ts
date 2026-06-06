@@ -23,7 +23,9 @@ export function formatNumber(value: number) {
 }
 
 export function getRelationLabel(relation: ClubSummary['relations'][number]) {
-  return relation === 'Alliance' ? '联盟' : '对抗';
+  const relationKind =
+    typeof relation === 'string' ? relation : relation.relation;
+  return relationKind === 'Alliance' ? '联盟' : '对抗';
 }
 
 export function formatRelationList(relations: ClubSummary['relations']) {

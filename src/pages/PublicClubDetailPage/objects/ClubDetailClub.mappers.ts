@@ -1,5 +1,8 @@
 import type { ClubView, PublicClubDetailView } from '@/objects/club';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import {
+  toClubSummaryRelation,
+  type ClubSummary,
+} from '@/pages/objects/ClubSummary';
 
 import type { ClubPublicProfile } from './PublicClubDetailPage.types';
 
@@ -36,9 +39,7 @@ export function toClubSummary(item: ClubView): ClubSummary {
     memberCount: item.members.length,
     powerRating: item.powerRating,
     treasury: item.treasuryBalance ?? item.pointPool ?? item.totalPoints ?? 0,
-    relations: (item.relations ?? []).map((relation) =>
-      relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
-    ),
+    relations: (item.relations ?? []).map(toClubSummaryRelation),
   };
 }
 
@@ -74,9 +75,7 @@ export function toPublicClubDetail(
     treasury: item.treasuryBalance ?? 0,
     totalPoints: item.totalPoints,
     pointPool: item.pointPool,
-    relations: relations.map((relation) =>
-      relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
-    ),
+    relations: relations.map(toClubSummaryRelation),
     honors,
     applicationPolicy: item.applicationPolicy
       ? {

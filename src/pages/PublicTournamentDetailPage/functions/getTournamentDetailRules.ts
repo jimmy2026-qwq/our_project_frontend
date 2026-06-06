@@ -122,7 +122,7 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
     `排桌池：${stage.schedulingPoolSize ?? 4}`,
     `牌局长度：${getMahjongGameLengthLabel(mahjongRuleset.gameLength)}`,
     `初始点数：${mahjongRuleset.initialPoints}`,
-    `返还点/目标点：${mahjongRuleset.targetPoints}`,
+    `一位必要点数：${mahjongRuleset.targetPoints}`,
     `赤宝牌：${mahjongRuleset.akaDora ? `${mahjongRuleset.akaDoraCount} 张` : '关闭'}`,
     `食断：${mahjongRuleset.openTanyao ? '开启' : '关闭'}`,
     `双响：${mahjongRuleset.doubleRon ? '开启' : '关闭'}`,

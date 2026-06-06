@@ -1,5 +1,6 @@
 import type { TournamentPublicProfile } from './PublicTournamentDetailPage.types';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import type { TournamentStageRuleDraft } from './TournamentDetailRule.types';
 
@@ -36,10 +37,12 @@ export interface TournamentDetailWorkbenchState {
   missingLineupClubNames: string[];
   submittedLineupClubIds: string[];
   lineupSubmissionCounts: Record<string, number>;
+  recordByTableId: Record<string, MatchRecordSummary>;
   invitedClubs: ClubSummary[];
   selectableClubs: ClubSummary[];
   participantPlayers: PlayerProfile[];
   selectablePlayers: PlayerProfile[];
   selectedPlayerId: string;
+  operatorId?: string;
   visibleTables: TournamentDetailTableItem[];
 }

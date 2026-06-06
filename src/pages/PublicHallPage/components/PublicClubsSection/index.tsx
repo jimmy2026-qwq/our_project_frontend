@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import {
   ActionButton,
@@ -34,6 +34,13 @@ export function PublicClubsSection({
   onRefresh: () => void;
 }) {
   const [isCreateClubOpen, setIsCreateClubOpen] = useState(false);
+  const clubNamesById = useMemo(
+    () =>
+      Object.fromEntries(
+        payload.envelope.items.map((club) => [club.id, club.name]),
+      ),
+    [payload.envelope.items],
+  );
 
   return (
     <>
@@ -76,7 +83,11 @@ export function PublicClubsSection({
           <div className={hallSectionClassNames.listBody}>
             {payload.envelope.items.length > 0 ? (
               payload.envelope.items.map((club) => (
-                <ClubRow key={club.id} club={club} />
+                <ClubRow
+                  key={club.id}
+                  club={club}
+                  clubNamesById={clubNamesById}
+                />
               ))
             ) : (
               <EmptyState>当前没有可展示的俱乐部名录。</EmptyState>

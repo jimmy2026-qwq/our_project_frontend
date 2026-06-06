@@ -5,7 +5,10 @@ import type {
 } from '@/objects/club';
 import type { PlayerStatus } from '@/objects/player';
 import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import {
+  toClubSummaryRelation,
+  type ClubSummary,
+} from '@/pages/objects/ClubSummary';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import type { MemberHubApplicationInboxItem } from './MemberHub.types';
@@ -49,9 +52,7 @@ export function toClubSummary(item: ClubView): ClubSummary {
     memberCount: item.members.length,
     powerRating: item.powerRating,
     treasury: item.treasuryBalance ?? item.pointPool ?? item.totalPoints ?? 0,
-    relations: (item.relations ?? []).map((relation) =>
-      relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
-    ),
+    relations: (item.relations ?? []).map(toClubSummaryRelation),
   };
 }
 

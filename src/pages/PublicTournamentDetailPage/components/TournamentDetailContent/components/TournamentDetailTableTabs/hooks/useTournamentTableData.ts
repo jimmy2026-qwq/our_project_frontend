@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
-import { TournamentStageTablesAPI } from '@/api/tournament';
+import { TournamentRecordListAPI, TournamentStageTablesAPI } from '@/api/tournament';
+import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
@@ -12,7 +13,10 @@ import type {
   TournamentPublicProfile,
 } from '../../../../../objects/PublicTournamentDetailPage.types';
 import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
-import { toTournamentTableSummary } from '../../../../../objects/TournamentDetailTable.mappers';
+import {
+  toMatchRecordSummary,
+  toTournamentTableSummary,
+} from '../../../../../objects/TournamentDetailTable.mappers';
 
 export function useTournamentTableData({
   localProfile,
@@ -22,6 +26,9 @@ export function useTournamentTableData({
   state: DetailState<TournamentPublicProfile>;
 }) {
   const [tables, setTables] = useState<TournamentDetailTableItem[]>([]);
+  const [recordByTableId, setRecordByTableId] = useState<
+    Record<string, MatchRecordSummary>
+  >({});
   const [playerNames, setPlayerNames] = useState<Record<string, string>>({});
 
   useEffect(() => {
@@ -83,6 +90,60 @@ export function useTournamentTableData({
   useEffect(() => {
     let cancelled = false;
 
+    async function loadRecords() {
+      const currentProfile = localProfile ?? state.item;
+
+      if (!currentProfile?.id) {
+        if (!cancelled) {
+          setRecordByTableId({});
+        }
+        return;
+      }
+
+      try {
+        const envelope = await sendAPI(
+          new TournamentRecordListAPI({
+            tournamentId: currentProfile.id,
+            limit: 200,
+            offset: 0,
+          }),
+        ).then((recordEnvelope) =>
+          mapEnvelope(recordEnvelope, toMatchRecordSummary),
+        );
+        const records = [...envelope.items].sort((left, right) =>
+          right.recordedAt.localeCompare(left.recordedAt),
+        );
+        const nextRecordByTableId = records.reduce(
+          (recordMap, record) => {
+            if (record.tableId && !recordMap[record.tableId]) {
+              recordMap[record.tableId] = record;
+            }
+
+            return recordMap;
+          },
+          {} as Record<string, MatchRecordSummary>,
+        );
+
+        if (!cancelled) {
+          setRecordByTableId(nextRecordByTableId);
+        }
+      } catch {
+        if (!cancelled) {
+          setRecordByTableId({});
+        }
+      }
+    }
+
+    void loadRecords();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [localProfile, state.item]);
+
+  useEffect(() => {
+    let cancelled = false;
+
     async function loadPlayerNames() {
       const missingIds = Array.from(
         new Set(
@@ -124,5 +185,5 @@ export function useTournamentTableData({
     };
   }, [playerNames, tables]);
 
-  return { playerNames, tables };
+  return { playerNames, recordByTableId, tables };
 }
