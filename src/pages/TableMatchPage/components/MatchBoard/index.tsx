@@ -32,6 +32,7 @@ import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import { MatchActionBar } from './MatchActionBar';
 import { MatchCenterTable } from './MatchCenterTable';
+import { FinalSettlementOverlay } from './FinalSettlementOverlay';
 import { MatchMeldArea } from './MatchMeldArea';
 import { MatchPlayerHand } from './MatchPlayerHand';
 import { MatchResultOverlay } from './MatchResultOverlay';
@@ -40,9 +41,11 @@ const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
 interface MatchBoardProps {
   actionError: string | null;
+  finalSettlementTable: MahjongTableView | null;
   isSubmittingAction: boolean;
   mahjongAcceptedEvent: MahjongPublicEventView | null;
   mahjongTable: MahjongTableView;
+  onConfirmFinalSettlement: () => void;
   onAdvanceRound: () => void | Promise<void>;
   onSubmitAction: (action: MahjongLegalAction) => void;
   operatorId: string;
@@ -53,9 +56,11 @@ interface MatchBoardProps {
 
 export function MatchBoard({
   actionError,
+  finalSettlementTable,
   isSubmittingAction,
   mahjongAcceptedEvent,
-  mahjongTable,
+  mahjongTable: latestMahjongTable,
+  onConfirmFinalSettlement,
   onAdvanceRound,
   onSubmitAction,
   operatorId,
@@ -65,14 +70,20 @@ export function MatchBoard({
 }: MatchBoardProps) {
   useMahjongTileImagePreload();
 
+  const [displayedMahjongTable, setDisplayedMahjongTable] =
+    useState(latestMahjongTable);
+  const pendingMahjongTableRef = useRef<MahjongTableView | null>(null);
+  const mahjongTable = displayedMahjongTable;
   const seatRotation = getSeatRotation(mahjongTable, operatorId);
   const seatMap = getMahjongSeatMap(mahjongTable, seatRotation);
   const rivers = getRivers(mahjongTable, seatRotation);
   const melds = getMelds(mahjongTable, seatRotation);
   const legalActions = mahjongTable.legalActions ?? [];
   const roundKey = getCurrentRoundKey(mahjongTable);
+  const latestRoundKey = getCurrentRoundKey(latestMahjongTable);
   const turnActionDelayKey = getTurnActionDelayKey(mahjongTable, operatorId);
   const resultKey = getResultKey(mahjongTable);
+  const latestResultKey = getResultKey(latestMahjongTable);
   const [settlementAnimatingKey, setSettlementAnimatingKey] = useState<
     string | null
   >(null);
@@ -96,16 +107,28 @@ export function MatchBoard({
   const [isRiichiSelectionActive, setIsRiichiSelectionActive] = useState(false);
   const [isRelativeScoreMode, setIsRelativeScoreMode] = useState(false);
   const advanceStartedKeyRef = useRef<string | null>(null);
+  const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
   const winResultNeedsSequence = Boolean(
     mahjongTable.currentRound?.result &&
       isWinOutcome(mahjongTable.currentRound.result.outcome),
+  );
+  const isCurrentEastPlayer = seats.some(
+    (seat) => seat.seat === 'East' && seat.playerId === operatorId,
+  );
+  const isLocalSettlementDisplayActive = Boolean(
+    resultKey &&
+      mahjongTable.currentRound?.result &&
+      (resultSequenceCompletedKey !== resultKey ||
+        settlementProgress === undefined ||
+        settlementProgress < 1),
   );
   const shouldShowResult = Boolean(
     mahjongTable.currentRound?.result &&
       resultKey &&
       (!winResultNeedsSequence || resultOverlayReadyKey === resultKey) &&
       resultSequenceCompletedKey !== resultKey &&
-      settlementAnimatingKey !== resultKey,
+      settlementAnimatingKey !== resultKey &&
+      !finalSettlementTable,
   );
   const scoreDisplays = useMemo(
     () =>
@@ -116,7 +139,6 @@ export function MatchBoard({
       }),
     [mahjongTable.currentRound?.result, seatMap, settlementProgress],
   );
-  const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
   const canAdvanceAfterSettlement =
     table.status !== 'Archived' && mahjongTable.status !== 'Archived';
   const scoreStepActionLabel =
@@ -177,6 +199,36 @@ export function MatchBoard({
       seats,
     ],
   );
+
+  useEffect(() => {
+    const isIncomingDifferentRound =
+      latestRoundKey !== roundKey || latestResultKey !== resultKey;
+
+    if (isLocalSettlementDisplayActive && isIncomingDifferentRound) {
+      pendingMahjongTableRef.current = latestMahjongTable;
+      return;
+    }
+
+    pendingMahjongTableRef.current = null;
+    setDisplayedMahjongTable(latestMahjongTable);
+  }, [
+    isLocalSettlementDisplayActive,
+    latestMahjongTable,
+    latestResultKey,
+    latestRoundKey,
+    resultKey,
+    roundKey,
+  ]);
+
+  useEffect(() => {
+    if (isLocalSettlementDisplayActive || !pendingMahjongTableRef.current) {
+      return;
+    }
+
+    const pendingTable = pendingMahjongTableRef.current;
+    pendingMahjongTableRef.current = null;
+    setDisplayedMahjongTable(pendingTable);
+  }, [isLocalSettlementDisplayActive]);
 
   useEffect(() => {
     if (!turnActionDelayKey) {
@@ -291,6 +343,7 @@ export function MatchBoard({
         setSettlementProgress(1);
         if (
           canAdvanceAfterSettlement &&
+          isCurrentEastPlayer &&
           advanceStartedKeyRef.current !== resultKey
         ) {
           advanceStartedKeyRef.current = resultKey;
@@ -310,6 +363,7 @@ export function MatchBoard({
   }, [
     onAdvanceRound,
     canAdvanceAfterSettlement,
+    isCurrentEastPlayer,
     resultKey,
     resultSequenceCompletedKey,
   ]);
@@ -427,6 +481,13 @@ export function MatchBoard({
             result={mahjongTable.currentRound?.result ?? null}
             scoreStepActionLabel={scoreStepActionLabel}
             seats={seats}
+          />
+        ) : null}
+        {finalSettlementTable && !isLocalSettlementDisplayActive ? (
+          <FinalSettlementOverlay
+            mahjongTable={finalSettlementTable}
+            onConfirm={onConfirmFinalSettlement}
+            playerNames={playerNames}
           />
         ) : null}
       </div>

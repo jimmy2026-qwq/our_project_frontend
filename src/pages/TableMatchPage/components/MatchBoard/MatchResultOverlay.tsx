@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { AgariResult, MahjongSeatView } from '@/objects';
 import { getMahjongYakuLabel } from '@/objects';
 import type { MahjongResultWinLike } from '@/pages/shared/mahjongResultSequence';
@@ -32,6 +32,9 @@ export function MatchResultOverlay({
   seats,
 }: MatchResultOverlayProps) {
   const [stepIndex, setStepIndex] = useState(0);
+  const completedRef = useRef(false);
+  const onCompleteRef = useRef(onComplete);
+  const hasResult = Boolean(result);
   const resultResetKey = getOverlayResultKey(result);
   const scoreStepIndex = useMemo(
     () => (result && isWinOutcome(result.outcome) ? getResultWins(result).length : 1),
@@ -40,37 +43,51 @@ export function MatchResultOverlay({
 
   useEffect(() => {
     setStepIndex(0);
+    completedRef.current = false;
   }, [resultResetKey]);
+
+  useEffect(() => {
+    onCompleteRef.current = onComplete;
+  }, [onComplete]);
 
   const step = result ? getResultSequenceStep(result, stepIndex) : null;
   const isScoreStep =
     Boolean(result) &&
     (step?.kind === 'score' || (!step && stepIndex >= scoreStepIndex));
   const nextLabel = isScoreStep ? scoreStepActionLabel : '继续';
-  const buttonLabel = getOverlayButtonLabel(result, step, isScoreStep);
-  const handleAdvance = () => {
-    if (!result) {
+
+  useEffect(() => {
+    if (!hasResult) {
       return;
     }
 
-    if (isScoreStep) {
-      onComplete?.();
-      return;
-    }
+    const timer = window.setTimeout(
+      () => {
+        if (isScoreStep) {
+          if (!completedRef.current) {
+            completedRef.current = true;
+            onCompleteRef.current?.();
+          }
+          return;
+        }
 
-    setStepIndex((current) => Math.min(current + 1, scoreStepIndex));
-  };
+        setStepIndex((current) => Math.min(current + 1, scoreStepIndex));
+      },
+      isScoreStep ? scoreStepDisplayMs : resultDetailDisplayMs,
+    );
+
+    return () => {
+      window.clearTimeout(timer);
+    };
+  }, [hasResult, isScoreStep, resultResetKey, scoreStepIndex, stepIndex]);
 
   if (!result) {
     return null;
   }
 
   return (
-    <button
-      aria-label={buttonLabel}
-      className="absolute inset-[34px] z-[24] grid cursor-pointer appearance-none rounded-[28px] border-0 bg-[rgba(0,0,0,0.84)] p-8 text-left text-[#f2f7fb] shadow-[0_30px_90px_rgba(0,0,0,0.58)] outline-none transition focus-visible:ring-2 focus-visible:ring-[#ffd98a]"
-      onClick={handleAdvance}
-      type="button"
+    <div
+      className="absolute inset-[34px] z-[24] grid rounded-[28px] bg-[rgba(0,0,0,0.84)] p-8 text-left text-[#f2f7fb] shadow-[0_30px_90px_rgba(0,0,0,0.58)]"
     >
       {isScoreStep ? (
         <ScoreResultContent
@@ -93,9 +110,12 @@ export function MatchResultOverlay({
           result={result}
         />
       )}
-    </button>
+    </div>
   );
 }
+
+const resultDetailDisplayMs = 2000;
+const scoreStepDisplayMs = 2000;
 
 function getOverlayResultKey(result: AgariResult | null) {
   if (!result) {
@@ -502,26 +522,6 @@ function getWinLabel(result: AgariResult, win: MahjongResultWinLike) {
   }
 
   return result.outcome === 'Tsumo' ? '自摸' : '荣和';
-}
-
-function getOverlayButtonLabel(
-  result: AgariResult | null,
-  step: ReturnType<typeof getResultSequenceStep> | null,
-  isScoreStep: boolean,
-) {
-  if (!result) {
-    return '结算';
-  }
-
-  if (isScoreStep) {
-    return '点数结算';
-  }
-
-  if (step?.kind === 'win') {
-    return getWinLabel(result, step.win);
-  }
-
-  return getDrawLabel(result.outcome);
 }
 
 function getStepSubtitle(step: NonNullable<ReturnType<typeof getResultSequenceStep>>) {

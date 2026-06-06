@@ -1,5 +1,5 @@
 import { useCallback, useMemo } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
@@ -18,6 +18,7 @@ import { useTableMatchSeatState } from './hooks/useTableMatchSeatState';
 
 export function TableMatchPage() {
   const { tableId = '' } = useParams();
+  const navigate = useNavigate();
   const { session } = useAuth();
   const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
   const [showcaseMode] = useShowcaseMode();
@@ -73,6 +74,10 @@ export function TableMatchPage() {
   const backLink = table?.tournamentId
     ? `/public/tournaments/${table.tournamentId}`
     : '/public';
+  const handleConfirmFinalSettlement = useCallback(() => {
+    mahjongState.clearFinalSettlement();
+    navigate(backLink);
+  }, [backLink, mahjongState, navigate]);
 
   if (isLoading) {
     return <TableMatchLoading />;
@@ -98,6 +103,7 @@ export function TableMatchPage() {
       isMahjongRefreshing={mahjongState.isRefreshing}
       isMahjongLoading={mahjongState.isLoading}
       mahjongError={mahjongState.error}
+      finalSettlementTable={mahjongState.finalSettlementTable}
       mahjongTable={mahjongState.mahjongTable}
       mahjongAcceptedEvent={mahjongState.acceptedEvent}
       playerNames={playerNames}
@@ -111,6 +117,7 @@ export function TableMatchPage() {
       onRefresh={handleRefresh}
       onToggleOwnReady={() => void readyAction.handleToggleOwnReady()}
       onAdvanceRound={handleAdvanceRound}
+      onConfirmFinalSettlement={handleConfirmFinalSettlement}
       onSubmitMahjongAction={(action) => void mahjongState.submitAction(action)}
     />
   );

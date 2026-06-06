@@ -11,6 +11,7 @@ import {
 import { CenterTable, RoundPicker } from './components/CenterTable';
 import { ExhaustiveDrawStatusMarkers } from './components/PaifuOverlays/ExhaustiveDrawStatusMarkers';
 import { OperationFlash } from './components/PaifuOverlays/OperationFlash';
+import { PaifuFinalSettlementOverlay } from './components/PaifuOverlays/PaifuFinalSettlementOverlay';
 import { WinningCallFlash } from './components/PaifuOverlays/WinningCallFlash';
 import { WinningResultOverlay } from './components/PaifuOverlays/WinningResultOverlay';
 import { PlayerHand } from './components/PlayerAreas/PlayerHand';
@@ -46,6 +47,7 @@ export function PaifuHandTable({
     getInitialPerspectiveSeat(paifu, viewerPlayerId),
   );
   const [isRelativeScoreMode, setIsRelativeScoreMode] = useState(false);
+  const [isFinalSettlementOpen, setIsFinalSettlementOpen] = useState(false);
 
   useEffect(() => {
     setPerspectiveSeat(getInitialPerspectiveSeat(paifu, viewerPlayerId));
@@ -141,6 +143,10 @@ export function PaifuHandTable({
 
         {replay.isRoundPickerOpen ? (
           <RoundPicker
+            onOpenSettlement={() => {
+              replay.setIsRoundPickerOpen(false);
+              setIsFinalSettlementOpen(true);
+            }}
             onSelectRound={(index) => {
               onSelectRound(index);
               replay.setIsRoundPickerOpen(false);
@@ -206,6 +212,15 @@ export function PaifuHandTable({
             replaySnapshot={replay.replaySnapshot}
             replayStep={replay.replayStep}
             round={round}
+          />
+        ) : null}
+        {isFinalSettlementOpen ? (
+          <PaifuFinalSettlementOverlay
+            onConfirm={() => {
+              setIsFinalSettlementOpen(false);
+              onSelectRound(0);
+            }}
+            paifu={paifu}
           />
         ) : null}
       </div>

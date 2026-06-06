@@ -2,12 +2,14 @@ import type { PaifuRoundSummary } from '../../../../types';
 import { getRoundTitle } from '../../../../functions/getReplay';
 
 interface RoundPickerProps {
+  onOpenSettlement?: () => void;
   onSelectRound: (index: number) => void;
   rounds: PaifuRoundSummary[];
   selectedRoundIndex: number;
 }
 
 export function RoundPicker({
+  onOpenSettlement,
   onSelectRound,
   rounds,
   selectedRoundIndex,
@@ -29,6 +31,15 @@ export function RoundPicker({
           {getRoundTitle(item)}
         </button>
       ))}
+      {onOpenSettlement ? (
+        <button
+          className="mt-1 w-full rounded-2xl border border-[rgba(176,223,229,0.14)] bg-[rgba(255,255,255,0.03)] px-4 py-2 text-center text-sm text-[#c7d6e2] transition-[border-color,background-color,color] duration-200 hover:border-[rgba(114,216,209,0.32)] hover:text-[#f2f7fb]"
+          onClick={onOpenSettlement}
+          type="button"
+        >
+          查看结算
+        </button>
+      ) : null}
     </div>
   );
 }

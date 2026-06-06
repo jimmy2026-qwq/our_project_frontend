@@ -19,6 +19,7 @@ interface TableMatchSectionProps {
   isMahjongRefreshing: boolean;
   isMahjongLoading: boolean;
   mahjongError: string | null;
+  finalSettlementTable: MahjongTableView | null;
   mahjongTable: MahjongTableView | null;
   mahjongAcceptedEvent: MahjongPublicEventView | null;
   playerNames: Record<string, string>;
@@ -32,6 +33,7 @@ interface TableMatchSectionProps {
   onRefresh: () => void;
   onToggleOwnReady: () => void;
   onAdvanceRound: () => void;
+  onConfirmFinalSettlement: () => void;
   onSubmitMahjongAction: (action: MahjongLegalAction) => void;
 }
 
@@ -44,6 +46,7 @@ export function TableMatchSection({
   isMahjongRefreshing,
   isMahjongLoading,
   mahjongError,
+  finalSettlementTable,
   mahjongTable,
   mahjongAcceptedEvent,
   playerNames,
@@ -57,6 +60,7 @@ export function TableMatchSection({
   onRefresh,
   onToggleOwnReady,
   onAdvanceRound,
+  onConfirmFinalSettlement,
   onSubmitMahjongAction,
 }: TableMatchSectionProps) {
   const shouldShowMatchBoard = Boolean(mahjongTable?.currentRound);
@@ -77,9 +81,11 @@ export function TableMatchSection({
       {shouldShowMatchBoard && mahjongTable ? (
         <MatchBoard
           actionError={mahjongActionError}
+          finalSettlementTable={finalSettlementTable}
           isSubmittingAction={isSubmittingMahjongAction}
           mahjongTable={mahjongTable}
           mahjongAcceptedEvent={mahjongAcceptedEvent}
+          onConfirmFinalSettlement={onConfirmFinalSettlement}
           onAdvanceRound={onAdvanceRound}
           onSubmitAction={onSubmitMahjongAction}
           operatorId={operatorId}

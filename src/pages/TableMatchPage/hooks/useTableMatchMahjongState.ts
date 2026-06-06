@@ -41,7 +41,10 @@ export function useTableMatchMahjongState({
   const [actionError, setActionError] = useState<string | null>(null);
   const [acceptedEvent, setAcceptedEvent] =
     useState<MahjongPublicEventView | null>(null);
+  const [finalSettlementTable, setFinalSettlementTable] =
+    useState<MahjongTableView | null>(null);
   const lastSeenEventSequenceNoRef = useRef(0);
+  const previousTableRef = useRef<MahjongTableView | null>(null);
   const [reloadKey, reload] = useReducer((value) => value + 1, 0);
 
   useEffect(() => {
@@ -78,6 +81,10 @@ export function useTableMatchMahjongState({
           }
 
           lastSeenEventSequenceNoRef.current = nextSequenceNo;
+          if (shouldOpenFinalSettlement(previousTableRef.current, payload)) {
+            setFinalSettlementTable(payload);
+          }
+          previousTableRef.current = payload;
           setMahjongTable(payload);
         }
       } catch (loadError) {
@@ -142,6 +149,7 @@ export function useTableMatchMahjongState({
         setAcceptedEvent(response.acceptedEvent);
         lastSeenEventSequenceNoRef.current =
           response.table.lastEventSequenceNo ?? lastSeenEventSequenceNoRef.current;
+        previousTableRef.current = response.table;
         setMahjongTable(response.table);
       } catch (submitError) {
         setActionError(getMahjongErrorMessage(submitError));
@@ -172,8 +180,14 @@ export function useTableMatchMahjongState({
       setActionError(null);
 
       const response = await sendAPI<MahjongTableView>(
-        new MahjongCoreAdvanceRoundAPI(tableId, { showcaseMode }),
+        new MahjongCoreAdvanceRoundAPI(tableId, {
+          playerId: viewerPlayerId || null,
+          showcaseMode,
+        }),
       );
+      if (response.status === 'Finished') {
+        setFinalSettlementTable(response);
+      }
       const resolvedTable =
         response.status === 'Finished'
           ? (
@@ -186,6 +200,7 @@ export function useTableMatchMahjongState({
           : response;
 
       if (!operatorId && !viewerPlayerId) {
+        previousTableRef.current = resolvedTable;
         setMahjongTable(resolvedTable);
         return;
       }
@@ -196,6 +211,7 @@ export function useTableMatchMahjongState({
           createMahjongTableQuery({ operatorId, viewerPlayerId }),
         ),
       );
+      previousTableRef.current = viewerTable;
       setMahjongTable(viewerTable);
     } catch (advanceError) {
       setActionError(getMahjongErrorMessage(advanceError));
@@ -208,7 +224,9 @@ export function useTableMatchMahjongState({
   return {
     advanceRound,
     actionError,
+    clearFinalSettlement: () => setFinalSettlementTable(null),
     error,
+    finalSettlementTable,
     isLoading,
     isRefreshing,
     isSubmittingAction,
@@ -217,6 +235,17 @@ export function useTableMatchMahjongState({
     reload,
     submitAction,
   };
+}
+
+function shouldOpenFinalSettlement(
+  previous: MahjongTableView | null,
+  next: MahjongTableView,
+) {
+  if (!previous || !next.currentRound?.result) {
+    return false;
+  }
+
+  return isTerminalMahjongStatus(next.status) && !isTerminalMahjongStatus(previous.status);
 }
 
 function getAcceptedEventFlashDurationMs(event: MahjongPublicEventView) {
@@ -252,6 +281,10 @@ function isLiveMahjongStatus(status: MahjongTableView['status']) {
     status === 'WaitingCallDecision' ||
     status === 'RoundEnded'
   );
+}
+
+function isTerminalMahjongStatus(status: MahjongTableView['status']) {
+  return status === 'Finished' || status === 'Archived';
 }
 
 function createIdempotencyKey() {
