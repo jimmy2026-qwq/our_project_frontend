@@ -186,12 +186,20 @@ test.describe('RiichiNexus browser UI smoke checks', () => {
     await expect(page.getByText('家庭纪念日大赛')).toBeVisible();
     await page.getByRole('button', { name: '规则说明' }).click();
     await expect(page.getByText('当前阶段规则')).toBeVisible();
-    await expect(page.getByText(/牌局长度：/)).toBeVisible();
-    await expect(page.getByText(/初始点数：/)).toBeVisible();
-    await expect(page.getByText(/返还点\/目标点：/)).toBeVisible();
-    await expect(page.getByText(/赤宝牌：/)).toBeVisible();
-    await expect(page.getByText(/食断：/)).toBeVisible();
-    await expect(page.getByText(/双响：/)).toBeVisible();
+    await page.getByRole('button', { name: '查看规则细节' }).click();
+    const rulesDialog = page.getByRole('dialog');
+    await expect(rulesDialog.getByText('规则细节')).toBeVisible();
+    await expect(rulesDialog.getByText('牌局长度')).toBeVisible();
+    await expect(rulesDialog.getByRole('button', { name: '一局战' })).toBeVisible();
+    await expect(rulesDialog.getByRole('button', { name: '东风战' })).toBeVisible();
+    await expect(rulesDialog.getByRole('button', { name: '半庄战' })).toBeVisible();
+    await expect(rulesDialog.getByText('初始点数')).toBeVisible();
+    await expect(rulesDialog.getByText('一位必要点数')).toBeVisible();
+    await expect(rulesDialog.getByText('赤宝牌', { exact: true })).toBeVisible();
+    await expect(rulesDialog.getByText('食断')).toBeVisible();
+    await expect(rulesDialog.getByText('双响')).toBeVisible();
+    await page.getByRole('button', { name: '关闭' }).click();
+    await expect(rulesDialog).toHaveCount(0);
 
     await page.getByRole('button', { name: '牌桌' }).click();
     await expect(page.getByRole('link', { name: /进入牌桌|查看牌谱/ }).first()).toBeVisible();

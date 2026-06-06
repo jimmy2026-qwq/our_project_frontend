@@ -235,4 +235,107 @@ describe('TablePaifuPage data api integration', () => {
       ],
     });
   });
+
+  it('falls back to player ids when optional enrichment calls fail', async () => {
+    sendAPIMock.mockResolvedValueOnce({
+      appliedFilters: { tableId: 'table-2' },
+      hasMore: false,
+      items: [
+        {
+          paifuId: 'paifu-2',
+          playerIds: ['player-east', 'player-south'],
+          recordedAt: '2026-05-22T10:00:00Z',
+          source: 'manual',
+          tableId: 'table-2',
+          totalHands: 1,
+        },
+      ],
+      limit: 20,
+      offset: 0,
+      total: 1,
+    })
+      .mockResolvedValueOnce({
+        finalStandings: [
+          {
+            finalPoints: 27000,
+            placement: 1,
+            playerId: 'player-east',
+            seat: 'East',
+          },
+        ],
+        metadata: {
+          recordedAt: '2026-05-22T10:00:00Z',
+          seats: [
+            {
+              disconnected: false,
+              initialPoints: 25000,
+              playerId: 'player-east',
+              ready: true,
+              seat: 'East',
+            },
+            {
+              disconnected: false,
+              initialPoints: 25000,
+              playerId: 'player-south',
+              ready: true,
+              seat: 'South',
+            },
+          ],
+          source: 'manual',
+          stageId: '',
+          tableId: 'table-2',
+          tournamentId: '',
+        },
+        paifuId: 'paifu-2',
+        recordedAt: '2026-05-22T10:00:00Z',
+        rounds: [
+          {
+            actions: [
+              {
+                actionType: 'Discard',
+                actor: 'player-south',
+                revealedTiles: ['2m'],
+                sequenceNo: 1,
+                tile: '2m',
+              },
+            ],
+            descriptor: { handNumber: 1, honba: 0, roundWind: 'East' },
+            initialHands: {
+              'player-east': ['1m', '1m'],
+              'player-south': ['2m', '2m'],
+            },
+            result: {
+              outcome: 'ExhaustiveDraw',
+              scoreChanges: [
+                { delta: 0, playerId: 'player-east' },
+                { delta: 0, playerId: 'player-south' },
+              ],
+              tenpaiPlayerIds: ['player-east'],
+              yaku: [],
+            },
+          },
+        ],
+        tableId: 'table-2',
+      })
+      .mockRejectedValueOnce(new Error('player lookup unavailable'))
+      .mockResolvedValueOnce({
+        nickname: 'South Player',
+        playerId: 'player-south',
+      });
+
+    const result = await loadTablePaifus('table-2');
+
+    expect(sendAPIMock).toHaveBeenCalledTimes(4);
+    expect(result.items[0].metadata).toMatchObject({
+      playerNames: {
+        'player-east': 'player-east',
+        'player-south': 'South Player',
+      },
+      tableId: 'table-2',
+    });
+    expect(result.items[0].metadata.tournamentName).toBeUndefined();
+    expect(result.items[0].rounds[0].result.tenpaiPlayerIds).toEqual([
+      'player-east',
+    ]);
+  });
 });

@@ -131,6 +131,26 @@ describe('TablePaifuPage replay core', () => {
     expect(isExhaustiveDrawResultStep(round, 3)).toBe(true);
   });
 
+  it('keeps sequence limits stable when a round has no replayable actions', () => {
+    expect(
+      getReplaySequenceLimit(
+        {
+          ...round,
+          actions: [
+            {
+              sequenceNo: 1,
+              actor: 'east',
+              actionType: 'Draw',
+              tile: '4m',
+              revealedTiles: [],
+            },
+          ],
+        },
+        1,
+      ),
+    ).toBe(0);
+  });
+
   it('derives visible dora indicators and remaining wall count by replay step', () => {
     expect(getDoraIndicators(round, 0)).toEqual([]);
     expect(getDoraIndicators(round, 1)).toEqual(['5z']);
