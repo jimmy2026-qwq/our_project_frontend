@@ -22,6 +22,7 @@ interface TableMatchSectionProps {
   mahjongTable: MahjongTableView | null;
   mahjongAcceptedEvent: MahjongPublicEventView | null;
   playerNames: Record<string, string>;
+  showcaseMode: boolean;
   isRegisteredPlayer: boolean;
   operatorId: string;
   canUpdateOwnReady: boolean;
@@ -46,6 +47,7 @@ export function TableMatchSection({
   mahjongTable,
   mahjongAcceptedEvent,
   playerNames,
+  showcaseMode,
   isRegisteredPlayer,
   operatorId,
   canUpdateOwnReady,
@@ -75,7 +77,6 @@ export function TableMatchSection({
       {shouldShowMatchBoard && mahjongTable ? (
         <MatchBoard
           actionError={mahjongActionError}
-          isRefreshing={isMahjongRefreshing}
           isSubmittingAction={isSubmittingMahjongAction}
           mahjongTable={mahjongTable}
           mahjongAcceptedEvent={mahjongAcceptedEvent}
@@ -83,6 +84,7 @@ export function TableMatchSection({
           onSubmitAction={onSubmitMahjongAction}
           operatorId={operatorId}
           playerNames={playerNames}
+          showcaseMode={showcaseMode}
           table={table}
         />
       ) : (

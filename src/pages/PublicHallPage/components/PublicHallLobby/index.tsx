@@ -5,6 +5,7 @@ import {
   PublicHallLobbyMenu,
   type PublicHallLobbyEntry,
 } from './PublicHallLobbyMenu';
+import { ShowcaseModeToggle } from '@/app/ShowcaseModeToggle';
 import { PublicHallPlayerCard } from './PublicHallPlayerCard';
 import { lobbyClassNames } from './styles';
 
@@ -30,6 +31,7 @@ export function PublicHallLobby({
   return (
     <section className={lobbyClassNames.portal}>
       <span className={lobbyClassNames.glow} aria-hidden="true" />
+      <ShowcaseModeToggle />
       <PublicHallPlayerCard
         displayName={displayName}
         eloText={eloText}

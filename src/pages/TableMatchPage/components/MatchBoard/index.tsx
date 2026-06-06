@@ -40,7 +40,6 @@ const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
 interface MatchBoardProps {
   actionError: string | null;
-  isRefreshing: boolean;
   isSubmittingAction: boolean;
   mahjongAcceptedEvent: MahjongPublicEventView | null;
   mahjongTable: MahjongTableView;
@@ -48,12 +47,12 @@ interface MatchBoardProps {
   onSubmitAction: (action: MahjongLegalAction) => void;
   operatorId: string;
   playerNames: Record<string, string>;
+  showcaseMode: boolean;
   table: TableDetail;
 }
 
 export function MatchBoard({
   actionError,
-  isRefreshing,
   isSubmittingAction,
   mahjongAcceptedEvent,
   mahjongTable,
@@ -61,6 +60,7 @@ export function MatchBoard({
   onSubmitAction,
   operatorId,
   playerNames,
+  showcaseMode,
   table,
 }: MatchBoardProps) {
   useMahjongTileImagePreload();
@@ -326,6 +326,11 @@ export function MatchBoard({
           className="absolute left-1/2 top-1/2 h-[260px] w-[260px] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(236,197,122,0.22)] bg-[radial-gradient(circle,rgba(236,197,122,0.24),transparent_62%)] opacity-80"
         />
         <div className="absolute right-5 top-5 z-[15] grid max-w-[min(28rem,calc(100%-2.5rem))] justify-items-end gap-1 rounded-2xl border border-[rgba(176,223,229,0.18)] bg-[rgba(7,18,28,0.72)] px-4 py-3 text-right shadow-[0_12px_32px_rgba(0,0,0,0.28)] backdrop-blur">
+          {showcaseMode ? (
+            <span className="rounded-full border border-[rgba(242,247,251,0.42)] bg-[rgba(242,247,251,0.12)] px-2 py-0.5 text-[0.68rem] font-bold text-[#f2f7fb]">
+              展示模式
+            </span>
+          ) : null}
           <strong className="max-w-full truncate text-sm text-[#f2f7fb]">
             赛事桌 {String(table.tableNo).padStart(2, '0')}
           </strong>
@@ -334,7 +339,6 @@ export function MatchBoard({
             className="max-w-full truncate text-xs font-semibold text-[#c7d6e2]"
           >
             {table.stageId} / v{mahjongTable.version}
-            {isRefreshing ? ' / 同步中' : ''}
           </span>
         </div>
 

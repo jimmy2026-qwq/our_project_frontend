@@ -1,8 +1,14 @@
 import { APIMessage } from '@/system/api';
-import type { MahjongTableView } from '@/objects';
+import type { AdvanceMahjongRoundRequest, MahjongTableView } from '@/objects';
 
 export class MahjongCoreAdvanceRoundAPI extends APIMessage<MahjongTableView> {
-  constructor(readonly tableId: string) {
+  readonly request?: AdvanceMahjongRoundRequest;
+
+  constructor(
+    readonly tableId: string,
+    request?: AdvanceMahjongRoundRequest,
+  ) {
     super();
+    this.request = request;
   }
 }

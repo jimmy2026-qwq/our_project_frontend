@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
+import { useShowcaseMode } from '@/app/showcaseMode';
 
 import {
   TableMatchError,
@@ -19,6 +20,7 @@ export function TableMatchPage() {
   const { tableId = '' } = useParams();
   const { session } = useAuth();
   const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
+  const [showcaseMode] = useShowcaseMode();
   const isRegisteredPlayer = !!session?.user.roles.isRegisteredPlayer;
   const {
     table,
@@ -41,6 +43,7 @@ export function TableMatchPage() {
   });
   const mahjongState = useTableMatchMahjongState({
     operatorId,
+    showcaseMode,
     tableId,
     viewerPlayerId: matchPlayerId,
   });
@@ -98,6 +101,7 @@ export function TableMatchPage() {
       mahjongTable={mahjongState.mahjongTable}
       mahjongAcceptedEvent={mahjongState.acceptedEvent}
       playerNames={playerNames}
+      showcaseMode={showcaseMode}
       isRegisteredPlayer={isRegisteredPlayer}
       operatorId={matchPlayerId}
       canUpdateOwnReady={canUpdateOwnReady}

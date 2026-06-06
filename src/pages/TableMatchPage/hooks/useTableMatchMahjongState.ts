@@ -20,12 +20,14 @@ const liveMahjongRefreshIntervalMs = 1000;
 
 interface UseTableMatchMahjongStateParams {
   operatorId: string;
+  showcaseMode: boolean;
   tableId: string;
   viewerPlayerId: string;
 }
 
 export function useTableMatchMahjongState({
   operatorId,
+  showcaseMode,
   tableId,
   viewerPlayerId,
 }: UseTableMatchMahjongStateParams) {
@@ -170,7 +172,7 @@ export function useTableMatchMahjongState({
       setActionError(null);
 
       const response = await sendAPI<MahjongTableView>(
-        new MahjongCoreAdvanceRoundAPI(tableId),
+        new MahjongCoreAdvanceRoundAPI(tableId, { showcaseMode }),
       );
       const resolvedTable =
         response.status === 'Finished'
@@ -201,7 +203,7 @@ export function useTableMatchMahjongState({
     } finally {
       setIsRefreshing(false);
     }
-  }, [operatorId, tableId, viewerPlayerId]);
+  }, [operatorId, showcaseMode, tableId, viewerPlayerId]);
 
   return {
     advanceRound,
