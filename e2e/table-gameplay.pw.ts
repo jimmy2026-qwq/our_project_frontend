@@ -15,6 +15,7 @@ const tableId = process.env.E2E_TABLE_ID ?? 'table-be548ec5';
 const tournamentId = process.env.E2E_TOURNAMENT_ID ?? 'tournament-3c30af19';
 const stageId = process.env.E2E_STAGE_ID ?? 'stage-3b6fc7a8';
 const larryClubId = process.env.E2E_CLUB_ID ?? 'club-6f2ba885';
+const superAdminPlayerId = 'player-661d4fcc';
 
 const players = [
   {
@@ -323,7 +324,13 @@ test('一局战点完结算会归档牌桌，并刷新个人和俱乐部看板',
     const archivedState = await waitForArchivedTable(request, resultState.version);
     expect(archivedState.status).toBe('Archived');
     await expectArchivedViewsForAllPlayers(request);
-    const archivedTable = await getTournamentTable(request);
+    const scoringTable = await getTournamentTable(request);
+
+    expect(scoringTable.status).toBe('Scoring');
+    expect(scoringTable.matchRecordId).toEqual(expect.stringMatching(/^record-/));
+    expect(scoringTable.paifuId).toEqual(expect.stringMatching(/^paifu-/));
+
+    const archivedTable = await finalizeTournamentTable(request);
     const archivedMatchRecordId = archivedTable.matchRecordId;
     const archivedPaifuId = archivedTable.paifuId;
 
@@ -737,6 +744,17 @@ async function getTournamentTable(request: APIRequestContext) {
   return postApi<TournamentTableView>(request, 'tournamenttablegetapi', {
     tableId,
   });
+}
+
+async function finalizeTournamentTable(request: APIRequestContext) {
+  return postApi<TournamentTableView>(
+    request,
+    'tournamenttablefinalizearchiveapi',
+    {
+      tableId,
+      operatorId: superAdminPlayerId,
+    },
+  );
 }
 
 async function getTablePaifuList(request: APIRequestContext) {

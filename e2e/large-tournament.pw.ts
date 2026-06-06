@@ -21,6 +21,7 @@ const initialPoints = 25000;
 const ronPoints = 12000;
 const roundCount = Number(process.env.E2E_LARGE_ROUND_COUNT ?? 4);
 const tablesPerRound = playerCount / 4;
+const superAdminPlayerId = 'player-661d4fcc';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -98,7 +99,7 @@ test('64 人 8 俱乐部完整瑞士赛可以打满 4 轮、归档牌谱，并�
     for (const [index, table] of startedTables.entries()) {
       const globalTableIndex = (roundNumber - 1) * tablesPerRound + index;
       const paifu = buildRonPaifu(table, globalTableIndex);
-      const archivedTable = await postApi<TournamentTableView>(
+      const scoringTable = await postApi<TournamentTableView>(
         request,
         'tournamenttableuploadpaifuapi',
         {
@@ -109,7 +110,14 @@ test('64 人 8 俱乐部完整瑞士赛可以打满 4 轮、归档牌谱，并�
           },
         },
       );
+      const archivedTable = await finalizeTournamentTable(
+        request,
+        scoringTable,
+      );
 
+      expect(scoringTable.status).toBe('Scoring');
+      expect(scoringTable.matchRecordId).toEqual(expect.stringMatching(/^record-/));
+      expect(scoringTable.paifuId).toEqual(expect.stringMatching(/^paifu-/));
       expect(archivedTable.status).toBe('Archived');
       expect(archivedTable.matchRecordId).toEqual(expect.stringMatching(/^record-/));
       expect(archivedTable.paifuId).toEqual(expect.stringMatching(/^paifu-/));
@@ -289,6 +297,20 @@ async function getStageTables(
         limit: 100,
         offset: 0,
       },
+    },
+  );
+}
+
+async function finalizeTournamentTable(
+  request: APIRequestContext,
+  table: TournamentTableView,
+) {
+  return postApi<TournamentTableView>(
+    request,
+    'tournamenttablefinalizearchiveapi',
+    {
+      tableId: table.tableId,
+      operatorId: superAdminPlayerId,
     },
   );
 }

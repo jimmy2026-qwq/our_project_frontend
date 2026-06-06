@@ -249,12 +249,9 @@ test.describe('RiichiNexus browser UI smoke checks', () => {
     await expect(page.getByText("larry's club")).toBeVisible();
     await page.getByRole('button', { name: /赛事大厅/ }).click();
     await expect(page.getByRole('heading', { name: '公开赛程' })).toBeVisible();
-    await expect(
-      page
-        .getByText('家庭纪念日大赛')
-        .first()
-        .or(page.getByText('当前没有可展示的公开赛程。')),
-    ).toBeVisible();
+    await expect(page.getByLabel('赛事状态')).toBeVisible();
+    await expect(page.getByLabel('赛事阶段')).toBeVisible();
+    await expectNoCriticalText(page);
     await page.getByRole('button', { name: '刷新' }).first().click();
     await expect(page.getByText('公共大厅已刷新')).toBeVisible();
 
