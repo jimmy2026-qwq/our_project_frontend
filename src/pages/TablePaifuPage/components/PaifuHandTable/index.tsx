@@ -14,6 +14,7 @@ import { OperationFlash } from './components/PaifuOverlays/OperationFlash';
 import { PaifuFinalSettlementOverlay } from './components/PaifuOverlays/PaifuFinalSettlementOverlay';
 import { WinningCallFlash } from './components/PaifuOverlays/WinningCallFlash';
 import { WinningResultOverlay } from './components/PaifuOverlays/WinningResultOverlay';
+import { YakumanTileBurstOverlay } from './components/PaifuOverlays/YakumanTileBurstOverlay';
 import { PlayerHand } from './components/PlayerAreas/PlayerHand';
 import { PlayerMelds } from './components/PlayerAreas/PlayerMelds';
 import { PlayerRiver } from './components/PlayerAreas/PlayerRiver';
@@ -138,6 +139,9 @@ export function PaifuHandTable({
           <>
             <OperationFlash operation={replay.activeOperation} />
             <WinningCallFlash flash={replay.activeWinningCall} />
+            <YakumanTileBurstOverlay
+              burst={replay.activeYakumanTileBurst}
+            />
           </>
         )}
 

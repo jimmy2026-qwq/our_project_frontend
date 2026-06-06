@@ -101,6 +101,7 @@ export function usePaifuHandTableReplay({
   return {
     activeOperation: operation.activeOperation,
     activeWinningCall: operation.activeWinningCall,
+    activeYakumanTileBurst: operation.activeYakumanTileBurst,
     isExhaustiveDrawResult,
     isRoundPickerOpen,
     maxReplayStep,

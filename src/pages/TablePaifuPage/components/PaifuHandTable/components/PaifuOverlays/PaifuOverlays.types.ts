@@ -1,4 +1,5 @@
 import type { SeatWind } from '@/objects/tournament';
+import type { MahjongYakuKind } from '@/objects';
 
 export type ActiveOperation = {
   key: number | string;
@@ -11,4 +12,12 @@ export type WinningCallFlashView = {
   key: number | string;
   label: string;
   seat: SeatWind;
+  variant?: 'riichi' | 'win';
+};
+
+export type YakumanTileBurstView = {
+  featuredTile?: string;
+  key: number | string;
+  tiles: string[];
+  yakuKind: MahjongYakuKind;
 };

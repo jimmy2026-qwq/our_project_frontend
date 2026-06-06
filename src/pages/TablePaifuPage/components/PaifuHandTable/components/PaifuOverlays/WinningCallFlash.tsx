@@ -20,6 +20,8 @@ export function WinningCallFlash({
     return null;
   }
 
+  const isRiichi = flash.variant === 'riichi';
+
   return (
     <>
       <style>{`
@@ -42,8 +44,11 @@ export function WinningCallFlash({
       <div
         key={flash.key}
         className={[
-          'pointer-events-none absolute z-[18] grid h-[118px] w-[118px] place-items-center rounded-full border-[7px] border-[rgba(236,72,80,0.9)] bg-[rgba(184,31,42,0.32)] text-center font-black leading-none text-white shadow-[0_0_44px_rgba(236,72,80,0.5),inset_0_0_18px_rgba(255,255,255,0.15)] [text-shadow:0_3px_12px_rgba(0,0,0,0.62)]',
-          flash.label.length > 1 ? 'text-[2.35rem]' : 'text-[3.2rem]',
+          'pointer-events-none absolute z-[18] grid place-items-center rounded-full text-center font-black leading-none text-white [text-shadow:0_3px_12px_rgba(0,0,0,0.62)]',
+          isRiichi
+            ? 'h-[92px] w-[92px] border-[5px] border-[rgba(251,146,60,0.94)] bg-[rgba(234,88,12,0.34)] shadow-[0_0_34px_rgba(251,146,60,0.48),inset_0_0_14px_rgba(255,255,255,0.16)]'
+            : 'h-[118px] w-[118px] border-[7px] border-[rgba(236,72,80,0.9)] bg-[rgba(184,31,42,0.32)] shadow-[0_0_44px_rgba(236,72,80,0.5),inset_0_0_18px_rgba(255,255,255,0.15)]',
+          getCallFlashTextClass(flash.label, isRiichi),
           winningCallPositionClasses[flash.seat],
         ].join(' ')}
         style={{
@@ -54,4 +59,12 @@ export function WinningCallFlash({
       </div>
     </>
   );
+}
+
+function getCallFlashTextClass(label: string, isRiichi: boolean) {
+  if (isRiichi) {
+    return label.length > 2 ? 'text-[1.45rem]' : 'text-[2rem]';
+  }
+
+  return label.length > 1 ? 'text-[2.35rem]' : 'text-[3.2rem]';
 }

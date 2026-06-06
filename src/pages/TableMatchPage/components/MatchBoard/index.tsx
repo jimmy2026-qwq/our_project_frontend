@@ -13,9 +13,11 @@ import {
   settlementAnimationDurationMs,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuHandTableReplay';
 import {
+  getWinYaku,
   getResultWins,
   isWinOutcome,
 } from '@/pages/shared/mahjongResultSequence';
+import { getFirstYakumanYaku } from '@/pages/shared/yakumanAnimation';
 import { useMahjongTileImagePreload } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileImagePreload';
 import type {
   MeldGroup,
@@ -25,9 +27,11 @@ import { PlayerRiver } from '@/pages/TablePaifuPage/components/PaifuHandTable/co
 import { OperationFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/OperationFlash';
 import type {
   ActiveOperation,
+  YakumanTileBurstView,
   WinningCallFlashView,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/PaifuOverlays.types';
 import { WinningCallFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/WinningCallFlash';
+import { YakumanTileBurstOverlay } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/YakumanTileBurstOverlay';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
 
 import { MatchActionBar } from './MatchActionBar';
@@ -101,6 +105,8 @@ export function MatchBoard({
   >(null);
   const [resultWinningCallRemovedKey, setResultWinningCallRemovedKey] =
     useState<string | null>(null);
+  const [resultYakumanBurstActiveKey, setResultYakumanBurstActiveKey] =
+    useState<string | null>(null);
   const [delayedTurnActionKey, setDelayedTurnActionKey] = useState<
     string | null
   >(null);
@@ -127,8 +133,7 @@ export function MatchBoard({
       resultKey &&
       (!winResultNeedsSequence || resultOverlayReadyKey === resultKey) &&
       resultSequenceCompletedKey !== resultKey &&
-      settlementAnimatingKey !== resultKey &&
-      !finalSettlementTable,
+      settlementAnimatingKey !== resultKey,
   );
   const scoreDisplays = useMemo(
     () =>
@@ -139,8 +144,16 @@ export function MatchBoard({
       }),
     [mahjongTable.currentRound?.result, seatMap, settlementProgress],
   );
+  const terminalSettlementTable =
+    finalSettlementTable ??
+    (mahjongTable.status === 'Finished' || mahjongTable.status === 'Archived'
+      ? mahjongTable
+      : null);
   const canAdvanceAfterSettlement =
-    table.status !== 'Archived' && mahjongTable.status !== 'Archived';
+    !terminalSettlementTable &&
+    table.status !== 'Archived' &&
+    mahjongTable.status !== 'Archived' &&
+    mahjongTable.status !== 'Finished';
   const scoreStepActionLabel =
     table.status === 'Archived' || mahjongTable.status === 'Archived'
       ? '关闭结算'
@@ -196,6 +209,30 @@ export function MatchBoard({
       resultKey,
       resultWinningCallRemovedKey,
       seatRotation,
+      seats,
+    ],
+  );
+  const riichiCallFlash = useMemo(
+    () =>
+      createMatchRiichiCallFlash({
+        event: mahjongAcceptedEvent,
+        seatRotation,
+        seats,
+      }),
+    [mahjongAcceptedEvent, seatRotation, seats],
+  );
+  const yakumanTileBurst = useMemo(
+    () =>
+      createMatchYakumanTileBurst({
+        result: mahjongTable.currentRound?.result ?? null,
+        resultKey,
+        resultYakumanBurstActiveKey,
+        seats,
+      }),
+    [
+      mahjongTable.currentRound?.result,
+      resultKey,
+      resultYakumanBurstActiveKey,
       seats,
     ],
   );
@@ -271,6 +308,7 @@ export function MatchBoard({
       setResultHandRevealReadyKey(null);
       setResultOverlayReadyKey(null);
       setResultWinningCallRemovedKey(null);
+      setResultYakumanBurstActiveKey(null);
       setSettlementProgress(undefined);
       advanceStartedKeyRef.current = null;
       return;
@@ -281,6 +319,7 @@ export function MatchBoard({
     setResultHandRevealReadyKey(null);
     setResultOverlayReadyKey(null);
     setResultWinningCallRemovedKey(null);
+    setResultYakumanBurstActiveKey(null);
     setSettlementProgress(undefined);
   }, [resultKey]);
 
@@ -289,24 +328,55 @@ export function MatchBoard({
       setResultHandRevealReadyKey(resultKey);
       setResultOverlayReadyKey(resultKey);
       setResultWinningCallRemovedKey(resultKey);
+      setResultYakumanBurstActiveKey(null);
       return;
     }
+
+    const hasYakumanBurst = Boolean(
+      createMatchYakumanTileBurstData({
+        result: mahjongTable.currentRound?.result ?? null,
+        seats,
+      }),
+    );
 
     setResultHandRevealReadyKey(resultKey);
     setResultOverlayReadyKey(null);
     setResultWinningCallRemovedKey(null);
+    setResultYakumanBurstActiveKey(null);
     const flashTimer = window.setTimeout(() => {
       setResultWinningCallRemovedKey(resultKey);
     }, winningCallVisibleMs);
+    const yakumanBurstStartTimer = hasYakumanBurst
+      ? window.setTimeout(() => {
+          setResultYakumanBurstActiveKey(resultKey);
+        }, winningCallVisibleMs)
+      : undefined;
+    const yakumanBurstEndTimer = hasYakumanBurst
+      ? window.setTimeout(() => {
+          setResultYakumanBurstActiveKey((currentKey) =>
+            currentKey === resultKey ? null : currentKey,
+          );
+        }, winningCallVisibleMs + yakumanTileBurstVisibleMs)
+      : undefined;
     const overlayTimer = window.setTimeout(() => {
       setResultOverlayReadyKey(resultKey);
-    }, resultRevealDelayMs);
+    }, hasYakumanBurst
+      ? winningCallVisibleMs +
+          yakumanTileBurstVisibleMs +
+          yakumanTileBurstSettleDelayMs
+      : resultRevealDelayMs);
 
     return () => {
       window.clearTimeout(flashTimer);
+      if (yakumanBurstStartTimer) {
+        window.clearTimeout(yakumanBurstStartTimer);
+      }
+      if (yakumanBurstEndTimer) {
+        window.clearTimeout(yakumanBurstEndTimer);
+      }
       window.clearTimeout(overlayTimer);
     };
-  }, [resultKey, winResultNeedsSequence]);
+  }, [mahjongTable.currentRound?.result, resultKey, seats, winResultNeedsSequence]);
 
   useEffect(() => {
     if (!resultKey) {
@@ -412,10 +482,13 @@ export function MatchBoard({
         <MatchMeldArea melds={melds} />
         <OperationFlash
           operation={
-            winningCallFlash || winResultNeedsSequence ? undefined : activeOperation
+            winningCallFlash || riichiCallFlash || winResultNeedsSequence
+              ? undefined
+              : activeOperation
           }
         />
-        <WinningCallFlash flash={winningCallFlash} />
+        <WinningCallFlash flash={winningCallFlash ?? riichiCallFlash} />
+        <YakumanTileBurstOverlay burst={yakumanTileBurst} />
         {seatOrder.map((seat) => (
           <MatchPlayerHand
             key={seat}
@@ -483,9 +556,9 @@ export function MatchBoard({
             seats={seats}
           />
         ) : null}
-        {finalSettlementTable && !isLocalSettlementDisplayActive ? (
+        {terminalSettlementTable && !isLocalSettlementDisplayActive ? (
           <FinalSettlementOverlay
-            mahjongTable={finalSettlementTable}
+            mahjongTable={terminalSettlementTable}
             onConfirm={onConfirmFinalSettlement}
             playerNames={playerNames}
           />
@@ -500,6 +573,8 @@ const winningCallAnimationMs = 500;
 const winningCallVisibleMs = 1500;
 const winningCallSettlementWaitMs = 1500;
 const resultRevealDelayMs = winningCallAnimationMs + winningCallSettlementWaitMs;
+const yakumanTileBurstVisibleMs = 4200;
+const yakumanTileBurstSettleDelayMs = 500;
 const callMaskDelayMinMs = 650;
 const callMaskDelayRangeMs = 1350;
 
@@ -741,6 +816,145 @@ function createMatchWinningCallFlash({
   };
 }
 
+function createMatchRiichiCallFlash({
+  event,
+  seatRotation,
+  seats,
+}: {
+  event: MahjongPublicEventView | null;
+  seatRotation: Record<SeatWind, SeatWind>;
+  seats: MahjongSeatView[];
+}): WinningCallFlashView | undefined {
+  if (event?.actionType !== 'Riichi' || !event.actor) {
+    return undefined;
+  }
+
+  const seat = seats.find((seatView) => seatView.playerId === event.actor)?.seat;
+
+  if (!seat) {
+    return undefined;
+  }
+
+  return {
+    animationMs: winningCallAnimationMs,
+    key: event.sequenceNo,
+    label: getRiichiCallLabel(event.note),
+    seat: seatRotation[seat],
+    variant: 'riichi',
+  };
+}
+
+function createMatchYakumanTileBurst({
+  result,
+  resultKey,
+  resultYakumanBurstActiveKey,
+  seats,
+}: {
+  result: AgariResult | null;
+  resultKey: string | null;
+  resultYakumanBurstActiveKey: string | null;
+  seats: MahjongSeatView[];
+}): YakumanTileBurstView | undefined {
+  if (!resultKey || resultYakumanBurstActiveKey !== resultKey) {
+    return undefined;
+  }
+
+  const burst = createMatchYakumanTileBurstData({ result, seats });
+
+  if (!burst) {
+    return undefined;
+  }
+
+  return {
+    key: resultKey,
+    ...burst,
+  };
+}
+
+function createMatchYakumanTileBurstData({
+  result,
+  seats,
+}: {
+  result: AgariResult | null;
+  seats: MahjongSeatView[];
+}): Omit<YakumanTileBurstView, 'key'> | undefined {
+  if (!result || !isWinOutcome(result.outcome)) {
+    return undefined;
+  }
+
+  for (const win of getResultWins(result)) {
+    const yakumanYaku = getFirstYakumanYaku(getWinYaku(result, win));
+
+    if (!yakumanYaku) {
+      continue;
+    }
+
+    const winnerSeat = seats.find(
+      (seatView) => seatView.playerId === win.winner,
+    );
+    const targetSeat = win.target
+      ? seats.find((seatView) => seatView.playerId === win.target)
+      : result.target
+        ? seats.find((seatView) => seatView.playerId === result.target)
+        : undefined;
+    const featuredTile = getYakumanFeaturedTile({
+      result,
+      targetSeat,
+      winnerSeat,
+    });
+    const tiles = getYakumanBurstTiles({
+      featuredTile,
+      winnerSeat,
+    });
+
+    if (tiles.length === 0) {
+      return undefined;
+    }
+
+    return {
+      featuredTile,
+      tiles,
+      yakuKind: yakumanYaku.kind,
+    };
+  }
+
+  return undefined;
+}
+
+function getYakumanBurstTiles({
+  featuredTile,
+  winnerSeat,
+}: {
+  featuredTile?: string;
+  winnerSeat?: MahjongSeatView;
+}) {
+  const handTiles = winnerSeat?.handTiles ?? [];
+
+  return featuredTile
+    ? [featuredTile, ...removeFirstMatchingTile(handTiles, featuredTile)].slice(0, 14)
+    : handTiles.slice(0, 14);
+}
+
+function getYakumanFeaturedTile({
+  result,
+  targetSeat,
+  winnerSeat,
+}: {
+  result: AgariResult;
+  targetSeat?: MahjongSeatView;
+  winnerSeat?: MahjongSeatView;
+}) {
+  if (result.outcome === 'Tsumo') {
+    return winnerSeat?.drawTile ?? undefined;
+  }
+
+  if (result.outcome === 'Ron') {
+    return targetSeat?.river?.[targetSeat.river.length - 1]?.tile;
+  }
+
+  return undefined;
+}
+
 function shouldHideWinningHand({
   result,
   resultHandRevealReadyKey,
@@ -782,12 +996,21 @@ function getMatchOperationLabel(
     case 'AddedKan':
       return '杠';
     case 'Riichi':
-      return '立直';
+      return undefined;
     case 'Win':
       return result?.outcome === 'Tsumo' ? '自摸' : '荣';
     default:
       return undefined;
   }
+}
+
+function getRiichiCallLabel(note?: string | null) {
+  const normalizedNote = note ?? '';
+
+  return normalizedNote.toLowerCase().includes('double riichi') ||
+    normalizedNote.includes('两立直')
+    ? '两立直'
+    : '立直';
 }
 
 function createMatchScoreDisplays({

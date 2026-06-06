@@ -46,3 +46,7 @@ export function isAbortiveDrawAction(action?: PaifuAction) {
 export function isWinningAction(action?: PaifuAction) {
   return action?.actionType === 'Win';
 }
+
+export function isRiichiAction(action?: PaifuAction) {
+  return action?.actionType === 'Riichi';
+}

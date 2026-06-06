@@ -8,21 +8,35 @@ import type {
   TablePaifuDetail,
 } from '../../../types';
 import {
+  getResultWinForActor,
+  getWinYaku,
+} from '@/pages/shared/mahjongResultSequence';
+import { getFirstYakumanYaku } from '@/pages/shared/yakumanAnimation';
+
+import type { MahjongYakuKind } from '@/objects';
+
+import {
   getOperationText,
   getPlayerSeat,
   isAbortiveDrawAction,
+  isRiichiAction,
   isWinningAction,
+  removeFirstTile,
 } from '../../../functions/getReplay';
 import type {
   ActiveOperation,
+  YakumanTileBurstView,
   WinningCallFlashView,
 } from '../components/PaifuOverlays/PaifuOverlays.types';
 
 const winningCallAnimationMs = 500;
 const winningCallVisibleMs = 1500;
+const riichiCallVisibleMs = 1000;
 const winningCallSettlementWaitMs = 1500;
 const winningCallRevealDelayMs =
   winningCallAnimationMs + winningCallSettlementWaitMs;
+const yakumanTileBurstVisibleMs = 4200;
+const yakumanTileBurstSettleDelayMs = 500;
 
 export function usePaifuOperationFlash({
   isExhaustiveDrawResult,
@@ -40,6 +54,8 @@ export function usePaifuOperationFlash({
   const [activeOperation, setActiveOperation] = useState<ActiveOperation>();
   const [activeWinningCall, setActiveWinningCall] =
     useState<WinningCallFlashView>();
+  const [activeYakumanTileBurst, setActiveYakumanTileBurst] =
+    useState<YakumanTileBurstView>();
   const [winningAction, setWinningAction] = useState<PaifuAction>();
   const [revealedWinningPlayerId, setRevealedWinningPlayerId] = useState<
     string | undefined
@@ -49,6 +65,7 @@ export function usePaifuOperationFlash({
     if (replayStep <= 0 || isExhaustiveDrawResult) {
       setActiveOperation(undefined);
       setActiveWinningCall(undefined);
+      setActiveYakumanTileBurst(undefined);
       setWinningAction(undefined);
       setRevealedWinningPlayerId(undefined);
       return;
@@ -61,6 +78,7 @@ export function usePaifuOperationFlash({
     if (!label || !seat) {
       setActiveOperation(undefined);
       setActiveWinningCall(undefined);
+      setActiveYakumanTileBurst(undefined);
       setWinningAction(undefined);
       setRevealedWinningPlayerId(undefined);
       return;
@@ -69,13 +87,41 @@ export function usePaifuOperationFlash({
     setWinningAction(undefined);
     setRevealedWinningPlayerId(undefined);
     setActiveWinningCall(undefined);
+    setActiveYakumanTileBurst(undefined);
 
     if (isAbortiveDrawAction(action)) {
       setActiveOperation({ key: Date.now(), label, seat: seat as SeatWind });
       return;
     }
 
+    if (isRiichiAction(action)) {
+      setActiveOperation(undefined);
+      setActiveWinningCall({
+        animationMs: winningCallAnimationMs,
+        key: Date.now(),
+        label,
+        seat: seat as SeatWind,
+        variant: 'riichi',
+      });
+      const flashTimerId = window.setTimeout(() => {
+        setActiveWinningCall(undefined);
+      }, riichiCallVisibleMs);
+
+      return () => {
+        window.clearTimeout(flashTimerId);
+      };
+    }
+
     if (isWinningAction(action)) {
+      const resultWin = getResultWinForActor(round.result, action.actor);
+      const yakumanYaku = resultWin
+        ? getFirstYakumanYaku(getWinYaku(round.result, resultWin))
+        : undefined;
+      const yakumanTiles = getYakumanBurstTilesForPaifuAction({
+        action,
+        resultWin,
+        round,
+      });
       setRevealedWinningPlayerId(action.actor);
       setActiveOperation(undefined);
       setActiveWinningCall({
@@ -87,12 +133,33 @@ export function usePaifuOperationFlash({
       const flashTimerId = window.setTimeout(() => {
         setActiveWinningCall(undefined);
       }, winningCallVisibleMs);
-      const settlementTimerId = window.setTimeout(() => {
-        setWinningAction(action);
-      }, winningCallRevealDelayMs);
+      const yakumanTimerId = yakumanYaku
+        ? window.setTimeout(() => {
+            setActiveYakumanTileBurst({
+              featuredTile: action.tile,
+              key: `${action.sequenceNo}-${yakumanYaku.kind}`,
+              tiles: yakumanTiles,
+              yakuKind: yakumanYaku.kind as MahjongYakuKind,
+            });
+          }, winningCallVisibleMs)
+        : undefined;
+      const settlementTimerId = window.setTimeout(
+        () => {
+          setActiveYakumanTileBurst(undefined);
+          setWinningAction(action);
+        },
+        yakumanYaku
+          ? winningCallVisibleMs +
+              yakumanTileBurstVisibleMs +
+              yakumanTileBurstSettleDelayMs
+          : winningCallRevealDelayMs,
+      );
 
       return () => {
         window.clearTimeout(flashTimerId);
+        if (yakumanTimerId) {
+          window.clearTimeout(yakumanTimerId);
+        }
         window.clearTimeout(settlementTimerId);
       };
     }
@@ -107,6 +174,7 @@ export function usePaifuOperationFlash({
 
   const clearWinningAction = useCallback(() => {
     setActiveWinningCall(undefined);
+    setActiveYakumanTileBurst(undefined);
     setWinningAction(undefined);
     setRevealedWinningPlayerId(undefined);
   }, []);
@@ -114,11 +182,29 @@ export function usePaifuOperationFlash({
   return {
     activeOperation,
     activeWinningCall,
+    activeYakumanTileBurst,
     clearWinningAction,
     revealedWinningPlayerId,
     winningAction,
     setWinningAction,
   };
+}
+
+function getYakumanBurstTilesForPaifuAction({
+  action,
+  resultWin,
+  round,
+}: {
+  action: PaifuAction;
+  resultWin?: ReturnType<typeof getResultWinForActor>;
+  round: PaifuRoundSummary;
+}) {
+  const tiles =
+    action.handTilesAfterAction ??
+    (resultWin?.winner ? round.initialHands[resultWin.winner] : undefined) ??
+    [];
+
+  return action.tile ? [action.tile, ...removeFirstTile(tiles, action.tile)] : tiles;
 }
 
 function getWinningCallLabel(round: PaifuRoundSummary) {

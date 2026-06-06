@@ -91,7 +91,9 @@ export function useTableMatchMahjongState({
       } catch (loadError) {
         if (!cancelled) {
           setError(getMahjongErrorMessage(loadError));
-          setMahjongTable(null);
+          if (!previousTableRef.current) {
+            setMahjongTable(null);
+          }
         }
       } finally {
         if (!cancelled) {
@@ -260,6 +262,10 @@ function getAcceptedEventFlashDurationMs(event: MahjongPublicEventView) {
 
   if (event.actionType === 'Chi' || event.actionType === 'Pon') {
     return 500;
+  }
+
+  if (event.actionType === 'Riichi') {
+    return 1000;
   }
 
   return 1500;

@@ -37,7 +37,9 @@ export function useTableMatchData(tableId: string) {
       } catch (loadError) {
         if (!cancelled) {
           setError(getTableErrorMessage(loadError));
-          setTable(null);
+          if (isInitialLoad) {
+            setTable(null);
+          }
         }
       } finally {
         if (!cancelled) {

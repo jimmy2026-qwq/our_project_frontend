@@ -174,7 +174,7 @@ const northNotenHand = [
   '2s',
   '5s',
   '8s',
-  '1z',
+  '2z',
   '4z',
 ];
 
