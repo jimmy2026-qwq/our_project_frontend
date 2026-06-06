@@ -187,11 +187,6 @@ export function YakumanTileBurstOverlay({
             transform: scale(1) translateY(0);
             filter: blur(0);
           }
-          76% {
-            opacity: 1;
-            transform: scale(1) translateY(0);
-            filter: blur(0);
-          }
           100% {
             opacity: 0;
             transform: scale(1.72) translateY(-18px);
@@ -221,7 +216,7 @@ export function YakumanTileBurstOverlay({
             filter: brightness(1.16) drop-shadow(0 16px 22px rgba(0, 0, 0, 0.38));
           }
 
-          76% {
+          70% {
             opacity: 1;
             transform:
               translate(calc(-50% + var(--burst-x)), calc(-50% + var(--burst-y)))

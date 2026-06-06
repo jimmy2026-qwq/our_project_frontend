@@ -100,10 +100,12 @@ export function WinningResultOverlay({
   const uraDoraVisible =
     resultWin?.uraDoraVisible ?? round.result.uraDoraVisible ?? false;
   const yakuList = resultWin ? getWinYaku(sequenceResult, resultWin) : round.result.yaku;
-  const pointText =
-    typeof resultWin?.han === 'number' && typeof resultWin?.fu === 'number'
-      ? `${formatPoints(resultWin.points)} / ${resultWin.han}番${resultWin.fu}符`
-      : formatPoints(resultWin?.points ?? round.result.points);
+  const pointText = formatWinPointText({
+    fu: resultWin?.fu,
+    han: resultWin?.han,
+    points: resultWin?.points ?? round.result.points,
+    yaku: yakuList,
+  });
   const advanceStep = () => {
     setStepIndex((current) => advanceResultSequenceStep(sequenceResult, current));
   };
@@ -261,4 +263,41 @@ function formatDelta(value: number) {
   }
 
   return '+0';
+}
+
+function formatWinPointText({
+  fu,
+  han,
+  points,
+  yaku,
+}: {
+  fu?: number | null;
+  han?: number | null;
+  points: number;
+  yaku: MahjongResultWinLike['yaku'];
+}) {
+  if (typeof han === 'number' && yaku.some((item) => item.han >= 13)) {
+    return `${formatPoints(points)} / ${formatYakumanMultiplier(han)}`;
+  }
+
+  return typeof han === 'number' && typeof fu === 'number'
+    ? `${formatPoints(points)} / ${han}番${fu}符`
+    : formatPoints(points);
+}
+
+function formatYakumanMultiplier(han: number) {
+  const multiplier = Math.max(1, Math.min(9, Math.floor(han / 13)));
+  const labels = [
+    '役满',
+    '两倍役满',
+    '三倍役满',
+    '四倍役满',
+    '五倍役满',
+    '六倍役满',
+    '七倍役满',
+    '八倍役满',
+    '九倍役满',
+  ];
+
+  return labels[multiplier - 1];
 }

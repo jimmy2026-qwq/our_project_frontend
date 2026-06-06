@@ -254,10 +254,12 @@ function SingleWinPanel({
   });
   const winLabel = getWinLabel(result, win);
   const yakuList = getWinYaku(result, win);
-  const pointText =
-    typeof win.han === 'number' && typeof win.fu === 'number'
-      ? `${formatPoints(win.points)} / ${win.han}番${win.fu}符`
-      : formatPoints(win.points);
+  const pointText = formatWinPointText({
+    fu: win.fu,
+    han: win.han,
+    points: win.points,
+    yaku: yakuList,
+  });
 
   return (
     <>
@@ -423,11 +425,14 @@ function ResultFooter({
   const pointText =
     wins.length > 1
       ? formatPoints(result.points)
-      : `${formatPoints(primaryWin?.points ?? result.points)}${
-          typeof primaryWin?.han === 'number' && typeof primaryWin?.fu === 'number'
-            ? ` / ${primaryWin.han}番${primaryWin.fu}符`
-            : ''
-        }`;
+      : primaryWin
+        ? formatWinPointText({
+            fu: primaryWin.fu,
+            han: primaryWin.han,
+            points: primaryWin.points,
+            yaku: getWinYaku(result, primaryWin),
+          })
+        : formatPoints(result.points);
 
   return (
     <div className="flex flex-wrap items-end justify-between gap-4 self-end pb-1">
@@ -577,6 +582,43 @@ function formatDelta(value: number) {
   }
 
   return '+0';
+}
+
+function formatWinPointText({
+  fu,
+  han,
+  points,
+  yaku,
+}: {
+  fu?: number | null;
+  han?: number | null;
+  points: number;
+  yaku: MahjongResultWinLike['yaku'];
+}) {
+  if (typeof han === 'number' && yaku.some((item) => item.han >= 13)) {
+    return `${formatPoints(points)} / ${formatYakumanMultiplier(han)}`;
+  }
+
+  return typeof han === 'number' && typeof fu === 'number'
+    ? `${formatPoints(points)} / ${han}番${fu}符`
+    : formatPoints(points);
+}
+
+function formatYakumanMultiplier(han: number) {
+  const multiplier = Math.max(1, Math.min(9, Math.floor(han / 13)));
+  const labels = [
+    '役满',
+    '两倍役满',
+    '三倍役满',
+    '四倍役满',
+    '五倍役满',
+    '六倍役满',
+    '七倍役满',
+    '八倍役满',
+    '九倍役满',
+  ];
+
+  return labels[multiplier - 1];
 }
 
 function removeFirstTile(tiles: string[], tile: string) {
