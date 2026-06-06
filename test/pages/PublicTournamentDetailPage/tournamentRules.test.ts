@@ -109,7 +109,7 @@ describe('tournament detail rules', () => {
       expect.arrayContaining([
         '牌局长度：东风战',
         '初始点数：26000',
-        '返还点/目标点：32000',
+        '一位必要点数：32000',
         '赤宝牌：关闭',
         '食断：关闭',
         '双响：关闭',
