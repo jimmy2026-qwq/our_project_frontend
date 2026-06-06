@@ -28,9 +28,53 @@ describe('getNotificationBadgeLabel', () => {
     ).toBe('申请结果');
     expect(
       getNotificationBadgeLabel(
+        createNotification({ notificationType: 'ClubApplicationRejected' }),
+      ),
+    ).toBe('申请结果');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({
+          notificationType: 'ClubMemberContributionAdjusted',
+        }),
+      ),
+    ).toBe('俱乐部');
+    expect(
+      getNotificationBadgeLabel(
         createNotification({ notificationType: 'ClubTitleAssigned' }),
       ),
     ).toBe('俱乐部');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({ notificationType: 'TournamentClubInvited' }),
+      ),
+    ).toBe('赛事');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({ notificationType: 'TournamentPlayerInvited' }),
+      ),
+    ).toBe('赛事');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({ notificationType: 'TournamentLineupSelected' }),
+      ),
+    ).toBe('赛事');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({
+          notificationType: 'TournamentSettlementFinalized',
+        }),
+      ),
+    ).toBe('赛事');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({ notificationType: 'TournamentAppealFiled' }),
+      ),
+    ).toBe('赛事申诉');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({ notificationType: 'TournamentAppealAdjudicated' }),
+      ),
+    ).toBe('赛事申诉');
     expect(
       getNotificationBadgeLabel(
         createNotification({ notificationType: 'PlayerEloChanged' }),
@@ -44,6 +88,38 @@ describe('getNotificationBadgeLabel', () => {
         }),
       ),
     ).toBe('提醒');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({
+          notificationType: 'Unknown',
+          severity: 'success',
+        }),
+      ),
+    ).toBe('成功');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({
+          notificationType: 'Unknown',
+          severity: 'danger',
+        }),
+      ),
+    ).toBe('异常');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({
+          notificationType: 'Unknown',
+          severity: 'error',
+        }),
+      ),
+    ).toBe('异常');
+    expect(
+      getNotificationBadgeLabel(
+        createNotification({
+          notificationType: 'Unknown',
+          severity: 'mystery',
+        }),
+      ),
+    ).toBe('通知');
   });
 
   it('maps badge variants from severity while rejected applications stay outlined', () => {

@@ -6,6 +6,16 @@ import type { ClubPublicProfile } from '@/pages/PublicClubDetailPage/objects/Pub
 import type { AuthSession } from '@/providers/auth/AuthSession';
 
 describe('buildClubDetailWorkbench relation permissions', () => {
+  it('returns null until club profile data is available', () => {
+    expect(
+      buildClubDetailWorkbench({
+        profile: null,
+        session: null,
+        data: data({ isCurrentClubAdmin: false }),
+      }),
+    ).toBeNull();
+  });
+
   it('allows super admins to manage club relations directly', () => {
     const workbench = buildClubDetailWorkbench({
       profile: profile(),
@@ -38,9 +48,88 @@ describe('buildClubDetailWorkbench relation permissions', () => {
     expect(workbench?.canManageRelations).toBe(false);
     expect(workbench?.canRequestRelationChange).toBe(false);
   });
+
+  it('deduplicates featured player names and enables applications only for non-members', () => {
+    const workbench = buildClubDetailWorkbench({
+      profile: profile({
+        featuredPlayers: ['Larry', 'Alice'],
+      }),
+      session: session({ isSuperAdmin: false, isClubAdmin: false }),
+      data: data({
+        clubMemberNames: [' larry ', 'Bob'],
+        isCurrentClubAdmin: false,
+        isCurrentMember: false,
+      }),
+    });
+
+    expect(workbench?.featuredPlayerNames).toEqual(['Larry', 'Alice', 'Bob']);
+    expect(workbench?.isClubMember).toBe(false);
+    expect(workbench?.canApply).toBe(true);
+  });
+
+  it('blocks applications for featured members and guest sessions', () => {
+    const featuredMemberWorkbench = buildClubDetailWorkbench({
+      profile: profile(),
+      session: session({ isSuperAdmin: false, isClubAdmin: false }),
+      data: data({
+        isCurrentClubAdmin: false,
+        isCurrentMember: false,
+        isFeaturedMember: true,
+      }),
+    });
+    const guestWorkbench = buildClubDetailWorkbench({
+      profile: profile(),
+      session: session({
+        isRegisteredPlayer: false,
+        isSuperAdmin: false,
+        isClubAdmin: false,
+      }),
+      data: data({
+        isCurrentClubAdmin: false,
+        isCurrentMember: false,
+      }),
+    });
+
+    expect(featuredMemberWorkbench?.isClubMember).toBe(true);
+    expect(featuredMemberWorkbench?.canApply).toBe(false);
+    expect(guestWorkbench?.canApply).toBe(false);
+  });
+
+  it('derives lineup actions and operator id fallback from session and tournaments', () => {
+    const workbench = buildClubDetailWorkbench({
+      profile: profile({
+        activeTournaments: [
+          {
+            canSubmitLineup: false,
+            id: 'tournament-idle',
+            name: 'Idle Tournament',
+          },
+          {
+            canSubmitLineup: true,
+            id: 'tournament-actionable',
+            name: 'Actionable Tournament',
+          },
+        ],
+      }),
+      session: session({
+        isSuperAdmin: false,
+        isClubAdmin: false,
+        operatorId: null,
+      }),
+      data: data({ isCurrentClubAdmin: false }),
+    });
+
+    expect(workbench?.operatorId).toBe('user-a');
+    expect(workbench?.actionableTournaments).toEqual([
+      expect.objectContaining({ id: 'tournament-actionable' }),
+    ]);
+    expect(workbench?.canManageLineup).toBe(true);
+  });
 });
 
-function profile(): ClubPublicProfile {
+function profile(
+  overrides: Partial<ClubPublicProfile> = {},
+): ClubPublicProfile {
   return {
     id: 'club-a',
     name: 'Club A',
@@ -52,14 +141,19 @@ function profile(): ClubPublicProfile {
     relations: [],
     featuredPlayers: [],
     activeTournaments: [],
+    ...overrides,
   };
 }
 
 function session({
   isClubAdmin,
+  isRegisteredPlayer = true,
+  operatorId = 'player-a',
   isSuperAdmin,
 }: {
   isClubAdmin: boolean;
+  isRegisteredPlayer?: boolean;
+  operatorId?: string | null;
   isSuperAdmin: boolean;
 }): AuthSession {
   return {
@@ -68,10 +162,10 @@ function session({
       userId: 'user-a',
       username: 'tester',
       displayName: 'Tester',
-      operatorId: 'player-a',
+      operatorId: operatorId as string,
       roles: {
-        isGuest: false,
-        isRegisteredPlayer: true,
+        isGuest: !isRegisteredPlayer,
+        isRegisteredPlayer,
         isClubAdmin,
         isTournamentAdmin: false,
         isSuperAdmin,
@@ -81,9 +175,15 @@ function session({
 }
 
 function data({
+  clubMemberNames = [],
   isCurrentClubAdmin,
+  isCurrentMember = true,
+  isFeaturedMember = false,
 }: {
+  clubMemberNames?: string[];
   isCurrentClubAdmin: boolean;
+  isCurrentMember?: boolean;
+  isFeaturedMember?: boolean;
 }): ClubDetailData {
   return {
     isApplicationDialogOpen: false,
@@ -100,10 +200,10 @@ function data({
     isRelationDialogOpen: false,
     isRelationSubmitting: false,
     contributionTitleFields: [],
-    isCurrentMember: true,
+    isCurrentMember,
     isCurrentClubAdmin,
-    isFeaturedMember: false,
-    clubMemberNames: [],
+    isFeaturedMember,
+    clubMemberNames,
     currentApplicationStatus: null,
     applicationInbox: [],
     isInboxLoading: false,

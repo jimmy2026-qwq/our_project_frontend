@@ -21,11 +21,21 @@ export function buildClubDetailWorkbench({
 
   const isClubMember = data.isCurrentMember || data.isFeaturedMember;
   const featuredPlayerNames = Array.from(
-    new Map(
-      [...profile.featuredPlayers, ...data.clubMemberNames].map((name) => [
-        name.trim().toLowerCase(),
-        name,
-      ]),
+    [...profile.featuredPlayers, ...data.clubMemberNames].reduce(
+      (names, name) => {
+        const trimmedName = name.trim();
+
+        if (trimmedName) {
+          const key = trimmedName.toLowerCase();
+
+          if (!names.has(key)) {
+            names.set(key, trimmedName);
+          }
+        }
+
+        return names;
+      },
+      new Map<string, string>(),
     ).values(),
   );
   const canApply = !!session?.user.roles.isRegisteredPlayer && !isClubMember;
