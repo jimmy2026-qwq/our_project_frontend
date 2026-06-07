@@ -21,14 +21,12 @@ const liveMahjongRefreshIntervalMs = 1000;
 
 interface UseTableMatchMahjongStateParams {
   operatorId: string;
-  showcaseMode: boolean;
   tableId: string;
   viewerPlayerId: string;
 }
 
 export function useTableMatchMahjongState({
   operatorId,
-  showcaseMode,
   tableId,
   viewerPlayerId,
 }: UseTableMatchMahjongStateParams) {
@@ -182,9 +180,7 @@ export function useTableMatchMahjongState({
       setIsRefreshing(true);
       setActionError(null);
 
-      const request: AdvanceMahjongRoundRequest = {
-        showcaseMode,
-      };
+      const request: AdvanceMahjongRoundRequest = {};
       if (viewerPlayerId) {
         request.playerId = viewerPlayerId;
       }
@@ -226,7 +222,7 @@ export function useTableMatchMahjongState({
     } finally {
       setIsRefreshing(false);
     }
-  }, [operatorId, showcaseMode, tableId, viewerPlayerId]);
+  }, [operatorId, tableId, viewerPlayerId]);
 
   return {
     advanceRound,

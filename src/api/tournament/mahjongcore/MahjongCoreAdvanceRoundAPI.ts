@@ -4,7 +4,6 @@ import type { AdvanceMahjongRoundRequest, MahjongTableView } from '@/objects';
 
 interface AdvanceMahjongRoundTransportRequest {
   playerId: BackendOption<string>;
-  showcaseMode: BackendOption<boolean>;
 }
 
 export class MahjongCoreAdvanceRoundAPI extends APIMessage<MahjongTableView> {
@@ -19,7 +18,6 @@ export class MahjongCoreAdvanceRoundAPI extends APIMessage<MahjongTableView> {
       ? [
           {
             playerId: encodeNullableBackendOption(request.playerId),
-            showcaseMode: encodeNullableBackendOption(request.showcaseMode),
           },
         ]
       : [];

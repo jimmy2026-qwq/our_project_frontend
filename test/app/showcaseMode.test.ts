@@ -7,7 +7,6 @@ import {
   setShowcaseModeEnabled,
   useShowcaseMode,
 } from '@/app/showcaseMode';
-import { MahjongCoreAdvanceRoundAPI } from '@/api/tournament/mahjongcore/MahjongCoreAdvanceRoundAPI';
 
 function createLocalStorageMock() {
   const store = new Map<string, string>();
@@ -63,15 +62,6 @@ describe('showcase mode helpers', () => {
       'riichi-nexus-showcase-mode',
     );
     expect(isShowcaseModeEnabled()).toBe(false);
-  });
-
-  it('passes showcase mode options through the advance round api message', () => {
-    const api = new MahjongCoreAdvanceRoundAPI('table-1', {
-      showcaseMode: true,
-    });
-
-    expect(api.tableId).toBe('table-1');
-    expect(api.request).toEqual([{ playerId: [], showcaseMode: [true] }]);
   });
 
   it('initializes the showcase mode hook from storage', () => {

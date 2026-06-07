@@ -754,15 +754,18 @@ function getRoundWindOrder(seat: SeatWind) {
 }
 
 function getResultKey(mahjongTable: MahjongTableView) {
+  const round = mahjongTable.currentRound;
   const result = mahjongTable.currentRound?.result;
 
-  if (!result) {
+  if (!round || !result) {
     return null;
   }
 
   return [
     mahjongTable.tableId,
-    mahjongTable.lastEventSequenceNo,
+    round.descriptor.roundWind,
+    round.descriptor.handNumber,
+    round.descriptor.honba,
     result.outcome,
     result.winner,
     result.target,
@@ -1178,7 +1181,7 @@ function getMeldDisplaySourceTiles(
     return tiles;
   }
 
-  const handTiles = removeFirstMatchingTile(tiles, meld.calledTile);
+  const handTiles = removeFirstMatchingMeldTile(tiles, meld.calledTile);
 
   return [
     ...handTiles.slice(0, sidewaysIndex),
@@ -1198,6 +1201,39 @@ function removeFirstMatchingTile(tiles: string[], tile: string) {
 
     return true;
   });
+}
+
+function removeFirstMatchingMeldTile(tiles: string[], tile: string) {
+  const exactMatch = removeFirstMatchingTile(tiles, tile);
+
+  if (exactMatch.length !== tiles.length) {
+    return exactMatch;
+  }
+
+  return removeFirstMatchingTileBy(
+    tiles,
+    (item) => normalizeRedFiveForMeldMatch(item) === normalizeRedFiveForMeldMatch(tile),
+  );
+}
+
+function removeFirstMatchingTileBy(
+  tiles: string[],
+  matches: (tile: string) => boolean,
+) {
+  let removed = false;
+
+  return tiles.filter((item) => {
+    if (!removed && matches(item)) {
+      removed = true;
+      return false;
+    }
+
+    return true;
+  });
+}
+
+function normalizeRedFiveForMeldMatch(tile: string) {
+  return /^0[mps]$/.test(tile) ? `5${tile[1]}` : tile;
 }
 
 function getMeldSidewaysIndex({

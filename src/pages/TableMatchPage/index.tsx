@@ -44,7 +44,6 @@ export function TableMatchPage() {
   });
   const mahjongState = useTableMatchMahjongState({
     operatorId,
-    showcaseMode,
     tableId,
     viewerPlayerId: matchPlayerId,
   });

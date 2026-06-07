@@ -83,8 +83,10 @@ import { AppealResolveAPI } from '@/api/tournament/appeal/AppealResolveAPI';
 import { AppealUpdateWorkflowAPI } from '@/api/tournament/appeal/AppealUpdateWorkflowAPI';
 import { MahjongCoreAdvanceRoundAPI } from '@/api/tournament/mahjongcore/MahjongCoreAdvanceRoundAPI';
 import { MahjongCoreArchiveTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreArchiveTableAPI';
+import { MahjongCoreGetShowcaseModeAPI } from '@/api/tournament/mahjongcore/MahjongCoreGetShowcaseModeAPI';
 import { MahjongCoreGetTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreGetTableAPI';
 import { MahjongCoreResetTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreResetTableAPI';
+import { MahjongCoreSetShowcaseModeAPI } from '@/api/tournament/mahjongcore/MahjongCoreSetShowcaseModeAPI';
 import { MahjongCoreStartTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreStartTableAPI';
 import { MahjongCoreSubmitActionAPI } from '@/api/tournament/mahjongcore/MahjongCoreSubmitActionAPI';
 import type { APIMessage } from '@/system/api';
@@ -787,7 +789,6 @@ describe('API message contracts', () => {
       [
         new MahjongCoreAdvanceRoundAPI('table-a', {
           playerId: 'player-east',
-          showcaseMode: false,
         }),
         'mahjongcoreadvanceroundapi',
         {
@@ -795,10 +796,19 @@ describe('API message contracts', () => {
           request: [
             {
               playerId: ['player-east'],
-              showcaseMode: [false],
             },
           ],
         },
+      ],
+      [
+        new MahjongCoreGetShowcaseModeAPI(),
+        'mahjongcoregetshowcasemodeapi',
+        {},
+      ],
+      [
+        new MahjongCoreSetShowcaseModeAPI({ enabled: true }),
+        'mahjongcoresetshowcasemodeapi',
+        { request: { enabled: true } },
       ],
       [
         new MahjongCoreArchiveTableAPI('table-a', payload),
