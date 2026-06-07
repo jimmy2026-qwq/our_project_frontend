@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AgariResult, MahjongSeatView } from '@/objects';
 import { getMahjongYakuLabel } from '@/objects';
 import type { MahjongResultWinLike } from '@/pages/shared/mahjongResultSequence';
@@ -56,30 +56,36 @@ export function MatchResultOverlay({
     (step?.kind === 'score' || (!step && stepIndex >= scoreStepIndex));
   const nextLabel = isScoreStep ? scoreStepActionLabel : '继续';
 
+  const advanceStep = useCallback(() => {
+    if (!hasResult) {
+      return;
+    }
+
+    if (isScoreStep) {
+      if (!completedRef.current) {
+        completedRef.current = true;
+        onCompleteRef.current?.();
+      }
+      return;
+    }
+
+    setStepIndex((current) => Math.min(current + 1, scoreStepIndex));
+  }, [hasResult, isScoreStep, scoreStepIndex]);
+
   useEffect(() => {
     if (!hasResult) {
       return;
     }
 
     const timer = window.setTimeout(
-      () => {
-        if (isScoreStep) {
-          if (!completedRef.current) {
-            completedRef.current = true;
-            onCompleteRef.current?.();
-          }
-          return;
-        }
-
-        setStepIndex((current) => Math.min(current + 1, scoreStepIndex));
-      },
+      advanceStep,
       isScoreStep ? scoreStepDisplayMs : resultDetailDisplayMs,
     );
 
     return () => {
       window.clearTimeout(timer);
     };
-  }, [hasResult, isScoreStep, resultResetKey, scoreStepIndex, stepIndex]);
+  }, [advanceStep, hasResult, isScoreStep, resultResetKey, stepIndex]);
 
   if (!result) {
     return null;
@@ -92,12 +98,14 @@ export function MatchResultOverlay({
       {isScoreStep ? (
         <ScoreResultContent
           nextLabel={nextLabel}
+          onAdvance={advanceStep}
           playerNames={playerNames}
           result={result}
         />
       ) : step ? (
         <WinningResultContent
           nextLabel={nextLabel}
+          onAdvance={advanceStep}
           playerNames={playerNames}
           result={result}
           seats={seats}
@@ -106,6 +114,7 @@ export function MatchResultOverlay({
       ) : (
         <DrawResultContent
           nextLabel={nextLabel}
+          onAdvance={advanceStep}
           playerNames={playerNames}
           result={result}
         />
@@ -138,12 +147,14 @@ function getOverlayResultKey(result: AgariResult | null) {
 
 function WinningResultContent({
   nextLabel,
+  onAdvance,
   playerNames,
   result,
   seats,
   step,
 }: {
   nextLabel: string;
+  onAdvance: () => void;
   playerNames: Record<string, string>;
   result: AgariResult;
   seats: MahjongSeatView[];
@@ -157,6 +168,7 @@ function WinningResultContent({
         <SingleWinPanel
           headline={headline}
           nextLabel={nextLabel}
+          onAdvance={onAdvance}
           result={result}
           seats={seats}
           win={step.win}
@@ -184,6 +196,7 @@ function WinningResultContent({
       <div className="grid content-center gap-5 overflow-auto">
         <ScoreSettlementPanel
           nextLabel={nextLabel}
+          onAdvance={onAdvance}
           playerNames={playerNames}
           result={result}
         />
@@ -194,10 +207,12 @@ function WinningResultContent({
 
 function ScoreResultContent({
   nextLabel,
+  onAdvance,
   playerNames,
   result,
 }: {
   nextLabel: string;
+  onAdvance: () => void;
   playerNames: Record<string, string>;
   result: AgariResult;
 }) {
@@ -215,6 +230,7 @@ function ScoreResultContent({
       <div className="grid content-center gap-5 overflow-auto">
         <ScoreSettlementPanel
           nextLabel={nextLabel}
+          onAdvance={onAdvance}
           playerNames={playerNames}
           result={result}
         />
@@ -226,12 +242,14 @@ function ScoreResultContent({
 function SingleWinPanel({
   headline,
   nextLabel,
+  onAdvance,
   result,
   seats,
   win,
 }: {
   headline: ReturnType<typeof getWinHeadline>;
   nextLabel: string;
+  onAdvance: () => void;
   result: AgariResult;
   seats: MahjongSeatView[];
   win: MahjongResultWinLike;
@@ -291,9 +309,11 @@ function SingleWinPanel({
         {yakuList.length > 0 ? (
           <YakuList className="mx-auto w-[min(680px,88%)]" yaku={yakuList} />
         ) : null}
-        <span className="justify-self-center rounded-xl border border-[rgba(236,197,122,0.34)] bg-[rgba(236,197,122,0.12)] px-5 py-2 text-sm font-bold text-[#ffd98a]">
-          {nextLabel}
-        </span>
+        <ResultStepButton
+          className="justify-self-center"
+          label={nextLabel}
+          onClick={onAdvance}
+        />
       </div>
 
       <div className="flex flex-wrap items-end justify-between gap-4 self-end pb-1">
@@ -359,10 +379,12 @@ function YakuList({
 
 function DrawResultContent({
   nextLabel,
+  onAdvance,
   playerNames,
   result,
 }: {
   nextLabel: string;
+  onAdvance: () => void;
   playerNames: Record<string, string>;
   result: AgariResult;
 }) {
@@ -403,6 +425,7 @@ function DrawResultContent({
 
       <ResultFooter
         nextLabel={nextLabel}
+        onAdvance={onAdvance}
         playerNames={playerNames}
         result={result}
       />
@@ -412,11 +435,13 @@ function DrawResultContent({
 
 function ResultFooter({
   nextLabel,
+  onAdvance,
   playerNames,
   result,
   wins = getResultWins(result),
 }: {
   nextLabel: string;
+  onAdvance: () => void;
   playerNames: Record<string, string>;
   result: AgariResult;
   wins?: MahjongResultWinLike[];
@@ -463,9 +488,7 @@ function ResultFooter({
         </div>
       ) : null}
 
-      <span className="rounded-xl border border-[rgba(236,197,122,0.34)] bg-[rgba(236,197,122,0.12)] px-5 py-2 text-sm font-bold text-[#ffd98a]">
-        {nextLabel}
-      </span>
+      <ResultStepButton label={nextLabel} onClick={onAdvance} />
     </div>
   );
 }
@@ -543,10 +566,12 @@ function getPlayerName(playerId: string, playerNames: Record<string, string>) {
 
 function ScoreSettlementPanel({
   nextLabel,
+  onAdvance,
   playerNames,
   result,
 }: {
   nextLabel: string;
+  onAdvance: () => void;
   playerNames: Record<string, string>;
   result: AgariResult;
 }) {
@@ -565,10 +590,32 @@ function ScoreSettlementPanel({
           </span>
         </div>
       ))}
-      <span className="mt-4 justify-self-center rounded-xl border border-[rgba(236,197,122,0.34)] bg-[rgba(236,197,122,0.12)] px-5 py-2 text-sm font-bold text-[#ffd98a]">
-        {nextLabel}
-      </span>
+      <ResultStepButton
+        className="mt-4 justify-self-center"
+        label={nextLabel}
+        onClick={onAdvance}
+      />
     </div>
+  );
+}
+
+function ResultStepButton({
+  className = '',
+  label,
+  onClick,
+}: {
+  className?: string;
+  label: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      type="button"
+      className={`rounded-xl border border-[rgba(236,197,122,0.34)] bg-[rgba(236,197,122,0.12)] px-5 py-2 text-sm font-bold text-[#ffd98a] transition hover:border-[rgba(236,197,122,0.58)] hover:bg-[rgba(236,197,122,0.18)] focus:outline-none focus:ring-2 focus:ring-[#ffd98a] focus:ring-offset-2 focus:ring-offset-[rgba(0,0,0,0.84)] ${className}`}
+      onClick={onClick}
+    >
+      {label}
+    </button>
   );
 }
 

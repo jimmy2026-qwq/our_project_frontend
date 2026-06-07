@@ -71,7 +71,7 @@ describe('showcase mode helpers', () => {
     });
 
     expect(api.tableId).toBe('table-1');
-    expect(api.request).toEqual({ showcaseMode: true });
+    expect(api.request).toEqual([{ playerId: [], showcaseMode: [true] }]);
   });
 
   it('initializes the showcase mode hook from storage', () => {

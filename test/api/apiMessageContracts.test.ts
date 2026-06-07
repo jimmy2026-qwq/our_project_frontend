@@ -782,7 +782,23 @@ describe('API message contracts', () => {
       [
         new MahjongCoreAdvanceRoundAPI('table-a'),
         'mahjongcoreadvanceroundapi',
-        { tableId: 'table-a' },
+        { tableId: 'table-a', request: [] },
+      ],
+      [
+        new MahjongCoreAdvanceRoundAPI('table-a', {
+          playerId: 'player-east',
+          showcaseMode: false,
+        }),
+        'mahjongcoreadvanceroundapi',
+        {
+          tableId: 'table-a',
+          request: [
+            {
+              playerId: ['player-east'],
+              showcaseMode: [false],
+            },
+          ],
+        },
       ],
       [
         new MahjongCoreArchiveTableAPI('table-a', payload),
