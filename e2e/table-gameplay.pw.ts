@@ -56,6 +56,7 @@ const tonpuRuleset = {
   nagashiMangan: true,
   allowMultipleYakuman: true,
   bankruptcyEnd: true,
+  allLastDealerFinishAsTop: false,
   minHan: 1,
 };
 const oneKyokuRuleset = {

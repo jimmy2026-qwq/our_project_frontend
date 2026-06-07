@@ -11,6 +11,7 @@ export interface RealtimeEvent {
   body?: string | null;
   severity?: string | null;
   actionUrl?: string | null;
+  data?: unknown;
 }
 
 export const realtimeBrowserEventName = 'riichinexus:realtime-event';

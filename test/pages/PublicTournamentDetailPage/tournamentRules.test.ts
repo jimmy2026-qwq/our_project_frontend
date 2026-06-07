@@ -38,6 +38,7 @@ const swissStage: TournamentStageWithRules = {
     nagashiMangan: false,
     allowMultipleYakuman: false,
     bankruptcyEnd: false,
+    allLastDealerFinishAsTop: true,
     minHan: 2,
   },
 };
@@ -165,6 +166,7 @@ describe('tournament detail rules', () => {
         '流局满贯：关闭',
         '多倍役满：关闭',
         '击飞：关闭',
+        'All last 庄家一位即止：开启',
         '番缚：2 番',
         '配桌：蛇形分组',
         '积分带入：否',

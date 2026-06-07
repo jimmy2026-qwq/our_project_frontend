@@ -119,6 +119,7 @@ export function MatchBoard({
   const [isRiichiSelectionActive, setIsRiichiSelectionActive] = useState(false);
   const [isRelativeScoreMode, setIsRelativeScoreMode] = useState(false);
   const advanceStartedKeyRef = useRef<string | null>(null);
+  const settlementCompletedKeyRef = useRef<string | null>(null);
   const seats = useMemo(() => mahjongTable.seats ?? [], [mahjongTable.seats]);
   const winResultNeedsSequence = Boolean(
     mahjongTable.currentRound?.result &&
@@ -410,6 +411,10 @@ export function MatchBoard({
       return;
     }
 
+    if (settlementCompletedKeyRef.current === resultKey) {
+      return;
+    }
+
     let animationFrame = 0;
     const timer = window.setTimeout(() => {
       setSettlementAnimatingKey(resultKey);
@@ -434,6 +439,7 @@ export function MatchBoard({
         }
 
         setSettlementProgress(1);
+        settlementCompletedKeyRef.current = resultKey;
         if (
           canAdvanceAfterSettlement &&
           isCurrentEastPlayer &&
@@ -695,15 +701,25 @@ function shouldCompleteTableAfterCurrentResult(mahjongTable: MahjongTableView) {
     return false;
   }
 
-  return (
-    !doesDealerContinueAfterCurrentResult(mahjongTable) &&
-    isAtOrBeyondLastScheduledHand(
-      descriptor,
-      mahjongTable.ruleset.gameLength,
-    ) &&
-    mahjongTable.seats.some(
+  const dealerContinues = doesDealerContinueAfterCurrentResult(mahjongTable);
+  const isLastScheduledHand = isAtOrBeyondLastScheduledHand(
+    descriptor,
+    mahjongTable.ruleset.gameLength,
+  );
+
+  if (!isLastScheduledHand) {
+    return false;
+  }
+
+  if (!dealerContinues) {
+    return mahjongTable.seats.some(
       (seat) => seat.points >= mahjongTable.ruleset.targetPoints,
-    )
+    );
+  }
+
+  return (
+    mahjongTable.ruleset.allLastDealerFinishAsTop &&
+    isCurrentDealerTop(mahjongTable)
   );
 }
 
@@ -730,6 +746,16 @@ function doesDealerContinueAfterCurrentResult(mahjongTable: MahjongTableView) {
   }
 
   return false;
+}
+
+function isCurrentDealerTop(mahjongTable: MahjongTableView) {
+  const eastSeat = mahjongTable.seats.find((seat) => seat.seat === 'East');
+
+  if (!eastSeat) {
+    return false;
+  }
+
+  return mahjongTable.seats.every((seat) => eastSeat.points >= seat.points);
 }
 
 function isAtOrBeyondLastScheduledHand(

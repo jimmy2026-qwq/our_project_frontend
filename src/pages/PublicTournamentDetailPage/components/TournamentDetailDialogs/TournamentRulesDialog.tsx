@@ -252,6 +252,16 @@ export function TournamentRulesDialog({
                     }
                     disabled={isSubmitting}
                   />
+                  <CheckboxField
+                    label="All last 庄家一位即止"
+                    checked={ruleset.allLastDealerFinishAsTop}
+                    onChange={(event) =>
+                      updateRuleset({
+                        allLastDealerFinishAsTop: event.currentTarget.checked,
+                      })
+                    }
+                    disabled={isSubmitting}
+                  />
                 </div>
               </section>
             </FieldGroup>

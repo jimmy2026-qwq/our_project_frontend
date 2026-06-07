@@ -6,6 +6,7 @@ import {
   MahjongCoreGetTableAPI,
   MahjongCoreSubmitActionAPI,
 } from '@/api/tournament/mahjongcore';
+import type { RealtimeEvent } from '@/app/realtime/RealtimeEvent';
 import type {
   AdvanceMahjongRoundRequest,
   MahjongActionResponse,
@@ -43,6 +44,7 @@ export function useTableMatchMahjongState({
   const [finalSettlementTable, setFinalSettlementTable] =
     useState<MahjongTableView | null>(null);
   const lastSeenEventSequenceNoRef = useRef(0);
+  const lastHandledFlashSequenceNoRef = useRef(0);
   const previousTableRef = useRef<MahjongTableView | null>(null);
   const [reloadKey, reload] = useReducer((value) => value + 1, 0);
 
@@ -74,7 +76,8 @@ export function useTableMatchMahjongState({
           if (
             previousSequenceNo > 0 &&
             payload.lastEvent &&
-            nextSequenceNo > previousSequenceNo
+            nextSequenceNo > previousSequenceNo &&
+            payload.lastEvent.sequenceNo !== lastHandledFlashSequenceNoRef.current
           ) {
             setAcceptedEvent(payload.lastEvent);
           }
@@ -147,6 +150,9 @@ export function useTableMatchMahjongState({
           new MahjongCoreSubmitActionAPI(tableId, request),
         );
 
+        if (response.acceptedEvent) {
+          lastHandledFlashSequenceNoRef.current = response.acceptedEvent.sequenceNo;
+        }
         setAcceptedEvent(response.acceptedEvent);
         lastSeenEventSequenceNoRef.current =
           response.table.lastEventSequenceNo ?? lastSeenEventSequenceNoRef.current;
@@ -224,6 +230,32 @@ export function useTableMatchMahjongState({
     }
   }, [operatorId, tableId, viewerPlayerId]);
 
+  const handleRealtimeMahjongEvent = useCallback(
+    (event: RealtimeEvent) => {
+      if (
+        event.eventType !== 'MahjongActionAccepted' ||
+        event.aggregateType !== 'mahjongTable' ||
+        event.aggregateId !== tableId
+      ) {
+        return false;
+      }
+
+      const acceptedAction = parseMahjongPublicEventView(event.data);
+
+      if (
+        acceptedAction &&
+        acceptedAction.sequenceNo !== lastHandledFlashSequenceNoRef.current
+      ) {
+        lastHandledFlashSequenceNoRef.current = acceptedAction.sequenceNo;
+        setAcceptedEvent(acceptedAction);
+      }
+
+      reload();
+      return true;
+    },
+    [tableId],
+  );
+
   return {
     advanceRound,
     actionError,
@@ -235,6 +267,7 @@ export function useTableMatchMahjongState({
     isSubmittingAction,
     mahjongTable,
     acceptedEvent,
+    handleRealtimeMahjongEvent,
     reload,
     submitAction,
   };
@@ -279,6 +312,36 @@ function createMahjongTableQuery({
     operatorId: operatorId || null,
     viewerPlayerId: viewerPlayerId || null,
   };
+}
+
+function parseMahjongPublicEventView(
+  value: unknown,
+): MahjongPublicEventView | null {
+  if (!isRecord(value)) {
+    return null;
+  }
+
+  if (
+    typeof value.sequenceNo !== 'number' ||
+    typeof value.actionType !== 'string'
+  ) {
+    return null;
+  }
+
+  return {
+    sequenceNo: value.sequenceNo,
+    actor: typeof value.actor === 'string' ? value.actor : null,
+    actionType: value.actionType as MahjongPublicEventView['actionType'],
+    tile: typeof value.tile === 'string' ? value.tile : null,
+    tiles: Array.isArray(value.tiles)
+      ? value.tiles.filter((tile): tile is string => typeof tile === 'string')
+      : [],
+    note: typeof value.note === 'string' ? value.note : null,
+  };
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
 }
 
 function isLiveMahjongStatus(status: MahjongTableView['status']) {

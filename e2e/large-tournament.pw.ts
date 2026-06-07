@@ -275,6 +275,7 @@ async function createLargeTournament(
             nagashiMangan: true,
             allowMultipleYakuman: true,
             bankruptcyEnd: true,
+            allLastDealerFinishAsTop: false,
             minHan: 1,
           },
         },

@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuth } from '@/app/auth/useAuth';
+import type { RealtimeEvent } from '@/app/realtime/RealtimeEvent';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 import { useShowcaseMode } from '@/app/showcaseMode';
 
@@ -63,12 +64,34 @@ export function TableMatchPage() {
     forceReload();
     mahjongState.reload();
   }, [forceReload, mahjongState]);
+  const handleRealtimeRefresh = useCallback(
+    (event: RealtimeEvent) => {
+      if (mahjongState.handleRealtimeMahjongEvent(event)) {
+        return;
+      }
+
+      if (
+        event.aggregateType === 'mahjongTable' &&
+        event.aggregateId !== tableId
+      ) {
+        return;
+      }
+
+      handleRefresh();
+    },
+    [handleRefresh, mahjongState, tableId],
+  );
   const handleAdvanceRound = useCallback(() => {
     void mahjongState.advanceRound();
   }, [mahjongState.advanceRound]);
   useRealtimeRefresh(
-    ['TournamentTableChanged', 'MahjongTableChanged', 'AppealChanged'],
-    handleRefresh,
+    [
+      'TournamentTableChanged',
+      'MahjongTableChanged',
+      'MahjongActionAccepted',
+      'AppealChanged',
+    ],
+    handleRealtimeRefresh,
   );
   const backLink = table?.tournamentId
     ? `/public/tournaments/${table.tournamentId}`

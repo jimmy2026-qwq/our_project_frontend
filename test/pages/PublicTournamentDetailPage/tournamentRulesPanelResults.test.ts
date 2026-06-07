@@ -241,6 +241,7 @@ function workbench(stages: TournamentStageWithRules[]): TournamentDetailWorkbenc
         akaDora: true,
         akaDoraCount: 3,
         allowMultipleYakuman: true,
+        allLastDealerFinishAsTop: false,
         bankruptcyEnd: true,
         doubleRon: true,
         gameLength: 'Hanchan',

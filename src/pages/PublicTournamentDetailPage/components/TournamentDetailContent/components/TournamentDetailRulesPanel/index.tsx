@@ -294,6 +294,10 @@ function RuleDetailsDialog({
                       checked={ruleset.allowMultipleYakuman}
                     />
                     <ReadonlyRuleCheckbox label="击飞" checked={ruleset.bankruptcyEnd} />
+                    <ReadonlyRuleCheckbox
+                      label="All last 庄家一位即止"
+                      checked={ruleset.allLastDealerFinishAsTop}
+                    />
                     {format === 'Swiss' ? (
                       <ReadonlyRuleCheckbox
                         label="积分带入"

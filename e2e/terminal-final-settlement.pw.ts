@@ -51,6 +51,7 @@ const terminalRuleset = {
   nagashiMangan: true,
   allowMultipleYakuman: true,
   bankruptcyEnd: false,
+  allLastDealerFinishAsTop: false,
   minHan: 1,
 };
 

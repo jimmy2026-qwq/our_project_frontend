@@ -12,6 +12,7 @@ export interface MahjongRuleset {
   nagashiMangan: boolean;
   allowMultipleYakuman: boolean;
   bankruptcyEnd: boolean;
+  allLastDealerFinishAsTop: boolean;
   minHan: number;
 }
 
@@ -27,6 +28,7 @@ export const DEFAULT_MAHJONG_RULESET: MahjongRuleset = {
   nagashiMangan: true,
   allowMultipleYakuman: true,
   bankruptcyEnd: true,
+  allLastDealerFinishAsTop: false,
   minHan: 1,
 };
 
@@ -49,5 +51,6 @@ export function normalizeMahjongRuleset(
     akaDoraCount,
     minHan: Math.max(1, Math.floor(Number(merged.minHan) || 1)),
     akaDora: Boolean(merged.akaDora) && akaDoraCount > 0,
+    allLastDealerFinishAsTop: Boolean(merged.allLastDealerFinishAsTop),
   };
 }

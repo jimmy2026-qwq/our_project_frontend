@@ -130,6 +130,7 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
     `流局满贯：${mahjongRuleset.nagashiMangan ? '开启' : '关闭'}`,
     `多倍役满：${mahjongRuleset.allowMultipleYakuman ? '开启' : '关闭'}`,
     `击飞：${mahjongRuleset.bankruptcyEnd ? '开启' : '关闭'}`,
+    `All last 庄家一位即止：${mahjongRuleset.allLastDealerFinishAsTop ? '开启' : '关闭'}`,
     `番缚：${mahjongRuleset.minHan} 番`,
   ];
 
