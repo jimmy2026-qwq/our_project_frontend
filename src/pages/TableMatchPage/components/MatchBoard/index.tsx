@@ -58,6 +58,12 @@ interface MatchBoardProps {
   table: TableDetail;
 }
 
+interface ResultSequencePlayback {
+  key: string;
+  needsSequence: boolean;
+  hasYakumanBurst: boolean;
+}
+
 export function MatchBoard({
   actionError,
   finalSettlementTable,
@@ -84,10 +90,8 @@ export function MatchBoard({
   const melds = getMelds(mahjongTable, seatRotation);
   const legalActions = mahjongTable.legalActions ?? [];
   const roundKey = getCurrentRoundKey(mahjongTable);
-  const latestRoundKey = getCurrentRoundKey(latestMahjongTable);
   const turnActionDelayKey = getTurnActionDelayKey(mahjongTable, operatorId);
   const resultKey = getResultKey(mahjongTable);
-  const latestResultKey = getResultKey(latestMahjongTable);
   const [settlementAnimatingKey, setSettlementAnimatingKey] = useState<
     string | null
   >(null);
@@ -107,6 +111,8 @@ export function MatchBoard({
     useState<string | null>(null);
   const [resultYakumanBurstActiveKey, setResultYakumanBurstActiveKey] =
     useState<string | null>(null);
+  const [resultSequencePlayback, setResultSequencePlayback] =
+    useState<ResultSequencePlayback | null>(null);
   const [delayedTurnActionKey, setDelayedTurnActionKey] = useState<
     string | null
   >(null);
@@ -238,10 +244,7 @@ export function MatchBoard({
   );
 
   useEffect(() => {
-    const isIncomingDifferentRound =
-      latestRoundKey !== roundKey || latestResultKey !== resultKey;
-
-    if (isLocalSettlementDisplayActive && isIncomingDifferentRound) {
+    if (isLocalSettlementDisplayActive) {
       pendingMahjongTableRef.current = latestMahjongTable;
       return;
     }
@@ -251,10 +254,6 @@ export function MatchBoard({
   }, [
     isLocalSettlementDisplayActive,
     latestMahjongTable,
-    latestResultKey,
-    latestRoundKey,
-    resultKey,
-    roundKey,
   ]);
 
   useEffect(() => {
@@ -310,6 +309,7 @@ export function MatchBoard({
       setResultWinningCallRemovedKey(null);
       setResultYakumanBurstActiveKey(null);
       setSettlementProgress(undefined);
+      setResultSequencePlayback(null);
       advanceStartedKeyRef.current = null;
       return;
     }
@@ -324,7 +324,35 @@ export function MatchBoard({
   }, [resultKey]);
 
   useEffect(() => {
-    if (!resultKey || !winResultNeedsSequence) {
+    if (!resultKey) {
+      setResultSequencePlayback(null);
+      return;
+    }
+
+    setResultSequencePlayback((currentPlayback) => {
+      if (currentPlayback?.key === resultKey) {
+        return currentPlayback;
+      }
+
+      return {
+        key: resultKey,
+        needsSequence: winResultNeedsSequence,
+        hasYakumanBurst: Boolean(
+          createMatchYakumanTileBurstData({
+            result: mahjongTable.currentRound?.result ?? null,
+            seats,
+          }),
+        ),
+      };
+    });
+  }, [mahjongTable.currentRound?.result, resultKey, seats, winResultNeedsSequence]);
+
+  useEffect(() => {
+    if (!resultKey || resultSequencePlayback?.key !== resultKey) {
+      return;
+    }
+
+    if (!resultSequencePlayback.needsSequence) {
       setResultHandRevealReadyKey(resultKey);
       setResultOverlayReadyKey(resultKey);
       setResultWinningCallRemovedKey(resultKey);
@@ -332,12 +360,7 @@ export function MatchBoard({
       return;
     }
 
-    const hasYakumanBurst = Boolean(
-      createMatchYakumanTileBurstData({
-        result: mahjongTable.currentRound?.result ?? null,
-        seats,
-      }),
-    );
+    const hasYakumanBurst = resultSequencePlayback.hasYakumanBurst;
 
     setResultHandRevealReadyKey(resultKey);
     setResultOverlayReadyKey(null);
@@ -376,7 +399,7 @@ export function MatchBoard({
       }
       window.clearTimeout(overlayTimer);
     };
-  }, [mahjongTable.currentRound?.result, resultKey, seats, winResultNeedsSequence]);
+  }, [resultKey, resultSequencePlayback]);
 
   useEffect(() => {
     if (!resultKey) {

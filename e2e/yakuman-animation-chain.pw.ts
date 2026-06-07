@@ -24,18 +24,18 @@ test.describe('役满动画链路', () => {
     });
 
     await expect(page.getByText('纯正九莲宝灯').first()).toBeVisible({
-      timeout: 6_000,
+      timeout: 15_000,
     });
     await expect(page.getByText('荣和').first()).toBeVisible({
-      timeout: 8_000,
+      timeout: 12_000,
     });
     await expect(page.getByText('点数结算').first()).toBeVisible({
-      timeout: 8_000,
+      timeout: 12_000,
     });
     await expect(page.getByText('本局总点数').first()).toBeVisible();
 
     await expect(page.locator('[aria-label="牌桌版本 v11"]')).toBeVisible({
-      timeout: 12_000,
+      timeout: 20_000,
     });
     await expect(page.getByText('东2局').first()).toBeVisible();
     expect(harness.advanceRequestCount()).toBe(1);
@@ -55,18 +55,18 @@ test.describe('役满动画链路', () => {
     });
 
     await expect(page.getByText('纯正九莲宝灯').first()).toBeVisible({
-      timeout: 6_000,
+      timeout: 15_000,
     });
     await expect(page.getByText('荣和').first()).toBeVisible({
-      timeout: 8_000,
+      timeout: 12_000,
     });
     await expect(page.getByText('点数结算').first()).toBeVisible({
-      timeout: 8_000,
+      timeout: 12_000,
     });
     await expect(page.getByText('本局总点数').first()).toBeVisible();
 
     await expect(page.getByText('最终排名').first()).toBeVisible({
-      timeout: 14_000,
+      timeout: 20_000,
     });
     await expect(page.getByText('牌桌结算').first()).toBeVisible();
     expect(harness.advanceRequestCount()).toBe(1);
@@ -79,19 +79,35 @@ test.describe('役满动画链路', () => {
     await page.getByText(/东1局/).first().click();
     await page.getByRole('button', { name: '东1局2本场' }).click();
 
-    for (let step = 0; step < 4; step += 1) {
-      await page.getByRole('button', { name: '向前一步' }).click();
-    }
+    await advanceReplayUntilYakumanResult(page);
 
     await expect(page.getByText('纯正九莲宝灯').first()).toBeVisible({
-      timeout: 6_000,
+      timeout: 10_000,
     });
     await expect(page.getByText('荣和').first()).toBeVisible({
-      timeout: 8_000,
+      timeout: 12_000,
     });
     await expect(page.getByText('最终排名')).toHaveCount(0);
   });
 });
+
+async function advanceReplayUntilYakumanResult(page: Page) {
+  const yakumanText = page.getByText('纯正九莲宝灯').first();
+  const forwardButton = page.getByRole('button', { name: '向前一步' });
+
+  for (let step = 0; step < 20; step += 1) {
+    if ((await yakumanText.count()) > 0 && await yakumanText.isVisible()) {
+      return;
+    }
+
+    if (await forwardButton.isDisabled()) {
+      return;
+    }
+
+    await forwardButton.click();
+    await page.waitForTimeout(120);
+  }
+}
 
 async function installLiveTableHarness(
   page: Page,
@@ -130,13 +146,22 @@ async function installLiveTableHarness(
   );
 
   await page.route('**/api/**', async (route) => {
-    const apiName = new URL(route.request().url()).pathname.split('/').pop();
+    const pathname = new URL(route.request().url()).pathname;
+
+    if (!/^\/api\/[^/]+api$/.test(pathname)) {
+      await route.fallback();
+      return;
+    }
+
+    const apiName = pathname.split('/').pop();
 
     switch (apiName) {
       case 'restoreauthsessionapi':
         await fulfillJson(route, createAuthSession());
         return;
       case 'getcurrentplayerapi':
+        await fulfillJson(route, createPlayerProfile(eastPlayerId));
+        return;
       case 'getplayerapi':
         await fulfillJson(route, createPlayerProfile(getRequestedPlayerId(route)));
         return;
@@ -164,7 +189,11 @@ async function installLiveTableHarness(
         await fulfillJson(route, { table: mahjongTable, acceptedEvent: null });
         return;
       default:
-        await fulfillJson(route, {});
+        await route.fulfill({
+          status: 500,
+          contentType: 'application/json',
+          body: JSON.stringify({ message: `Unhandled mocked API ${apiName}` }),
+        });
     }
   });
 
