@@ -1,5 +1,4 @@
 import { Alert } from '@/components/ui';
-import { cx } from '@/components/ui/cx';
 import type {
   AppealSummary,
   TableDetail,
@@ -12,6 +11,10 @@ import { TournamentDetailRulesTab } from './components/TournamentDetailRulesTab'
 import { AppealDialog } from '@/pages/TableMatchPage/components/TableMatchSection/AppealDialog';
 import { TournamentDetailManageTab } from './components/TournamentDetailTableTabs/TournamentDetailManageTab';
 import { TournamentDetailTablesTab } from './components/TournamentDetailTableTabs/TournamentDetailTablesTab';
+import {
+  TournamentDetailSidebar,
+  type TournamentDetailContentTabItem,
+} from './TournamentDetailSidebar';
 import { detailShellClassNames } from '../detailShell.styles';
 import type {
   TournamentDetailTableItem,
@@ -21,8 +24,6 @@ import type {
   AppealDecisionType,
   TournamentDetailTab,
 } from '../../objects/TournamentDetailView.types';
-
-type TabItem = { id: TournamentDetailTab; label: string };
 
 export function TournamentDetailContent({
   activeTab,
@@ -76,7 +77,7 @@ export function TournamentDetailContent({
   tableAppealError: string | null;
   submittingAppealId: string;
   tableDetailError: string;
-  tabItems: TabItem[];
+  tabItems: TournamentDetailContentTabItem[];
   updatingReadyTableId: string;
   uploadingDemoPaifuTableId: string;
   finalizingArchiveTableId: string;
@@ -106,23 +107,13 @@ export function TournamentDetailContent({
 }) {
   return (
     <div className={detailShellClassNames.frame}>
-      <aside className={detailShellClassNames.sidebar}>
-        {tabItems.map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            className={cx(
-              detailShellClassNames.navItem,
-              activeTab === tab.id ? detailShellClassNames.navItemActive : '',
-            )}
-            onClick={() => onActiveTabChange(tab.id)}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </aside>
+      <TournamentDetailSidebar
+        activeTab={activeTab}
+        tabItems={tabItems}
+        onActiveTabChange={onActiveTabChange}
+      />
 
-      <div className={cx(detailShellClassNames.content)}>
+      <div className={detailShellClassNames.content}>
         {workbench.tournamentActionError ? (
           <Alert variant="danger">{workbench.tournamentActionError}</Alert>
         ) : null}

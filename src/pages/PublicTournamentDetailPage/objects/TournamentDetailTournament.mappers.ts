@@ -9,10 +9,7 @@ import type { TournamentDetailView } from '@/objects/tournament';
 
 import type { TournamentPublicProfile } from './PublicTournamentDetailPage.types';
 
-interface TournamentDirectoryEntryView {
-  id: string;
-  name: string;
-}
+interface TournamentDirectoryEntryView { id: string; name: string }
 
 function toStageStatus(
   status: PublicTournamentStageView['status'],

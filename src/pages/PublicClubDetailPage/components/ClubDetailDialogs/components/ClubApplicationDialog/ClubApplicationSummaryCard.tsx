@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { StatusPill } from '@/components/ui';
 import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
 
-import { formatDateTime } from '../../../../functions/getClubApplicationHelpers';
+import { formatDateTime } from '../../../../functions/getClubApplicationDisplay';
 
 function getApplicationTone(status?: ClubApplication['status']) {
   if (status === 'Approved') {

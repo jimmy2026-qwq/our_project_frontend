@@ -2,18 +2,15 @@ import { useState } from 'react';
 
 import {
   AppealFileAPI,
-  TournamentTableFinalizeArchiveAPI,
   TournamentTableGetAPI,
   TournamentTableStartAPI,
-  TournamentTableUploadPaifuAPI,
 } from '@/api/tournament';
 import type { TableDetail } from '@/pages/objects/TournamentViews';
-import { createDemoTablePaifuForTable } from '@/pages/TablePaifuPage/demo';
-import { toBackendPaifu } from '@/pages/TablePaifuPage/objects/TablePaifuData.mappers';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
 import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
+import { useTournamentTableCompletionActions } from './useTournamentTableCompletionActions';
 
 export function useTournamentTableActionsRuntime({
   operatorId,
@@ -33,9 +30,6 @@ export function useTournamentTableActionsRuntime({
   setTableDetailError: (message: string) => void;
 }) {
   const [isSubmittingTableAction, setIsSubmittingTableAction] = useState(false);
-  const [uploadingDemoPaifuTableId, setUploadingDemoPaifuTableId] =
-    useState('');
-  const [finalizingArchiveTableId, setFinalizingArchiveTableId] = useState('');
   const [selectedAppealTable, setSelectedAppealTable] =
     useState<TournamentDetailTableItem | null>(null);
   const [appealDescription, setAppealDescription] = useState('');
@@ -46,6 +40,16 @@ export function useTournamentTableActionsRuntime({
     tableCode: string;
     unreadyPlayerNames: string[];
   } | null>(null);
+  const {
+    finalizingArchiveTableId,
+    uploadingDemoPaifuTableId,
+    handleFinalizeArchive,
+    handleUploadDemoPaifu,
+  } = useTournamentTableCompletionActions({
+    operatorId,
+    onScheduleSuccess,
+    setTableDetailError,
+  });
 
   async function actuallyStartManagedTable(tableId: string) {
     if (!operatorId) {
@@ -120,36 +124,6 @@ export function useTournamentTableActionsRuntime({
     setPendingStartConfirmation(null);
   }
 
-  async function handleUploadDemoPaifu(
-    table: Pick<TournamentDetailTableItem, 'id'>,
-  ) {
-    if (!operatorId) {
-      return;
-    }
-
-    try {
-      setUploadingDemoPaifuTableId(table.id);
-      setTableDetailError('');
-      const detail = await sendAPI(new TournamentTableGetAPI(table.id)).then(
-        toTableDetail,
-      );
-      const paifu = createDemoTablePaifuForTable(detail);
-      await sendAPI(
-        new TournamentTableUploadPaifuAPI(table.id, {
-          operatorId,
-          paifu: toBackendPaifu(paifu),
-        }),
-      ).then(toTableDetail);
-      onScheduleSuccess?.();
-    } catch (error) {
-      setTableDetailError(
-        error instanceof Error ? error.message : '无法上传默认牌谱结束牌桌。',
-      );
-    } finally {
-      setUploadingDemoPaifuTableId('');
-    }
-  }
-
   function openTableAppealDialog(table: TournamentDetailTableItem) {
     setSelectedAppealTable(table);
     setAppealDescription('');
@@ -194,25 +168,6 @@ export function useTournamentTableActionsRuntime({
       setTableDetailError(message);
     } finally {
       setIsSubmittingAppeal(false);
-    }
-  }
-
-  async function handleFinalizeArchive(table: Pick<TournamentDetailTableItem, 'id'>) {
-    if (!operatorId) {
-      return;
-    }
-
-    try {
-      setFinalizingArchiveTableId(table.id);
-      setTableDetailError('');
-      await sendAPI(new TournamentTableFinalizeArchiveAPI(table.id, operatorId));
-      onScheduleSuccess?.();
-    } catch (error) {
-      setTableDetailError(
-        error instanceof Error ? error.message : '无法确认归档牌桌。',
-      );
-    } finally {
-      setFinalizingArchiveTableId('');
     }
   }
 

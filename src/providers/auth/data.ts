@@ -1,68 +1,17 @@
-import {
-  BootstrapSuperAdminAuthAPI,
-  CreateGuestSessionAuthAPI,
-  CurrentSessionAuthAPI,
-  LoginAuthAPI,
-  LogoutAuthAPI,
-  RegisterAuthAPI,
-  RestoreAuthSessionAPI,
-  RevokeGuestSessionAuthAPI,
-} from '@/api/auth';
-import { GetCurrentPlayerAPI } from '@/api/player';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type {
-  AuthSessionView,
-  AuthSuccessView,
   BootstrapSuperAdminRequest,
-  CreateGuestSessionRequest,
-  CurrentSessionQuery,
   LoginRequest,
   RegisterAccountRequest,
-  CurrentSessionView,
-  GuestSessionResponse,
-  LogoutResponse,
 } from '@/objects/auth';
-import type { PlayerProfileView } from '@/objects/player';
-import { sendAPI } from '@/system/api';
+
+import { authApi, getCurrentPlayer } from './authApi';
 
 const AUTH_SESSION_STORAGE_KEY = 'riichi-nexus.auth.session';
 
 interface StoredSessionRecord {
   token: string;
   user: AuthSession['user'];
-}
-
-const authApi = {
-  bootstrapSuperAdmin(payload: BootstrapSuperAdminRequest) {
-    return sendAPI<AuthSuccessView>(BootstrapSuperAdminAuthAPI.fromRequest(payload));
-  },
-  login(payload: LoginRequest) {
-    return sendAPI<AuthSuccessView>(LoginAuthAPI.fromRequest(payload));
-  },
-  register(payload: RegisterAccountRequest) {
-    return sendAPI<AuthSuccessView>(RegisterAuthAPI.fromRequest(payload));
-  },
-  getAuthSession(token: string) {
-    return sendAPI<AuthSessionView>(new RestoreAuthSessionAPI(token));
-  },
-  logout(token: string) {
-    return sendAPI<LogoutResponse>(new LogoutAuthAPI(token));
-  },
-  getSession(filters: CurrentSessionQuery) {
-    return sendAPI<CurrentSessionView>(new CurrentSessionAuthAPI(filters));
-  },
-  createGuestSession(payload: CreateGuestSessionRequest) {
-    return sendAPI<GuestSessionResponse>(new CreateGuestSessionAuthAPI(payload));
-  },
-  revokeGuestSession(guestSessionId: string, reason?: string) {
-    return sendAPI<GuestSessionResponse>(
-      new RevokeGuestSessionAuthAPI(guestSessionId, reason),
-    );
-  },
-};
-
-function getCurrentPlayer(operatorId: string) {
-  return sendAPI<PlayerProfileView>(new GetCurrentPlayerAPI(operatorId));
 }
 
 type BackendAuthResponse = Awaited<ReturnType<typeof authApi.login>>;

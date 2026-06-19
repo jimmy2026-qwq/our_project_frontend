@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest';
 
-import { getMatchDisplayHandTiles } from '@/pages/TableMatchPage/components/MatchBoard/MatchPlayerHand.helpers';
+import { getMatchDisplayHandTiles } from '@/pages/TableMatchPage/components/MatchBoard/functions/getMatchPlayerHandTiles';
 import { getSeatStateBadges } from '@/pages/TableMatchPage/components/MatchBoard/matchBoardLabels';
 
 describe('MatchPlayerHand', () => {

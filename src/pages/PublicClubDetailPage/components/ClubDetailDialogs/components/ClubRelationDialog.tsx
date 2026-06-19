@@ -3,7 +3,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { ListPublicClubsAPI } from '@/api/club';
 import {
   ActionButton,
-  Alert,
   Dialog,
   DialogBody,
   DialogDescription,
@@ -13,9 +12,6 @@ import {
   DialogPortal,
   DialogSurface,
   DialogTitle,
-  FieldGroup,
-  SelectField,
-  TextareaField,
 } from '@/components/ui';
 import type {
   ClubRelationKind,
@@ -24,12 +20,7 @@ import type {
 import { sendAPI } from '@/system/api';
 
 import type { ClubRelationDraft } from '../../ClubDetailContent/hooks/useClubRelationActions';
-
-const relationOptions: Array<{ value: ClubRelationKind; label: string }> = [
-  { value: 'Alliance', label: '联盟' },
-  { value: 'Rivalry', label: '对抗' },
-  { value: 'Neutral', label: '中立' },
-];
+import { ClubRelationDialogFields } from './ClubRelationDialogFields';
 
 export function ClubRelationDialog({
   clubId,
@@ -129,48 +120,18 @@ export function ClubRelationDialog({
           </DialogHeader>
 
           <DialogBody className="px-6 py-5">
-            <FieldGroup>
-              {loadError ? (
-                <Alert variant="warning">{loadError}</Alert>
-              ) : null}
-              <SelectField
-                label="目标俱乐部"
-                value={targetClubId}
-                onChange={(event) => setTargetClubId(event.currentTarget.value)}
-                disabled={isLoading || isSubmitting || selectableClubs.length === 0}
-              >
-                {selectableClubs.length === 0 ? (
-                  <option value="">暂无可选俱乐部</option>
-                ) : null}
-                {selectableClubs.map((club) => (
-                  <option key={club.clubId} value={club.clubId}>
-                    {club.name}
-                  </option>
-                ))}
-              </SelectField>
-              <SelectField
-                label="关系"
-                value={relation}
-                onChange={(event) =>
-                  setRelation(event.currentTarget.value as ClubRelationKind)
-                }
-                disabled={isSubmitting}
-              >
-                {relationOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </SelectField>
-              <TextareaField
-                label="备注"
-                value={note}
-                rows={3}
-                placeholder="可选"
-                onChange={(event) => setNote(event.currentTarget.value)}
-                disabled={isSubmitting}
-              />
-            </FieldGroup>
+            <ClubRelationDialogFields
+              isLoading={isLoading}
+              isSubmitting={isSubmitting}
+              loadError={loadError}
+              note={note}
+              relation={relation}
+              selectableClubs={selectableClubs}
+              targetClubId={targetClubId}
+              onNoteChange={setNote}
+              onRelationChange={setRelation}
+              onTargetClubIdChange={setTargetClubId}
+            />
           </DialogBody>
 
           <DialogFooter className="border-t border-[rgba(176,223,229,0.14)] px-6 py-5">

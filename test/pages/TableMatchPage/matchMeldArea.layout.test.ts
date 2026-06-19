@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   getMeldBoxHeight,
   getMeldBoxStyle,
-} from '@/pages/TableMatchPage/components/MatchBoard/MatchMeldArea.helpers';
+} from '@/pages/TableMatchPage/components/MatchBoard/functions/getMatchMeldAreaStyle';
 import type { MeldGroup } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
 
 describe('MatchMeldArea layout', () => {

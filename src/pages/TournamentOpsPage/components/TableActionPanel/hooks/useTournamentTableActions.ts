@@ -194,10 +194,5 @@ export function useTournamentTableActions({
     );
   }
 
-  return {
-    handleStartTable,
-    handleResetTable,
-    handleFileAppeal,
-    handleUpdateSeatState,
-  };
+  return { handleStartTable, handleResetTable, handleFileAppeal, handleUpdateSeatState };
 }

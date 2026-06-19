@@ -18,7 +18,7 @@ import type { HomeClubApplicationState } from '../objects/ClubApplication.types'
 import {
   getFallbackPlayerName,
   getSelectedClubName,
-} from '../functions/getClubApplicationHelpers';
+} from '../functions/getClubApplicationDisplay';
 import { toClubApplicationMutationModel } from '../objects/ClubApplication.mappers';
 import { useClubApplicationLoaders } from './useClubApplicationLoaders';
 
