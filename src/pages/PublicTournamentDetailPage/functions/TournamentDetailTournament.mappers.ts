@@ -1,4 +1,8 @@
-import { DEFAULT_MAHJONG_RULESET } from '@/objects';
+import {
+  DEFAULT_MAHJONG_RULESET,
+  StageStatuses,
+  TournamentStatuses,
+} from '@/objects';
 import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
@@ -18,23 +22,23 @@ function toStageStatus(
 }
 
 function toAdminStageStatus(status?: string): StageStatus {
-  if (status === 'Ready') {
-    return 'Ready';
+  if (status === StageStatuses.Ready) {
+    return StageStatuses.Ready;
   }
 
-  if (status === 'Active') {
-    return 'Active';
+  if (status === StageStatuses.Active) {
+    return StageStatuses.Active;
   }
 
-  if (status === 'Completed') {
-    return 'Completed';
+  if (status === StageStatuses.Completed) {
+    return StageStatuses.Completed;
   }
 
-  if (status === 'Archived') {
-    return 'Archived';
+  if (status === StageStatuses.Archived) {
+    return StageStatuses.Archived;
   }
 
-  return 'Pending';
+  return StageStatuses.Pending;
 }
 
 function toTournamentWhitelistType(
@@ -71,7 +75,9 @@ export function toPublicTournamentDetail(
   );
   const nextStage =
     stages.find(
-      (stage) => stage.status !== 'Completed' && stage.status !== 'Archived',
+      (stage) =>
+        stage.status !== StageStatuses.Completed &&
+        stage.status !== StageStatuses.Archived,
     ) ?? stages[stages.length - 1];
 
   return {
@@ -93,7 +99,9 @@ export function toPublicTournamentDetail(
     whitelistCount: item.whitelistCount,
     nextStageId: nextStage?.stageId ?? '',
     nextStageName: nextStage?.name ?? 'No stages available',
-    nextStageStatus: nextStage ? toStageStatus(nextStage.status) : 'Pending',
+    nextStageStatus: nextStage
+      ? toStageStatus(nextStage.status)
+      : StageStatuses.Pending,
     nextScheduledAt: item.startsAt,
     stages: stages.map((stage) => ({
       stageId: stage.stageId,
@@ -134,7 +142,9 @@ export function toTournamentDetailFromAdminView(
   );
   const nextStage =
     stages.find(
-      (stage) => stage.status !== 'Completed' && stage.status !== 'Archived',
+      (stage) =>
+        stage.status !== StageStatuses.Completed &&
+        stage.status !== StageStatuses.Archived,
     ) ?? stages[stages.length - 1];
   const participatingClubIds =
     item.participatingClubs?.map((club) => club.clubId) ?? [];
@@ -149,7 +159,7 @@ export function toTournamentDetailFromAdminView(
   return {
     id: item.tournamentId,
     name: item.name,
-    status: (item.status as TournamentPublicProfile['status']) ?? 'Draft',
+    status: (item.status as TournamentPublicProfile['status']) ?? TournamentStatuses.Draft,
     tagline: `Organizer: ${item.organizer}`,
     description: `Draft tournament detail loaded from the admin endpoint with ${stages.length} stage(s).`,
     venue: item.organizer,

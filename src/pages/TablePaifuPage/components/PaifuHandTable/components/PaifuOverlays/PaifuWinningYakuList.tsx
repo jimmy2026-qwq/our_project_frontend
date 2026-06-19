@@ -1,7 +1,7 @@
 import type { PaifuTile, Yaku } from '@/objects';
 import { getMahjongYakuLabel } from '@/objects';
 
-import { formatYakuValue } from '../../../../functions/getReplay';
+import { formatYakuValue } from '../../../../functions/getReplayCore';
 import { IndicatorPanel } from './WinningResultIndicators';
 
 export function PaifuWinningYakuList({

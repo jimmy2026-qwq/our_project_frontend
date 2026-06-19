@@ -2,6 +2,7 @@ import type { SeatWind } from '@/objects/tournament';
 
 import {
   isSamePaifuTile,
+  PaifuActionType,
   PaifuTileSuit,
   type PaifuAction,
   type PaifuTile,
@@ -25,7 +26,7 @@ export function getOpenMeldTiles({
       ? [...action.revealedTiles]
       : repeatTile(action.tile ?? undefined, fallbackCount);
   const tiles =
-    action.actionType === 'Chi'
+    action.actionType === PaifuActionType.Chi
       ? [
           ...(action.tile ? [action.tile] : []),
           ...removeFirstMatchingTile(revealedTiles, action.tile ?? undefined),
@@ -71,19 +72,19 @@ export function getClosedKanTiles(action: PaifuAction): MeldTile[] {
 
 export function isCallAction(action: PaifuAction) {
   return (
-    action.actionType === 'Chi' ||
-    action.actionType === 'Pon' ||
-    action.actionType === 'Kan' ||
-    action.actionType === 'OpenKan'
+    action.actionType === PaifuActionType.Chi ||
+    action.actionType === PaifuActionType.Pon ||
+    action.actionType === PaifuActionType.Kan ||
+    action.actionType === PaifuActionType.OpenKan
   );
 }
 
 export function isKanAction(action: PaifuAction) {
   return (
-    action.actionType === 'Kan' ||
-    action.actionType === 'OpenKan' ||
-    action.actionType === 'ClosedKan' ||
-    action.actionType === 'AddedKan'
+    action.actionType === PaifuActionType.Kan ||
+    action.actionType === PaifuActionType.OpenKan ||
+    action.actionType === PaifuActionType.ClosedKan ||
+    action.actionType === PaifuActionType.AddedKan
   );
 }
 

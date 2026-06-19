@@ -47,8 +47,8 @@ async function loadSchedules(
   try {
     const envelope = await sendAPI(
       new ListPublicSchedulesAPI({
-        tournamentStatus: state.scheduleTournamentStatus || undefined,
-        stageStatus: state.scheduleStageStatus || undefined,
+        tournamentStatus: state.scheduleTournamentStatus,
+        stageStatus: state.scheduleStageStatus,
       }),
     ).then((payload) => mapEnvelope(payload, toPublicSchedule));
     return { envelope, source: 'api' };

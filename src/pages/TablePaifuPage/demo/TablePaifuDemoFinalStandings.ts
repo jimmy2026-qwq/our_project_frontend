@@ -1,9 +1,9 @@
-import type { FinalStanding as PaifuFinalStanding } from '@/objects';
+import { SeatWinds, type FinalStanding as PaifuFinalStanding } from '@/objects';
 
 export const demoFinalStandings: PaifuFinalStanding[] = [
   {
     playerId: 'player-south',
-    seat: 'South',
+    seat: SeatWinds.South,
     finalPoints: 89600,
     placement: 1,
     uma: 20,
@@ -11,7 +11,7 @@ export const demoFinalStandings: PaifuFinalStanding[] = [
   },
   {
     playerId: 'player-west',
-    seat: 'West',
+    seat: SeatWinds.West,
     finalPoints: 24000,
     placement: 2,
     uma: 10,
@@ -19,7 +19,7 @@ export const demoFinalStandings: PaifuFinalStanding[] = [
   },
   {
     playerId: 'player-north',
-    seat: 'North',
+    seat: SeatWinds.North,
     finalPoints: 24000,
     placement: 3,
     uma: -10,
@@ -27,7 +27,7 @@ export const demoFinalStandings: PaifuFinalStanding[] = [
   },
   {
     playerId: 'player-east',
-    seat: 'East',
+    seat: SeatWinds.East,
     finalPoints: -37600,
     placement: 4,
     uma: -20,

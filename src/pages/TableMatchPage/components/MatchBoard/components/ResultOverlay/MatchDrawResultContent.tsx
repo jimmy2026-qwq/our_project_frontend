@@ -1,4 +1,4 @@
-import type { AgariResult } from '@/objects';
+import { HandOutcome, type AgariResult } from '@/objects';
 
 import { ResultFooter } from './MatchResultSettlementPanels';
 import { getDrawLabel, getPlayerName } from '../../functions/getMatchResultText';
@@ -22,7 +22,7 @@ export function DrawResultContent({
         <span className="rounded-xl border border-[rgba(214,162,255,0.38)] bg-[rgba(148,77,255,0.16)] px-4 py-1 text-sm font-bold tracking-[0.2em] text-[#d6a2ff]">
           {getDrawLabel(result.outcome)}
         </span>
-        {result.outcome === 'ExhaustiveDraw' ? (
+        {result.outcome === HandOutcome.ExhaustiveDraw ? (
           <div className="grid justify-items-center gap-3">
             <strong className="text-3xl font-bold tracking-[0.16em] text-[#d6a2ff] [text-shadow:0_2px_18px_rgba(148,77,255,0.72)]">
               荒牌流局

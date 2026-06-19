@@ -2,12 +2,13 @@ import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
 } from '@/objects';
+import { TournamentFormats } from '@/objects';
 
 function getStageFormatLabel(format?: string) {
   switch (format) {
-    case 'Knockout':
+    case TournamentFormats.Knockout:
       return '淘汰赛';
-    case 'Swiss':
+    case TournamentFormats.Swiss:
       return '瑞士轮';
     default:
       return undefined;

@@ -1,8 +1,12 @@
+export const TournamentStatuses = {
+  Draft: 'Draft',
+  RegistrationOpen: 'RegistrationOpen',
+  Scheduled: 'Scheduled',
+  InProgress: 'InProgress',
+  Completed: 'Completed',
+  Cancelled: 'Cancelled',
+  Archived: 'Archived',
+} as const;
+
 export type TournamentStatus =
-  | 'Draft'
-  | 'RegistrationOpen'
-  | 'Scheduled'
-  | 'InProgress'
-  | 'Completed'
-  | 'Cancelled'
-  | 'Archived';
+  (typeof TournamentStatuses)[keyof typeof TournamentStatuses];

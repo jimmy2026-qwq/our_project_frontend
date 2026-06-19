@@ -1,6 +1,6 @@
 import { WorkbenchContextPanel } from '@/components/ui';
 import { SelectField, TextInputField } from '@/components/ui';
-import type { TableStatus } from '@/objects';
+import { AppealStatuses, TableStatuses, type TableStatus } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { getActiveTournament } from '../functions/getTournamentOpsState';
@@ -67,19 +67,22 @@ export function TournamentOpsFiltersPanel({
       </SelectField>
       <SelectField
         label="牌桌状态"
-        value={state.tableStatus}
+        value={state.tableStatus ?? ''}
         onChange={(event) =>
           onStateChange({
-            tableStatus: event.currentTarget.value as TableStatus | '',
+            tableStatus:
+              event.currentTarget.value === ''
+                ? undefined
+                : (event.currentTarget.value as TableStatus),
           })
         }
       >
         <option value="">全部</option>
-        <option value="WaitingPreparation">等待开始</option>
-        <option value="InProgress">对局中</option>
-        <option value="Scoring">结算中</option>
-        <option value="Archived">已结束</option>
-        <option value="AppealInProgress">申诉处理中</option>
+        <option value={TableStatuses.WaitingPreparation}>等待开始</option>
+        <option value={TableStatuses.InProgress}>对局中</option>
+        <option value={TableStatuses.Scoring}>结算中</option>
+        <option value={TableStatuses.Archived}>已结束</option>
+        <option value={TableStatuses.AppealInProgress}>申诉处理中</option>
       </SelectField>
       <TextInputField
         label="玩家编号"
@@ -91,20 +94,21 @@ export function TournamentOpsFiltersPanel({
       />
       <SelectField
         label="申诉状态"
-        value={state.appealStatus}
+        value={state.appealStatus ?? ''}
         onChange={(event) =>
           onStateChange({
-            appealStatus: event.currentTarget.value as
-              | AppealSummary['status']
-              | '',
+            appealStatus:
+              event.currentTarget.value === ''
+                ? undefined
+                : (event.currentTarget.value as AppealSummary['status']),
           })
         }
       >
         <option value="">全部</option>
-        <option value="Open">处理中</option>
-        <option value="Resolved">已处理</option>
-        <option value="Rejected">已驳回</option>
-        <option value="Escalated">已升级</option>
+        <option value={AppealStatuses.Open}>处理中</option>
+        <option value={AppealStatuses.Resolved}>已处理</option>
+        <option value={AppealStatuses.Rejected}>已驳回</option>
+        <option value={AppealStatuses.Escalated}>已升级</option>
       </SelectField>
     </WorkbenchContextPanel>
   );

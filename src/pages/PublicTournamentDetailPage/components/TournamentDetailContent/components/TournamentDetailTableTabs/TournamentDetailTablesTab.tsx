@@ -32,9 +32,9 @@ export function TournamentDetailTablesTab({
   operatorId: string;
   participantWaitingTableDetails: Record<string, TableDetail>;
   tableDetailError: string;
-  updatingReadyTableId: string;
-  uploadingDemoPaifuTableId: string;
-  finalizingArchiveTableId: string;
+  updatingReadyTableId: string | null;
+  uploadingDemoPaifuTableId: string | null;
+  finalizingArchiveTableId: string | null;
   workbench: TournamentDetailWorkbenchState;
   onToggleOwnReady: (tableId: string, isReady: boolean) => void;
   onUploadDemoPaifu: (table: TournamentDetailTableItem) => void;

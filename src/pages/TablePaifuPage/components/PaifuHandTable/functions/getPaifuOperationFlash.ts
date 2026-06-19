@@ -9,7 +9,7 @@ import {
   type PaifuAction,
   type PaifuRound as PaifuRoundSummary,
 } from '@/objects';
-import { removeFirstTile } from '../../../functions/getReplay';
+import { removeFirstTile } from '../../../functions/getReplayCore';
 
 export const winningCallAnimationMs = 500;
 export const winningCallVisibleMs = 1500;

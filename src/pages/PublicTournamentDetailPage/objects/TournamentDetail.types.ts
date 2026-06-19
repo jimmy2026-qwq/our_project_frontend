@@ -1,4 +1,5 @@
 import type { TournamentPublicProfile } from './PublicTournamentDetailPage.types';
+import type { TableStatus } from '@/objects';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
@@ -9,7 +10,7 @@ export interface TournamentDetailTableItem {
   stageId: string;
   stageName: string;
   tableCode: string;
-  status: string;
+  status: TableStatus;
   playerIds: string[];
 }
 
@@ -21,7 +22,7 @@ export type TournamentHeaderStageAction = {
 
 export interface TournamentDetailWorkbenchState {
   profile: TournamentPublicProfile;
-  selectedClubId: string;
+  selectedClubId: string | null;
   isSubmittingTournamentAction: boolean;
   tournamentActionError: string;
   publishBlockedOpen: boolean;
@@ -42,7 +43,7 @@ export interface TournamentDetailWorkbenchState {
   selectableClubs: ClubSummary[];
   participantPlayers: PlayerProfile[];
   selectablePlayers: PlayerProfile[];
-  selectedPlayerId: string;
+  selectedPlayerId: string | null;
   operatorId?: string;
   visibleTables: TournamentDetailTableItem[];
 }

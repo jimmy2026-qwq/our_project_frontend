@@ -4,7 +4,7 @@ import {
   riverRowSize,
   riverTileImageWidth,
   riverTileVisibleHeight,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
 import type {
   MeldGroup,
   MeldTile,

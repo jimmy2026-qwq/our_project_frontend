@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Button, StatusPill } from '@/components/ui';
+import { PlayerStatuses } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import {
@@ -101,7 +102,9 @@ export function PlayerRow({ player }: { player: PlayerProfile }) {
         </span>
       </div>
       <StatusPill
-        tone={player.playerStatus === 'Active' ? 'success' : 'warning'}
+        tone={
+          player.playerStatus === PlayerStatuses.Active ? 'success' : 'warning'
+        }
       >
         {getPlayerStatusLabel(player.playerStatus)}
       </StatusPill>

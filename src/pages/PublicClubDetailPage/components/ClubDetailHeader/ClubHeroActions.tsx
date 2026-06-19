@@ -1,5 +1,6 @@
 import { Button, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
+import { ClubApplicationStatuses } from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 
 const heroActionClassName =
@@ -23,7 +24,8 @@ export function ClubHeroActions({
           已是俱乐部成员
         </StatusPill>
       ) : null}
-      {!isClubMember && currentApplicationStatus === 'Pending' ? (
+      {!isClubMember &&
+      currentApplicationStatus === ClubApplicationStatuses.Pending ? (
         <Button
           className={cx(
             heroActionClassName,
@@ -34,7 +36,8 @@ export function ClubHeroActions({
           申请处理中
         </Button>
       ) : null}
-      {!isClubMember && currentApplicationStatus === 'Rejected' ? (
+      {!isClubMember &&
+      currentApplicationStatus === ClubApplicationStatuses.Rejected ? (
         <Button
           variant="danger"
           className={cx(

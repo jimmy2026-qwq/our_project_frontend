@@ -22,8 +22,10 @@ export function useTournamentTableCompletionActions({
   setTableDetailError: (message: string) => void;
 }) {
   const [uploadingDemoPaifuTableId, setUploadingDemoPaifuTableId] =
-    useState('');
-  const [finalizingArchiveTableId, setFinalizingArchiveTableId] = useState('');
+    useState<string | null>(null);
+  const [finalizingArchiveTableId, setFinalizingArchiveTableId] = useState<
+    string | null
+  >(null);
 
   async function handleUploadDemoPaifu(
     table: Pick<TournamentDetailTableItem, 'id'>,
@@ -51,7 +53,7 @@ export function useTournamentTableCompletionActions({
         error instanceof Error ? error.message : '无法上传默认牌谱结束牌桌。',
       );
     } finally {
-      setUploadingDemoPaifuTableId('');
+      setUploadingDemoPaifuTableId(null);
     }
   }
 
@@ -72,7 +74,7 @@ export function useTournamentTableCompletionActions({
         error instanceof Error ? error.message : '无法确认归档牌桌。',
       );
     } finally {
-      setFinalizingArchiveTableId('');
+      setFinalizingArchiveTableId(null);
     }
   }
 

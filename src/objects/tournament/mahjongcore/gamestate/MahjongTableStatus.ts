@@ -1,9 +1,13 @@
+export const MahjongTableStatuses = {
+  NotStarted: 'NotStarted',
+  InProgress: 'InProgress',
+  WaitingPlayerAction: 'WaitingPlayerAction',
+  WaitingCallDecision: 'WaitingCallDecision',
+  RoundEnded: 'RoundEnded',
+  Finished: 'Finished',
+  Aborted: 'Aborted',
+  Archived: 'Archived',
+} as const;
+
 export type MahjongTableStatus =
-  | 'NotStarted'
-  | 'InProgress'
-  | 'WaitingPlayerAction'
-  | 'WaitingCallDecision'
-  | 'RoundEnded'
-  | 'Finished'
-  | 'Aborted'
-  | 'Archived';
+  (typeof MahjongTableStatuses)[keyof typeof MahjongTableStatuses];

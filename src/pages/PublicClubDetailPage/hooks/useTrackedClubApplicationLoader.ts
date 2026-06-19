@@ -4,6 +4,7 @@ import {
   GetClubApplicationAPI,
   GetCurrentClubApplicationAPI,
 } from '@/api/club';
+import { ClubApplicationStatuses } from '@/objects';
 import {
   isProvisionalClubApplicationId,
   updateTrackedClubApplicationStatus,
@@ -66,8 +67,8 @@ export function useTrackedClubApplicationLoader() {
 
       if (
         !applicationId &&
-        tracked?.status !== 'Rejected' &&
-        tracked?.status !== 'Withdrawn'
+        tracked?.status !== ClubApplicationStatuses.Rejected &&
+        tracked?.status !== ClubApplicationStatuses.Withdrawn
       ) {
         try {
           const current = await loadCurrentPendingApplication(
@@ -98,13 +99,16 @@ export function useTrackedClubApplicationLoader() {
       }
 
       if (isProvisionalClubApplicationId(tracked.id)) {
-        updateTrackedClubApplicationStatus(tracked.id, 'Rejected');
+        updateTrackedClubApplicationStatus(
+          tracked.id,
+          ClubApplicationStatuses.Rejected,
+        );
 
         return {
           application: {
             id: tracked.id,
             clubId: tracked.clubId,
-            status: 'Rejected',
+            status: ClubApplicationStatuses.Rejected,
             applicantName: tracked.applicantName,
             message: tracked.message,
             createdAt: tracked.submittedAt,
@@ -139,13 +143,16 @@ export function useTrackedClubApplicationLoader() {
         };
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) {
-          updateTrackedClubApplicationStatus(tracked.id, 'Rejected');
+          updateTrackedClubApplicationStatus(
+            tracked.id,
+            ClubApplicationStatuses.Rejected,
+          );
 
           return {
             application: {
               id: tracked.id,
               clubId: tracked.clubId,
-              status: 'Rejected',
+              status: ClubApplicationStatuses.Rejected,
               applicantName: tracked.applicantName,
               message: tracked.message,
               createdAt: tracked.submittedAt,

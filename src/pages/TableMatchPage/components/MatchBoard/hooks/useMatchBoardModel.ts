@@ -1,4 +1,9 @@
-import type { MahjongLegalAction } from '@/objects';
+import {
+  MahjongTableStatuses,
+  SeatWinds,
+  TableStatuses,
+  type MahjongLegalAction,
+} from '@/objects';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
@@ -53,18 +58,19 @@ export function useMatchBoardModel({
     result && isWinOutcome(result.outcome),
   );
   const isCurrentEastPlayer = seats.some(
-    (seat) => seat.seat === 'East' && seat.playerId === operatorId,
+    (seat) => seat.seat === SeatWinds.East && seat.playerId === operatorId,
   );
   const terminalSettlementTable =
     finalSettlementTable ??
-    (mahjongTable.status === 'Finished' || mahjongTable.status === 'Archived'
+    (mahjongTable.status === MahjongTableStatuses.Finished ||
+    mahjongTable.status === MahjongTableStatuses.Archived
       ? mahjongTable
       : null);
   const canAdvanceAfterSettlement =
     !terminalSettlementTable &&
-    table.status !== 'Archived' &&
-    mahjongTable.status !== 'Archived' &&
-    mahjongTable.status !== 'Finished';
+    table.status !== TableStatuses.Archived &&
+    mahjongTable.status !== MahjongTableStatuses.Archived &&
+    mahjongTable.status !== MahjongTableStatuses.Finished;
   const resultSequence = useMatchResultSequence({
     canAdvanceAfterSettlement,
     isCurrentEastPlayer,
@@ -99,7 +105,8 @@ export function useMatchBoardModel({
     [result, seatMap, resultSequence.settlementProgress],
   );
   const scoreStepActionLabel =
-    table.status === 'Archived' || mahjongTable.status === 'Archived'
+    table.status === TableStatuses.Archived ||
+    mahjongTable.status === MahjongTableStatuses.Archived
       ? '关闭结算'
       : shouldCompleteTableAfterCurrentResult(mahjongTable)
         ? '完成牌桌'

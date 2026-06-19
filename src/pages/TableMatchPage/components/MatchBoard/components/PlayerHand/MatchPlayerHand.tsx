@@ -13,7 +13,7 @@ import {
 import {
   handPositionClasses,
   labelPositionClasses,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
 
 import { getMatchDisplayHandTiles } from '../../functions/getMatchPlayerHandTiles';
 import {

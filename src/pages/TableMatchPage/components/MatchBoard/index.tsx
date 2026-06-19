@@ -1,3 +1,4 @@
+import { SeatWinds } from '@/objects';
 import { PlayerRiver } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PlayerAreas/PlayerRiver';
 import { OperationFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/OperationFlash';
 import { WinningCallFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/WinningCallFlash';
@@ -10,10 +11,10 @@ import { MatchMeldArea } from './components/MeldArea/MatchMeldArea';
 import { MatchPlayerHand } from './components/PlayerHand/MatchPlayerHand';
 import { FinalSettlementOverlay } from './components/ResultOverlay/FinalSettlementOverlay';
 import { MatchResultOverlay } from './components/ResultOverlay/MatchResultOverlay';
-import { seatOrder } from './functions/matchBoardSeats';
 import { shouldHideWinningHand } from './functions/getMatchBoardSettlement';
 import { useMatchBoardModel } from './hooks/useMatchBoardModel';
 import type { MatchBoardProps } from './objects/MatchBoardProps';
+import { matchBoardSeatOrder } from './objects/matchBoardSeatOrder';
 
 export function MatchBoard(props: MatchBoardProps) {
   useMahjongTileImagePreload();
@@ -58,7 +59,7 @@ export function MatchBoard(props: MatchBoardProps) {
           seatsByDisplaySeat={model.seatMap}
         />
 
-        {seatOrder.map((seat) => (
+        {matchBoardSeatOrder.map((seat) => (
           <PlayerRiver key={`${seat}-river`} rivers={model.rivers} seat={seat} />
         ))}
         <MatchMeldArea melds={model.melds} />
@@ -75,7 +76,7 @@ export function MatchBoard(props: MatchBoardProps) {
           flash={model.winningCallFlash ?? model.riichiCallFlash}
         />
         <YakumanTileBurstOverlay burst={model.yakumanTileBurst} />
-        {seatOrder.map((seat) => {
+        {matchBoardSeatOrder.map((seat) => {
           const seatView = model.seatMap[seat];
 
           return (
@@ -89,7 +90,9 @@ export function MatchBoard(props: MatchBoardProps) {
                     : []
                   : model.discardActions
               }
-              hideLabel={seat === 'East' && model.hasVisibleButtonActions}
+              hideLabel={
+                seat === SeatWinds.East && model.hasVisibleButtonActions
+              }
               isSubmitting={model.isSubmittingAction}
               isTurnPlayer={model.displayedTurnPlayerId === seatView?.playerId}
               onSubmitAction={model.submitActionAndClosePickers}

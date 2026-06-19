@@ -1,3 +1,4 @@
+import { ClubRelationKinds } from '@/objects/club';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import type { ClubPublicProfile } from '../objects/PublicTournamentDetailPage.types';
@@ -16,10 +17,11 @@ export function toClubPublicProfileSummary(
     totalPoints: profile.totalPoints ?? 0,
     pointPool: profile.pointPool ?? 0,
     allianceCount: profile.relations.filter(
-      (relation) => relation === 'Alliance',
+      (relation) => relation === ClubRelationKinds.Alliance,
     ).length,
-    rivalryCount: profile.relations.filter((relation) => relation === 'Rivalry')
-      .length,
+    rivalryCount: profile.relations.filter(
+      (relation) => relation === ClubRelationKinds.Rivalry,
+    ).length,
     relations: profile.relations,
   };
 }

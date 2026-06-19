@@ -1,4 +1,5 @@
 import { EmptyState, SectionIntro } from '@/components/ui';
+import { Roles } from '@/objects';
 
 import { ApplicationInboxPanel } from './components/MemberHubApplicationInboxPanel';
 import { MemberHubContextPanel } from './components/MemberHubContextPanel';
@@ -92,7 +93,7 @@ export function MemberHubPage() {
           />
         )}
 
-        {activeOperator.role === 'ClubAdmin' &&
+        {activeOperator.role === Roles.ClubAdmin &&
         clubDashboardState.source === 'api' &&
         clubDashboardState.dashboard ? (
           <DashboardPanel
@@ -106,7 +107,7 @@ export function MemberHubPage() {
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}
             loadState={clubDashboardState}
             roleNote={
-              activeOperator.role === 'ClubAdmin'
+              activeOperator.role === Roles.ClubAdmin
                 ? '接口暂时没有返回可用的俱乐部看板数据。'
                 : '只有俱乐部管理员可以查看俱乐部看板。'
             }

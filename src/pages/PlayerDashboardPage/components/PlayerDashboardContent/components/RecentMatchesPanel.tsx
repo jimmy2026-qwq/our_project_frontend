@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
+import { TableStatuses } from '@/objects';
 
 import type { RecentTableItem } from '../../../objects/PlayerDashboard.types';
 import { getRecentTableStatusLabel } from '../functions/getPlayerDashboardLabels';
@@ -13,9 +14,9 @@ export function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
         {items.length > 0 ? (
           items.map((table) => {
             const hasResult =
-              table.status === 'Scoring' ||
-              table.status === 'AppealInProgress' ||
-              table.status === 'Archived';
+              table.status === TableStatuses.Scoring ||
+              table.status === TableStatuses.AppealInProgress ||
+              table.status === TableStatuses.Archived;
 
             return (
               <article
@@ -36,7 +37,7 @@ export function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
                     >
                       查看赛事
                     </Link>
-                    {table.status === 'WaitingPreparation' ? (
+                    {table.status === TableStatuses.WaitingPreparation ? (
                       <span className={detailShellClassNames.actionDisabled}>
                         等待开桌
                       </span>

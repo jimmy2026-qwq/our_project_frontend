@@ -1,5 +1,6 @@
 import { EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
+import { ClubApplicationStatuses } from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 
 import { formatDateTime } from '../../../functions/formatClubDetail';
@@ -7,13 +8,13 @@ import { clubPanelClassNames } from '../styles';
 
 function getApplicationStatusLabel(status: ClubApplicationView['status']) {
   switch (status) {
-    case 'Pending':
+    case ClubApplicationStatuses.Pending:
       return '待处理';
-    case 'Approved':
+    case ClubApplicationStatuses.Approved:
       return '已通过';
-    case 'Rejected':
+    case ClubApplicationStatuses.Rejected:
       return '已拒绝';
-    case 'Withdrawn':
+    case ClubApplicationStatuses.Withdrawn:
       return '已撤回';
     default:
       return status;
@@ -53,16 +54,17 @@ export function ClubInboxPanel({
               <div className={clubPanelClassNames.rowSide}>
                 <StatusPill
                   tone={
-                    item.status === 'Pending'
+                    item.status === ClubApplicationStatuses.Pending
                       ? 'warning'
-                      : item.status === 'Approved'
+                      : item.status === ClubApplicationStatuses.Approved
                         ? 'success'
                         : 'danger'
                   }
                 >
                   {getApplicationStatusLabel(item.status)}
                 </StatusPill>
-                {item.canReview && item.status === 'Pending' ? (
+                {item.canReview &&
+                item.status === ClubApplicationStatuses.Pending ? (
                   <>
                     <button
                       type="button"

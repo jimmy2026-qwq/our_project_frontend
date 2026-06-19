@@ -1,7 +1,7 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuAction } from '@/objects';
-import { seatOrder } from './getReplayCore';
+import { PaifuActionType, type PaifuAction } from '@/objects';
+import { replaySeatOrder as seatOrder } from '../objects/replaySeatInfo';
 
 export function getOpenMeldSidewaysIndex({
   action,
@@ -14,7 +14,7 @@ export function getOpenMeldSidewaysIndex({
   claimedSeat?: SeatWind;
   tileCount: number;
 }) {
-  if (action.actionType === 'Chi') {
+  if (action.actionType === PaifuActionType.Chi) {
     return 0;
   }
 

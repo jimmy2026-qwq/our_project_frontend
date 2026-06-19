@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import type { SeatWind } from '@/objects/tournament';
+import { SeatWinds, type SeatWind } from '@/objects/tournament';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { useTournamentSeatStateSync } from './useTournamentSeatStateSync';
@@ -27,7 +27,7 @@ export function useTableActionPanel({
     'Reset requested from tournament ops.',
   );
   const [appealDescription, setAppealDescription] = useState('');
-  const [seatWind, setSeatWind] = useState<SeatWind>('East');
+  const [seatWind, setSeatWind] = useState<SeatWind>(SeatWinds.East);
   const [seatReady, setSeatReady] = useState(false);
   const [seatDisconnected, setSeatDisconnected] = useState(false);
   const [seatNote, setSeatNote] = useState('');
@@ -38,7 +38,7 @@ export function useTableActionPanel({
     setActionError(null);
   }, [table?.id]);
 
-  useTournamentTableDetailData(reloadKey, table?.id ?? '', setTableDetail);
+  useTournamentTableDetailData(reloadKey, table?.id ?? null, setTableDetail);
   useTournamentSeatStateSync({
     tableDetail,
     seatWind,

@@ -1,6 +1,8 @@
+import type { RealtimeEventType } from './RealtimeEventType';
+
 export interface RealtimeEvent {
   id: string;
-  eventType: string;
+  eventType: RealtimeEventType;
   aggregateType: string;
   aggregateId: string;
   occurredAt: string;

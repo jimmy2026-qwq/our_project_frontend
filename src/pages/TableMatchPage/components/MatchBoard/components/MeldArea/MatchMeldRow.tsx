@@ -1,6 +1,6 @@
 import type { CSSProperties } from 'react';
 
-import type { SeatWind } from '@/objects';
+import { SeatWinds, type SeatWind } from '@/objects';
 import { TileImage } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 import {
   riverRowSize,
@@ -8,7 +8,7 @@ import {
   riverTileImageWidth,
   riverTileTopCrop,
   riverTileVisibleHeight,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
 import type {
   MeldGroup,
   MeldTile,
@@ -140,17 +140,19 @@ function getMeldTileStyle(
 function getSidewaysTileTopOffset(seat: SeatWind) {
   const bottomAlignedOffset = riverRowSize - riverTileImageWidth;
 
-  return seat === 'South' || seat === 'North'
+  return seat === SeatWinds.South || seat === SeatWinds.North
     ? bottomAlignedOffset / 2
     : bottomAlignedOffset;
 }
 
 function getMeldTileFaceClass(seat: SeatWind) {
-  return seat === 'South' || seat === 'North' ? 'rotate-180' : '';
+  return seat === SeatWinds.South || seat === SeatWinds.North
+    ? 'rotate-180'
+    : '';
 }
 
 function getMeldDisplayTiles(seat: SeatWind, meld: MeldGroup) {
-  return seat === 'South' || seat === 'North'
+  return seat === SeatWinds.South || seat === SeatWinds.North
     ? [...meld.tiles].reverse()
     : meld.tiles;
 }

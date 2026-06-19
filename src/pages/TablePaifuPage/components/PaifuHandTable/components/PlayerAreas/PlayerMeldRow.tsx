@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react';
 
 import { getPaifuTileCode } from '@/objects';
-import type { SeatWind } from '@/objects/tournament';
+import { SeatWinds, type SeatWind } from '@/objects/tournament';
 
 import type {
   MeldGroup,
@@ -14,7 +14,7 @@ import {
   riverTileImageWidth,
   riverTileTopCrop,
   riverTileVisibleHeight,
-} from '../../functions/getPaifuTableLayout';
+} from '../../objects/paifuTableLayout';
 
 export function MeldRow({
   meld,
@@ -142,17 +142,19 @@ function getMeldTileStyle(
 function getSidewaysTileTopOffset(seat: SeatWind) {
   const bottomAlignedOffset = riverRowSize - riverTileImageWidth;
 
-  return seat === 'South' || seat === 'North'
+  return seat === SeatWinds.South || seat === SeatWinds.North
     ? bottomAlignedOffset / 2
     : bottomAlignedOffset;
 }
 
 function getMeldTileFaceClass(seat: SeatWind) {
-  return seat === 'South' || seat === 'North' ? 'rotate-180' : '';
+  return seat === SeatWinds.South || seat === SeatWinds.North
+    ? 'rotate-180'
+    : '';
 }
 
 function getMeldDisplayTiles(seat: SeatWind, meld: MeldGroup) {
-  return seat === 'South' || seat === 'North'
+  return seat === SeatWinds.South || seat === SeatWinds.North
     ? [...meld.tiles].reverse()
     : meld.tiles;
 }

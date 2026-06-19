@@ -2,7 +2,7 @@ import { SeatWinds, type SeatWind } from '@/objects/tournament';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
-import { seatOrder } from '../../../functions/getReplay';
+import { replaySeatOrder as seatOrder } from '../../../objects/replaySeatInfo';
 
 export function getInitialPerspectiveSeat(
   paifu: TablePaifuDetail,

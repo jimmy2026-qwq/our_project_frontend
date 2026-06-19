@@ -1,4 +1,9 @@
-import type { AgariResult, MahjongSeatView, PaifuTile } from '@/objects';
+import {
+  HandOutcome,
+  type AgariResult,
+  type MahjongSeatView,
+  type PaifuTile,
+} from '@/objects';
 import {
   getWinYaku,
   getResultWins,
@@ -112,11 +117,11 @@ function getYakumanFeaturedTile({
   targetSeat?: MahjongSeatView;
   winnerSeat?: MahjongSeatView;
 }) {
-  if (result.outcome === 'Tsumo') {
+  if (result.outcome === HandOutcome.Tsumo) {
     return winnerSeat?.drawTile ?? undefined;
   }
 
-  if (result.outcome === 'Ron') {
+  if (result.outcome === HandOutcome.Ron) {
     return targetSeat?.river?.[targetSeat.river.length - 1]?.tile;
   }
 

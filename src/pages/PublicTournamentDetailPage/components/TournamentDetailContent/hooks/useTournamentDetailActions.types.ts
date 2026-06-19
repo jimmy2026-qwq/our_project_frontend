@@ -29,8 +29,8 @@ export interface UseTournamentDetailActionsParams {
   setPublishBlockedOpen: Dispatch<SetStateAction<boolean>>;
   setRuleDraft: Dispatch<SetStateAction<TournamentStageRuleDraft>>;
   setRulesDialogOpen: Dispatch<SetStateAction<boolean>>;
-  setSelectedClubId: Dispatch<SetStateAction<string>>;
-  setSelectedPlayerId: Dispatch<SetStateAction<string>>;
+  setSelectedClubId: Dispatch<SetStateAction<string | null>>;
+  setSelectedPlayerId: Dispatch<SetStateAction<string | null>>;
   setTournamentActionError: Dispatch<SetStateAction<string>>;
   workbench: TournamentDetailWorkbenchState | null;
 }

@@ -5,7 +5,7 @@ import {
   getWinYaku,
   isWinOutcome,
 } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplay';
+import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
 import {
   formatDelta,

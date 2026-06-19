@@ -1,4 +1,4 @@
-import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplay';
+import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
 import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 

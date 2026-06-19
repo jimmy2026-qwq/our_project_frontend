@@ -1,14 +1,15 @@
 import { StatusPill } from '@/components/ui';
+import { PlayerStatuses } from '@/objects';
 
 import type { MemberListItem } from '../objects/MemberListItem';
 
 function getPlayerStatusLabel(status?: string) {
   switch (status) {
-    case 'Active':
+    case PlayerStatuses.Active:
       return '活跃';
-    case 'Suspended':
+    case PlayerStatuses.Suspended:
       return '停用';
-    case 'Banned':
+    case PlayerStatuses.Banned:
       return '封禁';
     default:
       return status || '活跃';

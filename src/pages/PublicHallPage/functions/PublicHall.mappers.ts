@@ -5,6 +5,7 @@ import type {
   StageStatus,
   TournamentSummaryView,
 } from '@/objects';
+import { PlayerStatuses, StageStatuses } from '@/objects';
 import type { PlayerProfileView, PlayerStatus } from '@/objects/player';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { toClubSummaryRelation } from '@/pages/shared_objects/club/functions/toClubSummaryRelation';
@@ -12,10 +13,10 @@ import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile'
 
 import type {
   PlayerLeaderboardEntry,
-  PublicHallLeaderboardStatus,
   PublicHallState,
   PublicSchedule,
 } from '../objects/PublicHallPage.types';
+import { PublicHallLeaderboardDisplayStatuses } from '../objects/PublicHallLeaderboardDisplayStatus';
 
 export interface TournamentDirectoryEntryView {
   id: string;
@@ -85,9 +86,17 @@ export function toTournamentDirectoryEntry(
 }
 
 export function toLeaderboardStatus(
-  status: PublicHallLeaderboardStatus,
+  status: PlayerStatus,
 ): PlayerLeaderboardEntry['status'] {
-  return status === 'Suspended' ? 'Inactive' : status;
+  if (status === PlayerStatuses.Active) {
+    return PublicHallLeaderboardDisplayStatuses.Active;
+  }
+
+  if (status === PlayerStatuses.Banned) {
+    return PublicHallLeaderboardDisplayStatuses.Banned;
+  }
+
+  return PublicHallLeaderboardDisplayStatuses.Inactive;
 }
 
 export function toLeaderboardStatusFilter(
@@ -97,27 +106,35 @@ export function toLeaderboardStatusFilter(
     return undefined;
   }
 
-  return status === 'Inactive' ? 'Suspended' : status;
+  if (status === PublicHallLeaderboardDisplayStatuses.Active) {
+    return PlayerStatuses.Active;
+  }
+
+  if (status === PublicHallLeaderboardDisplayStatuses.Banned) {
+    return PlayerStatuses.Banned;
+  }
+
+  return PlayerStatuses.Suspended;
 }
 
 export function toStageStatus(status?: string): StageStatus {
-  if (status === 'Ready') {
-    return 'Ready';
+  if (status === StageStatuses.Ready) {
+    return StageStatuses.Ready;
   }
 
-  if (status === 'Active') {
-    return 'Active';
+  if (status === StageStatuses.Active) {
+    return StageStatuses.Active;
   }
 
-  if (status === 'Completed') {
-    return 'Completed';
+  if (status === StageStatuses.Completed) {
+    return StageStatuses.Completed;
   }
 
-  if (status === 'Archived') {
-    return 'Archived';
+  if (status === StageStatuses.Archived) {
+    return StageStatuses.Archived;
   }
 
-  return 'Pending';
+  return StageStatuses.Pending;
 }
 
 function toPlayerClubIds(item: PlayerProfileView): string[] {

@@ -1,46 +1,48 @@
-export function getTableStatusLabel(status: string) {
+import { TableStatuses, type TableStatus } from '@/objects';
+
+export function getTableStatusLabel(status: TableStatus) {
   switch (status) {
-    case 'WaitingPreparation':
+    case TableStatuses.WaitingPreparation:
       return '等待准备';
-    case 'InProgress':
+    case TableStatuses.InProgress:
       return '进行中';
-    case 'Scoring':
+    case TableStatuses.Scoring:
       return '等待申诉';
-    case 'AppealInProgress':
+    case TableStatuses.AppealInProgress:
       return '申诉处理中';
-    case 'Archived':
+    case TableStatuses.Archived:
       return '已归档';
     default:
       return status;
   }
 }
 
-export function getTableSortWeight(status: string) {
+export function getTableSortWeight(status: TableStatus) {
   switch (status) {
-    case 'InProgress':
-    case 'Scoring':
-    case 'AppealInProgress':
+    case TableStatuses.InProgress:
+    case TableStatuses.Scoring:
+    case TableStatuses.AppealInProgress:
       return 0;
-    case 'Archived':
+    case TableStatuses.Archived:
       return 1;
-    case 'WaitingPreparation':
+    case TableStatuses.WaitingPreparation:
       return 2;
     default:
       return 3;
   }
 }
 
-export function getTableStatusTone(status: string) {
+export function getTableStatusTone(status: TableStatus) {
   switch (status) {
-    case 'InProgress':
+    case TableStatuses.InProgress:
       return 'success' as const;
-    case 'Scoring':
+    case TableStatuses.Scoring:
       return 'warning' as const;
-    case 'AppealInProgress':
+    case TableStatuses.AppealInProgress:
       return 'danger' as const;
-    case 'Archived':
+    case TableStatuses.Archived:
       return 'neutral' as const;
-    case 'WaitingPreparation':
+    case TableStatuses.WaitingPreparation:
       return 'warning' as const;
     default:
       return 'neutral' as const;

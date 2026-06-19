@@ -86,7 +86,7 @@ export function useTournamentInviteActions({
 
       setSelectedClubId((current) =>
         current === invitedClubId
-          ? (remainingSelectable[0]?.id ?? '')
+          ? (remainingSelectable[0]?.id ?? null)
           : current,
       );
     } catch (error) {
@@ -141,7 +141,7 @@ export function useTournamentInviteActions({
         return (
           workbench.selectablePlayers.find(
             (player) => player.playerId !== invitedPlayerId,
-          )?.playerId ?? ''
+          )?.playerId ?? null
         );
       });
     } catch (error) {

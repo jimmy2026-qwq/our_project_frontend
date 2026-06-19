@@ -58,7 +58,7 @@ async function loadTables(
       state.tournamentId,
       state.stageId,
       {
-        status: state.tableStatus || undefined,
+        status: state.tableStatus,
         playerId: state.playerId || undefined,
         limit: 10,
         offset: 0,

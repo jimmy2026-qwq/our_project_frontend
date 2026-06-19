@@ -5,6 +5,7 @@ import type {
   PaifuRound as PaifuRoundSummary,
   PaifuTile,
 } from '@/objects';
+import { PaifuActionType } from '@/objects';
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import { removeFirstTile } from './getReplayCore';
 import { getPlayerSeat } from './getReplayPlayers';
@@ -63,7 +64,10 @@ export function applySnapshotAction({
     rivers,
   });
 
-  if (action.actionType === 'Win' || action.actionType === 'DrawGame') {
+  if (
+    action.actionType === PaifuActionType.Win ||
+    action.actionType === PaifuActionType.DrawGame
+  ) {
     drawnTileIndexes[action.actor] = undefined;
   }
 }
@@ -86,13 +90,15 @@ function applyRiverSnapshot({
   if (
     !action.actor ||
     !action.tile ||
-    (action.actionType !== 'Discard' && action.actionType !== 'Riichi')
+    (action.actionType !== PaifuActionType.Discard &&
+      action.actionType !== PaifuActionType.Riichi)
   ) {
     return;
   }
 
   const sideways =
-    action.actionType === 'Riichi' || pendingRiichiSideways[actorSeat];
+    action.actionType === PaifuActionType.Riichi ||
+    pendingRiichiSideways[actorSeat];
 
   hands[action.actor] = action.handTilesAfterAction
     ? hands[action.actor]
@@ -150,14 +156,14 @@ function applyMeldSnapshot({
     ];
   }
 
-  if (action.actionType === 'ClosedKan') {
+  if (action.actionType === PaifuActionType.ClosedKan) {
     melds[actorSeat] = [
       ...melds[actorSeat],
       { actionType: action.actionType, tiles: getClosedKanTiles(action) },
     ];
   }
 
-  if (action.actionType === 'AddedKan') {
+  if (action.actionType === PaifuActionType.AddedKan) {
     melds[actorSeat] = [
       ...melds[actorSeat],
       {

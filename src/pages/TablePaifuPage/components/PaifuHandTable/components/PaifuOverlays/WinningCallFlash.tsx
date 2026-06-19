@@ -1,13 +1,15 @@
-import type { SeatWind } from '@/objects/tournament';
+import { SeatWinds, type SeatWind } from '@/objects/tournament';
 
 import type { WinningCallFlashView } from '../../objects/PaifuOverlayViews';
 
 const winningCallPositionClasses: Record<SeatWind, string> = {
-  East: 'left-1/2 top-[calc(50%+116px)] -translate-x-1/2 -translate-y-1/2',
-  South:
+  [SeatWinds.East]:
+    'left-1/2 top-[calc(50%+116px)] -translate-x-1/2 -translate-y-1/2',
+  [SeatWinds.South]:
     'left-[calc(50%+200px)] top-1/2 -translate-x-1/2 -translate-y-1/2',
-  West: 'left-1/2 top-[calc(50%-174px)] -translate-x-1/2 -translate-y-1/2',
-  North:
+  [SeatWinds.West]:
+    'left-1/2 top-[calc(50%-174px)] -translate-x-1/2 -translate-y-1/2',
+  [SeatWinds.North]:
     'left-[calc(50%-272px)] top-1/2 -translate-x-1/2 -translate-y-1/2',
 };
 

@@ -1,4 +1,9 @@
-import type { ClubPrivilegeCode, StageStatus, TournamentStatus } from '@/objects';
+import {
+  PlayerStatuses,
+  type ClubPrivilegeCode,
+  type StageStatus,
+  type TournamentStatus,
+} from '@/objects';
 import type {
   AdvancementRule,
   KnockoutRuleConfig,
@@ -19,6 +24,15 @@ export interface DetailState<T> {
 export interface PublicHallViewerContext {
   session: AuthContextSession | null;
 }
+
+export const ClubLineupMemberStatuses = {
+  Active: PlayerStatuses.Active,
+  Inactive: 'Inactive',
+  Banned: PlayerStatuses.Banned,
+} as const;
+
+export type ClubLineupMemberStatus =
+  (typeof ClubLineupMemberStatuses)[keyof typeof ClubLineupMemberStatuses];
 
 export interface ClubPublicProfile {
   id: string;
@@ -54,7 +68,7 @@ export interface ClubPublicProfile {
       tier: string;
       stars?: number | null;
     } | null;
-    status?: 'Active' | 'Inactive' | 'Banned';
+    status?: ClubLineupMemberStatus;
     isAdmin?: boolean;
     internalTitle?: string | null;
     privileges?: ClubPrivilegeCode[];

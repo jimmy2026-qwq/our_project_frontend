@@ -28,10 +28,10 @@ export function TournamentInvitedClubsPanel({
   invitedClubs: ClubSummary[];
   lineupSubmissionCounts: Record<string, number>;
   selectableClubs: ClubSummary[];
-  selectedClubId: string;
+  selectedClubId: string | null;
   canManageTournament: boolean;
   isSubmittingTournamentAction: boolean;
-  onSelectedClubIdChange: (value: string) => void;
+  onSelectedClubIdChange: (value: string | null) => void;
   onInviteClub: () => void;
 }) {
   return (
@@ -50,9 +50,9 @@ export function TournamentInvitedClubsPanel({
             </p>
             <SelectField
               label="俱乐部"
-              value={selectedClubId}
+              value={selectedClubId ?? ''}
               onChange={(event) =>
-                onSelectedClubIdChange(event.currentTarget.value)
+                onSelectedClubIdChange(event.currentTarget.value || null)
               }
               disabled={
                 isSubmittingTournamentAction || selectableClubs.length === 0

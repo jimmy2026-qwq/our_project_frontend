@@ -1,5 +1,5 @@
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
-import { getRoundTitle } from '../../../../functions/getReplay';
+import { getRoundTitle } from '../../../../functions/getReplayCore';
 
 interface RoundPickerProps {
   onOpenSettlement?: () => void;

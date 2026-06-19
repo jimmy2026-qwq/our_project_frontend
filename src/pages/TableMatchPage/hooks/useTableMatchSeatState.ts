@@ -1,21 +1,19 @@
 import { useMemo } from 'react';
 
+import { TableStatuses } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
+
+import { getTableSeatMap } from '../functions/getTableSeatMap';
 
 export function useTableMatchSeatState(
   table: TableDetail | null,
   operatorId: string,
   isRegisteredPlayer: boolean,
 ) {
-  const seatMap = useMemo(() => {
-    const entries = table?.seats ?? [];
-    return {
-      East: entries.find((seat) => seat.seat === 'East') ?? null,
-      South: entries.find((seat) => seat.seat === 'South') ?? null,
-      West: entries.find((seat) => seat.seat === 'West') ?? null,
-      North: entries.find((seat) => seat.seat === 'North') ?? null,
-    };
-  }, [table]);
+  const seatMap = useMemo(
+    () => getTableSeatMap(table?.seats ?? []),
+    [table],
+  );
 
   const ownSeat = useMemo(
     () => table?.seats.find((seat) => seat.playerId === operatorId) ?? null,
@@ -29,12 +27,12 @@ export function useTableMatchSeatState(
       isRegisteredPlayer &&
       !!operatorId &&
       !!ownSeat &&
-      table?.status === 'WaitingPreparation' &&
+      table?.status === TableStatuses.WaitingPreparation &&
       !ownSeat.disconnected,
     canFileAppeal:
       isRegisteredPlayer &&
       !!operatorId &&
       !!ownSeat &&
-      table?.status === 'Scoring',
+      table?.status === TableStatuses.Scoring,
   };
 }

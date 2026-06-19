@@ -3,8 +3,12 @@ import { useEffect, useMemo, useState } from 'react';
 import {
   getPlayerDisplayName,
   getRoundPlayerId,
-} from '../../../functions/getReplay';
-import { SeatWinds, type PaifuRound as PaifuRoundSummary } from '@/objects';
+} from '../../../functions/getReplayPlayers';
+import {
+  HandOutcome,
+  SeatWinds,
+  type PaifuRound as PaifuRoundSummary,
+} from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
 import {
   createPerspectivePaifu,
@@ -98,7 +102,7 @@ const emptyPaifuRound: PaifuRoundSummary = {
     doraIndicators: null,
     fu: null,
     han: null,
-    outcome: 'AbortiveDraw',
+    outcome: HandOutcome.AbortiveDraw,
     points: 0,
     scoreChanges: [],
     settlement: null,

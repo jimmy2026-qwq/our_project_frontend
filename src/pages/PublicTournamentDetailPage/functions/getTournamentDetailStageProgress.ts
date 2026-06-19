@@ -1,3 +1,5 @@
+import { StageStatuses, TournamentStatuses } from '@/objects';
+
 import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
 import type { TournamentDetailTableItem } from '../objects/TournamentDetail.types';
 
@@ -6,7 +8,10 @@ type TournamentStageView = NonNullable<
 >[number];
 
 export function isTournamentStageCompleted(stage: TournamentStageView) {
-  return stage.status === 'Completed' || stage.status === 'Archived';
+  return (
+    stage.status === StageStatuses.Completed ||
+    stage.status === StageStatuses.Archived
+  );
 }
 
 export function getTournamentDetailStageProgress({
@@ -24,7 +29,8 @@ export function getTournamentDetailStageProgress({
     (left, right) => (left.order ?? 0) - (right.order ?? 0),
   );
   const isTournamentClosed =
-    profile.status === 'Completed' || profile.status === 'Archived';
+    profile.status === TournamentStatuses.Completed ||
+    profile.status === TournamentStatuses.Archived;
   const declaredNextStage = orderedStages.find(
     (stage) => stage.stageId === profile.nextStageId,
   );
@@ -39,16 +45,16 @@ export function getTournamentDetailStageProgress({
   const isWaitingForLineups =
     canManageTournament &&
     !!profile.nextStageId &&
-    (profile.status === 'RegistrationOpen' ||
-      profile.status === 'InProgress') &&
+    (profile.status === TournamentStatuses.RegistrationOpen ||
+      profile.status === TournamentStatuses.InProgress) &&
     missingLineupClubNames.length > 0;
   const canScheduleStage =
     canManageTournament &&
     !!nextStage &&
     !isTournamentClosed &&
-    (profile.status === 'RegistrationOpen' ||
-      profile.status === 'Scheduled' ||
-      profile.status === 'InProgress') &&
+    (profile.status === TournamentStatuses.RegistrationOpen ||
+      profile.status === TournamentStatuses.Scheduled ||
+      profile.status === TournamentStatuses.InProgress) &&
     missingLineupClubNames.length === 0 &&
     !isTournamentStageCompleted(nextStage) &&
     nextStageTables.length === 0 &&

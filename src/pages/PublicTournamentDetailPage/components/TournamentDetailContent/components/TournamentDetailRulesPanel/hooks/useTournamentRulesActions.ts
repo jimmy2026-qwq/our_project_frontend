@@ -2,7 +2,13 @@ import {
   TournamentStageConfigureRulesAPI,
   TournamentStageCreateAPI,
 } from '@/api/tournament';
-import { normalizeMahjongRuleset } from '@/objects';
+import {
+  AdvancementRuleTypes,
+  KnockoutSeedingPolicies,
+  normalizeMahjongRuleset,
+  SwissPairingMethods,
+  TournamentFormats,
+} from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import {
@@ -49,7 +55,7 @@ export function useTournamentRulesActions({
       return;
     }
 
-    const isKnockout = ruleDraft.format === 'Knockout';
+    const isKnockout = ruleDraft.format === TournamentFormats.Knockout;
     const advanceCount = isKnockout
       ? normalizeKnockoutBracketSize(ruleDraft.advanceCount)
       : Math.max(1, Math.floor(ruleDraft.advanceCount || 0));
@@ -69,15 +75,16 @@ export function useTournamentRulesActions({
               format: ruleDraft.format,
               roundCount: currentRuleStage.roundCount,
               advancementRuleType: isKnockout
-                ? 'KnockoutElimination'
-                : 'SwissCut',
+                ? AdvancementRuleTypes.KnockoutElimination
+                : AdvancementRuleTypes.SwissCut,
               cutSize: isKnockout ? undefined : advanceCount,
               bracketSize: isKnockout ? advanceCount : undefined,
               targetTableCount: isKnockout ? advanceCount / 4 : undefined,
               schedulingPoolSize: currentRuleStage.schedulingPoolSize ?? 4,
               pairingMethod: isKnockout
                 ? undefined
-                : (currentRuleStage.swissRule?.pairingMethod ?? 'balanced-elo'),
+                : (currentRuleStage.swissRule?.pairingMethod ??
+                  SwissPairingMethods.BalancedElo),
               carryOverPoints: isKnockout
                 ? undefined
                 : (currentRuleStage.swissRule?.carryOverPoints ?? true),
@@ -92,7 +99,8 @@ export function useTournamentRulesActions({
                 ? (currentRuleStage.knockoutRule?.repechageEnabled ?? false)
                 : undefined,
               seedingPolicy: isKnockout
-                ? (currentRuleStage.knockoutRule?.seedingPolicy ?? 'rating')
+                ? (currentRuleStage.knockoutRule?.seedingPolicy ??
+                  KnockoutSeedingPolicies.Rating)
                 : undefined,
               mahjongRuleset,
             },
@@ -107,19 +115,23 @@ export function useTournamentRulesActions({
             roundCount: getDefaultRoundCount(ruleDraft.format),
             operatorId,
             advancementRuleType: isKnockout
-              ? 'KnockoutElimination'
-              : 'SwissCut',
+              ? AdvancementRuleTypes.KnockoutElimination
+              : AdvancementRuleTypes.SwissCut,
             cutSize: isKnockout ? undefined : advanceCount,
             bracketSize: isKnockout ? advanceCount : undefined,
             targetTableCount: isKnockout ? advanceCount / 4 : undefined,
-            pairingMethod: isKnockout ? undefined : 'balanced-elo',
+            pairingMethod: isKnockout
+              ? undefined
+              : SwissPairingMethods.BalancedElo,
             carryOverPoints: isKnockout ? undefined : true,
             maxRounds: isKnockout
               ? undefined
               : getDefaultRoundCount(ruleDraft.format),
             thirdPlaceMatch: isKnockout ? false : undefined,
             repechageEnabled: isKnockout ? false : undefined,
-            seedingPolicy: isKnockout ? 'rating' : undefined,
+            seedingPolicy: isKnockout
+              ? KnockoutSeedingPolicies.Rating
+              : undefined,
             mahjongRuleset,
             schedulingPoolSize: 4,
           }),

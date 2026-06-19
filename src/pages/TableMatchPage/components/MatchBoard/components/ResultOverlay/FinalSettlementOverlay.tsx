@@ -1,13 +1,13 @@
-import type { MahjongTableView, SeatWind } from '@/objects';
-import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplay';
+import type { MahjongTableView } from '@/objects';
+import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
+
+import { matchBoardSeatOrder } from '../../objects/matchBoardSeatOrder';
 
 interface FinalSettlementOverlayProps {
   mahjongTable: MahjongTableView;
   onConfirm: () => void;
   playerNames: Record<string, string>;
 }
-
-const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
 export function FinalSettlementOverlay({
   mahjongTable,
@@ -18,7 +18,8 @@ export function FinalSettlementOverlay({
     .sort(
       (left, right) =>
         right.points - left.points ||
-        seatOrder.indexOf(left.seat) - seatOrder.indexOf(right.seat),
+        matchBoardSeatOrder.indexOf(left.seat) -
+          matchBoardSeatOrder.indexOf(right.seat),
     )
     .map((seat, index) => ({
       ...seat,

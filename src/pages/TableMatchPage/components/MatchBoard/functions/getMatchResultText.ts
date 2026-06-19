@@ -1,16 +1,16 @@
-import type { AgariResult } from '@/objects';
+import { HandOutcome, type AgariResult } from '@/objects';
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import {
   getResultSequenceStep,
   getResultWins,
   isNagashiManganWin,
 } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplay';
+import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
 type ResultSequenceStep = NonNullable<ReturnType<typeof getResultSequenceStep>>;
 
 export function getDrawLabel(outcome: string) {
-  return outcome === 'ExhaustiveDraw' ? '流局结算' : '本局结束';
+  return outcome === HandOutcome.ExhaustiveDraw ? '流局结算' : '本局结束';
 }
 
 export function getWinHeadline(
@@ -38,9 +38,9 @@ export function getWinHeadline(
   }
 
   const multipleRonLabel =
-    result.outcome === 'Ron' && wins.length >= 3
+    result.outcome === HandOutcome.Ron && wins.length >= 3
       ? '三家荣和'
-      : result.outcome === 'Ron' && wins.length === 2
+      : result.outcome === HandOutcome.Ron && wins.length === 2
         ? '双响'
         : getWinLabel(result, win);
   const subtitleParts = [
@@ -63,7 +63,7 @@ export function getWinLabel(
     return '流局满贯';
   }
 
-  return result.outcome === 'Tsumo' ? '自摸' : '荣和';
+  return result.outcome === HandOutcome.Tsumo ? '自摸' : '荣和';
 }
 
 export function getPlayerName(

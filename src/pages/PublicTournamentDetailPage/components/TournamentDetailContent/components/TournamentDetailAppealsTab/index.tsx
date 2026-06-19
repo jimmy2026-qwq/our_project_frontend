@@ -1,10 +1,14 @@
 import { Alert, Button, EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
+import {
+  AppealDecisionTypes,
+  AppealStatuses,
+  type AppealDecisionType,
+} from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
 import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
-import type { AppealDecisionType } from '../../../../objects/TournamentDetailView.types';
 import {
   formatDateTime,
   getAppealStatusLabel,
@@ -88,7 +92,7 @@ function AppealRow({
   const appealResultText =
     appeal.resolution ?? appeal.verdict ?? '\u5f85\u5904\u7406';
   const appealStatusText =
-    appeal.status === 'Open'
+    appeal.status === AppealStatuses.Open
       ? appealResultText
       : getAppealStatusLabel(appeal.status) || appealResultText;
   const assigneeLabel = appeal.assigneeId
@@ -111,7 +115,8 @@ function AppealRow({
         <span>{`处理人：${assigneeLabel}`}</span>
         <span>{`处理结果：${appeal.resolution ?? appeal.verdict ?? '待处理'}`}</span>
         <span>{`最近更新：${formatDateTime(appeal.updatedAt ?? appeal.createdAt)}`}</span>
-        {appeal.status !== 'Resolved' && appeal.status !== 'Rejected' ? (
+        {appeal.status !== AppealStatuses.Resolved &&
+        appeal.status !== AppealStatuses.Rejected ? (
           <div className={detailShellClassNames.actionRow}>
             {canManageAppeals && !isAppealClaimed ? (
               <Button
@@ -126,7 +131,9 @@ function AppealRow({
             {canManageAppeals ? (
               <Button
                 size="sm"
-                onClick={() => onOpenAppealAction(appeal, 'Resolve')}
+                onClick={() =>
+                  onOpenAppealAction(appeal, AppealDecisionTypes.Resolve)
+                }
                 disabled={submittingAppealId === appeal.id || !isAppealClaimed}
               >
                 解决
@@ -136,17 +143,22 @@ function AppealRow({
               <Button
                 variant="secondary"
                 size="sm"
-                onClick={() => onOpenAppealAction(appeal, 'Reject')}
+                onClick={() =>
+                  onOpenAppealAction(appeal, AppealDecisionTypes.Reject)
+                }
                 disabled={submittingAppealId === appeal.id || !isAppealClaimed}
               >
                 驳回
               </Button>
             ) : null}
-            {canManageAppeals && appeal.status !== 'Escalated' ? (
+            {canManageAppeals &&
+            appeal.status !== AppealStatuses.Escalated ? (
               <Button
                 variant="outline"
                 size="sm"
-                onClick={() => onOpenAppealAction(appeal, 'Escalate')}
+                onClick={() =>
+                  onOpenAppealAction(appeal, AppealDecisionTypes.Escalate)
+                }
                 disabled={submittingAppealId === appeal.id}
               >
                 升级

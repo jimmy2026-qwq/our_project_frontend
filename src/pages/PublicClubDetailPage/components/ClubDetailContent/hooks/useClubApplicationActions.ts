@@ -1,5 +1,6 @@
 ﻿import { ReviewClubApplicationAPI } from '@/api/club';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
+import { ClubApplicationStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import { upsertTrackedClubApplication } from '../../../functions/getClubApplicationTracker';
@@ -83,7 +84,7 @@ export function useClubApplicationActions({
       );
 
       if (decision === 'reject') {
-        setCurrentApplicationStatus('Rejected');
+        setCurrentApplicationStatus(ClubApplicationStatuses.Rejected);
       }
     } catch (error) {
       notifyMutationResult(

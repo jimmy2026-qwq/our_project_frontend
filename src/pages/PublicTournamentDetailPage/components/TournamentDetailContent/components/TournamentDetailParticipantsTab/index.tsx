@@ -22,8 +22,8 @@ export function TournamentDetailParticipantsTab({
   workbench: TournamentDetailWorkbenchState;
   onInviteClub: () => Promise<void> | void;
   onInvitePlayer: () => Promise<void> | void;
-  onSelectClubId: (clubId: string) => void;
-  onSelectPlayerId: (playerId: string) => void;
+  onSelectClubId: (clubId: string | null) => void;
+  onSelectPlayerId: (playerId: string | null) => void;
 }) {
   const tab = useTournamentDetailParticipantsTab(workbench);
 
@@ -111,11 +111,11 @@ export function TournamentDetailParticipantsTab({
         title={participantText.inviteClubTitle}
         description={participantText.inviteClubDescription}
         label={participantText.chooseClub}
-        value={workbench.selectedClubId}
+        value={workbench.selectedClubId ?? ''}
         options={tab.clubOptions}
         isSubmitting={workbench.isSubmittingTournamentAction}
         emptyLabel={participantText.noClubOptions}
-        onValueChange={onSelectClubId}
+        onValueChange={(value) => onSelectClubId(value || null)}
         onSubmit={async () => {
           await onInviteClub();
           tab.setClubInviteOpen(false);
@@ -128,11 +128,11 @@ export function TournamentDetailParticipantsTab({
         title={participantText.invitePlayerTitle}
         description={participantText.invitePlayerDescription}
         label={participantText.choosePlayer}
-        value={workbench.selectedPlayerId}
+        value={workbench.selectedPlayerId ?? ''}
         options={tab.playerOptions}
         isSubmitting={workbench.isSubmittingTournamentAction}
         emptyLabel={participantText.noPlayerOptions}
-        onValueChange={onSelectPlayerId}
+        onValueChange={(value) => onSelectPlayerId(value || null)}
         onSubmit={async () => {
           await onInvitePlayer();
           tab.setPlayerInviteOpen(false);

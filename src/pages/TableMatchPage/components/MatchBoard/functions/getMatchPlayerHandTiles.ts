@@ -1,4 +1,9 @@
-import { isSamePaifuTile, type PaifuTile, type SeatWind } from '@/objects';
+import {
+  SeatWinds,
+  isSamePaifuTile,
+  type PaifuTile,
+  type SeatWind,
+} from '@/objects';
 import { getDisplayTiles } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
 
 export function getMatchDisplayHandTiles({
@@ -27,7 +32,7 @@ export function getMatchDisplayHandTiles({
     tile,
   }));
 
-  if (seat === 'South' || seat === 'North') {
+  if (seat === SeatWinds.South || seat === SeatWinds.North) {
     return [drawnDisplayTile, ...baseDisplayTiles];
   }
 

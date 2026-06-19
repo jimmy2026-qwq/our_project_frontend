@@ -5,5 +5,3 @@ export type TournamentDetailTab =
   | 'tables'
   | 'manage'
   | 'appeals';
-
-export type AppealDecisionType = 'Resolve' | 'Reject' | 'Escalate';

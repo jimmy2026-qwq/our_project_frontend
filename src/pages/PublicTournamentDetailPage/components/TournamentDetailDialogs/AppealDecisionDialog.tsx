@@ -12,9 +12,12 @@ import {
   DialogTitle,
   Textarea,
 } from '@/components/ui';
+import {
+  AppealDecisionTypes,
+  type AppealDecisionType,
+} from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
-import type { AppealDecisionType } from '../../objects/TournamentDetailView.types';
 import { getAppealDecisionLabel } from '../../functions/getTournamentDetailView';
 
 export function AppealDecisionDialog({
@@ -41,7 +44,8 @@ export function AppealDecisionDialog({
   onShouldResetTableOnResolveChange: (value: boolean) => void;
   onSubmit: () => void;
 }) {
-  const isResolveAction = selectedAppealAction?.decision === 'Resolve';
+  const isResolveAction =
+    selectedAppealAction?.decision === AppealDecisionTypes.Resolve;
 
   return (
     <Dialog

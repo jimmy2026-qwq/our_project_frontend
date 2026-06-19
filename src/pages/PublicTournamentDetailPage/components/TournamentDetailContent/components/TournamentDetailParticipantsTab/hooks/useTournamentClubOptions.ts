@@ -31,7 +31,7 @@ export function useTournamentClubOptions({
 }) {
   const [availableClubs, setAvailableClubs] = useState<ClubSummary[]>([]);
   const [invitedClubs, setInvitedClubs] = useState<ClubSummary[]>([]);
-  const [selectedClubId, setSelectedClubId] = useState('');
+  const [selectedClubId, setSelectedClubId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -53,7 +53,7 @@ export function useTournamentClubOptions({
           setAvailableClubs(envelope.items);
           if (canManageTournament) {
             setSelectedClubId(
-              (current) => current || envelope.items[0]?.id || '',
+              (current) => current ?? envelope.items[0]?.id ?? null,
             );
           }
         }

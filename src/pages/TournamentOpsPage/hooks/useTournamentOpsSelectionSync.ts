@@ -1,5 +1,6 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
+import { TableStatuses } from '@/objects';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 import {
@@ -12,9 +13,9 @@ import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState'
 interface TournamentOpsSelectionSyncParams {
   directory: TournamentDirectoryState | null;
   tables: LoadState<TournamentTableSummary> | null;
-  selectedTableId: string;
+  selectedTableId: string | null;
   setState: Dispatch<SetStateAction<TournamentOpsState>>;
-  setSelectedTableId: Dispatch<SetStateAction<string>>;
+  setSelectedTableId: Dispatch<SetStateAction<string | null>>;
 }
 
 export function useTournamentOpsSelectionSync({
@@ -54,11 +55,11 @@ export function useTournamentOpsSelectionSync({
 
     const preferredTable =
       tables.envelope.items.find(
-        (table) => table.status === 'WaitingPreparation',
+        (table) => table.status === TableStatuses.WaitingPreparation,
       ) ??
       tables.envelope.items[0] ??
       null;
 
-    setSelectedTableId(preferredTable?.id ?? '');
+    setSelectedTableId(preferredTable?.id ?? null);
   }, [selectedTableId, setSelectedTableId, tables]);
 }

@@ -1,5 +1,9 @@
 import { cx } from '@/components/ui/cx';
-import type { MahjongCommandType, MahjongLegalAction } from '@/objects';
+import {
+  MahjongCommandTypes,
+  type MahjongCommandType,
+  type MahjongLegalAction,
+} from '@/objects';
 
 export interface DisplayActionButton {
   action?: MahjongLegalAction;
@@ -18,11 +22,13 @@ export function getVisibleButtonActions(
     dismissedTsumoKey && dismissedTsumoKey === tsumoKey,
   );
   const hasBackendPass = collapsedActions.some(
-    (action) => action.commandType === 'Pass',
+    (action) => action.commandType === MahjongCommandTypes.Pass,
   );
   const shouldAddLocalPass = Boolean(tsumoKey && !hasBackendPass);
   const visibleActions = shouldHideTsumo
-    ? collapsedActions.filter((action) => action.commandType !== 'Tsumo')
+    ? collapsedActions.filter(
+        (action) => action.commandType !== MahjongCommandTypes.Tsumo,
+      )
     : collapsedActions;
   const displayButtons: DisplayActionButton[] = [];
 
@@ -35,9 +41,12 @@ export function getVisibleButtonActions(
       key,
     });
 
-    if (action.commandType === 'Tsumo' && shouldAddLocalPass) {
+    if (
+      action.commandType === MahjongCommandTypes.Tsumo &&
+      shouldAddLocalPass
+    ) {
       displayButtons.push({
-        commandType: 'Pass',
+        commandType: MahjongCommandTypes.Pass,
         key: `${key}:local-pass`,
         localSkipTsumo: true,
       });
@@ -49,7 +58,7 @@ export function getVisibleButtonActions(
 
 export function getTsumoActionKey(actions: MahjongLegalAction[]) {
   return actions
-    .filter((action) => action.commandType === 'Tsumo')
+    .filter((action) => action.commandType === MahjongCommandTypes.Tsumo)
     .map(getActionIdentity)
     .sort()
     .join('|');
@@ -57,17 +66,17 @@ export function getTsumoActionKey(actions: MahjongLegalAction[]) {
 
 export function getActionButtonLabel(commandType: MahjongCommandType) {
   const labels: Record<MahjongCommandType, string> = {
-    AbortiveDraw: '流局',
-    AddedKan: '杠',
-    Chi: '吃',
-    ClosedKan: '杠',
-    Discard: '切牌',
-    OpenKan: '杠',
-    Pass: '跳过',
-    Pon: '碰',
-    Riichi: '立直',
-    Ron: '荣和',
-    Tsumo: '自摸',
+    [MahjongCommandTypes.AbortiveDraw]: '流局',
+    [MahjongCommandTypes.AddedKan]: '杠',
+    [MahjongCommandTypes.Chi]: '吃',
+    [MahjongCommandTypes.ClosedKan]: '杠',
+    [MahjongCommandTypes.Discard]: '切牌',
+    [MahjongCommandTypes.OpenKan]: '杠',
+    [MahjongCommandTypes.Pass]: '跳过',
+    [MahjongCommandTypes.Pon]: '碰',
+    [MahjongCommandTypes.Riichi]: '立直',
+    [MahjongCommandTypes.Ron]: '荣和',
+    [MahjongCommandTypes.Tsumo]: '自摸',
   };
 
   return labels[commandType];
@@ -98,7 +107,7 @@ function collapsePickerActions(actions: MahjongLegalAction[]) {
   let hasRiichi = false;
 
   return actions.filter((action) => {
-    if (action.commandType === 'Chi') {
+    if (action.commandType === MahjongCommandTypes.Chi) {
       if (hasChi) {
         return false;
       }
@@ -107,7 +116,7 @@ function collapsePickerActions(actions: MahjongLegalAction[]) {
       return true;
     }
 
-    if (action.commandType === 'Riichi') {
+    if (action.commandType === MahjongCommandTypes.Riichi) {
       if (hasRiichi) {
         return false;
       }
@@ -122,24 +131,27 @@ function collapsePickerActions(actions: MahjongLegalAction[]) {
 
 function getActionButtonToneClassName(commandType: MahjongCommandType) {
   if (
-    commandType === 'Chi' ||
-    commandType === 'Pon' ||
-    commandType === 'OpenKan' ||
-    commandType === 'ClosedKan' ||
-    commandType === 'AddedKan'
+    commandType === MahjongCommandTypes.Chi ||
+    commandType === MahjongCommandTypes.Pon ||
+    commandType === MahjongCommandTypes.OpenKan ||
+    commandType === MahjongCommandTypes.ClosedKan ||
+    commandType === MahjongCommandTypes.AddedKan
   ) {
     return 'border-[rgba(95,214,145,0.48)] bg-[linear-gradient(180deg,rgba(43,148,93,0.94),rgba(23,103,71,0.94))] text-[#d7ffe5]';
   }
 
-  if (commandType === 'Riichi') {
+  if (commandType === MahjongCommandTypes.Riichi) {
     return 'border-[rgba(255,181,89,0.58)] bg-[linear-gradient(180deg,rgba(231,138,50,0.96),rgba(168,83,30,0.96))] text-[#fff0d2]';
   }
 
-  if (commandType === 'Ron' || commandType === 'Tsumo') {
+  if (
+    commandType === MahjongCommandTypes.Ron ||
+    commandType === MahjongCommandTypes.Tsumo
+  ) {
     return 'border-[rgba(255,112,112,0.58)] bg-[linear-gradient(180deg,rgba(211,64,69,0.96),rgba(132,35,48,0.96))] text-[#ffe1e1]';
   }
 
-  if (commandType === 'Pass') {
+  if (commandType === MahjongCommandTypes.Pass) {
     return 'border-[rgba(190,200,210,0.34)] bg-[linear-gradient(180deg,rgba(96,108,121,0.9),rgba(55,64,76,0.9))] text-[#edf2f7]';
   }
 

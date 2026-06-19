@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
+import { TableStatuses } from '@/objects';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
@@ -29,12 +30,12 @@ export function TournamentDetailTableRow({
   onToggleOwnReady,
   onUploadDemoPaifu,
 }: {
-  finalizingArchiveTableId: string;
+  finalizingArchiveTableId: string | null;
   operatorId: string;
   participantWaitingTableDetails: Record<string, TableDetail>;
   table: TournamentDetailTableItem;
-  updatingReadyTableId: string;
-  uploadingDemoPaifuTableId: string;
+  updatingReadyTableId: string | null;
+  uploadingDemoPaifuTableId: string | null;
   workbench: TournamentDetailWorkbenchState;
   onFinalizeArchive: (table: TournamentDetailTableItem) => void;
   onOpenRecordSummary: (record: MatchRecordSummary) => void;
@@ -46,19 +47,21 @@ export function TournamentDetailTableRow({
     .map((playerId) => workbench.playerNames[playerId] ?? playerId)
     .join(' / ');
   const record = workbench.recordByTableId[table.id] ?? null;
-  const isFinished = table.status === 'Archived';
-  const isInProgress = table.status === 'InProgress';
-  const isScoring = table.status === 'Scoring';
+  const isFinished = table.status === TableStatuses.Archived;
+  const isInProgress = table.status === TableStatuses.InProgress;
+  const isScoring = table.status === TableStatuses.Scoring;
   const hasResult =
-    isFinished || isScoring || table.status === 'AppealInProgress';
-  const isWaiting = table.status === 'WaitingPreparation';
+    isFinished || isScoring || table.status === TableStatuses.AppealInProgress;
+  const isWaiting = table.status === TableStatuses.WaitingPreparation;
   const canFileAppeal = isScoring && table.playerIds.includes(operatorId);
   const participantTableDetail = participantWaitingTableDetails[table.id];
   const ownSeat =
     participantTableDetail?.seats.find((seat) => seat.playerId === operatorId) ??
     null;
   const canUpdateOwnReady =
-    table.status === 'WaitingPreparation' && !!ownSeat && !ownSeat.disconnected;
+    table.status === TableStatuses.WaitingPreparation &&
+    !!ownSeat &&
+    !ownSeat.disconnected;
 
   return (
     <article className={detailShellClassNames.row}>

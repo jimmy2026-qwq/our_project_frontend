@@ -1,4 +1,5 @@
 import { Alert } from '@/components/ui';
+import type { AppealDecisionType } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
@@ -18,10 +19,7 @@ import type {
   TournamentDetailTableItem,
   TournamentDetailWorkbenchState,
 } from '../../objects/TournamentDetail.types';
-import type {
-  AppealDecisionType,
-  TournamentDetailTab,
-} from '../../objects/TournamentDetailView.types';
+import type { TournamentDetailTab } from '../../objects/TournamentDetailView.types';
 
 export function TournamentDetailContent({
   activeTab,
@@ -76,9 +74,9 @@ export function TournamentDetailContent({
   submittingAppealId: string;
   tableDetailError: string;
   tabItems: TournamentDetailContentTabItem[];
-  updatingReadyTableId: string;
-  uploadingDemoPaifuTableId: string;
-  finalizingArchiveTableId: string;
+  updatingReadyTableId: string | null;
+  uploadingDemoPaifuTableId: string | null;
+  finalizingArchiveTableId: string | null;
   waitingTables: TournamentDetailTableItem[];
   workbench: TournamentDetailWorkbenchState;
   onActiveTabChange: (tab: TournamentDetailTab) => void;
@@ -91,8 +89,8 @@ export function TournamentDetailContent({
     decision: AppealDecisionType,
   ) => void;
   onOpenTableAppeal: (table: TournamentDetailTableItem) => void;
-  onSelectClubId: (clubId: string) => void;
-  onSelectPlayerId: (playerId: string) => void;
+  onSelectClubId: (clubId: string | null) => void;
+  onSelectPlayerId: (playerId: string | null) => void;
   onSelectManageTable: (table: TournamentDetailTableItem) => void;
   onStartManagedTable: (table: TournamentDetailTableItem) => void;
   onToggleOwnReady: (tableId: string, isReady: boolean) => void;

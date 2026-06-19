@@ -1,4 +1,10 @@
-import { RoundSettlementNote, type PaifuRound as PaifuRoundSummary } from '@/objects';
+import {
+  HandOutcome,
+  PaifuActionType,
+  RoundSettlementNote,
+  SeatWinds,
+  type PaifuRound as PaifuRoundSummary,
+} from '@/objects';
 import { createDemoPaifuRound } from './createDemoPaifuRound';
 import {
   fullDoraRow,
@@ -13,7 +19,7 @@ import {
 export function getDemoRonRound(): PaifuRoundSummary {
   return createDemoPaifuRound({
     descriptor: {
-      roundWind: 'East',
+      roundWind: SeatWinds.East,
       handNumber: 1,
       honba: 2,
     },
@@ -21,7 +27,7 @@ export function getDemoRonRound(): PaifuRoundSummary {
     actions: [
       {
         sequenceNo: 1,
-        actionType: 'DoraReveal',
+        actionType: PaifuActionType.DoraReveal,
         tile: '4z',
         revealedTiles: ['4z'],
         note: 'Initial dora indicator.',
@@ -29,7 +35,7 @@ export function getDemoRonRound(): PaifuRoundSummary {
       {
         sequenceNo: 2,
         actor: 'player-east',
-        actionType: 'Riichi',
+        actionType: PaifuActionType.Riichi,
         tile: '0p',
         handTilesAfterAction: eastAfterDiscardingRedFive,
         revealedTiles: ['0p'],
@@ -38,7 +44,7 @@ export function getDemoRonRound(): PaifuRoundSummary {
       {
         sequenceNo: 3,
         actor: 'player-south',
-        actionType: 'Win',
+        actionType: PaifuActionType.Win,
         tile: '0p',
         fromPlayer: 'player-east',
         targetSequenceNo: 2,
@@ -49,7 +55,7 @@ export function getDemoRonRound(): PaifuRoundSummary {
       },
     ],
     result: {
-      outcome: 'Ron',
+      outcome: HandOutcome.Ron,
       winner: 'player-south',
       target: 'player-east',
       han: 26,

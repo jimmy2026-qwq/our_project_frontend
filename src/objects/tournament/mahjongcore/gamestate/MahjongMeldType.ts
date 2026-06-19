@@ -1,6 +1,10 @@
+export const MahjongMeldTypes = {
+  Chi: 'Chi',
+  Pon: 'Pon',
+  OpenKan: 'OpenKan',
+  ClosedKan: 'ClosedKan',
+  AddedKan: 'AddedKan',
+} as const;
+
 export type MahjongMeldType =
-  | 'Chi'
-  | 'Pon'
-  | 'OpenKan'
-  | 'ClosedKan'
-  | 'AddedKan';
+  (typeof MahjongMeldTypes)[keyof typeof MahjongMeldTypes];

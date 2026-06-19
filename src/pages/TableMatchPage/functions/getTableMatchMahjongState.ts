@@ -1,5 +1,7 @@
 import {
   isPaifuTile,
+  MahjongTableStatuses,
+  PaifuActionType,
   toPaifuTile,
   type MahjongPublicEventView,
   type MahjongTableView,
@@ -23,15 +25,18 @@ export function shouldOpenFinalSettlement(
 export function getAcceptedEventFlashDurationMs(
   event: MahjongPublicEventView,
 ) {
-  if (event.actionType === 'Win') {
+  if (event.actionType === PaifuActionType.Win) {
     return 1000;
   }
 
-  if (event.actionType === 'Chi' || event.actionType === 'Pon') {
+  if (
+    event.actionType === PaifuActionType.Chi ||
+    event.actionType === PaifuActionType.Pon
+  ) {
     return 500;
   }
 
-  return event.actionType === 'Riichi' ? 1000 : 1500;
+  return event.actionType === PaifuActionType.Riichi ? 1000 : 1500;
 }
 
 export function createMahjongTableQuery({
@@ -90,10 +95,10 @@ function parsePaifuTile(value: unknown): PaifuTile | null {
 
 export function isLiveMahjongStatus(status: MahjongTableView['status']) {
   return (
-    status === 'InProgress' ||
-    status === 'WaitingPlayerAction' ||
-    status === 'WaitingCallDecision' ||
-    status === 'RoundEnded'
+    status === MahjongTableStatuses.InProgress ||
+    status === MahjongTableStatuses.WaitingPlayerAction ||
+    status === MahjongTableStatuses.WaitingCallDecision ||
+    status === MahjongTableStatuses.RoundEnded
   );
 }
 
@@ -118,7 +123,10 @@ export function getMahjongErrorMessage(error: unknown) {
 }
 
 function isTerminalMahjongStatus(status: MahjongTableView['status']) {
-  return status === 'Finished' || status === 'Archived';
+  return (
+    status === MahjongTableStatuses.Finished ||
+    status === MahjongTableStatuses.Archived
+  );
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

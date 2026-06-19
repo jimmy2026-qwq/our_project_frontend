@@ -20,13 +20,13 @@ export function ClubTournamentLineupBody({
   onTogglePlayer,
 }: {
   isLoading: boolean;
-  selectedStageId: string;
+  selectedStageId: string | null;
   stageOptions: Array<{ stageId: string; name: string }>;
   statusFilter: MemberStatusFilter;
   eloSort: EloSort;
   selectedPlayerIds: string[];
   visibleMembers: MemberListItem[];
-  onSelectedStageIdChange: (value: string) => void;
+  onSelectedStageIdChange: (value: string | null) => void;
   onStatusFilterChange: (value: MemberStatusFilter) => void;
   onEloSortChange: (value: EloSort) => void;
   onTogglePlayer: (playerId: string) => void;

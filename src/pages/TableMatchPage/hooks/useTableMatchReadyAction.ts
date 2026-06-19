@@ -4,6 +4,7 @@ import { TournamentTableUpdateOwnReadyAPI } from '@/api/tournament';
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import { useNotice } from '@/app/feedback/useNotice';
 import type {
+  TableSeat,
   TournamentTableView,
   UpdateOwnTableReadyStateRequest,
 } from '@/objects';
@@ -12,7 +13,6 @@ import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
 import { toTableDetail } from '../functions/toTableDetail';
-import type { TableSeat } from '../objects/TableMatch.types';
 
 interface TableMatchReadyActionParams {
   table: TableDetail | null;

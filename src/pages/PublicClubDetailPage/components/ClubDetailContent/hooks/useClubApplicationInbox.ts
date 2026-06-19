@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ListClubApplicationsAPI } from '@/api/club';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import { ClubApplicationStatuses } from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
@@ -43,7 +44,7 @@ export function useClubApplicationInbox({
     void sendAPI(
       new ListClubApplicationsAPI(profile.id, {
         operatorId,
-        status: 'Pending',
+        status: ClubApplicationStatuses.Pending,
         limit: 20,
         offset: 0,
       }),

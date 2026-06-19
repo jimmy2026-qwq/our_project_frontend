@@ -3,6 +3,7 @@ import type {
   PaifuRound as PaifuRoundSummary,
   PaifuTile,
 } from '@/objects';
+import { HandOutcome, PaifuActionType } from '@/objects';
 import { removeFirstTile } from './getReplayCore';
 import { getAddedTileIndex } from './getReplaySnapshotHands';
 
@@ -16,7 +17,10 @@ export function applyHandSnapshot(
     return;
   }
 
-  if (action.actionType === 'Draw' && action.handTilesAfterAction) {
+  if (
+    action.actionType === PaifuActionType.Draw &&
+    action.handTilesAfterAction
+  ) {
     const beforeTiles = hands[action.actor] ?? [];
     const afterTiles = [...action.handTilesAfterAction];
 
@@ -47,8 +51,8 @@ function getVisibleHandTilesAfterAction({
   const afterTiles = [...(action.handTilesAfterAction ?? [])];
 
   if (
-    action.actionType !== 'Win' ||
-    round.result.outcome !== 'Ron' ||
+    action.actionType !== PaifuActionType.Win ||
+    round.result.outcome !== HandOutcome.Ron ||
     !action.tile ||
     afterTiles.length <= currentTiles.length
   ) {

@@ -1,5 +1,6 @@
 import {
   getPaifuTileCode,
+  MahjongMeldTypes,
   type MahjongSeatView,
   type MahjongTableView,
   type PaifuTile,
@@ -10,7 +11,7 @@ import type {
   RiverDiscard,
 } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
 
-import { seatOrder } from './matchBoardSeats';
+import { matchBoardSeatOrder } from '../objects/matchBoardSeatOrder';
 import {
   removeFirstMatchingTile,
   removeFirstMatchingTileBy,
@@ -22,7 +23,7 @@ export function getMahjongSeatMap(
   mahjongTable: MahjongTableView,
   seatRotation: Record<SeatWind, SeatWind>,
 ) {
-  return seatOrder.reduce(
+  return matchBoardSeatOrder.reduce(
     (seatMap, seat) => ({
       ...seatMap,
       [seat]:
@@ -148,7 +149,7 @@ function getMeldSidewaysIndex({
   seat: SeatWind;
   tileCount: number;
 }) {
-  if (meldType === 'Chi') {
+  if (meldType === MahjongMeldTypes.Chi) {
     return 0;
   }
 
@@ -177,10 +178,11 @@ function getClaimRelation(
   callerSeat: SeatWind,
   claimedSeat: SeatWind,
 ): ClaimRelation {
-  const callerIndex = seatOrder.indexOf(callerSeat);
-  const claimedIndex = seatOrder.indexOf(claimedSeat);
+  const callerIndex = matchBoardSeatOrder.indexOf(callerSeat);
+  const claimedIndex = matchBoardSeatOrder.indexOf(claimedSeat);
   const relation =
-    (claimedIndex - callerIndex + seatOrder.length) % seatOrder.length;
+    (claimedIndex - callerIndex + matchBoardSeatOrder.length) %
+    matchBoardSeatOrder.length;
 
   if (relation === 3) {
     return 'upper';
@@ -194,7 +196,7 @@ function getClaimRelation(
 }
 
 function createSeatRecord<T>(factory: (seat: SeatWind) => T) {
-  return seatOrder.reduce(
+  return matchBoardSeatOrder.reduce(
     (record, seat) => ({
       ...record,
       [seat]: factory(seat),

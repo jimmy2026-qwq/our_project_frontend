@@ -1,4 +1,9 @@
-import type { MahjongLegalAction, MahjongTableView } from '@/objects';
+import {
+  MahjongCommandTypes,
+  MahjongRoundPhases,
+  type MahjongLegalAction,
+  type MahjongTableView,
+} from '@/objects';
 
 export function getTurnActionDelayKey(
   mahjongTable: MahjongTableView,
@@ -9,7 +14,7 @@ export function getTurnActionDelayKey(
   if (
     !operatorId ||
     !round ||
-    round.phase !== 'PlayerTurn' ||
+    round.phase !== MahjongRoundPhases.PlayerTurn ||
     round.turnPlayerId !== operatorId
   ) {
     return null;
@@ -18,7 +23,9 @@ export function getTurnActionDelayKey(
   const actions = mahjongTable.legalActions ?? [];
 
   if (
-    !actions.some((action) => action.commandType === 'Discard') ||
+    !actions.some(
+      (action) => action.commandType === MahjongCommandTypes.Discard,
+    ) ||
     actions.some(isCallResponseAction)
   ) {
     return null;
@@ -74,10 +81,10 @@ export function getResultKey(mahjongTable: MahjongTableView) {
 
 export function isCallResponseAction(action: MahjongLegalAction) {
   return (
-    action.commandType === 'Chi' ||
-    action.commandType === 'Pon' ||
-    action.commandType === 'OpenKan' ||
-    action.commandType === 'Ron' ||
-    action.commandType === 'Pass'
+    action.commandType === MahjongCommandTypes.Chi ||
+    action.commandType === MahjongCommandTypes.Pon ||
+    action.commandType === MahjongCommandTypes.OpenKan ||
+    action.commandType === MahjongCommandTypes.Ron ||
+    action.commandType === MahjongCommandTypes.Pass
   );
 }

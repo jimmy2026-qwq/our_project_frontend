@@ -1,4 +1,4 @@
-import type { PaifuTileInput } from '@/objects';
+import { PaifuActionType, type PaifuTileInput } from '@/objects';
 import type { DemoPaifuAction } from './createDemoPaifuRound';
 import { southAfterOpenKan } from './TablePaifuDemoHands';
 import { exhaustiveDrawHands } from './TablePaifuDemoHandSets';
@@ -47,7 +47,7 @@ function drawAndDiscard({
     {
       sequenceNo,
       actor,
-      actionType: 'Draw',
+      actionType: PaifuActionType.Draw,
       tile,
       handTilesAfterAction: [...handTilesAfterAction, tile],
       revealedTiles: [],
@@ -55,7 +55,7 @@ function drawAndDiscard({
     {
       sequenceNo: sequenceNo + 1,
       actor,
-      actionType: 'Discard',
+      actionType: PaifuActionType.Discard,
       tile,
       handTilesAfterAction,
       revealedTiles: [tile],
@@ -79,7 +79,7 @@ export function getDemoExhaustiveDrawActions(): DemoPaifuAction[] {
     {
       sequenceNo: 3,
       actor: 'player-south',
-      actionType: 'OpenKan',
+      actionType: PaifuActionType.OpenKan,
       tile: '1z',
       fromPlayer: 'player-east',
       targetSequenceNo: 2,
@@ -90,7 +90,7 @@ export function getDemoExhaustiveDrawActions(): DemoPaifuAction[] {
     {
       sequenceNo: 4,
       actor: 'player-south',
-      actionType: 'Draw',
+      actionType: PaifuActionType.Draw,
       tile: '9p',
       handTilesAfterAction: [...southAfterOpenKan, '9p'],
       revealedTiles: [],
@@ -99,7 +99,7 @@ export function getDemoExhaustiveDrawActions(): DemoPaifuAction[] {
     {
       sequenceNo: 5,
       actor: 'player-south',
-      actionType: 'Discard',
+      actionType: PaifuActionType.Discard,
       tile: '9p',
       handTilesAfterAction: southAfterOpenKan,
       revealedTiles: ['9p'],
@@ -107,7 +107,7 @@ export function getDemoExhaustiveDrawActions(): DemoPaifuAction[] {
     },
     {
       sequenceNo: 6,
-      actionType: 'DoraReveal',
+      actionType: PaifuActionType.DoraReveal,
       tile: '6z',
       revealedTiles: ['6z'],
       note: 'Kan dora indicator after the open kan discard.',
@@ -115,7 +115,7 @@ export function getDemoExhaustiveDrawActions(): DemoPaifuAction[] {
     ...createExhaustiveDrawActions(7),
     {
       sequenceNo: 59,
-      actionType: 'DrawGame',
+      actionType: PaifuActionType.DrawGame,
       revealedTiles: [],
       note: 'The wall is exhausted and the hand ends in exhaustive draw.',
     },

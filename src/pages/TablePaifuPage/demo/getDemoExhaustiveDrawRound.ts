@@ -1,4 +1,10 @@
-import { RoundSettlementNote, type PaifuRound as PaifuRoundSummary } from '@/objects';
+import {
+  HandOutcome,
+  PaifuActionType,
+  RoundSettlementNote,
+  SeatWinds,
+  type PaifuRound as PaifuRoundSummary,
+} from '@/objects';
 import { createDemoPaifuRound } from './createDemoPaifuRound';
 import {
   eastDealerTenpaiHand,
@@ -10,7 +16,7 @@ import { getDemoExhaustiveDrawActions } from './getDemoExhaustiveDrawActions';
 export function getDemoExhaustiveDrawRound(): PaifuRoundSummary {
   return createDemoPaifuRound({
     descriptor: {
-      roundWind: 'East',
+      roundWind: SeatWinds.East,
       handNumber: 1,
       honba: 1,
     },
@@ -18,7 +24,7 @@ export function getDemoExhaustiveDrawRound(): PaifuRoundSummary {
     actions: [
       {
         sequenceNo: 1,
-        actionType: 'DoraReveal',
+        actionType: PaifuActionType.DoraReveal,
         tile: '5z',
         revealedTiles: ['5z'],
         note: 'Initial dora indicator.',
@@ -26,7 +32,7 @@ export function getDemoExhaustiveDrawRound(): PaifuRoundSummary {
       {
         sequenceNo: 2,
         actor: 'player-east',
-        actionType: 'Riichi',
+        actionType: PaifuActionType.Riichi,
         tile: '1z',
         handTilesAfterAction: eastDealerTenpaiHand,
         revealedTiles: ['1z'],
@@ -35,7 +41,7 @@ export function getDemoExhaustiveDrawRound(): PaifuRoundSummary {
       ...getDemoExhaustiveDrawActions(),
     ],
     result: {
-      outcome: 'ExhaustiveDraw',
+      outcome: HandOutcome.ExhaustiveDraw,
       yaku: [],
       doraIndicators: ['5z', '6z', '5m', '2p', '7s'],
       uraDoraIndicators: fullUraDoraRow,

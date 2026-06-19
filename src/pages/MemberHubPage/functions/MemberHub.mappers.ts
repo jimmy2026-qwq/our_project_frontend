@@ -3,6 +3,7 @@ import type {
   ClubMembershipApplicationView,
   ClubView,
 } from '@/objects/club';
+import { ClubApplicationStatuses } from '@/objects/club';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { toClubSummaryRelation } from '@/pages/shared_objects/club/functions/toClubSummaryRelation';
@@ -88,7 +89,7 @@ export function toClubApplicationViewFromInboxItem(
     reviewedAt: null,
     reviewNote: null,
     withdrawnByPrincipalId: null,
-    canReview: item.status === 'Pending',
+    canReview: item.status === ClubApplicationStatuses.Pending,
     canWithdraw: false,
   };
 }

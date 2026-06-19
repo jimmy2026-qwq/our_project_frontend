@@ -1,4 +1,5 @@
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import { TournamentStatuses } from '@/objects';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
@@ -31,8 +32,8 @@ interface BuildTournamentDetailWorkbenchParams {
   recordByTableId: Record<string, MatchRecordSummary>;
   ruleDraft: TournamentStageRuleDraft;
   rulesDialogOpen: boolean;
-  selectedClubId: string;
-  selectedPlayerId: string;
+  selectedClubId: string | null;
+  selectedPlayerId: string | null;
   session: AuthContextSession | null;
   showMoreInfo: boolean;
   tables: TournamentDetailTableItem[];
@@ -67,7 +68,7 @@ export function buildTournamentDetailWorkbench({
     !!session?.user.roles.isRegisteredPlayer &&
     (session.user.roles.isSuperAdmin || session.user.roles.isTournamentAdmin);
   const canPublishTournament =
-    canManageTournament && profile.status === 'Draft';
+    canManageTournament && profile.status === TournamentStatuses.Draft;
   const missingLineupClubNames = getNextStageMissingLineupClubNames(profile, [
     ...invitedClubs,
     ...availableClubs,

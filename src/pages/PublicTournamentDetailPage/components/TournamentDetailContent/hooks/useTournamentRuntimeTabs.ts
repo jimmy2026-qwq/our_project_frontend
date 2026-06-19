@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { TableStatuses } from '@/objects';
+
 import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
 import type { TournamentDetailTab } from '../../../objects/TournamentDetailView.types';
 
@@ -47,7 +49,7 @@ export function useTournamentRuntimeTabs({
   const waitingTables = useMemo(
     () =>
       (workbench?.visibleTables ?? []).filter(
-        (table) => table.status === 'WaitingPreparation',
+        (table) => table.status === TableStatuses.WaitingPreparation,
       ),
     [workbench?.visibleTables],
   );

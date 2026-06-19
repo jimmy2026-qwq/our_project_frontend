@@ -1,4 +1,8 @@
-import type { Role } from '@/objects';
+import {
+  Roles,
+  type ClubApplicationStatus,
+  type Role,
+} from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import type { DashboardSummary } from '@/pages/shared_objects/dashboard/OpsAnalyticsDashboard';
@@ -24,7 +28,7 @@ export interface MemberHubApplicationInboxItem {
   playerId: string;
   applicantName: string;
   message: string;
-  status: 'Pending' | 'Approved' | 'Rejected' | 'Withdrawn';
+  status: ClubApplicationStatus;
   submittedAt: string;
   source: DataSource;
 }
@@ -53,7 +57,7 @@ export interface MemberHubState {
 export const EMPTY_MEMBER_HUB_OPERATOR: MemberHubOperator = {
   id: '',
   label: '无操作身份',
-  role: 'RegisteredPlayer',
+  role: Roles.RegisteredPlayer,
   playerId: '',
   managedClubIds: [],
 };

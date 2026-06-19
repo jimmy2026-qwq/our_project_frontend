@@ -2,7 +2,7 @@ import type { SeatWind } from '@/objects/tournament';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../objects/TablePaifuDetail';
-import { getRoundPlayerId } from '../../functions/getReplay';
+import { getRoundPlayerId } from '../../functions/getReplayPlayers';
 import { PlayerHand } from './components/PlayerAreas/PlayerHand';
 import { shouldRevealPaifuHand } from './functions/shouldRevealPaifuHand';
 import type { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';

@@ -2,11 +2,10 @@ import { useState } from 'react';
 
 import { AppealFileAPI } from '@/api/tournament';
 import { useNotice } from '@/app/feedback/useNotice';
+import type { TableSeat } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
-
-import type { TableSeat } from '../objects/TableMatch.types';
 
 interface TableMatchAppealFormParams {
   table: TableDetail | null;

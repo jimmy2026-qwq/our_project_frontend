@@ -3,6 +3,7 @@ import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
 } from '@/objects';
+import { TournamentFormats } from '@/objects';
 
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 
@@ -47,9 +48,9 @@ export function getStageDisplayName(
 
 function getStageFormatLabel(format?: string) {
   switch (format) {
-    case 'Knockout':
+    case TournamentFormats.Knockout:
       return '淘汰赛';
-    case 'Swiss':
+    case TournamentFormats.Swiss:
       return '瑞士轮';
     default:
       return undefined;

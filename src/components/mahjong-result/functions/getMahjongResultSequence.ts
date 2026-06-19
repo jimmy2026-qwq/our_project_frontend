@@ -1,4 +1,4 @@
-import type { PaifuTile, ScoreChange, Yaku } from '@/objects';
+import { HandOutcome, type PaifuTile, type ScoreChange, type Yaku } from '@/objects';
 
 export interface MahjongResultWinLike {
   winner: string;
@@ -41,7 +41,7 @@ export type MahjongResultSequenceStep =
     };
 
 export function isWinOutcome(outcome: string) {
-  return outcome === 'Ron' || outcome === 'Tsumo';
+  return outcome === HandOutcome.Ron || outcome === HandOutcome.Tsumo;
 }
 
 export function getResultWins(result: MahjongResultLike): MahjongResultWinLike[] {

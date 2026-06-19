@@ -1,5 +1,5 @@
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
-import { isPlayerTenpai } from '../../../functions/getReplay';
+import { isPlayerTenpai } from '../../../functions/getReplayPlayers';
 import type { HandVisibilityMode } from '../objects/HandVisibilityMode';
 
 export function shouldRevealPaifuHand({

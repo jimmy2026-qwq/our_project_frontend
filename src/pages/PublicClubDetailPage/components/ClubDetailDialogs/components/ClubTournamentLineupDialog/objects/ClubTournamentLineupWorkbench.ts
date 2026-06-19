@@ -9,7 +9,7 @@ export interface ClubTournamentLineupWorkbench {
   members: PlayerProfile[];
   isLoading: boolean;
   isSubmitting: boolean;
-  selectedStageId: string;
+  selectedStageId: string | null;
   statusFilter: MemberStatusFilter;
   eloSort: EloSort;
   selectedPlayerIds: string[];

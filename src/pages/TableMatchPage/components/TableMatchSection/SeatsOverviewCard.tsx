@@ -6,6 +6,7 @@ import {
   CardTitle,
   StatusPill,
 } from '@/components/ui';
+import { SeatWinds, type TableSeat } from '@/objects/tournament';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import {
@@ -13,7 +14,7 @@ import {
   getSeatStatusTone,
   getTableStatusLabel,
 } from '../../functions/TableMatch.labels';
-import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
+import type { TableSeatMap } from '../../functions/getTableSeatMap';
 import { SeatCard } from './SeatCard';
 
 interface SeatsOverviewCardProps {
@@ -86,19 +87,25 @@ function SeatsLayout({
   return (
     <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_minmax(0,1fr)] md:grid-rows-[auto_auto_auto]">
       <SeatCard
-        wind="North"
-        playerId={seatMap.North?.playerId ?? 'Unassigned'}
-        playerName={getSeatPlayerName(seatMap.North?.playerId, playerNames)}
-        ready={seatMap.North?.ready ?? false}
-        disconnected={seatMap.North?.disconnected ?? false}
+        wind={SeatWinds.North}
+        playerId={seatMap[SeatWinds.North]?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(
+          seatMap[SeatWinds.North]?.playerId,
+          playerNames,
+        )}
+        ready={seatMap[SeatWinds.North]?.ready ?? false}
+        disconnected={seatMap[SeatWinds.North]?.disconnected ?? false}
         className="md:col-start-2 md:row-start-1"
       />
       <SeatCard
-        wind="West"
-        playerId={seatMap.West?.playerId ?? 'Unassigned'}
-        playerName={getSeatPlayerName(seatMap.West?.playerId, playerNames)}
-        ready={seatMap.West?.ready ?? false}
-        disconnected={seatMap.West?.disconnected ?? false}
+        wind={SeatWinds.West}
+        playerId={seatMap[SeatWinds.West]?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(
+          seatMap[SeatWinds.West]?.playerId,
+          playerNames,
+        )}
+        ready={seatMap[SeatWinds.West]?.ready ?? false}
+        disconnected={seatMap[SeatWinds.West]?.disconnected ?? false}
         className="md:col-start-1 md:row-start-2"
       />
       <div className="rounded-[28px] border border-[rgba(236,197,122,0.22)] bg-[radial-gradient(circle_at_top,rgba(236,197,122,0.16),transparent_55%),linear-gradient(180deg,rgba(17,38,52,0.92),rgba(8,20,30,0.96))] p-6 text-center shadow-[0_18px_48px_rgba(0,0,0,0.22)] md:col-start-2 md:row-start-2">
@@ -112,19 +119,25 @@ function SeatsLayout({
         </div>
       </div>
       <SeatCard
-        wind="East"
-        playerId={seatMap.East?.playerId ?? 'Unassigned'}
-        playerName={getSeatPlayerName(seatMap.East?.playerId, playerNames)}
-        ready={seatMap.East?.ready ?? false}
-        disconnected={seatMap.East?.disconnected ?? false}
+        wind={SeatWinds.East}
+        playerId={seatMap[SeatWinds.East]?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(
+          seatMap[SeatWinds.East]?.playerId,
+          playerNames,
+        )}
+        ready={seatMap[SeatWinds.East]?.ready ?? false}
+        disconnected={seatMap[SeatWinds.East]?.disconnected ?? false}
         className="md:col-start-3 md:row-start-2"
       />
       <SeatCard
-        wind="South"
-        playerId={seatMap.South?.playerId ?? 'Unassigned'}
-        playerName={getSeatPlayerName(seatMap.South?.playerId, playerNames)}
-        ready={seatMap.South?.ready ?? false}
-        disconnected={seatMap.South?.disconnected ?? false}
+        wind={SeatWinds.South}
+        playerId={seatMap[SeatWinds.South]?.playerId ?? 'Unassigned'}
+        playerName={getSeatPlayerName(
+          seatMap[SeatWinds.South]?.playerId,
+          playerNames,
+        )}
+        ready={seatMap[SeatWinds.South]?.ready ?? false}
+        disconnected={seatMap[SeatWinds.South]?.disconnected ?? false}
         className="md:col-start-2 md:row-start-3"
       />
     </div>

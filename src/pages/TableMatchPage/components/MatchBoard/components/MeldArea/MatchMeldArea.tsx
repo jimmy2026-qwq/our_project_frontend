@@ -1,26 +1,25 @@
-import type { SeatWind } from '@/objects';
+import { SeatWinds, type SeatWind } from '@/objects';
 import type { MeldGroup } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
 
 import { MeldRow } from './MatchMeldRow';
 import { getMeldBoxStyle } from '../../functions/getMatchMeldAreaStyle';
+import { matchBoardSeatOrder } from '../../objects/matchBoardSeatOrder';
 
 interface MatchMeldAreaProps {
   melds: Record<SeatWind, MeldGroup[]>;
 }
 
-const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
-
 const meldBoxPositionClasses: Record<SeatWind, string> = {
-  East: 'bottom-[126px] right-[18%]',
-  South: 'right-[126px] top-[20%] rotate-90',
-  West: 'left-[18%] top-[150px] rotate-180',
-  North: 'left-[126px] bottom-[20%] -rotate-90',
+  [SeatWinds.East]: 'bottom-[126px] right-[18%]',
+  [SeatWinds.South]: 'right-[126px] top-[20%] rotate-90',
+  [SeatWinds.West]: 'left-[18%] top-[150px] rotate-180',
+  [SeatWinds.North]: 'left-[126px] bottom-[20%] -rotate-90',
 };
 
 export function MatchMeldArea({ melds }: MatchMeldAreaProps) {
   return (
     <>
-      {seatOrder.map((seat) => (
+      {matchBoardSeatOrder.map((seat) => (
         <SeatMeldBox key={seat} melds={melds[seat]} seat={seat} />
       ))}
     </>

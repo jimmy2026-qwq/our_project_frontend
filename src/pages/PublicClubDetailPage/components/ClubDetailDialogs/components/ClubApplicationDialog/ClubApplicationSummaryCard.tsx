@@ -1,16 +1,20 @@
 import { useMemo } from 'react';
 
 import { StatusPill } from '@/components/ui';
+import { ClubApplicationStatuses } from '@/objects';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 
 import { formatDateTime } from '../../../../functions/getClubApplicationDisplay';
 
 function getApplicationTone(status?: ClubApplication['status']) {
-  if (status === 'Approved') {
+  if (status === ClubApplicationStatuses.Approved) {
     return 'success' as const;
   }
 
-  if (status === 'Rejected' || status === 'Withdrawn') {
+  if (
+    status === ClubApplicationStatuses.Rejected ||
+    status === ClubApplicationStatuses.Withdrawn
+  ) {
     return 'danger' as const;
   }
 
@@ -19,13 +23,13 @@ function getApplicationTone(status?: ClubApplication['status']) {
 
 function getApplicationStatusLabel(status?: ClubApplication['status']) {
   switch (status) {
-    case 'Pending':
+    case ClubApplicationStatuses.Pending:
       return '待处理';
-    case 'Approved':
+    case ClubApplicationStatuses.Approved:
       return '已通过';
-    case 'Rejected':
+    case ClubApplicationStatuses.Rejected:
       return '已拒绝';
-    case 'Withdrawn':
+    case ClubApplicationStatuses.Withdrawn:
       return '已撤回';
     default:
       return status ?? '--';

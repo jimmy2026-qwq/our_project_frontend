@@ -3,7 +3,7 @@ import type {
   PublicTournamentStageView,
   StageStatus,
 } from '@/objects';
-import { DEFAULT_MAHJONG_RULESET } from '@/objects';
+import { DEFAULT_MAHJONG_RULESET, StageStatuses } from '@/objects';
 
 import type { TournamentPublicProfile } from '../objects/PublicClubDetailPage.types';
 
@@ -38,7 +38,9 @@ export function toPublicTournamentDetail(
   );
   const nextStage =
     stages.find(
-      (stage) => stage.status !== 'Completed' && stage.status !== 'Archived',
+      (stage) =>
+        stage.status !== StageStatuses.Completed &&
+        stage.status !== StageStatuses.Archived,
     ) ?? stages[stages.length - 1];
 
   return {
@@ -60,7 +62,9 @@ export function toPublicTournamentDetail(
     whitelistCount: item.whitelistCount,
     nextStageId: nextStage?.stageId ?? '',
     nextStageName: nextStage?.name ?? 'No stages available',
-    nextStageStatus: nextStage ? toStageStatus(nextStage.status) : 'Pending',
+    nextStageStatus: nextStage
+      ? toStageStatus(nextStage.status)
+      : StageStatuses.Pending,
     nextScheduledAt: item.startsAt,
     stages: stages.map((stage) => ({
       stageId: stage.stageId,

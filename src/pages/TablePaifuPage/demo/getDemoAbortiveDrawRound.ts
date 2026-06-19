@@ -1,4 +1,10 @@
-import { RoundSettlementNote, type PaifuRound as PaifuRoundSummary } from '@/objects';
+import {
+  HandOutcome,
+  PaifuActionType,
+  RoundSettlementNote,
+  SeatWinds,
+  type PaifuRound as PaifuRoundSummary,
+} from '@/objects';
 import { createDemoPaifuRound } from './createDemoPaifuRound';
 import {
   eastNineTerminals,
@@ -10,7 +16,7 @@ import { roundOneInitialHands } from './TablePaifuDemoHandSets';
 export function getDemoAbortiveDrawRound(): PaifuRoundSummary {
   return createDemoPaifuRound({
     descriptor: {
-      roundWind: 'East',
+      roundWind: SeatWinds.East,
       handNumber: 1,
       honba: 0,
     },
@@ -18,7 +24,7 @@ export function getDemoAbortiveDrawRound(): PaifuRoundSummary {
     actions: [
       {
         sequenceNo: 1,
-        actionType: 'DoraReveal',
+        actionType: PaifuActionType.DoraReveal,
         tile: '4z',
         revealedTiles: ['4z'],
         note: 'Initial dora indicator.',
@@ -26,14 +32,14 @@ export function getDemoAbortiveDrawRound(): PaifuRoundSummary {
       {
         sequenceNo: 2,
         actor: 'player-east',
-        actionType: 'DrawGame',
+        actionType: PaifuActionType.DrawGame,
         handTilesAfterAction: eastNineTerminals,
         revealedTiles: eastNineTerminals,
         note: 'East 1 honba 0: East declares nine terminals abortive draw.',
       },
     ],
     result: {
-      outcome: 'AbortiveDraw',
+      outcome: HandOutcome.AbortiveDraw,
       yaku: [],
       doraIndicators: fullDoraRow,
       uraDoraIndicators: fullUraDoraRow,

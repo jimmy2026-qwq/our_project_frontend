@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { TournamentGetAPI, TournamentListAPI } from '@/api/tournament';
+import { StageStatuses, TournamentStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import {
@@ -29,7 +30,7 @@ export function useManagedDraftSchedulesLoader() {
       const tournaments = await sendAPI(
         new TournamentListAPI({
           adminId: operatorId,
-          status: 'Draft',
+          status: TournamentStatuses.Draft,
           limit: 50,
           offset: 0,
         }),
@@ -48,10 +49,10 @@ export function useManagedDraftSchedulesLoader() {
               {
                 tournamentId: detail.tournamentId,
                 tournamentName: detail.name,
-                tournamentStatus: 'Draft',
+                tournamentStatus: TournamentStatuses.Draft,
                 stageId: `${detail.tournamentId}-draft-stage`,
                 stageName: 'Draft stage',
-                stageStatus: 'Pending',
+                stageStatus: StageStatuses.Pending,
                 scheduledAt: detail.startsAt,
                 isUnpublished: true,
               } satisfies PublicSchedule,
@@ -63,7 +64,7 @@ export function useManagedDraftSchedulesLoader() {
               ({
                 tournamentId: detail.tournamentId,
                 tournamentName: detail.name,
-                tournamentStatus: 'Draft',
+                tournamentStatus: TournamentStatuses.Draft,
                 stageId: stage.stageId,
                 stageName: stage.name,
                 stageStatus: toStageStatus(stage.status),

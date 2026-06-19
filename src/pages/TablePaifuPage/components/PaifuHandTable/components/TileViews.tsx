@@ -6,7 +6,7 @@ import type { SeatWind } from '@/objects/tournament';
 import {
   tileFaceClasses,
   tileSizeClasses,
-} from '../functions/getPaifuTableLayout';
+} from '../objects/paifuTableLayout';
 import {
   getTileImageSrc,
   maxTileImageRetryCount,

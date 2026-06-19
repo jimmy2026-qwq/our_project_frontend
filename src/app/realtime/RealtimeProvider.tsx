@@ -6,6 +6,7 @@ import {
   realtimeBrowserEventName,
   type RealtimeEvent,
 } from './RealtimeEvent';
+import { isRealtimeEventType } from './RealtimeEventType';
 
 export function RealtimeProvider({ children }: { children: ReactNode }) {
   const { isReady, session } = useAuthContext();
@@ -66,6 +67,7 @@ function parseRealtimeEvent(value: string): RealtimeEvent | null {
     if (
       !event.id ||
       !event.eventType ||
+      !isRealtimeEventType(event.eventType) ||
       !event.aggregateType ||
       !event.aggregateId
     ) {

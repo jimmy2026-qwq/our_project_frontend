@@ -11,7 +11,7 @@ import {
 
 interface TablesPanelProps {
   payload: LoadState<TournamentTableSummary>;
-  selectedTableId: string;
+  selectedTableId: string | null;
   onSelectTable: (tableId: string) => void;
   playerNames: Record<string, string>;
 }

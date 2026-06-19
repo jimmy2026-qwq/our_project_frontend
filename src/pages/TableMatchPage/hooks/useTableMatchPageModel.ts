@@ -17,7 +17,7 @@ import { useTableMatchMahjongState } from './useTableMatchMahjongState';
 import { useTableMatchPlayerNames } from './useTableMatchPlayerNames';
 import { useTableMatchReadyAction } from './useTableMatchReadyAction';
 import { useTableMatchSeatState } from './useTableMatchSeatState';
-import type { TableSeatMap } from '../objects/TableMatch.types';
+import type { TableSeatMap } from '../functions/getTableSeatMap';
 
 interface TableMatchPageStatus {
   error: string | null;

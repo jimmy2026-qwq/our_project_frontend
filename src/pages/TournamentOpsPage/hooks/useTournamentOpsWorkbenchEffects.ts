@@ -20,9 +20,9 @@ interface TournamentOpsEffectsParams {
   records: LoadState<MatchRecordSummary> | null;
   appeals: LoadState<AppealSummary> | null;
   isLoading: boolean;
-  selectedTableId: string;
+  selectedTableId: string | null;
   setState: Dispatch<SetStateAction<TournamentOpsState>>;
-  setSelectedTableId: Dispatch<SetStateAction<string>>;
+  setSelectedTableId: Dispatch<SetStateAction<string | null>>;
   pendingRefresh: boolean;
   setPendingRefresh: Dispatch<SetStateAction<boolean>>;
   playerNames: Record<string, string>;

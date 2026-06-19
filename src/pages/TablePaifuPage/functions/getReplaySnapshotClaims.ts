@@ -3,7 +3,7 @@ import type { SeatWind } from '@/objects/tournament';
 import { isSamePaifuTile, type PaifuAction, type PaifuTile } from '@/objects';
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import type { RiverDiscard } from '../objects/ReplaySnapshot.types';
-import { seatOrder } from './getReplayCore';
+import { replaySeatOrder as seatOrder } from '../objects/replaySeatInfo';
 import { getPlayerSeat } from './getReplayPlayers';
 
 export function claimDiscard({

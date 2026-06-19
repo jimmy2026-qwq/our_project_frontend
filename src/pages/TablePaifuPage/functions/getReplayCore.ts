@@ -1,23 +1,28 @@
 import { getPaifuRoundActions } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import type { SeatWind } from '@/objects/tournament';
+import { replaySeatLabels } from '../objects/replaySeatInfo';
 
 import {
+  HandOutcome,
+  PaifuActionType,
   isSamePaifuTile,
   type PaifuAction,
   type PaifuRound as PaifuRoundSummary,
   type PaifuTile,
 } from '@/objects';
 
-export const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
-
-export const seatLabels: Record<SeatWind, string> = {
-  East: '\u4e1c',
-  South: '\u5357',
-  West: '\u897f',
-  North: '\u5317',
-};
-
-const roundWindLabels: Record<SeatWind, string> = seatLabels;
+const roundWindLabels: Record<SeatWind, string> = replaySeatLabels;
+const replayActionTypes = new Set<PaifuAction['actionType']>([
+  PaifuActionType.Discard,
+  PaifuActionType.DrawGame,
+  PaifuActionType.Win,
+  PaifuActionType.Chi,
+  PaifuActionType.Pon,
+  PaifuActionType.Kan,
+  PaifuActionType.AddedKan,
+  PaifuActionType.ClosedKan,
+  PaifuActionType.OpenKan,
+]);
 
 export function getRoundTitle(round: PaifuRoundSummary) {
   return `${roundWindLabels[round.descriptor.roundWind]}${round.descriptor.handNumber}\u5c40${round.descriptor.honba}\u672c\u573a`;
@@ -47,22 +52,14 @@ export function getReplayActions(round: PaifuRoundSummary) {
   return getPaifuRoundActions(round).filter((action) =>
     Boolean(
       action.actor &&
-      (action.actionType === 'Discard' ||
-        (action.actionType === 'Riichi' && action.tile) ||
-        action.actionType === 'DrawGame' ||
-        action.actionType === 'Win' ||
-        action.actionType === 'Chi' ||
-        action.actionType === 'Pon' ||
-        action.actionType === 'Kan' ||
-        action.actionType === 'AddedKan' ||
-        action.actionType === 'ClosedKan' ||
-        action.actionType === 'OpenKan'),
+        (replayActionTypes.has(action.actionType) ||
+          (action.actionType === PaifuActionType.Riichi && action.tile)),
     ),
   );
 }
 
 export function isExhaustiveDrawRound(round: PaifuRoundSummary) {
-  return round.result.outcome === 'ExhaustiveDraw';
+  return round.result.outcome === HandOutcome.ExhaustiveDraw;
 }
 
 export function getReplayStepCount(round: PaifuRoundSummary) {
@@ -103,7 +100,7 @@ export function getReplaySequenceLimit(
 
 function isRiichiDeclarationRon(round: PaifuRoundSummary, action: PaifuAction) {
   if (
-    round.result.outcome !== 'Ron' ||
+    round.result.outcome !== HandOutcome.Ron ||
     !action.actor ||
     !action.tile ||
     round.result.target !== action.actor
@@ -115,7 +112,7 @@ function isRiichiDeclarationRon(round: PaifuRoundSummary, action: PaifuAction) {
 
   return getPaifuRoundActions(round).some(
     (item) =>
-      item.actionType === 'Win' &&
+      item.actionType === PaifuActionType.Win &&
       item.sequenceNo > action.sequenceNo &&
       item.tile &&
       isSamePaifuTile(item.tile, actionTile),
@@ -128,7 +125,7 @@ export function getAcceptedRiichiActions(
 ) {
   return getPaifuRoundActions(round).filter(
     (action) =>
-      action.actionType === 'Riichi' &&
+      action.actionType === PaifuActionType.Riichi &&
       action.actor &&
       action.sequenceNo <= sequenceLimit &&
       !isRiichiDeclarationRon(round, action),
@@ -144,7 +141,7 @@ export function getDoraIndicators(
   return getPaifuRoundActions(round)
     .filter(
       (action) =>
-        action.actionType === 'DoraReveal' &&
+        action.actionType === PaifuActionType.DoraReveal &&
         action.tile &&
         action.sequenceNo <= sequenceLimit,
     )
@@ -165,14 +162,18 @@ export function getRemainingTileCount(
   const sequenceLimit = getReplaySequenceLimit(round, replayStep);
   const drawCount = getPaifuRoundActions(round).filter(
     (action) =>
-      action.actionType === 'Draw' && action.sequenceNo <= sequenceLimit,
+      action.actionType === PaifuActionType.Draw &&
+      action.sequenceNo <= sequenceLimit,
   ).length;
 
   return Math.max(0, 69 - drawCount);
 }
 
 export function isWinningRound(round: PaifuRoundSummary) {
-  return round.result.outcome === 'Ron' || round.result.outcome === 'Tsumo';
+  return (
+    round.result.outcome === HandOutcome.Ron ||
+    round.result.outcome === HandOutcome.Tsumo
+  );
 }
 
 export function removeFirstTile(tiles: PaifuTile[], tile: PaifuTile) {

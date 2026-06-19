@@ -1,3 +1,5 @@
+import { TableStatuses } from '@/objects';
+
 import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
 import type {
   TournamentDetailTableItem,
@@ -39,7 +41,7 @@ export function getTournamentDetailHeaderAction({
       );
       const archivedTableCount =
         stageTables.length > 0
-          ? stageTables.filter((table) => table.status === 'Archived').length
+          ? stageTables.filter((table) => table.status === TableStatuses.Archived).length
           : (stage.archivedTableCount ?? 0);
 
       return (

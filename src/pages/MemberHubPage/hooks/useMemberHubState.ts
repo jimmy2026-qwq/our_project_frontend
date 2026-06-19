@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ListClubsAPI } from '@/api/club/ListClubsAPI';
 import { useAuthContext } from '@/app/auth/useAuthContext';
-import type { ClubListQuery, ListEnvelope } from '@/objects';
+import { Roles, type ClubListQuery, type ListEnvelope } from '@/objects';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { sendAPI } from '@/system/api';
@@ -52,7 +52,7 @@ async function loadMemberHubOperatorDirectory(
       operators.push({
         id: currentOperatorId,
         label: `${currentDisplayName} / ${isAdmin ? '俱乐部管理员' : '注册选手'}`,
-        role: isAdmin ? 'ClubAdmin' : 'RegisteredPlayer',
+        role: isAdmin ? Roles.ClubAdmin : Roles.RegisteredPlayer,
         playerId: currentOperatorId,
         managedClubIds: isAdmin
           ? currentOperatorClubs.items.map((club) => club.id)

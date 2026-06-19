@@ -1,4 +1,4 @@
-import { operationPositionClasses } from '../../functions/getPaifuTableLayout';
+import { operationPositionClasses } from '../../objects/paifuTableLayout';
 import type { ActiveOperation } from '../../objects/PaifuOverlayViews';
 
 export function OperationFlash({ operation }: { operation?: ActiveOperation }) {

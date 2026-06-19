@@ -2,7 +2,7 @@ import type { MahjongResultWinLike } from '@/components/mahjong-result/functions
 import { isNagashiManganWin } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
 import { HandOutcome, type PaifuRound as PaifuRoundSummary } from '@/objects';
-import { formatPoints } from '../../../functions/getReplay';
+import { formatPoints } from '../../../functions/getReplayCore';
 
 export function getWinLabel(
   round: PaifuRoundSummary,

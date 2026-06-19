@@ -1,7 +1,13 @@
 import { useCallback } from 'react';
 
 import { ListClubApplicationsAPI } from '@/api/club/ListClubApplicationsAPI';
-import type { ClubApplicationListQuery, ListEnvelope, Role } from '@/objects';
+import {
+  ClubApplicationStatuses,
+  Roles,
+  type ClubApplicationListQuery,
+  type ListEnvelope,
+  type Role,
+} from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
@@ -30,7 +36,7 @@ export function useMemberHubApplicationInboxLoader() {
       operatorId: string,
       role: Role,
     ): Promise<ApplicationInboxState> => {
-      if (role !== 'ClubAdmin') {
+      if (role !== Roles.ClubAdmin) {
         return {
           items: [],
           source: 'api',
@@ -40,7 +46,7 @@ export function useMemberHubApplicationInboxLoader() {
       try {
         const envelope = await getClubApplications(clubId, {
           operatorId,
-          status: 'Pending',
+          status: ClubApplicationStatuses.Pending,
           limit: 20,
           offset: 0,
         });

@@ -1,3 +1,4 @@
+import { AppealStatuses, PlayerStatuses, TableStatuses } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
@@ -17,15 +18,15 @@ export function getRecentTableStatusLabel(
   status: TournamentTableSummary['status'],
 ) {
   switch (status) {
-    case 'WaitingPreparation':
+    case TableStatuses.WaitingPreparation:
       return '待准备';
-    case 'InProgress':
+    case TableStatuses.InProgress:
       return '进行中';
-    case 'Scoring':
+    case TableStatuses.Scoring:
       return '等待申诉';
-    case 'AppealInProgress':
+    case TableStatuses.AppealInProgress:
       return '申诉处理中';
-    case 'Archived':
+    case TableStatuses.Archived:
       return '已归档';
     default:
       return status;
@@ -34,15 +35,15 @@ export function getRecentTableStatusLabel(
 
 export function getAppealStatusLabel(status: AppealSummary['status']) {
   switch (status) {
-    case 'Open':
+    case AppealStatuses.Open:
       return '待处理';
-    case 'UnderReview':
+    case AppealStatuses.UnderReview:
       return '审核中';
-    case 'Resolved':
+    case AppealStatuses.Resolved:
       return '已解决';
-    case 'Rejected':
+    case AppealStatuses.Rejected:
       return '已驳回';
-    case 'Escalated':
+    case AppealStatuses.Escalated:
       return '已升级';
     default:
       return status;
@@ -51,15 +52,15 @@ export function getAppealStatusLabel(status: AppealSummary['status']) {
 
 export function getAppealStatusTone(status: AppealSummary['status']) {
   switch (status) {
-    case 'Resolved':
+    case AppealStatuses.Resolved:
       return 'success' as const;
-    case 'Rejected':
+    case AppealStatuses.Rejected:
       return 'danger' as const;
-    case 'Escalated':
+    case AppealStatuses.Escalated:
       return 'warning' as const;
-    case 'UnderReview':
+    case AppealStatuses.UnderReview:
       return 'neutral' as const;
-    case 'Open':
+    case AppealStatuses.Open:
     default:
       return 'warning' as const;
   }
@@ -67,11 +68,11 @@ export function getAppealStatusTone(status: AppealSummary['status']) {
 
 export function getPlayerStatusLabel(status?: string) {
   switch (status) {
-    case 'Active':
+    case PlayerStatuses.Active:
       return '正常';
-    case 'Suspended':
+    case PlayerStatuses.Suspended:
       return '停用';
-    case 'Banned':
+    case PlayerStatuses.Banned:
       return '封禁';
     default:
       return status || '--';

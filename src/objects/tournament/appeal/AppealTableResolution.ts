@@ -1,7 +1,10 @@
-export type AppealTableResolution =
-  | 'RestorePriorState'
-  | 'ArchiveTable'
-  | 'ResumeScoring'
-  | 'ResumePlay'
-  | 'ForceReset';
+export const AppealTableResolutions = {
+  RestorePriorState: 'RestorePriorState',
+  ArchiveTable: 'ArchiveTable',
+  ResumeScoring: 'ResumeScoring',
+  ResumePlay: 'ResumePlay',
+  ForceReset: 'ForceReset',
+} as const;
 
+export type AppealTableResolution =
+  (typeof AppealTableResolutions)[keyof typeof AppealTableResolutions];

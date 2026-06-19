@@ -1,7 +1,7 @@
 import { useEffect, useReducer, useState } from 'react';
 
 import { TournamentTableGetAPI } from '@/api/tournament';
-import type { TournamentTableView } from '@/objects';
+import { TableStatuses, type TournamentTableView } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
@@ -64,7 +64,7 @@ export function useTableMatchData(tableId: string) {
   }, [reloadKey, tableId]);
 
   useEffect(() => {
-    if (table?.status !== 'InProgress') {
+    if (table?.status !== TableStatuses.InProgress) {
       return;
     }
 

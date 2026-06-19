@@ -13,6 +13,7 @@ import type {
   TournamentMatchRecordView,
   TournamentTableView,
 } from '@/objects';
+import { TableStatuses } from '@/objects';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { sendAPI } from '@/system/api';
@@ -112,7 +113,7 @@ export function usePlayerDashboardMatchData() {
       getRecords({ playerId: operatorId, limit: 8 }),
     ]);
     const rawRecentTables = tablesEnvelope.items
-      .filter((table) => table.status !== 'Archived')
+      .filter((table) => table.status !== TableStatuses.Archived)
       .sort(
         (left, right) =>
           getActiveTableRank(left.status) - getActiveTableRank(right.status),

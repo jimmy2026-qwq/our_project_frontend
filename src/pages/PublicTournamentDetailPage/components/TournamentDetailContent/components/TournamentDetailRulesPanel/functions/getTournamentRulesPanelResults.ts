@@ -1,3 +1,4 @@
+import { AdvancementRuleTypes, StageStatuses, TournamentFormats } from '@/objects';
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
 import { getCurrentRuleStage } from '../../../../../functions/getTournamentDetailRules';
 
@@ -23,8 +24,8 @@ export function getQualifiedPlayerIds(
   }
 
   if (
-    stage.format === 'Knockout' ||
-    stage.advancementRule?.ruleType === 'KnockoutElimination'
+    stage.format === TournamentFormats.Knockout ||
+    stage.advancementRule?.ruleType === AdvancementRuleTypes.KnockoutElimination
   ) {
     const knockoutResultPlayerIds = getKnockoutResultRows(
       stage.bracket,
@@ -114,7 +115,10 @@ export function getStandingResultRows(
 export function isCompletedStage(
   stage: ReturnType<typeof getCurrentRuleStage>,
 ) {
-  return stage?.status === 'Completed' || stage?.status === 'Archived';
+  return (
+    stage?.status === StageStatuses.Completed ||
+    stage?.status === StageStatuses.Archived
+  );
 }
 
 export function isFinalStage(

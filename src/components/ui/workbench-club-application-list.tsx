@@ -1,5 +1,10 @@
 import type { ReactNode } from 'react';
 
+import {
+  ClubApplicationStatuses,
+  type ClubApplicationStatus,
+} from '@/objects';
+
 import { EmptyState } from './feedback';
 import { InlineActions } from './layout';
 import { ListRow } from './detail-layout';
@@ -10,34 +15,34 @@ export interface ClubApplicationListItem {
   title: ReactNode;
   message: ReactNode;
   submittedAt: ReactNode;
-  status: string;
+  status: ClubApplicationStatus;
   meta?: ReactNode;
   actions?: ReactNode;
 }
 
-function getApplicationStatusTone(status: string) {
+function getApplicationStatusTone(status: ClubApplicationStatus) {
   switch (status) {
-    case 'Pending':
+    case ClubApplicationStatuses.Pending:
       return 'warning';
-    case 'Approved':
+    case ClubApplicationStatuses.Approved:
       return 'success';
-    case 'Rejected':
-    case 'Withdrawn':
+    case ClubApplicationStatuses.Rejected:
+    case ClubApplicationStatuses.Withdrawn:
       return 'neutral';
     default:
       return 'info';
   }
 }
 
-function getApplicationStatusLabel(status: string) {
+function getApplicationStatusLabel(status: ClubApplicationStatus) {
   switch (status) {
-    case 'Pending':
+    case ClubApplicationStatuses.Pending:
       return '待处理';
-    case 'Approved':
+    case ClubApplicationStatuses.Approved:
       return '已通过';
-    case 'Rejected':
+    case ClubApplicationStatuses.Rejected:
       return '已拒绝';
-    case 'Withdrawn':
+    case ClubApplicationStatuses.Withdrawn:
       return '已撤回';
     default:
       return status;

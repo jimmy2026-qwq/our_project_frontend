@@ -5,7 +5,7 @@ import {
   SelectField,
   TextareaField,
 } from '@/components/ui';
-import type { SeatWind } from '@/objects/tournament';
+import { SeatWinds, type SeatWind } from '@/objects/tournament';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 interface TableWaitingControlsProps {
@@ -62,10 +62,10 @@ export function TableWaitingControls({
           }
           disabled={!canOperate || isSubmitting}
         >
-          <option value="East">东</option>
-          <option value="South">南</option>
-          <option value="West">西</option>
-          <option value="North">北</option>
+          <option value={SeatWinds.East}>东</option>
+          <option value={SeatWinds.South}>南</option>
+          <option value={SeatWinds.West}>西</option>
+          <option value={SeatWinds.North}>北</option>
         </SelectField>
         {selectedSeat ? (
           <div className="grid gap-1 text-[#c7d6e2]">

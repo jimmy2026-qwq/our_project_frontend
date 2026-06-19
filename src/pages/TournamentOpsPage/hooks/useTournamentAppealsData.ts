@@ -51,7 +51,7 @@ async function loadAppeals(
   try {
     const envelope = await getAppeals({
       tournamentId: state.tournamentId,
-      status: state.appealStatus || undefined,
+      status: state.appealStatus,
       limit: 10,
       offset: 0,
     });

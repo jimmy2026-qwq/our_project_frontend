@@ -1,10 +1,11 @@
 import type { NotificationId } from './NotificationId';
+import type { NotificationType } from './NotificationType';
 import type { PlayerId } from '../player/playerprofile';
 
 export interface Notification {
   id: NotificationId;
   recipientPlayerId: PlayerId;
-  notificationType: string;
+  notificationType: NotificationType;
   title: string;
   body: string;
   severity: string;

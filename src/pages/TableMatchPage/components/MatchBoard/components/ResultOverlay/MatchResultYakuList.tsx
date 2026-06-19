@@ -1,6 +1,6 @@
 import { getMahjongYakuLabel } from '@/objects';
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import { formatYakuValue } from '@/pages/TablePaifuPage/functions/getReplay';
+import { formatYakuValue } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
 export function YakuList({
   className,

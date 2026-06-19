@@ -1,8 +1,10 @@
-import type {
-  AgariResult,
-  MahjongPublicEventView,
-  MahjongSeatView,
-  SeatWind,
+import {
+  HandOutcome,
+  PaifuActionType,
+  type AgariResult,
+  type MahjongPublicEventView,
+  type MahjongSeatView,
+  type SeatWind,
 } from '@/objects';
 import { getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import type {
@@ -73,7 +75,7 @@ export function createMatchWinningCallFlash({
   return {
     animationMs: winningCallAnimationMs,
     key: resultKey,
-    label: result.outcome === 'Tsumo' ? '自摸' : '和',
+    label: result.outcome === HandOutcome.Tsumo ? '自摸' : '和',
     seat: seatRotation[seat],
   };
 }
@@ -87,7 +89,7 @@ export function createMatchRiichiCallFlash({
   seatRotation: Record<SeatWind, SeatWind>;
   seats: MahjongSeatView[];
 }): WinningCallFlashView | undefined {
-  if (event?.actionType !== 'Riichi' || !event.actor) {
+  if (event?.actionType !== PaifuActionType.Riichi || !event.actor) {
     return undefined;
   }
 
@@ -111,19 +113,19 @@ function getMatchOperationLabel(
   result: AgariResult | null,
 ) {
   switch (event.actionType) {
-    case 'Chi':
+    case PaifuActionType.Chi:
       return '吃';
-    case 'Pon':
+    case PaifuActionType.Pon:
       return '碰';
-    case 'Kan':
-    case 'OpenKan':
-    case 'ClosedKan':
-    case 'AddedKan':
+    case PaifuActionType.Kan:
+    case PaifuActionType.OpenKan:
+    case PaifuActionType.ClosedKan:
+    case PaifuActionType.AddedKan:
       return '杠';
-    case 'Riichi':
+    case PaifuActionType.Riichi:
       return undefined;
-    case 'Win':
-      return result?.outcome === 'Tsumo' ? '自摸' : '荣';
+    case PaifuActionType.Win:
+      return result?.outcome === HandOutcome.Tsumo ? '自摸' : '荣';
     default:
       return undefined;
   }

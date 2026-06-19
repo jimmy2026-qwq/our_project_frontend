@@ -17,6 +17,7 @@ import type {
   ClubRelationKind,
   PublicClubDirectoryEntry,
 } from '@/objects/club';
+import { ClubRelationKinds } from '@/objects/club';
 import { sendAPI } from '@/system/api';
 
 import type { ClubRelationDraft } from '../../ClubDetailContent/hooks/useClubRelationActions';
@@ -41,7 +42,9 @@ export function ClubRelationDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [loadError, setLoadError] = useState('');
   const [targetClubId, setTargetClubId] = useState('');
-  const [relation, setRelation] = useState<ClubRelationKind>('Alliance');
+  const [relation, setRelation] = useState<ClubRelationKind>(
+    ClubRelationKinds.Alliance,
+  );
   const [note, setNote] = useState('');
   const selectableClubs = useMemo(
     () => clubs.filter((club) => club.clubId !== clubId),
@@ -57,7 +60,7 @@ export function ClubRelationDialog({
   useEffect(() => {
     if (!open) {
       setTargetClubId('');
-      setRelation('Alliance');
+      setRelation(ClubRelationKinds.Alliance);
       setNote('');
       setLoadError('');
       return;

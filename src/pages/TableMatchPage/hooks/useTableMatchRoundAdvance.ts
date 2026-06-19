@@ -11,6 +11,7 @@ import type {
   MahjongActionResponse,
   MahjongTableView,
 } from '@/objects';
+import { MahjongTableStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import {
@@ -54,11 +55,11 @@ export function useTableMatchRoundAdvance({
       const response = await sendAPI<MahjongTableView>(
         new MahjongCoreAdvanceRoundAPI(tableId, request),
       );
-      if (response.status === 'Finished') {
+      if (response.status === MahjongTableStatuses.Finished) {
         setFinalSettlementTable(response);
       }
       const resolvedTable =
-        response.status === 'Finished'
+        response.status === MahjongTableStatuses.Finished
           ? (
               await sendAPI<MahjongActionResponse>(
                 new MahjongCoreArchiveTableAPI(tableId, {

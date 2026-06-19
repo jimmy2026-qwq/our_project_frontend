@@ -1,5 +1,6 @@
 import { getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import {
+  HandOutcome,
   getPaifuTileCode,
   type PaifuAction,
   type PaifuRound as PaifuRoundSummary,
@@ -12,10 +13,10 @@ import {
 } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import {
   getDoraIndicators,
-  getReplaySnapshot,
   getVisibleDoraIndicatorCount,
   removeFirstTile,
-} from '../../../../functions/getReplay';
+} from '../../../../functions/getReplayCore';
+import { getReplaySnapshot } from '../../../../functions/getReplaySnapshot';
 import { ResultTile } from '../TileViews';
 import {
   formatWinPointText,
@@ -91,7 +92,7 @@ export function WinningResultOverlay({
 
   const winnerHand =
     replaySnapshot.hands[winnerId] ?? getPaifuInitialHands(round)[winnerId] ?? [];
-  const displayHand = round.result.outcome === 'Tsumo' && winningTile
+  const displayHand = round.result.outcome === HandOutcome.Tsumo && winningTile
     ? removeFirstTile(winnerHand, winningTile)
     : winnerHand;
   const doraIndicators =

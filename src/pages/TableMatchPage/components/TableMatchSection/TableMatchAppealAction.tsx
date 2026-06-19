@@ -1,8 +1,8 @@
 import { Button } from '@/components/ui';
+import { TableStatuses, type TableSeat } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { getAppealButtonText } from '../../functions/TableMatch.labels';
-import type { TableSeat } from '../../objects/TableMatch.types';
 
 interface TableMatchAppealActionProps {
   status: TableDetail['status'];
@@ -63,11 +63,11 @@ function getAppealUnavailableText({
     return '只有本桌参赛玩家可以发起赛事申诉。';
   }
 
-  if (status === 'Archived') {
+  if (status === TableStatuses.Archived) {
     return '牌桌已归档，不能再创建新的申诉工单。';
   }
 
-  if (status === 'AppealInProgress') {
+  if (status === TableStatuses.AppealInProgress) {
     return '当前牌桌已有进行中的申诉工单。';
   }
 

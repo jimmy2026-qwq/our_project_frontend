@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
+import { ClubApplicationStatuses } from '@/objects';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
@@ -98,9 +99,10 @@ export function useClubApplicationDialog({
   const canSubmit =
     !!state &&
     !isMember &&
-    application?.status !== 'Pending' &&
-    application?.status !== 'Approved';
-  const canWithdraw = !!application && application.status === 'Pending';
+    application?.status !== ClubApplicationStatuses.Pending &&
+    application?.status !== ClubApplicationStatuses.Approved;
+  const canWithdraw =
+    !!application && application.status === ClubApplicationStatuses.Pending;
 
   useEffect(() => {
     if (isMember) {

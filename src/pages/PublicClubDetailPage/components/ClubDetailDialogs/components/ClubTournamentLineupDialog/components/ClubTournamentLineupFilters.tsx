@@ -14,11 +14,11 @@ export function ClubTournamentLineupFilters({
   onEloSortChange,
 }: {
   isLoading: boolean;
-  selectedStageId: string;
+  selectedStageId: string | null;
   stageOptions: Array<{ stageId: string; name: string }>;
   statusFilter: MemberStatusFilter;
   eloSort: EloSort;
-  onSelectedStageIdChange: (value: string) => void;
+  onSelectedStageIdChange: (value: string | null) => void;
   onStatusFilterChange: (value: MemberStatusFilter) => void;
   onEloSortChange: (value: EloSort) => void;
 }) {
@@ -30,9 +30,9 @@ export function ClubTournamentLineupFilters({
       {hasMultipleStages ? (
         <SelectField
           label="赛段"
-          value={selectedStageId}
+          value={selectedStageId ?? ''}
           onChange={(event) =>
-            onSelectedStageIdChange(event.currentTarget.value)
+            onSelectedStageIdChange(event.currentTarget.value || null)
           }
           disabled={isLoading}
         >

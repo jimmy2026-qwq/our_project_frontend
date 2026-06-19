@@ -7,6 +7,7 @@ import {
   EmptyState,
   StatusPill,
 } from '@/components/ui';
+import { TableStatuses } from '@/objects';
 
 import {
   getTableStatusLabel,
@@ -38,11 +39,11 @@ export function TournamentTablesPanel({
               const playerLabel = table.playerIds
                 .map((playerId) => playerNames[playerId] ?? playerId)
                 .join(' / ');
-              const isFinished = table.status === 'Archived';
+              const isFinished = table.status === TableStatuses.Archived;
               const hasResult =
                 isFinished ||
-                table.status === 'Scoring' ||
-                table.status === 'AppealInProgress';
+                table.status === TableStatuses.Scoring ||
+                table.status === TableStatuses.AppealInProgress;
 
               return (
                 <DetailRow

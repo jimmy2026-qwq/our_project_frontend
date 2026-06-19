@@ -1,8 +1,17 @@
-import type { AgariResult, MahjongSeatView, MahjongTableView, SeatWind } from '@/objects';
+import {
+  HandOutcome,
+  MahjongGameLengths,
+  MahjongTableStatuses,
+  SeatWinds,
+  type AgariResult,
+  type MahjongSeatView,
+  type MahjongTableView,
+  type SeatWind,
+} from '@/objects';
 import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterTableDisplay';
 import { getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
-import { seatOrder } from './matchBoardSeats';
+import { matchBoardSeatOrder } from '../objects/matchBoardSeatOrder';
 
 export function shouldCompleteTableAfterCurrentResult(
   mahjongTable: MahjongTableView,
@@ -14,8 +23,8 @@ export function shouldCompleteTableAfterCurrentResult(
   }
 
   if (
-    mahjongTable.status === 'Finished' ||
-    mahjongTable.status === 'Archived'
+    mahjongTable.status === MahjongTableStatuses.Finished ||
+    mahjongTable.status === MahjongTableStatuses.Archived
   ) {
     return true;
   }
@@ -27,7 +36,7 @@ export function shouldCompleteTableAfterCurrentResult(
     return true;
   }
 
-  if (mahjongTable.ruleset.gameLength === 'OneKyoku') {
+  if (mahjongTable.ruleset.gameLength === MahjongGameLengths.OneKyoku) {
     return true;
   }
 
@@ -73,7 +82,7 @@ export function createMatchScoreDisplays({
   }
 
   return Object.fromEntries(
-    seatOrder.map((seat) => {
+    matchBoardSeatOrder.map((seat) => {
       const seatView = seatsByDisplaySeat[seat];
       const delta =
         result.scoreChanges.find((change) => change.playerId === seatView?.playerId)
@@ -131,7 +140,7 @@ export function shouldHideWinningHand({
 function doesDealerContinueAfterCurrentResult(mahjongTable: MahjongTableView) {
   const result = mahjongTable.currentRound?.result;
   const eastPlayerId = mahjongTable.seats.find(
-    (seat) => seat.seat === 'East',
+    (seat) => seat.seat === SeatWinds.East,
   )?.playerId;
 
   if (!result || !eastPlayerId) {
@@ -142,15 +151,17 @@ function doesDealerContinueAfterCurrentResult(mahjongTable: MahjongTableView) {
     return getResultWins(result).some((win) => win.winner === eastPlayerId);
   }
 
-  if (result.outcome === 'ExhaustiveDraw') {
+  if (result.outcome === HandOutcome.ExhaustiveDraw) {
     return Boolean(result.tenpaiPlayerIds?.includes(eastPlayerId));
   }
 
-  return result.outcome === 'AbortiveDraw';
+  return result.outcome === HandOutcome.AbortiveDraw;
 }
 
 function isCurrentDealerTop(mahjongTable: MahjongTableView) {
-  const eastSeat = mahjongTable.seats.find((seat) => seat.seat === 'East');
+  const eastSeat = mahjongTable.seats.find(
+    (seat) => seat.seat === SeatWinds.East,
+  );
 
   return Boolean(
     eastSeat &&
@@ -172,11 +183,11 @@ function isAtOrBeyondLastScheduledHand(
 function getLastScheduledRoundWind(
   gameLength: MahjongTableView['ruleset']['gameLength'],
 ): SeatWind {
-  return gameLength === 'Hanchan' ? 'South' : 'East';
+  return gameLength === MahjongGameLengths.Hanchan ? SeatWinds.South : SeatWinds.East;
 }
 
 function getRoundWindOrder(seat: SeatWind) {
-  return seatOrder.indexOf(seat);
+  return matchBoardSeatOrder.indexOf(seat);
 }
 
 function normalizeZero(value: number) {
@@ -184,5 +195,9 @@ function normalizeZero(value: number) {
 }
 
 function isScoreSettlementOutcome(outcome: string) {
-  return outcome === 'Ron' || outcome === 'Tsumo' || outcome === 'ExhaustiveDraw';
+  return (
+    outcome === HandOutcome.Ron ||
+    outcome === HandOutcome.Tsumo ||
+    outcome === HandOutcome.ExhaustiveDraw
+  );
 }

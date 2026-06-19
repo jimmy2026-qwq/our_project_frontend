@@ -6,6 +6,7 @@ import {
   TournamentStageCompleteAPI,
   TournamentStageScheduleTablesAPI,
 } from '@/api/tournament';
+import { TournamentStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import { getNextStageMissingLineupClubNames } from '../../../functions/getNextStageLineup';
@@ -58,7 +59,9 @@ export function useTournamentLifecycleActions({
         await refreshTournamentProfile(workbench.profile.id);
       } catch {
         setLocalProfile((current) =>
-          current ? { ...current, status: 'RegistrationOpen' } : current,
+          current
+            ? { ...current, status: TournamentStatuses.RegistrationOpen }
+            : current,
         );
       }
 

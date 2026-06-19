@@ -7,7 +7,7 @@ import {
   getDoraIndicators,
   getRemainingTileCount,
   getRoundTitle,
-} from '../../../../functions/getReplay';
+} from '../../../../functions/getReplayCore';
 import { DoraIndicatorTile } from '../TileViews';
 import { BangziCounter, RemainingTileCount } from './CenterTableCounters';
 import type { TableStickDisplay } from '../../objects/CenterTableDisplay';

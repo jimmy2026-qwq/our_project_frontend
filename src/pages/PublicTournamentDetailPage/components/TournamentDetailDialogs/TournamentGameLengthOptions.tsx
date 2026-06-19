@@ -2,11 +2,12 @@ import type {
   MahjongGameLength,
   MahjongRuleset,
 } from '@/objects/tournament';
+import { MahjongGameLengths } from '@/objects/tournament';
 
 const gameLengthOptions: Array<{ value: MahjongGameLength; label: string }> = [
-  { value: 'OneKyoku', label: '一局战' },
-  { value: 'Tonpu', label: '东风战' },
-  { value: 'Hanchan', label: '半庄战' },
+  { value: MahjongGameLengths.OneKyoku, label: '一局战' },
+  { value: MahjongGameLengths.Tonpu, label: '东风战' },
+  { value: MahjongGameLengths.Hanchan, label: '半庄战' },
 ];
 
 export function TournamentGameLengthOptions({

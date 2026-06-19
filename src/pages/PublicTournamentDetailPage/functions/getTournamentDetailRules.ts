@@ -5,7 +5,15 @@
   SwissRuleConfig,
   TournamentFormat,
 } from '@/objects/tournament';
-import { normalizeMahjongRuleset } from '@/objects/tournament';
+import {
+  AdvancementRuleTypes,
+  KnockoutSeedingPolicies,
+  MahjongGameLengths,
+  normalizeMahjongRuleset,
+  StageStatuses,
+  SwissPairingMethods,
+  TournamentFormats,
+} from '@/objects/tournament';
 import type {
   TournamentStageRuleDraft,
   TournamentStageWithRules,
@@ -17,19 +25,19 @@ export function getCurrentRuleStage(profile: TournamentPublicProfile) {
 
   return (
     stages.find((stage) => stage.stageId === profile.nextStageId) ??
-    stages.find((stage) => stage.status === 'Active') ??
-    stages.find((stage) => stage.status === 'Ready') ??
+    stages.find((stage) => stage.status === StageStatuses.Active) ??
+    stages.find((stage) => stage.status === StageStatuses.Ready) ??
     stages[0] ??
     null
   );
 }
 
 export function getTournamentFormatLabel(format?: string) {
-  return format === 'Knockout' ? '淘汰赛' : '瑞士轮';
+  return format === TournamentFormats.Knockout ? '淘汰赛' : '瑞士轮';
 }
 
 export function getDefaultRoundCount(format: TournamentFormat) {
-  return format === 'Knockout' ? 3 : 4;
+  return format === TournamentFormats.Knockout ? 3 : 4;
 }
 
 function normalizePositiveInteger(value: unknown, fallback: number) {
@@ -51,7 +59,10 @@ export function getStageAdvanceCount(stage: TournamentStageWithRules | null) {
   const rule = stage.advancementRule;
   const knockoutRule = stage.knockoutRule;
 
-  if (rule?.ruleType === 'KnockoutElimination' || stage.format === 'Knockout') {
+  if (
+    rule?.ruleType === AdvancementRuleTypes.KnockoutElimination ||
+    stage.format === TournamentFormats.Knockout
+  ) {
     const targetCount = rule?.targetTableCount
       ? rule.targetTableCount * 4
       : undefined;
@@ -69,10 +80,10 @@ export function createRuleDraftFromStage(
   stage: TournamentStageWithRules | null,
 ): TournamentStageRuleDraft {
   const format: TournamentFormat =
-    stage?.format === 'Knockout' ||
-    stage?.advancementRule?.ruleType === 'KnockoutElimination'
-      ? 'Knockout'
-      : 'Swiss';
+    stage?.format === TournamentFormats.Knockout ||
+    stage?.advancementRule?.ruleType === AdvancementRuleTypes.KnockoutElimination
+      ? TournamentFormats.Knockout
+      : TournamentFormats.Swiss;
 
   return {
     format,
@@ -95,15 +106,15 @@ export function describeAdvancementRule(
   }
 
   switch (rule.ruleType) {
-    case 'SwissCut':
+    case AdvancementRuleTypes.SwissCut:
       return `瑞士轮结束后前 ${normalizePositiveInteger(rule.cutSize, 8)} 人晋级`;
-    case 'KnockoutElimination': {
+    case AdvancementRuleTypes.KnockoutElimination: {
       const advanceCount = getStageAdvanceCount(stage);
       return `淘汰赛入围 ${advanceCount} 人`;
     }
-    case 'ScoreThreshold':
+    case AdvancementRuleTypes.ScoreThreshold:
       return `总分达到 ${rule.thresholdScore ?? 0} 的玩家晋级`;
-    case 'Custom':
+    case AdvancementRuleTypes.Custom:
       return rule.note || '自定义晋级规则';
     default:
       return '当前规则未识别';
@@ -134,14 +145,14 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
     `番缚：${mahjongRuleset.minHan} 番`,
   ];
 
-  if (stage.format === 'Swiss') {
+  if (stage.format === TournamentFormats.Swiss) {
     details.push(
       `配桌：${describeSwissPairing(stage.swissRule)}`,
       `积分带入：${stage.swissRule?.carryOverPoints === false ? '否' : '是'}`,
     );
   }
 
-  if (stage.format === 'Knockout') {
+  if (stage.format === TournamentFormats.Knockout) {
     details.push(
       `种子：${describeKnockoutSeeding(stage.knockoutRule)}`,
       `季军赛：${stage.knockoutRule?.thirdPlaceMatch ? '开启' : '关闭'}`,
@@ -153,28 +164,30 @@ export function describeRuleDetails(stage: TournamentStageWithRules | null) {
 
 export function getMahjongGameLengthLabel(gameLength?: MahjongGameLength) {
   switch (gameLength) {
-    case 'OneKyoku':
+    case MahjongGameLengths.OneKyoku:
       return '一局战';
-    case 'Tonpu':
+    case MahjongGameLengths.Tonpu:
       return '东风战';
-    case 'Hanchan':
+    case MahjongGameLengths.Hanchan:
     default:
       return '半庄战';
   }
 }
 
 function describeSwissPairing(rule?: SwissRuleConfig | null) {
-  return rule?.pairingMethod === 'snake' ? '蛇形分组' : '均衡 ELO';
+  return rule?.pairingMethod === SwissPairingMethods.Snake
+    ? '蛇形分组'
+    : '均衡 ELO';
 }
 
 function describeKnockoutSeeding(rule?: KnockoutRuleConfig | null) {
   switch (rule?.seedingPolicy) {
-    case 'standings':
+    case KnockoutSeedingPolicies.Standings:
       return '按当前排名';
-    case 'ranking':
+    case KnockoutSeedingPolicies.Ranking:
       return '按段位';
-    case 'elo':
-    case 'rating':
+    case KnockoutSeedingPolicies.Elo:
+    case KnockoutSeedingPolicies.Rating:
     default:
       return '按 ELO';
   }
@@ -186,13 +199,13 @@ export function getRuleSummaryLabel(rule?: AdvancementRule) {
   }
 
   switch (rule.ruleType) {
-    case 'SwissCut':
+    case AdvancementRuleTypes.SwissCut:
       return '瑞士轮晋级';
-    case 'KnockoutElimination':
+    case AdvancementRuleTypes.KnockoutElimination:
       return '淘汰赛';
-    case 'ScoreThreshold':
+    case AdvancementRuleTypes.ScoreThreshold:
       return '分数线晋级';
-    case 'Custom':
+    case AdvancementRuleTypes.Custom:
       return '自定义';
     default:
       return '规则';

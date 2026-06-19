@@ -4,7 +4,12 @@ import type {
   TournamentOperationsStageView,
   TournamentStageDirectoryEntry,
 } from '@/objects/tournament';
-import { DEFAULT_MAHJONG_RULESET } from '@/objects/tournament';
+import {
+  AdvancementRuleTypes,
+  DEFAULT_MAHJONG_RULESET,
+  TournamentFormats,
+  TournamentStatuses,
+} from '@/objects/tournament';
 
 import type { TournamentPublicProfile } from '../../../../../objects/PublicClubDetailPage.types';
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
@@ -14,7 +19,7 @@ type PublicTournamentStage = NonNullable<
 >[number];
 
 const fallbackAdvancementRule = {
-  ruleType: 'Custom',
+  ruleType: AdvancementRuleTypes.Custom,
   cutSize: null,
   thresholdScore: null,
   targetTableCount: null,
@@ -45,7 +50,7 @@ export function createFallbackTournamentDetailForLineup(
     tournamentId: tournament.id,
     name: tournament.name,
     organizer: '',
-    status: tournament.status ?? 'RegistrationOpen',
+    status: tournament.status ?? TournamentStatuses.RegistrationOpen,
     startsAt: '',
     endsAt: '',
     participatingClubs: [],
@@ -111,14 +116,14 @@ export function toDetailStageFromPublicStage(
 
 function normalizeTournamentFormat(format?: string): TournamentFormat {
   switch (format) {
-    case 'Swiss':
-    case 'Knockout':
-    case 'RoundRobin':
-    case 'Finals':
-    case 'Custom':
+    case TournamentFormats.Swiss:
+    case TournamentFormats.Knockout:
+    case TournamentFormats.RoundRobin:
+    case TournamentFormats.Finals:
+    case TournamentFormats.Custom:
       return format;
     default:
-      return 'Custom';
+      return TournamentFormats.Custom;
   }
 }
 

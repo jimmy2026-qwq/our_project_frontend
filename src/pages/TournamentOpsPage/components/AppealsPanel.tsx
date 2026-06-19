@@ -1,20 +1,21 @@
 import { DataTablePanel } from '@/components/ui';
 import { TableCell, TableRow } from '@/components/ui';
+import { AppealStatuses } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import type { LoadState } from '../objects/TournamentOps.types';
 
 function getAppealStatusLabel(status: AppealSummary['status']) {
   switch (status) {
-    case 'Open':
+    case AppealStatuses.Open:
       return '待处理';
-    case 'UnderReview':
+    case AppealStatuses.UnderReview:
       return '审核中';
-    case 'Resolved':
+    case AppealStatuses.Resolved:
       return '已解决';
-    case 'Rejected':
+    case AppealStatuses.Rejected:
       return '已驳回';
-    case 'Escalated':
+    case AppealStatuses.Escalated:
       return '已升级';
     default:
       return status;

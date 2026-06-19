@@ -13,12 +13,12 @@ import { getFirstYakumanYaku } from '@/components/mahjong-result/functions/getFi
 import type { MahjongYakuKind } from '@/objects';
 
 import {
-  getOperationText,
-  getPlayerSeat,
   isAbortiveDrawAction,
   isRiichiAction,
   isWinningAction,
-} from '../../../functions/getReplay';
+  getOperationText,
+} from '../../../functions/getReplayOperations';
+import { getPlayerSeat } from '../../../functions/getReplayPlayers';
 import type {
   ActiveOperation,
   YakumanTileBurstView,

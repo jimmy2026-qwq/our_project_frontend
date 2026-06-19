@@ -6,12 +6,14 @@ import type { LoadState } from '../objects/TournamentOps.types';
 
 export function useTournamentSelectedTable(
   tables: LoadState<TournamentTableSummary> | null,
-  selectedTableId: string,
+  selectedTableId: string | null,
 ) {
   return useMemo(
     () =>
-      tables?.envelope.items.find((table) => table.id === selectedTableId) ??
-      null,
+      selectedTableId
+        ? tables?.envelope.items.find((table) => table.id === selectedTableId) ??
+          null
+        : null,
     [selectedTableId, tables],
   ) satisfies TournamentTableSummary | null;
 }

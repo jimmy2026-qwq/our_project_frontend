@@ -17,7 +17,7 @@ import type {
   MahjongRuleset,
   TournamentFormat,
 } from '@/objects/tournament';
-import { normalizeMahjongRuleset } from '@/objects/tournament';
+import { normalizeMahjongRuleset, TournamentFormats } from '@/objects/tournament';
 import type { TournamentStageRuleDraft } from '../../objects/TournamentDetailRule.types';
 import { TournamentMahjongRulesetFields } from './TournamentMahjongRulesetFields';
 
@@ -77,11 +77,15 @@ export function TournamentRulesDialog({
                 }
                 disabled={isSubmitting}
               >
-                <option value="Swiss">瑞士轮</option>
-                <option value="Knockout">淘汰赛</option>
+                <option value={TournamentFormats.Swiss}>瑞士轮</option>
+                <option value={TournamentFormats.Knockout}>淘汰赛</option>
               </SelectField>
               <TextInputField
-                label={draft.format === 'Knockout' ? '入围人数' : '晋级人数'}
+                label={
+                  draft.format === TournamentFormats.Knockout
+                    ? '入围人数'
+                    : '晋级人数'
+                }
                 type="number"
                 min={1}
                 step={1}

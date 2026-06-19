@@ -10,7 +10,7 @@ interface UseLineupSubmissionParams {
   clubId: string;
   operatorId: string;
   tournament: ClubTournamentItem | null;
-  selectedStageId: string;
+  selectedStageId: string | null;
   selectedPlayerIds: string[];
   stageOptions: NonNullable<TournamentDetailView['stages']>;
   notifySuccess: (title: string, description?: string) => void;
@@ -30,7 +30,7 @@ export function useLineupSubmission({
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   async function submitLineup() {
-    const effectiveStageId = selectedStageId || stageOptions[0]?.stageId || '';
+    const effectiveStageId = selectedStageId ?? stageOptions[0]?.stageId ?? null;
 
     if (
       !tournament?.id ||

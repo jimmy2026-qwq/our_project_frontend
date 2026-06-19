@@ -1,20 +1,24 @@
 import type { ButtonProps } from '@/components/ui';
-import type {
-  KyokuDescriptor,
-  MahjongCommandType,
-  MahjongLegalAction,
-  MahjongRoundPhase,
-  MahjongSeatView,
-  MahjongTableStatus,
-  SeatWind,
+import {
+  MahjongCommandTypes,
+  MahjongRoundPhases,
+  MahjongTableStatuses,
+  SeatWinds,
+  type KyokuDescriptor,
+  type MahjongCommandType,
+  type MahjongLegalAction,
+  type MahjongRoundPhase,
+  type MahjongSeatView,
+  type MahjongTableStatus,
+  type SeatWind,
 } from '@/objects';
 
 export function getSeatLabel(seat: SeatWind) {
   const labels: Record<SeatWind, string> = {
-    East: '东',
-    South: '南',
-    West: '西',
-    North: '北',
+    [SeatWinds.East]: '东',
+    [SeatWinds.South]: '南',
+    [SeatWinds.West]: '西',
+    [SeatWinds.North]: '北',
   };
 
   return labels[seat];
@@ -26,14 +30,14 @@ export function getRoundLabel(descriptor: KyokuDescriptor) {
 
 export function getMahjongStatusLabel(status: MahjongTableStatus) {
   const labels: Record<MahjongTableStatus, string> = {
-    Aborted: '已中止',
-    Archived: '已归档',
-    Finished: '已结束',
-    InProgress: '进行中',
-    NotStarted: '未开始',
-    RoundEnded: '本局结束',
-    WaitingCallDecision: '等待牌局推进',
-    WaitingPlayerAction: '等待出牌',
+    [MahjongTableStatuses.Aborted]: '已中止',
+    [MahjongTableStatuses.Archived]: '已归档',
+    [MahjongTableStatuses.Finished]: '已结束',
+    [MahjongTableStatuses.InProgress]: '进行中',
+    [MahjongTableStatuses.NotStarted]: '未开始',
+    [MahjongTableStatuses.RoundEnded]: '本局结束',
+    [MahjongTableStatuses.WaitingCallDecision]: '等待牌局推进',
+    [MahjongTableStatuses.WaitingPlayerAction]: '等待出牌',
   };
 
   return labels[status];
@@ -41,12 +45,12 @@ export function getMahjongStatusLabel(status: MahjongTableStatus) {
 
 export function getMahjongPhaseLabel(phase: MahjongRoundPhase) {
   const labels: Record<MahjongRoundPhase, string> = {
-    CallDecision: '牌局推进中',
-    Finished: '本局完成',
-    InitialDeal: '配牌',
-    PlayerTurn: '手番',
-    Settlement: '结算',
-    WinDecision: '和牌判断',
+    [MahjongRoundPhases.CallDecision]: '牌局推进中',
+    [MahjongRoundPhases.Finished]: '本局完成',
+    [MahjongRoundPhases.InitialDeal]: '配牌',
+    [MahjongRoundPhases.PlayerTurn]: '手番',
+    [MahjongRoundPhases.Settlement]: '结算',
+    [MahjongRoundPhases.WinDecision]: '和牌判断',
   };
 
   return labels[phase];
@@ -54,17 +58,17 @@ export function getMahjongPhaseLabel(phase: MahjongRoundPhase) {
 
 export function getActionLabel(action: MahjongLegalAction) {
   const baseLabels: Record<MahjongCommandType, string> = {
-    AbortiveDraw: '流局',
-    AddedKan: '加杠',
-    Chi: '吃',
-    ClosedKan: '暗杠',
-    Discard: '切牌',
-    OpenKan: '明杠',
-    Pass: '过',
-    Pon: '碰',
-    Riichi: '立直',
-    Ron: '荣和',
-    Tsumo: '自摸',
+    [MahjongCommandTypes.AbortiveDraw]: '流局',
+    [MahjongCommandTypes.AddedKan]: '加杠',
+    [MahjongCommandTypes.Chi]: '吃',
+    [MahjongCommandTypes.ClosedKan]: '暗杠',
+    [MahjongCommandTypes.Discard]: '切牌',
+    [MahjongCommandTypes.OpenKan]: '明杠',
+    [MahjongCommandTypes.Pass]: '过',
+    [MahjongCommandTypes.Pon]: '碰',
+    [MahjongCommandTypes.Riichi]: '立直',
+    [MahjongCommandTypes.Ron]: '荣和',
+    [MahjongCommandTypes.Tsumo]: '自摸',
   };
   const tileSuffix = action.tile ? ` ${action.tile}` : '';
 
@@ -74,21 +78,24 @@ export function getActionLabel(action: MahjongLegalAction) {
 export function getActionTone(
   commandType: MahjongCommandType,
 ): ButtonProps['variant'] {
-  if (commandType === 'Ron' || commandType === 'Tsumo') {
+  if (
+    commandType === MahjongCommandTypes.Ron ||
+    commandType === MahjongCommandTypes.Tsumo
+  ) {
     return 'danger';
   }
 
   if (
-    commandType === 'Chi' ||
-    commandType === 'Pon' ||
-    commandType === 'OpenKan' ||
-    commandType === 'ClosedKan' ||
-    commandType === 'AddedKan'
+    commandType === MahjongCommandTypes.Chi ||
+    commandType === MahjongCommandTypes.Pon ||
+    commandType === MahjongCommandTypes.OpenKan ||
+    commandType === MahjongCommandTypes.ClosedKan ||
+    commandType === MahjongCommandTypes.AddedKan
   ) {
     return 'secondary';
   }
 
-  if (commandType === 'Pass') {
+  if (commandType === MahjongCommandTypes.Pass) {
     return 'outline';
   }
 

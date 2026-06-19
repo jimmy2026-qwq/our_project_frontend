@@ -9,9 +9,9 @@ import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
 import {
   getCurrentRiichiStickCount,
   getPlayerPointsBeforeSettlement,
-  getRoundPlayerId,
-  seatOrder,
-} from '../../../functions/getReplay';
+} from '../../../functions/getReplayPoints';
+import { getRoundPlayerId } from '../../../functions/getReplayPlayers';
+import { replaySeatOrder as seatOrder } from '../../../objects/replaySeatInfo';
 
 export const settlementAnimationDurationMs = 1000;
 export const settlementAnimationDelayMs = 500;

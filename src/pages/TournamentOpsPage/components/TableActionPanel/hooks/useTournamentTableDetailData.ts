@@ -8,22 +8,24 @@ import { toTableDetail } from '../../../functions/TournamentOps.mappers';
 
 export function useTournamentTableDetailData(
   reloadKey: number,
-  selectedTableId: string,
+  selectedTableId: string | null,
   setTableDetail: Dispatch<SetStateAction<TableDetail | null>>,
 ) {
   useEffect(() => {
     let cancelled = false;
 
-    if (!selectedTableId) {
+    if (selectedTableId === null) {
       setTableDetail(null);
       return () => {
         cancelled = true;
       };
     }
 
+    const tableId = selectedTableId;
+
     async function loadTableDetail() {
       try {
-        const table = await sendAPI(new TournamentTableGetAPI(selectedTableId));
+        const table = await sendAPI(new TournamentTableGetAPI(tableId));
         const detail = toTableDetail(table);
 
         if (!cancelled) {

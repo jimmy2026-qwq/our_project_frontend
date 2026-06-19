@@ -1,4 +1,4 @@
-import type { MahjongLegalAction } from '@/objects';
+import { MahjongCommandTypes, type MahjongLegalAction } from '@/objects';
 
 import { isCallResponseAction } from './getMatchBoardKeys';
 
@@ -15,14 +15,14 @@ export function getMatchBoardActionState({
 
   return {
     discardActions: visibleLegalActions.filter(
-      (action) => action.commandType === 'Discard',
+      (action) => action.commandType === MahjongCommandTypes.Discard,
     ),
     hasCallResponseActions: legalActions.some(isCallResponseAction),
     hasVisibleButtonActions: visibleLegalActions.some(
-      (action) => action.commandType !== 'Discard',
+      (action) => action.commandType !== MahjongCommandTypes.Discard,
     ),
     riichiActions: visibleLegalActions.filter(
-      (action) => action.commandType === 'Riichi',
+      (action) => action.commandType === MahjongCommandTypes.Riichi,
     ),
     visibleLegalActions,
   };

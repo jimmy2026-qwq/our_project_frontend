@@ -8,11 +8,12 @@ import type {
   ClubRelationKind,
   PublicClubDirectoryEntry,
 } from '@/objects/club';
+import { ClubRelationKinds } from '@/objects/club';
 
 const relationOptions: Array<{ value: ClubRelationKind; label: string }> = [
-  { value: 'Alliance', label: '联盟' },
-  { value: 'Rivalry', label: '对抗' },
-  { value: 'Neutral', label: '中立' },
+  { value: ClubRelationKinds.Alliance, label: '联盟' },
+  { value: ClubRelationKinds.Rivalry, label: '对抗' },
+  { value: ClubRelationKinds.Neutral, label: '中立' },
 ];
 
 export function ClubRelationDialogFields({

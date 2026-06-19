@@ -1,6 +1,16 @@
-import type { ListEnvelope, StageStatus, TournamentStatus } from '@/objects';
+import {
+  StageStatuses,
+  TournamentStatuses,
+  type ListEnvelope,
+  type StageStatus,
+  type TournamentStatus,
+} from '@/objects';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import {
+  PublicHallLeaderboardDisplayStatuses,
+  type PublicHallLeaderboardDisplayStatus,
+} from './PublicHallLeaderboardDisplayStatus';
 
 export type DataSource = 'api' | 'mock';
 export type PublicView = 'schedules' | 'clubs' | 'leaderboard';
@@ -38,7 +48,7 @@ export interface PlayerLeaderboardEntry {
     stars?: number | null;
   } | null;
   normalizedRankScore?: number | null;
-  status: 'Active' | 'Inactive' | 'Banned';
+  status: PublicHallLeaderboardDisplayStatus;
 }
 
 export interface LoadState<T> {
@@ -62,25 +72,23 @@ export interface LeaderboardDataState {
 
 export interface PublicHallState {
   activeView: PublicView;
-  scheduleTournamentStatus: TournamentStatus | '';
-  scheduleStageStatus: StageStatus | '';
+  scheduleTournamentStatus?: TournamentStatus;
+  scheduleStageStatus?: StageStatus;
   leaderboardClubId: string;
-  leaderboardStatus: 'Active' | 'Inactive' | 'Banned' | '';
+  leaderboardStatus?: PublicHallLeaderboardDisplayStatus;
   clubActiveOnly: boolean;
 }
 
 export const DEFAULT_PUBLIC_HALL_STATE: PublicHallState = {
   activeView: 'schedules',
-  scheduleTournamentStatus: 'InProgress',
-  scheduleStageStatus: 'Active',
+  scheduleTournamentStatus: TournamentStatuses.InProgress,
+  scheduleStageStatus: StageStatuses.Active,
   leaderboardClubId: '',
-  leaderboardStatus: 'Active',
+  leaderboardStatus: PublicHallLeaderboardDisplayStatuses.Active,
   clubActiveOnly: true,
 };
 
 export const PUBLIC_HALL_CACHE_TTL_MS = 15_000;
-
-export type PublicHallLeaderboardStatus = 'Active' | 'Suspended' | 'Banned';
 
 export interface PublicHallRankSnapshot {
   platform: string;

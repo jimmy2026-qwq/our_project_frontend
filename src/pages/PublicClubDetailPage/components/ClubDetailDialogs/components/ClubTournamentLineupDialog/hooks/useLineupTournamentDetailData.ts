@@ -34,11 +34,13 @@ export function useLineupTournamentDetailData({
   open,
   notifyWarning,
 }: UseLineupTournamentDetailDataParams) {
-  const [selectedStageId, setSelectedStageId] = useState('');
+  const [selectedStageId, setSelectedStageId] = useState<string | null>(null);
   const [selectedPlayerIds, setSelectedPlayerIds] = useState<string[]>([]);
   const [tournamentDetail, setTournamentDetail] =
     useState<TournamentDetailView | null>(null);
-  const [initializedStageId, setInitializedStageId] = useState('');
+  const [initializedStageId, setInitializedStageId] = useState<string | null>(
+    null,
+  );
   const [isLoadingTournamentDetail, setIsLoadingTournamentDetail] =
     useState(false);
 
@@ -47,15 +49,15 @@ export function useLineupTournamentDetailData({
       return;
     }
 
-    setSelectedStageId('');
-    setInitializedStageId('');
+    setSelectedStageId(null);
+    setInitializedStageId(null);
     setSelectedPlayerIds([]);
   }, [open]);
 
   useEffect(() => {
     if (!open || !tournament?.id) {
       setTournamentDetail(null);
-      setSelectedStageId('');
+      setSelectedStageId(null);
       setSelectedPlayerIds([]);
       return;
     }
@@ -70,8 +72,8 @@ export function useLineupTournamentDetailData({
         }
 
         setTournamentDetail(detail);
-        const defaultStageId = detail.stages?.[0]?.stageId ?? '';
-        setSelectedStageId((current) => current || defaultStageId);
+        const defaultStageId = detail.stages?.[0]?.stageId ?? null;
+        setSelectedStageId((current) => current ?? defaultStageId);
       })
       .catch((error) => {
         if (!cancelled) {
@@ -80,7 +82,7 @@ export function useLineupTournamentDetailData({
             error instanceof Error ? error.message : 'Please try again.',
           );
           setTournamentDetail(null);
-          setSelectedStageId('');
+          setSelectedStageId(null);
           setSelectedPlayerIds([]);
         }
       })
@@ -98,7 +100,7 @@ export function useLineupTournamentDetailData({
   useEffect(() => {
     if (!selectedStageId) {
       setSelectedPlayerIds([]);
-      setInitializedStageId('');
+      setInitializedStageId(null);
       return;
     }
 

@@ -1,14 +1,15 @@
-import type { TournamentStatus } from '@/objects';
+import { TournamentStatuses, type TournamentStatus } from '@/objects';
+import { ClubRelationKinds } from '@/objects/club';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
-  Draft: '未发布',
-  RegistrationOpen: '报名中',
-  Scheduled: '已排期',
-  InProgress: '进行中',
-  Completed: '已完成',
-  Cancelled: '已取消',
-  Archived: '已归档',
+  [TournamentStatuses.Draft]: '未发布',
+  [TournamentStatuses.RegistrationOpen]: '报名中',
+  [TournamentStatuses.Scheduled]: '已排期',
+  [TournamentStatuses.InProgress]: '进行中',
+  [TournamentStatuses.Completed]: '已完成',
+  [TournamentStatuses.Cancelled]: '已取消',
+  [TournamentStatuses.Archived]: '已归档',
 };
 
 export function formatDateTime(value: string) {
@@ -25,13 +26,13 @@ export function formatNumber(value: number) {
 export function getRelationLabel(relation: ClubSummary['relations'][number]) {
   const relationKind =
     typeof relation === 'string' ? relation : relation.relation;
-  return relationKind === 'Alliance' ? '联盟' : '对抗';
+  return relationKind === ClubRelationKinds.Alliance ? '联盟' : '对抗';
 }
 
 export function formatRelationList(relations: ClubSummary['relations']) {
   return relations.map(getRelationLabel).join(' / ') || '暂无关系';
 }
 
-export function getTournamentStatusLabel(status: TournamentStatus | '') {
-  return status ? (TOURNAMENT_STATUS_LABELS[status] ?? status) : status;
+export function getTournamentStatusLabel(status: TournamentStatus) {
+  return TOURNAMENT_STATUS_LABELS[status] ?? status;
 }

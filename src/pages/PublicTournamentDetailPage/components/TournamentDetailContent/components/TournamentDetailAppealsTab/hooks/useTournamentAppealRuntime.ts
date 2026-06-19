@@ -5,12 +5,16 @@ import {
   AppealListAPI,
   AppealUpdateWorkflowAPI,
 } from '@/api/tournament';
+import {
+  AppealDecisionTypes,
+  AppealTableResolutions,
+  type AppealDecisionType,
+} from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import type { AppealDecisionType } from '../../../../../objects/TournamentDetailView.types';
 import { getAppealDecisionLabel } from '../../../../../functions/getTournamentDetailView';
 import { toAppealSummary } from '../../../../../functions/TournamentDetailAppeal.mappers';
 
@@ -86,11 +90,11 @@ export function useTournamentAppealRuntime({
   ) {
     setSelectedAppealAction({ appeal, decision });
     setAppealActionError('');
-    setShouldResetTableOnResolve(decision === 'Resolve');
+    setShouldResetTableOnResolve(decision === AppealDecisionTypes.Resolve);
     setAppealVerdict(
-      decision === 'Resolve'
+      decision === AppealDecisionTypes.Resolve
         ? '已核实申诉内容，工单处理完成。'
-        : decision === 'Reject'
+        : decision === AppealDecisionTypes.Reject
           ? '已核实当前情况，申诉不成立。'
           : '当前申诉需要进一步升级处理。',
     );
@@ -146,9 +150,9 @@ export function useTournamentAppealRuntime({
           decision: selectedAppealAction.decision,
           verdict,
           tableResolution:
-            selectedAppealAction.decision === 'Resolve' &&
+            selectedAppealAction.decision === AppealDecisionTypes.Resolve &&
             shouldResetTableOnResolve
-              ? 'ForceReset'
+              ? AppealTableResolutions.ForceReset
               : undefined,
           note: `赛事管理员执行了${getAppealDecisionLabel(selectedAppealAction.decision)}操作。`,
         }),

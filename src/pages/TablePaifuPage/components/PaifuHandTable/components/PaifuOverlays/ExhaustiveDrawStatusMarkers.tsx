@@ -3,9 +3,9 @@ import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import {
   getRoundPlayerId,
   isPlayerTenpai,
-  seatOrder,
-} from '../../../../functions/getReplay';
-import { operationPositionClasses } from '../../functions/getPaifuTableLayout';
+} from '../../../../functions/getReplayPlayers';
+import { replaySeatOrder as seatOrder } from '../../../../objects/replaySeatInfo';
+import { operationPositionClasses } from '../../objects/paifuTableLayout';
 
 export function ExhaustiveDrawStatusMarkers({
   paifu,

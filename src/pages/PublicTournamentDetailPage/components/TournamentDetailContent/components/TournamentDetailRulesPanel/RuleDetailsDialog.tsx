@@ -12,7 +12,9 @@ import {
   TextInputField,
 } from '@/components/ui';
 import {
+  MahjongGameLengths,
   normalizeMahjongRuleset,
+  TournamentFormats,
   type MahjongGameLength,
 } from '@/objects/tournament';
 
@@ -27,9 +29,9 @@ import {
 } from './functions/getRuleDetailsDialogLabels';
 
 const gameLengthOptions: Array<{ value: MahjongGameLength; label: string }> = [
-  { value: 'OneKyoku', label: '一局战' },
-  { value: 'Tonpu', label: '东风战' },
-  { value: 'Hanchan', label: '半庄战' },
+  { value: MahjongGameLengths.OneKyoku, label: '一局战' },
+  { value: MahjongGameLengths.Tonpu, label: '东风战' },
+  { value: MahjongGameLengths.Hanchan, label: '半庄战' },
 ];
 
 export function RuleDetailsDialog({
@@ -44,7 +46,7 @@ export function RuleDetailsDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const ruleset = normalizeMahjongRuleset(stage?.mahjongRuleset);
-  const format = stage?.format ?? 'Swiss';
+  const format = stage?.format ?? TournamentFormats.Swiss;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -61,8 +63,8 @@ export function RuleDetailsDialog({
                   <span className="leading-7 text-[#f2f7fb]">赛制</span>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { value: 'Swiss', label: '瑞士轮' },
-                      { value: 'Knockout', label: '淘汰赛' },
+                      { value: TournamentFormats.Swiss, label: '瑞士轮' },
+                      { value: TournamentFormats.Knockout, label: '淘汰赛' },
                     ].map((option) => (
                       <button
                         key={option.value}
@@ -82,7 +84,11 @@ export function RuleDetailsDialog({
                 </div>
                 <div className="grid gap-3 md:grid-cols-2">
                   <TextInputField
-                    label={format === 'Knockout' ? '入围人数' : '晋级人数'}
+                    label={
+                      format === TournamentFormats.Knockout
+                        ? '入围人数'
+                        : '晋级人数'
+                    }
                     value={getStageAdvanceCount(stage)}
                     readOnly
                   />
@@ -93,9 +99,11 @@ export function RuleDetailsDialog({
                     readOnly
                   />
                   <TextInputField
-                    label={format === 'Knockout' ? '种子' : '配桌'}
+                    label={
+                      format === TournamentFormats.Knockout ? '种子' : '配桌'
+                    }
                     value={
-                      format === 'Knockout'
+                      format === TournamentFormats.Knockout
                         ? describeKnockoutSeeding(stage.knockoutRule)
                         : describeSwissPairing(stage.swissRule)
                     }
@@ -154,7 +162,7 @@ export function RuleDetailsDialog({
                       label="All last 庄家一位即止"
                       checked={ruleset.allLastDealerFinishAsTop}
                     />
-                    {format === 'Swiss' ? (
+                    {format === TournamentFormats.Swiss ? (
                       <ReadonlyRuleCheckbox
                         label="积分带入"
                         checked={stage.swissRule?.carryOverPoints !== false}

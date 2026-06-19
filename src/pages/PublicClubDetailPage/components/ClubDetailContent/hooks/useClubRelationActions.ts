@@ -3,6 +3,7 @@ import {
 } from '@/api/club/SubmitClubRelationRequestAPI';
 import { UpdateClubRelationAPI } from '@/api/club/UpdateClubRelationAPI';
 import type { ClubRelationKind } from '@/objects/club';
+import { ClubRelationKinds } from '@/objects/club';
 import { sendAPI } from '@/system/api';
 
 import type { ClubDetailActionContext } from './useClubDetailActions.types';
@@ -65,9 +66,11 @@ export function useClubRelationActions({
         workbench.canManageRelations
           ? {
               successTitle:
-                draft.relation === 'Neutral' ? '关系已清除' : '关系已更新',
+                draft.relation === ClubRelationKinds.Neutral
+                  ? '关系已清除'
+                  : '关系已更新',
               successMessage:
-                draft.relation === 'Neutral'
+                draft.relation === ClubRelationKinds.Neutral
                   ? '两家俱乐部之间的关系已经恢复中立。'
                   : '两家俱乐部之间的关系已经同步更新。',
               fallbackTitle: '关系更新需要关注',

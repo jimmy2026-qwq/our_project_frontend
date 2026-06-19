@@ -1,4 +1,5 @@
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import { Roles } from '@/objects';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import {
@@ -45,7 +46,7 @@ export function getFallbackDirectory(
       ? {
           id: sessionOperatorId,
           label: `${sessionDisplayName} / 注册选手`,
-          role: 'RegisteredPlayer' as const,
+          role: Roles.RegisteredPlayer,
           playerId: sessionOperatorId,
           managedClubIds: [],
         }

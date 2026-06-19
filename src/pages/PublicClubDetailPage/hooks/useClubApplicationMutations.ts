@@ -4,6 +4,7 @@ import {
   SubmitClubApplicationAPI,
   WithdrawClubApplicationAPI,
 } from '@/api/club';
+import { ClubApplicationStatuses } from '@/objects';
 import {
   createProvisionalClubApplicationId,
   isProvisionalClubApplicationId,
@@ -82,7 +83,7 @@ export function useClubApplicationMutations() {
               state.operatorId,
             ),
             clubId: state.clubId,
-            status: 'Pending',
+            status: ClubApplicationStatuses.Pending,
             applicantName: selectedPlayerName,
             message,
             createdAt: new Date().toISOString(),

@@ -15,7 +15,7 @@ import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
 import { createDemoTablePaifu } from '../demo';
-import { getInitialRoundIndex } from '../functions/getReplay';
+import { getInitialRoundIndex } from '../functions/getReplayOperations';
 import {
   collectPaifuPlayerIds,
   getStageDisplayName,

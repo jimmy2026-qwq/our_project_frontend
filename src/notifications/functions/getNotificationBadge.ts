@@ -1,7 +1,9 @@
-import type { Notification } from '@/objects/notification';
+import { NotificationTypes, type Notification } from '@/objects/notification';
 
 export function getNotificationBadgeVariant(notification: Notification) {
-  if (notification.notificationType === 'ClubApplicationRejected') {
+  if (
+    notification.notificationType === NotificationTypes.ClubApplicationRejected
+  ) {
     return 'outline';
   }
 
@@ -10,24 +12,25 @@ export function getNotificationBadgeVariant(notification: Notification) {
 
 export function getNotificationBadgeLabel(notification: Notification) {
   switch (notification.notificationType) {
-    case 'ClubApplicationSubmitted':
+    case NotificationTypes.ClubApplicationSubmitted:
       return '申请';
-    case 'ClubApplicationApproved':
-    case 'ClubApplicationRejected':
+    case NotificationTypes.ClubApplicationApproved:
+    case NotificationTypes.ClubApplicationRejected:
       return '申请结果';
-    case 'ClubMemberContributionAdjusted':
-    case 'ClubTitleAssigned':
+    case NotificationTypes.ClubMemberContributionAdjusted:
+    case NotificationTypes.ClubTitleAssigned:
+    case NotificationTypes.ClubRelationChangeRequested:
       return '俱乐部';
-    case 'TournamentClubInvited':
-    case 'TournamentPlayerInvited':
-    case 'TournamentLineupSelected':
-    case 'TournamentSettlementFinalized':
-    case 'TournamentTableStarted':
+    case NotificationTypes.TournamentClubInvited:
+    case NotificationTypes.TournamentPlayerInvited:
+    case NotificationTypes.TournamentLineupSelected:
+    case NotificationTypes.TournamentSettlementFinalized:
+    case NotificationTypes.TournamentTableStarted:
       return '赛事';
-    case 'TournamentAppealFiled':
-    case 'TournamentAppealAdjudicated':
+    case NotificationTypes.TournamentAppealFiled:
+    case NotificationTypes.TournamentAppealAdjudicated:
       return '赛事申诉';
-    case 'PlayerEloChanged':
+    case NotificationTypes.PlayerEloChanged:
       return 'ELO';
     default:
       return severityLabel(notification.severity);

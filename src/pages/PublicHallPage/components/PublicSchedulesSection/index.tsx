@@ -70,32 +70,38 @@ export function PublicSchedulesSection({
         >
           <SelectField
             label="赛事状态"
-            value={state.scheduleTournamentStatus}
+            value={state.scheduleTournamentStatus ?? ''}
             onChange={(event) =>
               onStateChange({
-                scheduleTournamentStatus: event.currentTarget
-                  .value as PublicHallState['scheduleTournamentStatus'],
+                scheduleTournamentStatus:
+                  event.currentTarget.value === ''
+                    ? undefined
+                    : (event.currentTarget
+                        .value as PublicHallState['scheduleTournamentStatus']),
               })
             }
           >
             {TOURNAMENT_STATUS_FILTER_OPTIONS.map((option) => (
-              <option key={option.value || 'all'} value={option.value}>
+              <option key={option.value ?? 'all'} value={option.value ?? ''}>
                 {option.label}
               </option>
             ))}
           </SelectField>
           <SelectField
             label="赛事阶段"
-            value={state.scheduleStageStatus}
+            value={state.scheduleStageStatus ?? ''}
             onChange={(event) =>
               onStateChange({
-                scheduleStageStatus: event.currentTarget
-                  .value as PublicHallState['scheduleStageStatus'],
+                scheduleStageStatus:
+                  event.currentTarget.value === ''
+                    ? undefined
+                    : (event.currentTarget
+                        .value as PublicHallState['scheduleStageStatus']),
               })
             }
           >
             {STAGE_STATUS_FILTER_OPTIONS.map((option) => (
-              <option key={option.value || 'all'} value={option.value}>
+              <option key={option.value ?? 'all'} value={option.value ?? ''}>
                 {option.label}
               </option>
             ))}

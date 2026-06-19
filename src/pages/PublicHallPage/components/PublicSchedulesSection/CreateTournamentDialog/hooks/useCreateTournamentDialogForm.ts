@@ -5,7 +5,7 @@ import { TournamentCreateAPI } from '@/api/tournament';
 import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
 import { DEFAULT_MAHJONG_RULESET } from '@/objects';
-import type { TournamentFormat } from '@/objects/tournament';
+import { TournamentFormats, type TournamentFormat } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 
 const FORMAT_SWISS = '\u745e\u58eb\u8f6e';
@@ -13,7 +13,8 @@ const FORMAT_KNOCKOUT = '\u6dd8\u6c70\u8d5b';
 
 function getDefaultStageName(name: string, format: TournamentFormat) {
   const trimmedName = name.trim();
-  const suffix = format === 'Swiss' ? FORMAT_SWISS : FORMAT_KNOCKOUT;
+  const suffix =
+    format === TournamentFormats.Swiss ? FORMAT_SWISS : FORMAT_KNOCKOUT;
 
   if (!trimmedName) {
     return `${suffix}\u9636\u6bb5`;
@@ -23,7 +24,7 @@ function getDefaultStageName(name: string, format: TournamentFormat) {
 }
 
 function getDefaultRoundCount(format: TournamentFormat) {
-  return format === 'Swiss' ? 4 : 3;
+  return format === TournamentFormats.Swiss ? 4 : 3;
 }
 
 export function useCreateTournamentDialogForm({
@@ -37,7 +38,9 @@ export function useCreateTournamentDialogForm({
   const { session } = useAuthContext();
   const { notifySuccess, notifyWarning } = useNotice();
   const [name, setName] = useState('');
-  const [format, setFormat] = useState<TournamentFormat>('Swiss');
+  const [format, setFormat] = useState<TournamentFormat>(
+    TournamentFormats.Swiss,
+  );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const operatorId = session?.user.operatorId ?? session?.user.userId;
   const canCreate =
@@ -48,7 +51,7 @@ export function useCreateTournamentDialogForm({
 
   function reset() {
     setName('');
-    setFormat('Swiss');
+    setFormat(TournamentFormats.Swiss);
     setIsSubmitting(false);
   }
 

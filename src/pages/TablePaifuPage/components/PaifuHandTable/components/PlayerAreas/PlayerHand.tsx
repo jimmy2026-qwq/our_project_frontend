@@ -1,18 +1,18 @@
 import { getPaifuTileCode, type PaifuTile } from '@/objects';
-import type { SeatWind } from '@/objects/tournament';
+import { SeatWinds, type SeatWind } from '@/objects/tournament';
 
 import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import {
   getPlayerDisplayName,
   getRoundPlayerId,
-  seatLabels,
-} from '../../../../functions/getReplay';
+} from '../../../../functions/getReplayPlayers';
+import { replaySeatLabels } from '../../../../objects/replaySeatInfo';
 import { HandBackTile, HandTile } from '../TileViews';
+import { getDisplayTiles } from '../../functions/getPaifuTableLayout';
 import {
-  getDisplayTiles,
   handPositionClasses,
   labelPositionClasses,
-} from '../../functions/getPaifuTableLayout';
+} from '../../objects/paifuTableLayout';
 
 export function PlayerHand({
   drawnTileIndex,
@@ -46,7 +46,7 @@ export function PlayerHand({
         ].join(' ')}
       >
         <span className="text-[0.72rem] font-semibold uppercase tracking-[0.2em] text-[#ecc57a]">
-          {seatLabels[seat]}
+          {replaySeatLabels[seat]}
         </span>
         <strong className="block max-w-[18ch] truncate text-sm text-[#f2f7fb] [text-shadow:0_2px_10px_rgba(0,0,0,0.52)]">
           {playerName}
@@ -109,7 +109,7 @@ function getDisplayHandTiles({
     tile,
   }));
 
-  if (seat === 'South' || seat === 'North') {
+  if (seat === SeatWinds.South || seat === SeatWinds.North) {
     return [drawnDisplayTile, ...baseDisplayTiles];
   }
 

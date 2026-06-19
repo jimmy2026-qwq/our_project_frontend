@@ -1,6 +1,10 @@
+import {
+  AppealDecisionTypes,
+  AppealStatuses,
+  type AppealDecisionType,
+} from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import type { TableSeatState } from '@/pages/shared_objects/tournament/TableSeatState';
-import type { AppealDecisionType } from '../objects/TournamentDetailView.types';
 
 export function getSeatStatusTone(seat: TableSeatState) {
   if (seat.disconnected) {
@@ -28,14 +32,14 @@ export function getSeatStatusLabel(seat: TableSeatState) {
 
 export function getAppealStatusTone(status: AppealSummary['status']) {
   switch (status) {
-    case 'Resolved':
+    case AppealStatuses.Resolved:
       return 'success' as const;
-    case 'Rejected':
+    case AppealStatuses.Rejected:
       return 'danger' as const;
-    case 'UnderReview':
+    case AppealStatuses.UnderReview:
       return 'neutral' as const;
-    case 'Escalated':
-    case 'Open':
+    case AppealStatuses.Escalated:
+    case AppealStatuses.Open:
     default:
       return 'warning' as const;
   }
@@ -43,15 +47,15 @@ export function getAppealStatusTone(status: AppealSummary['status']) {
 
 export function getAppealStatusLabel(status: AppealSummary['status']) {
   switch (status) {
-    case 'Open':
+    case AppealStatuses.Open:
       return '\u5f85\u5904\u7406';
-    case 'UnderReview':
+    case AppealStatuses.UnderReview:
       return '\u5ba1\u6838\u4e2d';
-    case 'Resolved':
+    case AppealStatuses.Resolved:
       return '\u5df2\u5904\u7406';
-    case 'Rejected':
+    case AppealStatuses.Rejected:
       return '\u5df2\u9a73\u56de';
-    case 'Escalated':
+    case AppealStatuses.Escalated:
       return '\u5df2\u5347\u7ea7';
     default:
       return status;
@@ -60,11 +64,11 @@ export function getAppealStatusLabel(status: AppealSummary['status']) {
 
 export function getAppealDecisionLabel(decision: AppealDecisionType) {
   switch (decision) {
-    case 'Resolve':
+    case AppealDecisionTypes.Resolve:
       return '解决';
-    case 'Reject':
+    case AppealDecisionTypes.Reject:
       return '驳回';
-    case 'Escalate':
+    case AppealDecisionTypes.Escalate:
       return '升级';
     default:
       return decision;

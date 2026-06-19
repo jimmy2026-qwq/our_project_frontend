@@ -1,32 +1,35 @@
 import type { StageStatus, TournamentStatus } from '@/objects';
+import { StageStatuses, TournamentStatuses } from '@/objects';
+import { ClubRelationKinds } from '@/objects/club';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import type { PlayerLeaderboardEntry } from '../objects/PublicHallPage.types';
+import { PublicHallLeaderboardDisplayStatuses } from '../objects/PublicHallLeaderboardDisplayStatus';
 
 export const TOURNAMENT_STATUS_FILTER_OPTIONS: ReadonlyArray<{
-  value: TournamentStatus | '';
+  value?: TournamentStatus;
   label: string;
 }> = [
-  { value: '', label: '全部赛事' },
-  { value: 'Draft', label: '未发布' },
-  { value: 'RegistrationOpen', label: '报名中' },
-  { value: 'Scheduled', label: '已排期' },
-  { value: 'InProgress', label: '进行中' },
-  { value: 'Completed', label: '已完成' },
-  { value: 'Cancelled', label: '已取消' },
-  { value: 'Archived', label: '已归档' },
+  { label: '全部赛事' },
+  { value: TournamentStatuses.Draft, label: '未发布' },
+  { value: TournamentStatuses.RegistrationOpen, label: '报名中' },
+  { value: TournamentStatuses.Scheduled, label: '已排期' },
+  { value: TournamentStatuses.InProgress, label: '进行中' },
+  { value: TournamentStatuses.Completed, label: '已完成' },
+  { value: TournamentStatuses.Cancelled, label: '已取消' },
+  { value: TournamentStatuses.Archived, label: '已归档' },
 ];
 
 export const STAGE_STATUS_FILTER_OPTIONS: ReadonlyArray<{
-  value: StageStatus | '';
+  value?: StageStatus;
   label: string;
 }> = [
-  { value: '', label: '全部阶段' },
-  { value: 'Pending', label: '未开始' },
-  { value: 'Ready', label: '已就绪' },
-  { value: 'Active', label: '进行中' },
-  { value: 'Completed', label: '已完成' },
-  { value: 'Archived', label: '已归档' },
+  { label: '全部阶段' },
+  { value: StageStatuses.Pending, label: '未开始' },
+  { value: StageStatuses.Ready, label: '已就绪' },
+  { value: StageStatuses.Active, label: '进行中' },
+  { value: StageStatuses.Completed, label: '已完成' },
+  { value: StageStatuses.Archived, label: '已归档' },
 ];
 
 export function formatDateTime(value: string) {
@@ -40,14 +43,14 @@ export function formatNumber(value: number) {
   return new Intl.NumberFormat('zh-CN').format(value);
 }
 
-export function getTournamentStatusLabel(status: TournamentStatus | '') {
+export function getTournamentStatusLabel(status: TournamentStatus) {
   return (
     TOURNAMENT_STATUS_FILTER_OPTIONS.find((option) => option.value === status)
       ?.label ?? status
   );
 }
 
-export function getStageStatusLabel(status: StageStatus | '') {
+export function getStageStatusLabel(status: StageStatus) {
   return (
     STAGE_STATUS_FILTER_OPTIONS.find((option) => option.value === status)
       ?.label ?? status
@@ -57,7 +60,7 @@ export function getStageStatusLabel(status: StageStatus | '') {
 export function getRelationLabel(relation: ClubSummary['relations'][number]) {
   const relationKind =
     typeof relation === 'string' ? relation : relation.relation;
-  return relationKind === 'Alliance' ? '联盟' : '对抗';
+  return relationKind === ClubRelationKinds.Alliance ? '联盟' : '对抗';
 }
 
 export function formatRelationList(relations: ClubSummary['relations']) {
@@ -65,14 +68,13 @@ export function formatRelationList(relations: ClubSummary['relations']) {
 }
 
 export function getLeaderboardStatusLabel(
-  status: PlayerLeaderboardEntry['status'] | '',
+  status: PlayerLeaderboardEntry['status'],
 ) {
   return (
     {
-      '': '全部玩家',
-      Active: '活跃',
-      Inactive: '未活跃',
-      Banned: '封禁',
+      [PublicHallLeaderboardDisplayStatuses.Active]: '活跃',
+      [PublicHallLeaderboardDisplayStatuses.Inactive]: '未活跃',
+      [PublicHallLeaderboardDisplayStatuses.Banned]: '封禁',
     } as const
   )[status];
 }

@@ -4,6 +4,7 @@ import {
   TournamentTableGetAPI,
   TournamentTableUpdateOwnReadyAPI,
 } from '@/api/tournament';
+import { TableStatuses } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 
@@ -21,7 +22,9 @@ export function useTournamentWaitingTableRuntime({
 }) {
   const [participantWaitingTableDetails, setParticipantWaitingTableDetails] =
     useState<Record<string, TableDetail>>({});
-  const [updatingReadyTableId, setUpdatingReadyTableId] = useState('');
+  const [updatingReadyTableId, setUpdatingReadyTableId] = useState<string | null>(
+    null,
+  );
 
   useEffect(() => {
     if (!operatorId || !workbench?.visibleTables.length) {
@@ -31,7 +34,7 @@ export function useTournamentWaitingTableRuntime({
 
     const participantWaitingTables = workbench.visibleTables.filter(
       (table) =>
-        table.status === 'WaitingPreparation' &&
+        table.status === TableStatuses.WaitingPreparation &&
         table.playerIds.includes(operatorId),
     );
 
@@ -94,7 +97,7 @@ export function useTournamentWaitingTableRuntime({
         error instanceof Error ? error.message : '无法更新你的准备状态。',
       );
     } finally {
-      setUpdatingReadyTableId('');
+      setUpdatingReadyTableId(null);
     }
   }
 

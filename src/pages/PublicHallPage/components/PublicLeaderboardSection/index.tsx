@@ -7,11 +7,12 @@ import {
   SelectField,
 } from '@/components/ui';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
-import type { PlayerLeaderboardEntry } from '../../objects/PublicHallPage.types';
 import type {
   LoadState,
+  PlayerLeaderboardEntry,
   PublicHallState,
 } from '../../objects/PublicHallPage.types';
+import { PublicHallLeaderboardDisplayStatuses } from '../../objects/PublicHallLeaderboardDisplayStatus';
 
 import {
   hallSectionClassNames,
@@ -75,18 +76,27 @@ export function PublicLeaderboardSection({
           </SelectField>
           <SelectField
             label="状态"
-            value={state.leaderboardStatus}
+            value={state.leaderboardStatus ?? ''}
             onChange={(event) =>
               onStateChange({
-                leaderboardStatus: event.currentTarget
-                  .value as PublicHallState['leaderboardStatus'],
+                leaderboardStatus:
+                  event.currentTarget.value === ''
+                    ? undefined
+                    : (event.currentTarget
+                        .value as PublicHallState['leaderboardStatus']),
               })
             }
           >
             <option value="">全部状态</option>
-            <option value="Active">活跃</option>
-            <option value="Inactive">停用</option>
-            <option value="Banned">封禁</option>
+            <option value={PublicHallLeaderboardDisplayStatuses.Active}>
+              活跃
+            </option>
+            <option value={PublicHallLeaderboardDisplayStatuses.Inactive}>
+              停用
+            </option>
+            <option value={PublicHallLeaderboardDisplayStatuses.Banned}>
+              封禁
+            </option>
           </SelectField>
         </FilterActionRow>
         <section className={hallSectionClassNames.list}>

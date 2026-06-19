@@ -4,6 +4,7 @@ import {
   DataPanel,
   EmptyState,
 } from '@/components/ui';
+import { ClubApplicationStatuses, Roles } from '@/objects';
 
 import { formatMemberHubDateTime } from '../functions/formatMemberHubDateTime';
 import { getActiveOperator } from '../functions/getMemberHubOperator';
@@ -28,7 +29,7 @@ export function ApplicationInboxPanel({
 }: ApplicationInboxPanelProps) {
   const activeOperator = getActiveOperator(directory, state.operatorId);
 
-  if (activeOperator.role !== 'ClubAdmin') {
+  if (activeOperator.role !== Roles.ClubAdmin) {
     return (
       <DataPanel
         title="俱乐部申请收件箱"
@@ -42,7 +43,7 @@ export function ApplicationInboxPanel({
   }
 
   const pendingCount = inboxState.items.filter(
-    (item) => item.status === 'Pending',
+    (item) => item.status === ClubApplicationStatuses.Pending,
   ).length;
 
   return (
@@ -62,7 +63,8 @@ export function ApplicationInboxPanel({
           status: item.status,
           meta: item.applicant.playerId,
           actions:
-            item.canReview && item.status === 'Pending' ? (
+            item.canReview &&
+            item.status === ClubApplicationStatuses.Pending ? (
               <>
                 <ActionButton
                   onClick={() => onReview(item.applicationId, 'approve')}

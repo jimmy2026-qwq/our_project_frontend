@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { ListPlayersAPI } from '@/api/player';
+import { PlayerStatuses } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
@@ -10,7 +11,7 @@ import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer
 
 export function useTournamentPlayerOptions(session: AuthContextSession | null) {
   const [availablePlayers, setAvailablePlayers] = useState<PlayerProfile[]>([]);
-  const [selectedPlayerId, setSelectedPlayerId] = useState('');
+  const [selectedPlayerId, setSelectedPlayerId] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -20,26 +21,30 @@ export function useTournamentPlayerOptions(session: AuthContextSession | null) {
 
     if (!canManageTournament) {
       setAvailablePlayers([]);
-      setSelectedPlayerId('');
+      setSelectedPlayerId(null);
       return;
     }
 
     void sendAPI(
-      new ListPlayersAPI({ status: 'Active', limit: 100, offset: 0 }),
+      new ListPlayersAPI({
+        status: PlayerStatuses.Active,
+        limit: 100,
+        offset: 0,
+      }),
     )
       .then((envelope) => mapEnvelope(envelope, toPlayerProfile))
       .then((envelope) => {
         if (!cancelled) {
           setAvailablePlayers(envelope.items);
           setSelectedPlayerId(
-            (current) => current || envelope.items[0]?.playerId || '',
+            (current) => current ?? envelope.items[0]?.playerId ?? null,
           );
         }
       })
       .catch(() => {
         if (!cancelled) {
           setAvailablePlayers([]);
-          setSelectedPlayerId('');
+          setSelectedPlayerId(null);
         }
       });
 

@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import type { MahjongLegalAction } from '@/objects';
+import { MahjongCommandTypes, type MahjongLegalAction } from '@/objects';
 
 import { ChiChoicePanel } from './MatchActionChiChoicePanel';
 import {
@@ -33,11 +33,17 @@ export function MatchActionBar({
     null,
   );
   const buttonActions = useMemo(
-    () => actions.filter((action) => action.commandType !== 'Discard'),
+    () =>
+      actions.filter(
+        (action) => action.commandType !== MahjongCommandTypes.Discard,
+      ),
     [actions],
   );
   const chiActions = useMemo(
-    () => buttonActions.filter((action) => action.commandType === 'Chi'),
+    () =>
+      buttonActions.filter(
+        (action) => action.commandType === MahjongCommandTypes.Chi,
+      ),
     [buttonActions],
   );
   const chiActionKey = useMemo(() => getChiActionKey(chiActions), [chiActions]);
@@ -85,7 +91,7 @@ export function MatchActionBar({
       {isRiichiSelectionActive ? (
         <div className="flex justify-center p-3">
           <button
-            className={getActionButtonClassName('Pass')}
+            className={getActionButtonClassName(MahjongCommandTypes.Pass)}
             disabled={isSubmitting}
             onClick={() => onToggleRiichiSelection?.()}
             type="button"
@@ -114,7 +120,8 @@ export function MatchActionBar({
                 key={`${button.key}-${index}`}
                 className={[
                   getActionButtonClassName(button.commandType),
-                  button.commandType === 'Riichi' && isRiichiSelectionActive
+                  button.commandType === MahjongCommandTypes.Riichi &&
+                  isRiichiSelectionActive
                     ? 'ring-2 ring-[rgba(255,236,190,0.72)]'
                     : '',
                 ].join(' ')}
@@ -125,14 +132,17 @@ export function MatchActionBar({
                     return;
                   }
 
-                  if (button.commandType === 'Chi' && chiActions.length > 1) {
+                  if (
+                    button.commandType === MahjongCommandTypes.Chi &&
+                    chiActions.length > 1
+                  ) {
                     setOpenChiActionKey((currentKey) =>
                       currentKey === chiActionKey ? null : chiActionKey,
                     );
                     return;
                   }
 
-                  if (button.commandType === 'Riichi') {
+                  if (button.commandType === MahjongCommandTypes.Riichi) {
                     onToggleRiichiSelection?.();
                     return;
                   }

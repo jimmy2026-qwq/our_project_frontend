@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../objects/TablePaifuDetail';
-import { seatOrder } from '../../functions/getReplay';
+import { replaySeatOrder as seatOrder } from '../../objects/replaySeatInfo';
 import { CenterTable } from './components/CenterTable';
 import { ExhaustiveDrawStatusMarkers } from './components/PaifuOverlays/ExhaustiveDrawStatusMarkers';
 import { OperationFlash } from './components/PaifuOverlays/OperationFlash';

@@ -1,24 +1,27 @@
-export type Permission =
-  | 'ViewPublicSchedule'
-  | 'ViewClubDirectory'
-  | 'ViewPublicLeaderboard'
-  | 'ViewOwnDashboard'
-  | 'ViewClubDashboard'
-  | 'SubmitClubApplication'
-  | 'WithdrawClubApplication'
-  | 'ManageClubMembership'
-  | 'ManageClubOperations'
-  | 'SetClubTitle'
-  | 'AssignClubAdmin'
-  | 'SubmitTournamentLineup'
-  | 'ManageTournamentStages'
-  | 'ConfigureTournamentRules'
-  | 'ResetTableState'
-  | 'ManageTableSeatState'
-  | 'FileAppealTicket'
-  | 'ResolveAppeal'
-  | 'ManagePlatformOperations'
-  | 'BanRegisteredPlayer'
-  | 'DissolveClub'
-  | 'AssignTournamentAdmin'
-  | 'ViewAuditTrail';
+export const Permissions = {
+  ViewPublicSchedule: 'ViewPublicSchedule',
+  ViewClubDirectory: 'ViewClubDirectory',
+  ViewPublicLeaderboard: 'ViewPublicLeaderboard',
+  ViewOwnDashboard: 'ViewOwnDashboard',
+  ViewClubDashboard: 'ViewClubDashboard',
+  SubmitClubApplication: 'SubmitClubApplication',
+  WithdrawClubApplication: 'WithdrawClubApplication',
+  ManageClubMembership: 'ManageClubMembership',
+  ManageClubOperations: 'ManageClubOperations',
+  SetClubTitle: 'SetClubTitle',
+  AssignClubAdmin: 'AssignClubAdmin',
+  SubmitTournamentLineup: 'SubmitTournamentLineup',
+  ManageTournamentStages: 'ManageTournamentStages',
+  ConfigureTournamentRules: 'ConfigureTournamentRules',
+  ResetTableState: 'ResetTableState',
+  ManageTableSeatState: 'ManageTableSeatState',
+  FileAppealTicket: 'FileAppealTicket',
+  ResolveAppeal: 'ResolveAppeal',
+  ManagePlatformOperations: 'ManagePlatformOperations',
+  BanRegisteredPlayer: 'BanRegisteredPlayer',
+  DissolveClub: 'DissolveClub',
+  AssignTournamentAdmin: 'AssignTournamentAdmin',
+  ViewAuditTrail: 'ViewAuditTrail',
+} as const;
+
+export type Permission = (typeof Permissions)[keyof typeof Permissions];

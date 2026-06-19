@@ -29,15 +29,13 @@ export interface TournamentDirectoryState {
 export interface TournamentOpsState {
   tournamentId: string;
   stageId: string;
-  tableStatus: TableStatus | '';
+  tableStatus?: TableStatus;
   playerId: string;
-  appealStatus: AppealSummary['status'] | '';
+  appealStatus?: AppealSummary['status'];
 }
 
 export const DEFAULT_TOURNAMENT_OPS_STATE: TournamentOpsState = {
   tournamentId: '',
   stageId: '',
-  tableStatus: '',
   playerId: '',
-  appealStatus: '',
 };

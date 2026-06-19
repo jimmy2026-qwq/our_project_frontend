@@ -1,4 +1,5 @@
 import { SelectField, WorkbenchContextPanel } from '@/components/ui';
+import { Roles } from '@/objects';
 
 import type {
   MemberHubOperator,
@@ -66,7 +67,7 @@ export function MemberHubContextPanel({
       >
         {clubOptions.map((club) => {
           const disabled =
-            activeOperator.role !== 'ClubAdmin' ||
+            activeOperator.role !== Roles.ClubAdmin ||
             !activeOperator.managedClubIds.includes(club.id);
 
           return (

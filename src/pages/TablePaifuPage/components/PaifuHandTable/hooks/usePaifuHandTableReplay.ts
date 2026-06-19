@@ -4,10 +4,10 @@ import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
 import {
   getReplayActions,
-  getReplaySnapshot,
   getReplayStepCount,
   isExhaustiveDrawResultStep,
-} from '../../../functions/getReplay';
+} from '../../../functions/getReplayCore';
+import { getReplaySnapshot } from '../../../functions/getReplaySnapshot';
 import {
   createScoreDisplays,
   createTableSticks,

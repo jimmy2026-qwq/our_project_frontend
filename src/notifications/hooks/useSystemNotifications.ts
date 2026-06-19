@@ -5,6 +5,7 @@ import {
   realtimeBrowserEventName,
   type RealtimeBrowserEvent,
 } from '@/app/realtime/RealtimeEvent';
+import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 import type { Notification } from '@/objects/notification';
 import { getNotificationOperatorId } from '../functions/getNotificationOperatorId';
 import { getNotificationSnapshot } from '../functions/getNotificationSnapshot';
@@ -111,7 +112,7 @@ export function useSystemNotifications() {
       const realtimeEvent = (event as RealtimeBrowserEvent).detail;
 
       if (
-        realtimeEvent.eventType === 'NotificationCreated' &&
+        realtimeEvent.eventType === RealtimeEventTypes.NotificationCreated &&
         realtimeEvent.recipientPlayerId === operatorId
       ) {
         if (!seenRealtimeNotificationIds.current.has(realtimeEvent.id)) {
