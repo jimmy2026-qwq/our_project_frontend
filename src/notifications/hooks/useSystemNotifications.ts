@@ -4,22 +4,17 @@ import { useAuth } from '@/app/auth/useAuth';
 import {
   realtimeBrowserEventName,
   type RealtimeBrowserEvent,
-  type RealtimeEvent,
 } from '@/app/realtime/RealtimeEvent';
-import {
-  GetUnreadNotificationCountAPI,
-  ListNotificationsAPI,
-  MarkAllNotificationsReadAPI,
-  MarkNotificationReadAPI,
-} from '@/api/notification';
 import type { Notification } from '@/objects/notification';
-import { sendAPI } from '@/system/api';
+import { getNotificationOperatorId } from '../functions/getNotificationOperatorId';
+import { getNotificationSnapshot } from '../functions/getNotificationSnapshot';
+import { markAllNotificationsRead } from '../functions/markAllNotificationsRead';
+import { markNotificationRead } from '../functions/markNotificationRead';
+import { toNotificationFromRealtimeEvent } from '../functions/toNotificationFromRealtimeEvent';
 
 export function useSystemNotifications() {
   const { isReady, session } = useAuth();
-  const operatorId = session?.user.roles.isRegisteredPlayer
-    ? (session.user.operatorId ?? session.user.userId)
-    : '';
+  const operatorId = getNotificationOperatorId(session);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [isLoading, setIsLoading] = useState(false);
@@ -36,12 +31,9 @@ export function useSystemNotifications() {
       setIsLoading(true);
     }
     try {
-      const [items, unread] = await Promise.all([
-        sendAPI(new ListNotificationsAPI(operatorId, { limit: 40 })),
-        sendAPI(new GetUnreadNotificationCountAPI(operatorId)),
-      ]);
-      setNotifications(items);
-      setUnreadCount(unread.unreadCount);
+      const snapshot = await getNotificationSnapshot(operatorId);
+      setNotifications(snapshot.notifications);
+      setUnreadCount(snapshot.unreadCount);
     } catch (error) {
       if (!options?.silentFailure) {
         console.error('Notification refresh failed.', error);
@@ -60,12 +52,15 @@ export function useSystemNotifications() {
       }
 
       try {
-        await sendAPI(new MarkNotificationReadAPI(notificationId, operatorId));
+        await markNotificationRead(notificationId, operatorId);
       } catch (error) {
         console.error('Mark notification read failed.', error);
         return;
       }
 
+      const wasUnread = notifications.some(
+        (item) => item.id === notificationId && !item.readAt,
+      );
       setNotifications((current) =>
         current.map((item) =>
           item.id === notificationId
@@ -73,9 +68,11 @@ export function useSystemNotifications() {
             : item,
         ),
       );
-      setUnreadCount((current) => Math.max(0, current - 1));
+      if (wasUnread) {
+        setUnreadCount((current) => Math.max(0, current - 1));
+      }
     },
-    [operatorId],
+    [notifications, operatorId],
   );
 
   const markAllRead = useCallback(async () => {
@@ -84,7 +81,7 @@ export function useSystemNotifications() {
     }
 
     try {
-      await sendAPI(new MarkAllNotificationsReadAPI(operatorId));
+      await markAllNotificationsRead(operatorId);
     } catch (error) {
       console.error('Mark all notifications read failed.', error);
       return;
@@ -125,7 +122,7 @@ export function useSystemNotifications() {
             }
 
             return [
-              notificationFromRealtimeEvent(realtimeEvent, operatorId),
+              toNotificationFromRealtimeEvent(realtimeEvent, operatorId),
               ...current,
             ].slice(0, 40);
           });
@@ -164,27 +161,5 @@ export function useSystemNotifications() {
     notifications,
     refresh,
     unreadCount,
-  };
-}
-
-function notificationFromRealtimeEvent(
-  event: RealtimeEvent,
-  recipientPlayerId: string,
-): Notification {
-  return {
-    id: event.id,
-    recipientPlayerId,
-    notificationType: event.sourceEventType,
-    title: event.title ?? '系统通知',
-    body: event.body ?? '',
-    severity: event.severity ?? 'info',
-    sourceService: 'realtime',
-    sourceType: event.aggregateType,
-    sourceId: event.aggregateId,
-    actionUrl: event.actionUrl,
-    readAt: null,
-    createdAt: event.occurredAt,
-    expiresAt: null,
-    objects: {},
   };
 }
