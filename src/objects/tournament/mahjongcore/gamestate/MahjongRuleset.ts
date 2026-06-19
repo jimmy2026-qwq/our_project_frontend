@@ -1,4 +1,4 @@
-export type MahjongGameLength = 'OneKyoku' | 'Tonpu' | 'Hanchan';
+import type { MahjongGameLength } from './MahjongGameLength';
 
 export interface MahjongRuleset {
   gameLength: MahjongGameLength;

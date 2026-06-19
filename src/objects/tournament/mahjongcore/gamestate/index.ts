@@ -1,4 +1,5 @@
 export * from './MahjongDiscard';
+export * from './MahjongGameLength';
 export * from './MahjongMeld';
 export * from './MahjongMeldType';
 export * from './MahjongPendingCallView';
