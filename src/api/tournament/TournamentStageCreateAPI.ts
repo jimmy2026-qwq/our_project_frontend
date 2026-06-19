@@ -11,7 +11,6 @@ export class TournamentStageCreateAPI extends APIMessage<TournamentSummaryView> 
     super();
     this.tournamentId = tournamentId;
     this.request = {
-      id: request.id ? [request.id] : emptyBackendOption<string>(),
       name: request.name,
       format: request.format,
       order: request.order,

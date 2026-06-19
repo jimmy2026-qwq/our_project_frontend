@@ -2,6 +2,7 @@ import type {
   HandOutcome,
   MahjongYakuKind,
   PaifuActionType,
+  RoundSettlementNote,
   SeatWind,
   TableSeat,
 } from '@/objects/tournament';
@@ -31,7 +32,7 @@ export interface PaifuRoundWinSummary {
 export interface PaifuRoundSettlement {
   riichiSticksDelta: number;
   honbaPayment: number;
-  notes: string[];
+  notes: RoundSettlementNote[];
 }
 
 export interface PaifuAction {

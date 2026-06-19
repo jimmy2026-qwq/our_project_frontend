@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ListClubTournamentsAPI } from '@/api/club';
 import { GetPublicClubAPI } from '@/api/club';
-import { GetCurrentPlayerAPI } from '@/api/player/GetCurrentPlayerAPI';
+import { GetPlayerAPI } from '@/api/player/GetPlayerAPI';
 import type {
   ClubDetailState,
   ClubPublicProfile,
@@ -22,7 +22,7 @@ async function resolveClubViewerId(
   }
 
   try {
-    const player = await sendAPI(new GetCurrentPlayerAPI(fallbackViewerId));
+    const player = await sendAPI(new GetPlayerAPI(fallbackViewerId));
     return player.playerId || fallbackViewerId;
   } catch {
     return fallbackViewerId;

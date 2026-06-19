@@ -1,7 +1,7 @@
 import { APIMessage } from '@/system/api';
 import type { TournamentMutationView } from '@/objects';
 
-export class TournamentRegisterClubAPI extends APIMessage<TournamentMutationView> {
+export class TournamentInviteClubAPI extends APIMessage<TournamentMutationView> {
   readonly tournamentId: string;
   readonly clubId: string;
   readonly operatorId?: string;

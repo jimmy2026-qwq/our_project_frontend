@@ -15,6 +15,7 @@ export * from './PaifuRound';
 export * from './KyokuDescriptor';
 export * from './AgariResult';
 export * from './RoundSettlement';
+export * from './RoundSettlementNote';
 export * from './MahjongYakuKind';
 export * from './Yaku';
 export * from './apiTypes';

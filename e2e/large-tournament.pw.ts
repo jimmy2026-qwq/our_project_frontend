@@ -15,7 +15,6 @@ const playerCount = Number(process.env.E2E_LARGE_PLAYER_COUNT ?? 64);
 const clubCount = Number(process.env.E2E_LARGE_CLUB_COUNT ?? 8);
 const tournamentName = `E2E Large Tournament ${prefix}`;
 const tournamentOrganizer = 'E2E Large Regression';
-const stageId = `stage-${prefix}`;
 const stageName = '64 Player Swiss';
 const initialPoints = 25000;
 const ronPoints = 12000;
@@ -44,6 +43,10 @@ test('64 人 8 俱乐部完整瑞士赛可以打满 4 轮、归档牌谱，并�
   const clubs = await createClubsAndMemberships(request, players);
   const tournament = await createLargeTournament(request, playerCount);
   const tournamentId = tournament.tournamentId;
+  const stageId = tournament.stages[0]?.stageId;
+  if (!stageId) {
+    throw new Error('创建大赛事后应返回赛段 ID');
+  }
 
   for (const player of players) {
     await postApi<TournamentSummaryView>(request, 'tournamentregisterplayerapi', {
@@ -77,6 +80,7 @@ test('64 人 8 俱乐部完整瑞士赛可以打满 4 轮、归档牌谱，并�
     const roundTables = await waitForRoundTables(
       request,
       tournamentId,
+      stageId,
       roundNumber,
     );
     assertRoundTables(roundTables, roundNumber);
@@ -126,12 +130,13 @@ test('64 人 8 俱乐部完整瑞士赛可以打满 4 轮、归档牌谱，并�
     const archivedRoundTables = await waitForRoundArchived(
       request,
       tournamentId,
+      stageId,
       roundNumber,
     );
     expect(archivedRoundTables.every((table) => table.matchRecordId && table.paifuId)).toBe(true);
   }
 
-  const archivedPage = await getStageTables(request, tournamentId);
+  const archivedPage = await getStageTables(request, tournamentId, stageId);
   expect(archivedPage.total).toBe(tablesPerRound * roundCount);
   expect(archivedPage.items.every((table) => table.status === 'Archived')).toBe(true);
   expect(archivedPage.items.every((table) => table.matchRecordId && table.paifuId)).toBe(true);
@@ -254,7 +259,6 @@ async function createLargeTournament(
       adminId: null,
       stages: [
         {
-          id: stageId,
           name: stageName,
           format: 'Swiss',
           order: 1,
@@ -287,6 +291,7 @@ async function createLargeTournament(
 async function getStageTables(
   request: APIRequestContext,
   tournamentId: string,
+  stageId: string,
 ) {
   return postApi<ListEnvelope<TournamentTableView>>(
     request,
@@ -319,12 +324,13 @@ async function finalizeTournamentTable(
 async function waitForRoundTables(
   request: APIRequestContext,
   tournamentId: string,
+  stageId: string,
   roundNumber: number,
 ) {
   await expect
     .poll(
       async () => {
-        const tables = await getStageTables(request, tournamentId);
+        const tables = await getStageTables(request, tournamentId, stageId);
 
         return tables.items.filter(
           (table) =>
@@ -339,7 +345,7 @@ async function waitForRoundTables(
     )
     .toBe(tablesPerRound);
 
-  const tables = await getStageTables(request, tournamentId);
+  const tables = await getStageTables(request, tournamentId, stageId);
 
   return tables.items
     .filter((table) => table.stageRoundNumber === roundNumber)
@@ -349,12 +355,13 @@ async function waitForRoundTables(
 async function waitForRoundArchived(
   request: APIRequestContext,
   tournamentId: string,
+  stageId: string,
   roundNumber: number,
 ) {
   await expect
     .poll(
       async () => {
-        const tables = await getStageTables(request, tournamentId);
+        const tables = await getStageTables(request, tournamentId, stageId);
 
         return tables.items.filter(
           (table) =>
@@ -369,7 +376,7 @@ async function waitForRoundArchived(
     )
     .toBe(tablesPerRound);
 
-  const tables = await getStageTables(request, tournamentId);
+  const tables = await getStageTables(request, tournamentId, stageId);
 
   return tables.items
     .filter((table) => table.stageRoundNumber === roundNumber)

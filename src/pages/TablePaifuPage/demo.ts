@@ -481,9 +481,7 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
           settlement: {
             riichiSticksDelta: 0,
             honbaPayment: 0,
-            notes: [
-              'Nine terminals abortive draw. Dealer repeats into East 1 honba 1.',
-            ],
+            notes: ['AbortiveDrawRequested'],
           },
         },
       },
@@ -530,10 +528,7 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
           settlement: {
             riichiSticksDelta: 1000,
             honbaPayment: 0,
-            notes: [
-              'East is tenpai after double riichi. The three child seats are noten.',
-              'One riichi stick remains on the table and the next hand is East 1 honba 2.',
-            ],
+            notes: ['ExhaustiveDraw'],
           },
         },
       },
@@ -594,10 +589,7 @@ export function createDemoTablePaifu(tableId: string): TablePaifuDetail {
           settlement: {
             riichiSticksDelta: 0,
             honbaPayment: 600,
-            notes: [
-              'East pays South 64600 points for the hand.',
-              'The 1000 point riichi stick from the previous hand is awarded to South and the table supply is cleared.',
-            ],
+            notes: ['DoubleYakuman'],
           },
         },
       },

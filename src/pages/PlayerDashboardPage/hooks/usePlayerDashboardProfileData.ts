@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { GetPublicClubAPI } from '@/api/club';
 import { OpsAnalyticsPlayerDashboardAPI } from '@/api/opsanalytics';
-import { GetCurrentPlayerAPI } from '@/api/player';
+import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
 import { toDashboardSummary } from '../functions/toDashboardSummary';
@@ -32,7 +32,7 @@ function getPlayerClubLinks(clubIds: string[]) {
 export function usePlayerDashboardProfileData() {
   return useCallback(async (operatorId: string) => {
     const [player, dashboard] = await Promise.all([
-      sendAPI(new GetCurrentPlayerAPI(operatorId)).then(toPlayerProfile),
+      sendAPI(new GetPlayerAPI(operatorId)).then(toPlayerProfile),
       sendAPI(
         new OpsAnalyticsPlayerDashboardAPI({
           playerId: operatorId,

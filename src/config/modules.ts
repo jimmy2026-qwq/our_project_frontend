@@ -23,7 +23,7 @@ export const featureModules: FeatureModule[] = [
       'Homepage application workbench that connects joinable club list, current player context, submit flow, withdraw flow, and local fallback bridge.',
     entities: ['Club', 'Registered Player', 'Club Application'],
     primaryRoles: ['RegisteredPlayer', 'ClubAdmin'],
-    apiMessages: ['ListClubsAPI', 'GetCurrentPlayerAPI', 'SubmitClubApplicationAPI'],
+    apiMessages: ['ListClubsAPI', 'GetPlayerAPI', 'SubmitClubApplicationAPI'],
   },
   {
     id: 'member-hub',

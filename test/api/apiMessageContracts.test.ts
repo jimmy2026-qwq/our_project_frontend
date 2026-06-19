@@ -26,7 +26,6 @@ import { PlatformAdminBanPlayerAPI } from '@/api/platformadmin/PlatformAdminBanP
 import { PlatformAdminDissolveClubAPI } from '@/api/platformadmin/PlatformAdminDissolveClubAPI';
 import { PlatformAdminGrantSuperAdminAPI } from '@/api/platformadmin/PlatformAdminGrantSuperAdminAPI';
 import { CreatePlayerAPI } from '@/api/player/CreatePlayerAPI';
-import { GetCurrentPlayerAPI } from '@/api/player/GetCurrentPlayerAPI';
 import { GetPlayerAPI } from '@/api/player/GetPlayerAPI';
 import { ListPlayersAPI } from '@/api/player/ListPlayersAPI';
 import { PublicPlayerLeaderboardAPI } from '@/api/player/PublicPlayerLeaderboardAPI';
@@ -41,9 +40,8 @@ import { TournamentPaifuGetAPI } from '@/api/tournament/TournamentPaifuGetAPI';
 import { TournamentPaifuListAPI } from '@/api/tournament/TournamentPaifuListAPI';
 import { TournamentPublishAPI } from '@/api/tournament/TournamentPublishAPI';
 import { TournamentRecordGetAPI } from '@/api/tournament/TournamentRecordGetAPI';
-import { TournamentRecordGetByTableAPI } from '@/api/tournament/TournamentRecordGetByTableAPI';
 import { TournamentRecordListAPI } from '@/api/tournament/TournamentRecordListAPI';
-import { TournamentRegisterClubAPI } from '@/api/tournament/TournamentRegisterClubAPI';
+import { TournamentInviteClubAPI } from '@/api/tournament/TournamentInviteClubAPI';
 import { TournamentRegisterPlayerAPI } from '@/api/tournament/TournamentRegisterPlayerAPI';
 import { TournamentRemoveClubParticipationAPI } from '@/api/tournament/TournamentRemoveClubParticipationAPI';
 import { TournamentRevokeAdminAPI } from '@/api/tournament/TournamentRevokeAdminAPI';
@@ -71,7 +69,6 @@ import { TournamentTableStartAPI } from '@/api/tournament/TournamentTableStartAP
 import { TournamentTableUpdateOwnReadyAPI } from '@/api/tournament/TournamentTableUpdateOwnReadyAPI';
 import { TournamentTableUpdateSeatStateAPI } from '@/api/tournament/TournamentTableUpdateSeatStateAPI';
 import { TournamentTableUploadPaifuAPI } from '@/api/tournament/TournamentTableUploadPaifuAPI';
-import { TournamentWhitelistClubAPI } from '@/api/tournament/TournamentWhitelistClubAPI';
 import { TournamentWhitelistListAPI } from '@/api/tournament/TournamentWhitelistListAPI';
 import { TournamentWhitelistPlayerAPI } from '@/api/tournament/TournamentWhitelistPlayerAPI';
 import { AppealAdjudicateAPI } from '@/api/tournament/appeal/AppealAdjudicateAPI';
@@ -79,15 +76,12 @@ import { AppealFileAPI } from '@/api/tournament/appeal/AppealFileAPI';
 import { AppealGetAPI } from '@/api/tournament/appeal/AppealGetAPI';
 import { AppealListAPI } from '@/api/tournament/appeal/AppealListAPI';
 import { AppealReopenAPI } from '@/api/tournament/appeal/AppealReopenAPI';
-import { AppealResolveAPI } from '@/api/tournament/appeal/AppealResolveAPI';
 import { AppealUpdateWorkflowAPI } from '@/api/tournament/appeal/AppealUpdateWorkflowAPI';
 import { MahjongCoreAdvanceRoundAPI } from '@/api/tournament/mahjongcore/MahjongCoreAdvanceRoundAPI';
 import { MahjongCoreArchiveTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreArchiveTableAPI';
 import { MahjongCoreGetShowcaseModeAPI } from '@/api/tournament/mahjongcore/MahjongCoreGetShowcaseModeAPI';
 import { MahjongCoreGetTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreGetTableAPI';
-import { MahjongCoreResetTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreResetTableAPI';
 import { MahjongCoreSetShowcaseModeAPI } from '@/api/tournament/mahjongcore/MahjongCoreSetShowcaseModeAPI';
-import { MahjongCoreStartTableAPI } from '@/api/tournament/mahjongcore/MahjongCoreStartTableAPI';
 import { MahjongCoreSubmitActionAPI } from '@/api/tournament/mahjongcore/MahjongCoreSubmitActionAPI';
 import type { APIMessage } from '@/system/api';
 import { apiNameOf } from '@/system/api/apiNameOf';
@@ -111,10 +105,12 @@ describe('API message contracts', () => {
     });
 
     expectMessage(bootstrap, 'bootstrapsuperadminauthapi', {
-      bootstrapKey: 'key',
-      username: 'root',
-      password: 'password123',
-      displayName: 'Root',
+      request: {
+        bootstrapKey: 'key',
+        username: 'root',
+        password: 'password123',
+        displayName: 'Root',
+      },
     });
     expectMessage(login, 'loginauthapi', {
       username: 'player',
@@ -203,11 +199,6 @@ describe('API message contracts', () => {
         }),
         'createplayerapi',
         { request: { userId: 'user-b', initialElo: 1510 } },
-      ],
-      [
-        new GetCurrentPlayerAPI('player-a'),
-        'getcurrentplayerapi',
-        { operatorId: 'player-a' },
       ],
       [new GetPlayerAPI('player-a'), 'getplayerapi', { playerId: 'player-a' }],
       [
@@ -433,18 +424,13 @@ describe('API message contracts', () => {
         { recordId: 'record-a' },
       ],
       [
-        new TournamentRecordGetByTableAPI('table-a'),
-        'tournamentrecordgetbytableapi',
-        { tableId: 'table-a' },
-      ],
-      [
         new TournamentRecordListAPI({ tournamentId: 'tournament-a' }),
         'tournamentrecordlistapi',
         { query: { tournamentId: 'tournament-a' } },
       ],
       [
-        new TournamentRegisterClubAPI('tournament-a', 'club-a', 'player-admin'),
-        'tournamentregisterclubapi',
+        new TournamentInviteClubAPI('tournament-a', 'club-a', 'player-admin'),
+        'tournamentinviteclubapi',
         { tournamentId: 'tournament-a', clubId: 'club-a', operatorId: 'player-admin' },
       ],
       [
@@ -593,11 +579,6 @@ describe('API message contracts', () => {
         { tableId: 'table-a', request: payload },
       ],
       [
-        new TournamentWhitelistClubAPI('tournament-a', 'club-a', 'player-admin'),
-        'tournamentwhitelistclubapi',
-        { tournamentId: 'tournament-a', clubId: 'club-a', operatorId: 'player-admin' },
-      ],
-      [
         new TournamentWhitelistListAPI('tournament-a', { clubId: 'club-a' }),
         'tournamentwhitelistlistapi',
         { tournamentId: 'tournament-a', query: { clubId: 'club-a' } },
@@ -616,7 +597,6 @@ describe('API message contracts', () => {
 
   it('encodes stage rule payloads with backend Option arrays', () => {
     const create = new TournamentStageCreateAPI('tournament-a', {
-      id: 'stage-a',
       name: 'Stage A',
       format: 'Swiss',
       order: 2,
@@ -679,7 +659,6 @@ describe('API message contracts', () => {
     expectMessage(create, 'tournamentstagecreateapi', {
       tournamentId: 'tournament-a',
       request: {
-        id: ['stage-a'],
         operatorId: ['player-admin'],
         cutSize: [16],
         carryOverPoints: [true],
@@ -757,16 +736,6 @@ describe('API message contracts', () => {
         },
       ],
       [
-        new AppealResolveAPI('appeal-a', 'player-admin', 'Rejected', 'note'),
-        'appealresolveapi',
-        {
-          appealId: 'appeal-a',
-          operatorId: 'player-admin',
-          verdict: 'Rejected',
-          note: 'note',
-        },
-      ],
-      [
         new AppealUpdateWorkflowAPI('appeal-a', {
           operatorId: 'player-admin',
           clearAssignee: true,
@@ -822,16 +791,6 @@ describe('API message contracts', () => {
         }),
         'mahjongcoregettableapi',
         { tableId: 'table-a', query: { operatorId: 'player-a' } },
-      ],
-      [
-        new MahjongCoreResetTableAPI('table-a', payload),
-        'mahjongcoreresettableapi',
-        { tableId: 'table-a', request: payload },
-      ],
-      [
-        new MahjongCoreStartTableAPI('table-a', payload),
-        'mahjongcorestarttableapi',
-        { tableId: 'table-a', request: payload },
       ],
       [
         new MahjongCoreSubmitActionAPI('table-a', payload),

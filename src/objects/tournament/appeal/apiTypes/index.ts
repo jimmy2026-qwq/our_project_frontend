@@ -5,5 +5,4 @@ export * from './AppealListQuery';
 export * from './AppealTicketView';
 export * from './FileAppealRequest';
 export * from './ReopenAppealRequest';
-export * from './ResolveAppealRequest';
 export * from './UpdateAppealWorkflowRequest';

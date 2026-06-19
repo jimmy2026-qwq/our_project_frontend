@@ -159,9 +159,6 @@ async function installLiveTableHarness(
       case 'restoreauthsessionapi':
         await fulfillJson(route, createAuthSession());
         return;
-      case 'getcurrentplayerapi':
-        await fulfillJson(route, createPlayerProfile(eastPlayerId));
-        return;
       case 'getplayerapi':
         await fulfillJson(route, createPlayerProfile(getRequestedPlayerId(route)));
         return;

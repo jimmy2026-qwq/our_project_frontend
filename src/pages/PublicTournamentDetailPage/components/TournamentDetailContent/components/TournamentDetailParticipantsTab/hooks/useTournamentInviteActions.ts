@@ -1,6 +1,6 @@
 import { GetPlayerAPI } from '@/api/player';
 import {
-  TournamentRegisterClubAPI,
+  TournamentInviteClubAPI,
   TournamentRegisterPlayerAPI,
 } from '@/api/tournament';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
@@ -48,7 +48,7 @@ export function useTournamentInviteActions({
       setIsSubmittingTournamentAction(true);
       setTournamentActionError('');
       await sendAPI(
-        new TournamentRegisterClubAPI(
+        new TournamentInviteClubAPI(
           workbench.profile.id,
           invitedClubId,
           operatorId,

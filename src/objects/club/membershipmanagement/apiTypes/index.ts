@@ -1,6 +1,5 @@
 export * from './AddClubMemberRequest';
 export * from './AdjustClubMemberContributionRequest';
-export * from './ApproveClubApplicationRequest';
 export * from './AssignClubAdminRequest';
 export * from './AssignClubTitleRequest';
 export * from './ClearClubTitleRequest';
@@ -12,7 +11,6 @@ export * from './ClubMembershipApplicantView';
 export * from './ClubMembershipApplicationRequest';
 export * from './ClubMembershipApplicationResponse';
 export * from './ClubMembershipApplicationView';
-export * from './RejectClubApplicationRequest';
 export * from './RemoveClubMemberRequest';
 export * from './ReviewClubApplicationRequest';
 export * from './UpdateClubRecruitmentPolicyRequest';

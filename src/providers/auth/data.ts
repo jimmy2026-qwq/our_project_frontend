@@ -8,7 +8,7 @@ import {
   RestoreAuthSessionAPI,
   RevokeGuestSessionAuthAPI,
 } from '@/api/auth';
-import { GetCurrentPlayerAPI } from '@/api/player';
+import { GetPlayerAPI } from '@/api/player';
 import type { AuthSession } from '@/providers/auth/AuthSession';
 import type {
   AuthSessionView,
@@ -62,7 +62,7 @@ const authApi = {
 };
 
 function getCurrentPlayer(operatorId: string) {
-  return sendAPI<PlayerProfileView>(new GetCurrentPlayerAPI(operatorId));
+  return sendAPI<PlayerProfileView>(new GetPlayerAPI(operatorId));
 }
 
 type BackendAuthResponse = Awaited<ReturnType<typeof authApi.login>>;

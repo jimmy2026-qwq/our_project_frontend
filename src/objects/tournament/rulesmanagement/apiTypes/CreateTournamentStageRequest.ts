@@ -5,7 +5,6 @@ import type { TournamentFormat } from '../../tournamentmanagement/TournamentForm
 import type { MahjongRuleset } from '../../mahjongcore/gamestate/MahjongRuleset';
 
 export interface CreateTournamentStageRequest {
-  id?: string;
   name: string;
   format: TournamentFormat;
   order: number;
