@@ -1,6 +1,7 @@
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type {
   BootstrapSuperAdminRequest,
+  CurrentSessionView,
   LoginRequest,
   RegisterAccountRequest,
 } from '@/objects/auth';

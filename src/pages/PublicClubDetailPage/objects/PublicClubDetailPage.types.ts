@@ -6,7 +6,7 @@ import type {
   SwissRuleConfig,
 } from '@/objects/tournament';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 
 export type DataSource = 'api' | 'mock';
 

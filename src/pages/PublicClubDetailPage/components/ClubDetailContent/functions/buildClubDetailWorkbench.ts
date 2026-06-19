@@ -1,4 +1,4 @@
-﻿import type { AuthSession } from '@/providers/auth/AuthSession';
+﻿import type { AuthSession } from '@/app/auth/AuthSession';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 import type { ClubDetailWorkbenchState } from '../../../objects/ClubDetail.types';

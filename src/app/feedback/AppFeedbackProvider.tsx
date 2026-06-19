@@ -1,4 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 
 import { Alert, AlertDescription, AlertTitle, Button } from '@/components/ui';
 import {
@@ -6,7 +13,7 @@ import {
   type AppFeedbackContextValue,
   type AppNoticeInput,
   type NoticeTone,
-} from '@/providers/app-feedback-context';
+} from '@/app/feedback/app-feedback-context';
 
 interface AppNotice extends AppNoticeInput {
   id: number;
@@ -32,7 +39,11 @@ function NoticeStack({
   onDismiss: (id: number) => void;
 }) {
   return (
-    <div className="app-notice-stack fixed bottom-[18px] right-[18px] z-20 grid w-[min(360px,calc(100vw-24px))] gap-3" aria-live="polite" aria-label="应用通知">
+    <div
+      className="app-notice-stack fixed bottom-[18px] right-[18px] z-20 grid w-[min(360px,calc(100vw-24px))] gap-3"
+      aria-live="polite"
+      aria-label="应用通知"
+    >
       {notices.map((notice) => (
         <Alert
           key={notice.id}
@@ -41,7 +52,9 @@ function NoticeStack({
         >
           <div className="app-notice__body grid gap-[6px]">
             <AlertTitle>{notice.title}</AlertTitle>
-            {notice.message ? <AlertDescription>{notice.message}</AlertDescription> : null}
+            {notice.message ? (
+              <AlertDescription>{notice.message}</AlertDescription>
+            ) : null}
           </div>
           <Button
             type="button"
@@ -98,7 +111,10 @@ export function AppFeedbackProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const value = useMemo<AppFeedbackContextValue>(() => ({ pushNotice }), [pushNotice]);
+  const value = useMemo<AppFeedbackContextValue>(
+    () => ({ pushNotice }),
+    [pushNotice],
+  );
 
   return (
     <AppFeedbackContext.Provider value={value}>

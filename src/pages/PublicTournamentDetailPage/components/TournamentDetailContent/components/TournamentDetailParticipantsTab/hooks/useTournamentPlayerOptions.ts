@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ListPlayersAPI } from '@/api/player';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 

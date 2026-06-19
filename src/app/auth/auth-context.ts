@@ -5,7 +5,7 @@ import type {
   LoginRequest,
   RegisterAccountRequest,
 } from '@/objects/auth';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 
 export interface AuthContextValue {
   isReady: boolean;

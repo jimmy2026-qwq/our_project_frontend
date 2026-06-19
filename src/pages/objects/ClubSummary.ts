@@ -1,13 +1,4 @@
-import type { ClubRelationView } from '@/objects/club';
-
-export type ClubSummaryRelationKind = 'Alliance' | 'Hostile';
-
-export type ClubSummaryRelation =
-  | ClubSummaryRelationKind
-  | {
-      targetClubId: string;
-      relation: ClubSummaryRelationKind;
-    };
+import type { ClubSummaryRelation } from './ClubSummaryRelation';
 
 export interface ClubSummary {
   id: string;
@@ -25,13 +16,4 @@ export interface ClubSummary {
   strongestRivalPower?: number | null;
   honorTitles?: string[];
   relations: ClubSummaryRelation[];
-}
-
-export function toClubSummaryRelation(
-  relation: ClubRelationView,
-): ClubSummaryRelation {
-  return {
-    targetClubId: relation.targetClubId,
-    relation: relation.relation === 'Alliance' ? 'Alliance' : 'Hostile',
-  };
 }

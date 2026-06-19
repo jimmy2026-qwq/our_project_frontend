@@ -1,7 +1,29 @@
-import { useCallback, useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from 'react';
 
-import { Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle } from '@/components/ui';
-import { DialogContext, type ConfirmDialogOptions, type DialogContextValue } from '@/providers/dialog-context';
+import {
+  Button,
+  Dialog,
+  DialogBody,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogOverlay,
+  DialogPortal,
+  DialogSurface,
+  DialogTitle,
+} from '@/components/ui';
+import {
+  DialogContext,
+  type ConfirmDialogOptions,
+  type DialogContextValue,
+} from '@/components/confirmation-dialog/dialog-context';
 
 interface PendingDialogRequest {
   options: ConfirmDialogOptions;
@@ -9,7 +31,8 @@ interface PendingDialogRequest {
 }
 
 export function DialogProvider({ children }: { children: ReactNode }) {
-  const [activeDialog, setActiveDialog] = useState<ConfirmDialogOptions | null>(null);
+  const [activeDialog, setActiveDialog] =
+    useState<ConfirmDialogOptions | null>(null);
   const activeRequestRef = useRef<PendingDialogRequest | null>(null);
   const queuedRequestsRef = useRef<PendingDialogRequest[]>([]);
   const previousFocusedElementRef = useRef<HTMLElement | null>(null);
@@ -76,7 +99,9 @@ export function DialogProvider({ children }: { children: ReactNode }) {
     }
 
     previousFocusedElementRef.current =
-      document.activeElement instanceof HTMLElement ? document.activeElement : null;
+      document.activeElement instanceof HTMLElement
+        ? document.activeElement
+        : null;
 
     return () => {
       cancelButtonRef.current = null;
@@ -111,7 +136,11 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                 </p>
                 <DialogHeader>
                   <DialogTitle>{activeDialog.title}</DialogTitle>
-                  {activeDialog.message ? <DialogDescription>{activeDialog.message}</DialogDescription> : null}
+                  {activeDialog.message ? (
+                    <DialogDescription>
+                      {activeDialog.message}
+                    </DialogDescription>
+                  ) : null}
                 </DialogHeader>
               </DialogBody>
               <DialogFooter className="flex justify-end gap-3 border-t border-[rgba(176,223,229,0.14)] p-[22px] pt-4 md:p-6 md:pt-4">
@@ -123,7 +152,9 @@ export function DialogProvider({ children }: { children: ReactNode }) {
                   {activeDialog.cancelText ?? 'Cancel'}
                 </Button>
                 <Button
-                  variant={activeDialog.tone === 'danger' ? 'danger' : 'default'}
+                  variant={
+                    activeDialog.tone === 'danger' ? 'danger' : 'default'
+                  }
                   onClick={() => closeDialog(true)}
                 >
                   {activeDialog.confirmText ?? 'Confirm'}

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { GetClubAPI } from '@/api/club';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 import { sendAPI } from '@/system/api';

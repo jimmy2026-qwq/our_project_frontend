@@ -2,7 +2,7 @@
 
 import { ListClubContributionAuditsAPI } from '@/api/club';
 import type { ClubContributionAuditEntry, ListEnvelope } from '@/objects';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';

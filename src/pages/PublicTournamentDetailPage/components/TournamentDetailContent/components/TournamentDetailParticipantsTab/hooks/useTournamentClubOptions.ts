@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { GetPublicClubAPI, ListPublicClubsAPI, ListClubsAPI } from '@/api/club';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 

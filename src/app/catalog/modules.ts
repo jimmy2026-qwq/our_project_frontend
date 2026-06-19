@@ -1,5 +1,6 @@
 import type { FeatureModule } from './types';
 
+// Static product catalog used by planning/docs surfaces, not runtime flags.
 export const featureModules: FeatureModule[] = [
   {
     id: 'public-hall',
@@ -23,7 +24,11 @@ export const featureModules: FeatureModule[] = [
       'Homepage application workbench that connects joinable club list, current player context, submit flow, withdraw flow, and local fallback bridge.',
     entities: ['Club', 'Registered Player', 'Club Application'],
     primaryRoles: ['RegisteredPlayer', 'ClubAdmin'],
-    apiMessages: ['ListClubsAPI', 'GetCurrentPlayerAPI', 'SubmitClubApplicationAPI'],
+    apiMessages: [
+      'ListClubsAPI',
+      'GetCurrentPlayerAPI',
+      'SubmitClubApplicationAPI',
+    ],
   },
   {
     id: 'member-hub',
@@ -47,15 +52,30 @@ export const featureModules: FeatureModule[] = [
     entities: ['Tournament', 'Stage', 'Table', 'Appeal Ticket'],
     primaryRoles: ['TournamentAdmin'],
     frontendRoutes: ['/tournament-ops'],
-    apiMessages: ['TournamentListAPI', 'TournamentStageTablesAPI', 'AppealListAPI'],
+    apiMessages: [
+      'TournamentListAPI',
+      'TournamentStageTablesAPI',
+      'AppealListAPI',
+    ],
   },
   {
     id: 'api-client',
     title: 'API Modules & Normalization',
     summary:
       'Shared API layer that is split by domain, handles fetch/json behavior, and normalizes backend payloads into frontend domain models.',
-    entities: ['ListEnvelope', 'PublicSchedule', 'ClubSummary', 'TournamentPublicProfile'],
-    primaryRoles: ['Guest', 'RegisteredPlayer', 'ClubAdmin', 'TournamentAdmin', 'SuperAdmin'],
+    entities: [
+      'ListEnvelope',
+      'PublicSchedule',
+      'ClubSummary',
+      'TournamentPublicProfile',
+    ],
+    primaryRoles: [
+      'Guest',
+      'RegisteredPlayer',
+      'ClubAdmin',
+      'TournamentAdmin',
+      'SuperAdmin',
+    ],
     apiDomains: [
       'auth',
       'player',

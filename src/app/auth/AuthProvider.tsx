@@ -5,7 +5,7 @@ import type {
   LoginRequest,
   RegisterAccountRequest,
 } from '@/objects/auth';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import {
   bootstrapSuperAdminUser,
   enterGuestMode,
@@ -14,11 +14,12 @@ import {
   readPersistedSession,
   registerUser,
   restoreSession,
-} from '@/providers/auth/data';
-import { AuthContext } from '@/providers/auth-context';
+} from '@/app/auth/data';
+import { AuthContext } from '@/app/auth/auth-context';
 
 let pendingRestoreToken: string | null = null;
 let pendingRestorePromise: Promise<AuthSession | null> | null = null;
+const authSessionStorageKey = 'riichi-nexus.auth.session';
 
 function restoreSessionOnce(token: string) {
   if (pendingRestorePromise && pendingRestoreToken === token) {
@@ -72,6 +73,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => {
       isMounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    function handleSessionStorageChange(event: StorageEvent) {
+      if (event.key && event.key !== authSessionStorageKey) {
+        return;
+      }
+
+      const persisted = readPersistedSession();
+
+      setSession(persisted ? { token: persisted.token, user: persisted.user } : null);
+      setIsReady(true);
+    }
+
+    window.addEventListener('storage', handleSessionStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleSessionStorageChange);
     };
   }, []);
 

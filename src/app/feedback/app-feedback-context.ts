@@ -12,7 +12,8 @@ export interface AppFeedbackContextValue {
   pushNotice: (notice: AppNoticeInput) => void;
 }
 
-export const AppFeedbackContext = createContext<AppFeedbackContextValue | null>(null);
+export const AppFeedbackContext =
+  createContext<AppFeedbackContextValue | null>(null);
 
 export function useAppFeedbackContext() {
   const context = useContext(AppFeedbackContext);

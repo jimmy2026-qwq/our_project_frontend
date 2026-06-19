@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import {
