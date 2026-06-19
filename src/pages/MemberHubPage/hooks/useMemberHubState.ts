@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { ListClubsAPI } from '@/api/club/ListClubsAPI';
 import { useAuth } from '@/app/auth/useAuth';
 import type { ClubListQuery, ListEnvelope } from '@/objects';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';

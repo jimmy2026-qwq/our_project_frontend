@@ -1,28 +1,3 @@
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
-import type { ClubApplicationStatus } from '@/objects/club';
-
-export interface ClubApplication {
-  id: string;
-  clubId: string;
-  status: ClubApplicationStatus;
-  applicantName: string;
-  message: string;
-  createdAt: string;
-}
-
-export interface ClubApplicationView {
-  applicationId: string;
-  clubId: string;
-  clubName: string;
-  applicant: PlayerProfile;
-  submittedAt: string;
-  message: string;
-  status: ClubApplicationStatus;
-  reviewedBy?: string | null;
-  reviewedByDisplayName?: string | null;
-  reviewedAt?: string | null;
-  reviewNote?: string | null;
-  withdrawnByPrincipalId?: string | null;
-  canReview: boolean;
-  canWithdraw: boolean;
-}
+// Compatibility barrel for page-level club application view objects.
+export type { ClubApplication } from './ClubApplication';
+export type { ClubApplicationView } from './ClubApplicationView';

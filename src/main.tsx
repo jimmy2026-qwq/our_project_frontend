@@ -8,7 +8,7 @@ import {
   AuthProvider,
   DialogProvider,
   RealtimeProvider,
-} from '@/providers';
+} from '@/app/AppProviders';
 import { router } from '@/router';
 
 import './index.css';

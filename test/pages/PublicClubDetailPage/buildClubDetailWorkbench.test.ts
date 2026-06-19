@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 import { buildClubDetailWorkbench } from '@/pages/PublicClubDetailPage/components/ClubDetailContent/functions/buildClubDetailWorkbench';
 import type { ClubDetailData } from '@/pages/PublicClubDetailPage/components/ClubDetailContent/hooks/useClubDetailData';
 import type { ClubPublicProfile } from '@/pages/PublicClubDetailPage/objects/PublicClubDetailPage.types';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 
 describe('buildClubDetailWorkbench relation permissions', () => {
   it('returns null until club profile data is available', () => {

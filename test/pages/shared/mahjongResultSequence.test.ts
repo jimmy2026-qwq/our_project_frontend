@@ -8,8 +8,8 @@ import {
   getWinYaku,
   isNagashiManganWin,
   isResultScoreStep,
-} from '@/pages/shared/mahjongResultSequence';
-import type { MahjongResultLike } from '@/pages/shared/mahjongResultSequence';
+} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import type { MahjongResultLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
 const doubleRonResult: MahjongResultLike = {
   outcome: 'Ron',

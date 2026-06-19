@@ -1,5 +1,5 @@
-import type { ConfirmDialogOptions } from '@/providers/dialog-context';
-import { useDialogContext } from '@/providers/dialog-context';
+import type { ConfirmDialogOptions } from '@/components/confirmation-dialog/dialog-context';
+import { useDialogContext } from '@/components/confirmation-dialog/dialog-context';
 
 export function useDialog() {
   const { confirm } = useDialogContext();

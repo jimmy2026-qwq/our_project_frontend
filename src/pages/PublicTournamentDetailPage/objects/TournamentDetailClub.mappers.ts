@@ -1,9 +1,7 @@
 import type { PublicClubDetailView, PublicClubDirectoryEntry } from '@/objects';
 import type { ClubView } from '@/objects/club';
-import {
-  toClubSummaryRelation,
-  type ClubSummary,
-} from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import { toClubSummaryRelation } from '@/pages/functions/toClubSummaryRelation';
 
 import type { ClubPublicProfile } from './PublicTournamentDetailPage.types';
 

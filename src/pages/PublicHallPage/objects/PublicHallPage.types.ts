@@ -1,6 +1,6 @@
 import type { ListEnvelope, StageStatus, TournamentStatus } from '@/objects';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 
 export type DataSource = 'api' | 'mock';
 export type PublicView = 'schedules' | 'clubs' | 'leaderboard';

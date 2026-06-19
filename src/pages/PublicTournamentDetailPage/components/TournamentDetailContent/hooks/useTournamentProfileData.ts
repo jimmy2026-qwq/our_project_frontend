@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { GetPublicTournamentAPI } from '@/api/tournament';
 import { TournamentGetAPI } from '@/api/tournament';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 
 import type {

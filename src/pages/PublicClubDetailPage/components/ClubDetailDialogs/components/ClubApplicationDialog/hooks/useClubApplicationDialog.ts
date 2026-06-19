@@ -5,7 +5,7 @@ import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
 import type { HomeClubApplicationState } from '../../../../../objects/ClubApplication.types';
-import { getFallbackPlayerName } from '../../../../../functions/getClubApplicationHelpers';
+import { getFallbackPlayerName } from '../../../../../functions/getClubApplicationDisplay';
 import { useClubApplicationLoaders } from '../../../../../hooks/useClubApplicationLoaders';
 import { useClubApplicationDialogActions } from './useClubApplicationDialogActions';
 

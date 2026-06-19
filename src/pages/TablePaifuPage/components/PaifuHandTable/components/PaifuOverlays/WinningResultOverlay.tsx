@@ -3,24 +3,26 @@ import type {
   PaifuRoundSummary,
 } from '../../../../types';
 import { useEffect, useState } from 'react';
-import { getMahjongYakuLabel } from '@/objects';
-import type { MahjongResultWinLike } from '@/pages/shared/mahjongResultSequence';
 import {
   advanceResultSequenceStep,
   getResultSequenceStep,
   getWinYaku,
-  isNagashiManganWin,
-} from '@/pages/shared/mahjongResultSequence';
+} from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import {
-  formatPoints,
-  formatYakuValue,
   getDoraIndicators,
   getReplaySnapshot,
   getVisibleDoraIndicatorCount,
   removeFirstTile,
 } from '../../../../functions/getReplay';
 import { ResultTile } from '../TileViews';
-import { IndicatorPanel, WinningTile } from './WinningResultIndicators';
+import {
+  formatWinPointText,
+  getPlayerName,
+  getWinLabel,
+} from '../../functions/getPaifuWinningResultText';
+import { ScoreSettlementPanel } from './PaifuScoreSettlementPanel';
+import { PaifuWinningYakuList } from './PaifuWinningYakuList';
+import { WinningTile } from './WinningResultIndicators';
 
 export function WinningResultOverlay({
   action,
@@ -139,32 +141,13 @@ export function WinningResultOverlay({
             ) : null}
           </div>
 
-          <div className="mx-auto grid w-[min(680px,88%)] content-start gap-3">
-            <div className="mb-2 flex justify-center gap-3">
-              <IndicatorPanel
-                label={'\u8868\u5b9d\u724c'}
-                shownCount={doraIndicatorCount}
-                tiles={doraIndicators}
-              />
-              <IndicatorPanel
-                label={'\u91cc\u5b9d\u724c'}
-                shownCount={doraIndicatorCount}
-                tiles={uraDoraIndicators}
-                visible={uraDoraVisible}
-              />
-            </div>
-            {yakuList.map((yaku, index) => (
-              <div
-                key={`${yaku.kind}-${yaku.han}-${index}`}
-                className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-3 text-xl"
-              >
-                <span>{getMahjongYakuLabel(yaku.kind)}</span>
-                <span className="text-[#ffd98a]">
-                  {formatYakuValue(yaku.han)}
-                </span>
-              </div>
-            ))}
-          </div>
+          <PaifuWinningYakuList
+            doraIndicatorCount={doraIndicatorCount}
+            doraIndicators={doraIndicators}
+            uraDoraIndicators={uraDoraIndicators}
+            uraDoraVisible={uraDoraVisible}
+            yakuList={yakuList}
+          />
         </div>
 
         <div className="flex flex-wrap items-end justify-between gap-4 self-end pb-1">
@@ -210,94 +193,4 @@ export function WinningResultOverlay({
       </div>
     </div>
   );
-}
-
-function getWinLabel(
-  round: PaifuRoundSummary,
-  win?: MahjongResultWinLike,
-) {
-  if (win && isNagashiManganWin(win)) {
-    return '流局满贯';
-  }
-
-  return round.result.outcome === 'Tsumo' ? '\u81ea\u6478' : '\u8363\u548c';
-}
-
-function ScoreSettlementPanel({
-  playerNames,
-  round,
-}: {
-  playerNames: Record<string, string>;
-  round: PaifuRoundSummary;
-}) {
-  return (
-    <div className="mx-auto grid w-[min(680px,92%)] content-center gap-3">
-      {round.result.scoreChanges.map((change) => (
-        <div
-          key={change.playerId}
-          className="grid grid-cols-[minmax(0,1fr)_auto] items-center border-b border-[rgba(255,255,255,0.16)] py-4 text-2xl font-bold"
-        >
-          <span className="truncate text-[#f2f7fb]">
-            {getPlayerName(change.playerId, playerNames)}
-          </span>
-          <span className={change.delta >= 0 ? 'text-[#57e38d]' : 'text-[#ff6d6d]'}>
-            {formatDelta(change.delta)}
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-function getPlayerName(playerId: string, playerNames: Record<string, string>) {
-  return playerNames[playerId] ?? playerId;
-}
-
-function formatDelta(value: number) {
-  if (value > 0) {
-    return `+${formatPoints(value)}`;
-  }
-
-  if (value < 0) {
-    return `-${formatPoints(Math.abs(value))}`;
-  }
-
-  return '+0';
-}
-
-function formatWinPointText({
-  fu,
-  han,
-  points,
-  yaku,
-}: {
-  fu?: number | null;
-  han?: number | null;
-  points: number;
-  yaku: MahjongResultWinLike['yaku'];
-}) {
-  if (typeof han === 'number' && yaku.some((item) => item.han >= 13)) {
-    return `${formatPoints(points)} / ${formatYakumanMultiplier(han)}`;
-  }
-
-  return typeof han === 'number' && typeof fu === 'number'
-    ? `${formatPoints(points)} / ${han}番${fu}符`
-    : formatPoints(points);
-}
-
-function formatYakumanMultiplier(han: number) {
-  const multiplier = Math.max(1, Math.min(9, Math.floor(han / 13)));
-  const labels = [
-    '役满',
-    '两倍役满',
-    '三倍役满',
-    '四倍役满',
-    '五倍役满',
-    '六倍役满',
-    '七倍役满',
-    '八倍役满',
-    '九倍役满',
-  ];
-
-  return labels[multiplier - 1];
 }

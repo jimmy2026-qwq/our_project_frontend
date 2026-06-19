@@ -1,7 +1,7 @@
 ﻿import { useEffect, useState } from 'react';
 
 import { ListClubApplicationsAPI } from '@/api/club';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';

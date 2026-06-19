@@ -1,8 +1,6 @@
 import type { ClubView, PublicClubDetailView } from '@/objects/club';
-import {
-  toClubSummaryRelation,
-  type ClubSummary,
-} from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import { toClubSummaryRelation } from '@/pages/functions/toClubSummaryRelation';
 
 import type { ClubPublicProfile } from './PublicClubDetailPage.types';
 

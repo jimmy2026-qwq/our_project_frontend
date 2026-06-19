@@ -1,12 +1,10 @@
+import type { PlayerCurrentRank } from './PlayerCurrentRank';
+
 export interface PlayerProfile {
   playerId: string;
   displayName: string;
   playerStatus?: 'Active' | 'Inactive' | 'Banned';
-  currentRank?: {
-    platform: string;
-    tier: string;
-    stars?: number | null;
-  } | null;
+  currentRank?: PlayerCurrentRank | null;
   elo?: number;
   clubIds?: string[];
 }

@@ -3,7 +3,7 @@
 import { AuthCheckPermissionAPI } from '@/api/auth';
 import { ClubPrivilegeCodes, type ClubPrivilegeCode } from '@/objects/club';
 import type { Permission } from '@/objects/auth';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import { sendAPI } from '@/system/api';
 
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';

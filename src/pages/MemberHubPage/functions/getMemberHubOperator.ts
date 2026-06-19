@@ -1,4 +1,4 @@
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type { ClubSummary } from '@/pages/objects/ClubSummary';
 
 import {

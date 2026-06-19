@@ -8,7 +8,7 @@ import {
   labelPositionClasses,
 } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
 
-import { getMatchDisplayHandTiles } from './MatchPlayerHand.helpers';
+import { getMatchDisplayHandTiles } from './functions/getMatchPlayerHandTiles';
 import {
   getSeatLabel,
   getSeatStateBadges,

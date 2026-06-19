@@ -10,8 +10,8 @@ import type {
 import {
   getResultWinForActor,
   getWinYaku,
-} from '@/pages/shared/mahjongResultSequence';
-import { getFirstYakumanYaku } from '@/pages/shared/yakumanAnimation';
+} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getFirstYakumanYaku } from '@/components/mahjong-result/functions/getFirstYakumanYaku';
 
 import type { MahjongYakuKind } from '@/objects';
 
@@ -21,22 +21,23 @@ import {
   isAbortiveDrawAction,
   isRiichiAction,
   isWinningAction,
-  removeFirstTile,
 } from '../../../functions/getReplay';
 import type {
   ActiveOperation,
   YakumanTileBurstView,
   WinningCallFlashView,
 } from '../components/PaifuOverlays/PaifuOverlays.types';
-
-const winningCallAnimationMs = 500;
-const winningCallVisibleMs = 1500;
-const riichiCallVisibleMs = 1000;
-const winningCallSettlementWaitMs = 1500;
-const winningCallRevealDelayMs =
-  winningCallAnimationMs + winningCallSettlementWaitMs;
-const yakumanTileBurstVisibleMs = 4200;
-const yakumanTileBurstSettleDelayMs = 500;
+import {
+  getOperationFlashDurationMs,
+  getWinningCallLabel,
+  getYakumanBurstTilesForPaifuAction,
+  riichiCallVisibleMs,
+  winningCallAnimationMs,
+  winningCallRevealDelayMs,
+  winningCallVisibleMs,
+  yakumanTileBurstSettleDelayMs,
+  yakumanTileBurstVisibleMs,
+} from '../functions/getPaifuOperationFlash';
 
 export function usePaifuOperationFlash({
   isExhaustiveDrawResult,
@@ -188,31 +189,4 @@ export function usePaifuOperationFlash({
     winningAction,
     setWinningAction,
   };
-}
-
-function getYakumanBurstTilesForPaifuAction({
-  action,
-  resultWin,
-  round,
-}: {
-  action: PaifuAction;
-  resultWin?: ReturnType<typeof getResultWinForActor>;
-  round: PaifuRoundSummary;
-}) {
-  const tiles =
-    action.handTilesAfterAction ??
-    (resultWin?.winner ? round.initialHands[resultWin.winner] : undefined) ??
-    [];
-
-  return action.tile ? [action.tile, ...removeFirstTile(tiles, action.tile)] : tiles;
-}
-
-function getWinningCallLabel(round: PaifuRoundSummary) {
-  return round.result.outcome === 'Tsumo' ? '\u81ea\u6478' : '\u548c';
-}
-
-function getOperationFlashDurationMs(action: PaifuAction) {
-  return action.actionType === 'Chi' || action.actionType === 'Pon'
-    ? 500
-    : 1500;
 }

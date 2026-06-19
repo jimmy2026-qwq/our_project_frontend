@@ -6,10 +6,8 @@ import type {
   TournamentSummaryView,
 } from '@/objects';
 import type { PlayerProfileView, PlayerStatus } from '@/objects/player';
-import {
-  toClubSummaryRelation,
-  type ClubSummary,
-} from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import { toClubSummaryRelation } from '@/pages/functions/toClubSummaryRelation';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import type {

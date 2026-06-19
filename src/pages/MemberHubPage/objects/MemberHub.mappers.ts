@@ -5,10 +5,8 @@ import type {
 } from '@/objects/club';
 import type { PlayerStatus } from '@/objects/player';
 import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
-import {
-  toClubSummaryRelation,
-  type ClubSummary,
-} from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import { toClubSummaryRelation } from '@/pages/functions/toClubSummaryRelation';
 import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
 
 import type { MemberHubApplicationInboxItem } from './MemberHub.types';

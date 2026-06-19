@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { DEFAULT_MAHJONG_RULESET } from '@/objects';
-import type { AuthSession } from '@/providers/auth/AuthSession';
+import type { AuthSession } from '@/app/auth/AuthSession';
 import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
 import type { DetailState } from '../../../objects/PublicTournamentDetailPage.types';
 
