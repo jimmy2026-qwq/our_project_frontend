@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import { participantText } from '../functions/getTournamentDetailParticipantsText';
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';

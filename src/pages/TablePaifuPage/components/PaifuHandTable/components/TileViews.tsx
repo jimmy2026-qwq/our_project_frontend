@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 
+import { getPaifuTileCode, type PaifuTileInput } from '@/objects';
 import type { SeatWind } from '@/objects/tournament';
 
 import {
@@ -9,7 +10,7 @@ import {
 import {
   getTileImageSrc,
   maxTileImageRetryCount,
-} from './TileImagePreload';
+} from '../functions/getMahjongTileImage';
 
 export function TileImage({
   className,
@@ -18,10 +19,11 @@ export function TileImage({
 }: {
   className: string;
   style?: CSSProperties;
-  tile: string;
+  tile: PaifuTileInput;
 }) {
   const [retryNonce, setRetryNonce] = useState(0);
   const [hasFailed, setHasFailed] = useState(false);
+  const tileCode = useMemo(() => getPaifuTileCode(tile), [tile]);
   const src = useMemo(
     () => getTileImageSrc(tile, retryNonce),
     [retryNonce, tile],
@@ -40,7 +42,7 @@ export function TileImage({
 
   return (
     <img
-      alt={tile}
+      alt={tileCode}
       className={className}
       draggable={false}
       onError={() => {
@@ -64,7 +66,7 @@ export function HandTile({
 }: {
   className?: string;
   seat: SeatWind;
-  tile: string;
+  tile: PaifuTileInput;
 }) {
   return (
     <span
@@ -98,11 +100,11 @@ export function HandBackTile({ seat }: { seat: SeatWind }) {
   );
 }
 
-export function ResultTile({ tile }: { tile: string }) {
+export function ResultTile({ tile }: { tile: PaifuTileInput }) {
   return <TileImage className="block w-[52px] select-none" tile={tile} />;
 }
 
-export function DoraIndicatorTile({ tile }: { tile: string }) {
+export function DoraIndicatorTile({ tile }: { tile: PaifuTileInput }) {
   return <TileImage className="block w-[28px] select-none" tile={tile} />;
 }
 
@@ -128,19 +130,21 @@ function TileImageFallback({
 }: {
   className: string;
   style?: CSSProperties;
-  tile: string;
+  tile: PaifuTileInput;
 }) {
+  const tileCode = getPaifuTileCode(tile);
+
   return (
     <span
-      aria-label={tile}
+      aria-label={tileCode}
       className={[
         'grid aspect-[80/129] place-items-center rounded-[5px] border border-[#d6c59a] bg-[linear-gradient(180deg,#fbf8ef,#e6dbc2)] text-[0.58rem] font-bold leading-none text-[#22313d] shadow-[inset_0_1px_0_rgba(255,255,255,0.7),inset_0_-3px_0_rgba(94,73,38,0.2)]',
         className,
       ].join(' ')}
       style={style}
-      title={tile}
+      title={tileCode}
     >
-      {formatTileFallbackLabel(tile)}
+      {formatTileFallbackLabel(tileCode)}
     </span>
   );
 }

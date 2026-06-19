@@ -12,7 +12,7 @@ import {
   DialogTitle,
   Textarea,
 } from '@/components/ui';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import type { AppealDecisionType } from '../../objects/TournamentDetailView.types';
 import { getAppealDecisionLabel } from '../../functions/getTournamentDetailView';

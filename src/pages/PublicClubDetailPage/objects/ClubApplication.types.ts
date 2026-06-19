@@ -1,7 +1,7 @@
 import type { ClubMembershipApplicationResponse } from '@/objects';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 export type DataSource = 'api' | 'mock';
 

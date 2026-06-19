@@ -1,5 +1,5 @@
 ﻿import { AssignClubAdminAPI, RemoveClubMemberAPI } from '@/api/club';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
 import { upsertClubAdminOverride } from '../../../functions/getClubAdminOverrides';

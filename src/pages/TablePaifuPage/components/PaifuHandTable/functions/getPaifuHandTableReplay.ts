@@ -1,10 +1,11 @@
-import type { SeatWind } from '@/objects/tournament';
+import { HandOutcome, type SeatWind } from '@/objects';
 
 import type {
   CenterScoreDisplay,
   TableStickDisplay,
-} from '../components/CenterTable';
-import type { PaifuRoundSummary, TablePaifuDetail } from '../../../types';
+} from '../objects/CenterTableDisplay';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
 import {
   getCurrentRiichiStickCount,
   getPlayerPointsBeforeSettlement,
@@ -17,9 +18,9 @@ export const settlementAnimationDelayMs = 500;
 
 export function isScoreSettlementRound(round: PaifuRoundSummary) {
   return (
-    round.result.outcome === 'ExhaustiveDraw' ||
-    round.result.outcome === 'Ron' ||
-    round.result.outcome === 'Tsumo'
+    round.result.outcome === HandOutcome.ExhaustiveDraw ||
+    round.result.outcome === HandOutcome.Ron ||
+    round.result.outcome === HandOutcome.Tsumo
   );
 }
 
@@ -94,7 +95,8 @@ export function createTableSticks({
     honba: round.descriptor.honba,
     riichi: getCurrentRiichiStickCount({
       hasSettlementApplied:
-        (round.result.outcome === 'Ron' || round.result.outcome === 'Tsumo') &&
+        (round.result.outcome === HandOutcome.Ron ||
+          round.result.outcome === HandOutcome.Tsumo) &&
         settlementProgress !== undefined,
       replayStep,
       round,

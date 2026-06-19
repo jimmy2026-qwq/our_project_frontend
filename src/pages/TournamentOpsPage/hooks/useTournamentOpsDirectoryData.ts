@@ -12,11 +12,11 @@ import { sendAPI } from '@/system/api';
 import type {
   TournamentContext,
   TournamentDirectoryState,
-} from '../objects/data';
+} from '../objects/TournamentOps.types';
 import {
   toTournamentDirectoryEntry,
   type TournamentDirectoryEntryView,
-} from '../objects/TournamentOps.mappers';
+} from '../functions/TournamentOps.mappers';
 
 export function useTournamentOpsDirectoryData(reloadKey = 0) {
   const [directory, setDirectory] = useState<TournamentDirectoryState | null>(

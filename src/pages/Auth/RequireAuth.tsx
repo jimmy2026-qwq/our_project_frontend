@@ -1,9 +1,9 @@
 import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 
 export function RequireAuth() {
-  const { isReady, session } = useAuth();
+  const { isReady, session } = useAuthContext();
   const location = useLocation();
 
   if (!isReady) {

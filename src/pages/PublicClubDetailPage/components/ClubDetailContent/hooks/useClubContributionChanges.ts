@@ -1,15 +1,15 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ListClubContributionAuditsAPI } from '@/api/club';
 import type { ClubContributionAuditEntry, ListEnvelope } from '@/objects';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 interface UseClubContributionChangesParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   canViewContributionChanges: boolean;
 }
 

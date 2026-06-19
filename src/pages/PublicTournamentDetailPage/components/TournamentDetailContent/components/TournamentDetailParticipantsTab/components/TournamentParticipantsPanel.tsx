@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import { participantText } from '../functions/getTournamentDetailParticipantsText';
 import { LineupRoster, ToggleArrow } from './TournamentParticipantsShared';

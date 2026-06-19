@@ -1,17 +1,17 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { ListClubApplicationsAPI } from '@/api/club';
-import type { AuthSession } from '@/app/auth/AuthSession';
-import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toClubApplicationView } from '../../../objects/ClubDetailApplication.mappers';
+import { toClubApplicationView } from '../../../functions/ClubDetailApplication.mappers';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 interface UseClubApplicationInboxParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   canReviewApplications: boolean;
 }
 

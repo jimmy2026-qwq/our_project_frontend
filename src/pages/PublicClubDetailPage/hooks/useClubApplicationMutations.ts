@@ -10,7 +10,7 @@ import {
   updateTrackedClubApplicationStatus,
   upsertTrackedClubApplication,
 } from '../functions/getClubApplicationTracker';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
@@ -19,7 +19,7 @@ import {
   getFallbackPlayerName,
   getSelectedClubName,
 } from '../functions/getClubApplicationDisplay';
-import { toClubApplicationMutationModel } from '../objects/ClubApplication.mappers';
+import { toClubApplicationMutationModel } from '../functions/ClubApplication.mappers';
 import { useClubApplicationLoaders } from './useClubApplicationLoaders';
 
 export function useClubApplicationMutations() {

@@ -1,13 +1,11 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
 import { useRefreshNotice } from '@/app/feedback/useRefreshNotice';
-import type {
-  AppealSummary,
-  MatchRecordSummary,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
-import type { LoadState, TournamentDirectoryState } from '../objects/data';
+import type { LoadState, TournamentDirectoryState } from '../objects/TournamentOps.types';
 
 interface TournamentOpsRefreshNoticeParams {
   directory: TournamentDirectoryState | null;

@@ -1,7 +1,7 @@
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
 // Maps the auth session to the player/operator id expected by notification APIs.
-export function getNotificationOperatorId(session: AuthSession | null): string {
+export function getNotificationOperatorId(session: AuthContextSession | null): string {
   if (!session?.user.roles.isRegisteredPlayer) {
     return '';
   }

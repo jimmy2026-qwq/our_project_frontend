@@ -5,11 +5,11 @@ import {
   TournamentTableGetAPI,
   TournamentTableStartAPI,
 } from '@/api/tournament';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
-import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
+import { toTableDetail } from '../../../../../functions/TournamentDetailTable.mappers';
 import { useTournamentTableCompletionActions } from './useTournamentTableCompletionActions';
 
 export function useTournamentTableActionsRuntime({

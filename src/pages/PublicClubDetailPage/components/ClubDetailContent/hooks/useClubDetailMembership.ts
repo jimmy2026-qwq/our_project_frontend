@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 import { GetClubAPI } from '@/api/club';
-import type { AuthSession } from '@/app/auth/AuthSession';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
 import { hasClubAdminOverride } from '../../../functions/getClubAdminOverrides';
@@ -12,7 +12,7 @@ import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.ty
 
 interface UseClubDetailMembershipParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
 }
 
 async function resolveClubAdminAccess(clubId: string, playerId: string) {

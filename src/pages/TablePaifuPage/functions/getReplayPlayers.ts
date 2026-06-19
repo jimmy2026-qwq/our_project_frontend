@@ -1,6 +1,7 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuRoundSummary, TablePaifuDetail } from '../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import { isExhaustiveDrawRound } from './getReplayCore';
 
 export function getPlayerSeat(paifu: TablePaifuDetail, playerId: string) {

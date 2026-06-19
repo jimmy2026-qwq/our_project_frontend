@@ -1,4 +1,4 @@
-import type { PaifuRoundSummary } from '../../../../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import { getRoundTitle } from '../../../../functions/getReplay';
 
 interface RoundPickerProps {

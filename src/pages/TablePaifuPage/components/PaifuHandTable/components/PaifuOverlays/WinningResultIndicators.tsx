@@ -1,9 +1,10 @@
+import { getPaifuTileCode, type PaifuTile } from '@/objects';
 import { DoraIndicatorTile, ResultBackTile, ResultTile } from '../TileViews';
 
 interface IndicatorPanelProps {
   label: string;
   shownCount: number;
-  tiles?: string[];
+  tiles?: PaifuTile[];
   visible?: boolean;
 }
 
@@ -23,7 +24,7 @@ export function IndicatorPanel({
           (tile, index) =>
             tile ? (
               <DoraIndicatorTile
-                key={`${label}-${tile}-${index}`}
+                key={`${label}-${getPaifuTileCode(tile)}-${index}`}
                 tile={tile}
               />
             ) : (
@@ -35,7 +36,13 @@ export function IndicatorPanel({
   );
 }
 
-export function WinningTile({ label, tile }: { label: string; tile: string }) {
+export function WinningTile({
+  label,
+  tile,
+}: {
+  label: string;
+  tile: PaifuTile;
+}) {
   return (
     <span className="relative ml-5 inline-flex">
       <ResultTile tile={tile} />
@@ -52,7 +59,7 @@ function getIndicatorSlots({
   visible = true,
 }: {
   count: number;
-  tiles?: string[];
+  tiles?: PaifuTile[];
   visible?: boolean;
 }) {
   const visibleCount = visible ? Math.max(0, Math.min(5, count)) : 0;

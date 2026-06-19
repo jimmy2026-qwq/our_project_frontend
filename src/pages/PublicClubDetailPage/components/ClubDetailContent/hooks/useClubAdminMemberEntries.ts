@@ -6,19 +6,19 @@ import {
   ListClubMembersAPI,
 } from '@/api/club';
 import type { ClubMemberPrivilegeSnapshotView, ListEnvelope } from '@/objects';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import { hasClubAdminOverride } from '../../../functions/getClubAdminOverrides';
 import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
-import { toPlayerProfile } from '../../../objects/ClubDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../functions/ClubDetailPlayer.mappers';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 interface UseClubAdminMemberEntriesParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   currentPlayerProfile: PlayerProfile | null;
 }
 

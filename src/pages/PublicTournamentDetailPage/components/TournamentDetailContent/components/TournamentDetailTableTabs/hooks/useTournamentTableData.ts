@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { TournamentRecordListAPI, TournamentStageTablesAPI } from '@/api/tournament';
-import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
@@ -12,11 +12,11 @@ import type {
   DetailState,
   TournamentPublicProfile,
 } from '../../../../../objects/PublicTournamentDetailPage.types';
-import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
 import {
   toMatchRecordSummary,
   toTournamentTableSummary,
-} from '../../../../../objects/TournamentDetailTable.mappers';
+} from '../../../../../functions/TournamentDetailTable.mappers';
 
 export function useTournamentTableData({
   localProfile,

@@ -6,7 +6,7 @@ import { AppErrorBoundary } from '@/app/AppErrorBoundary';
 import {
   AppFeedbackProvider,
   AuthProvider,
-  DialogProvider,
+  ConfirmationDialogProvider,
   RealtimeProvider,
 } from '@/app/AppProviders';
 import { router } from '@/router';
@@ -37,11 +37,11 @@ createRoot(container).render(
     <AppErrorBoundary>
       <AuthProvider>
         <RealtimeProvider>
-          <DialogProvider>
+          <ConfirmationDialogProvider>
             <AppFeedbackProvider>
               <RouterProvider router={router} />
             </AppFeedbackProvider>
-          </DialogProvider>
+          </ConfirmationDialogProvider>
         </RealtimeProvider>
       </AuthProvider>
     </AppErrorBoundary>

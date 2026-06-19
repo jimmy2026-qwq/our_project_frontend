@@ -4,7 +4,7 @@ import {
   PlatformAdminBanPlayerAPI,
   PlatformAdminGrantSuperAdminAPI,
 } from '@/api/platformadmin';
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
 import type { PlayerLeaderboardEntry } from '../../../../objects/PublicHallPage.types';
 import { sendAPI } from '@/system/api';
@@ -26,7 +26,7 @@ export function useManagePlayerDialogAction({
   onOpenChange: (open: boolean) => void;
   onCompleted?: () => void;
 }) {
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const { notifySuccess, notifyWarning } = useNotice();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const operatorId = session?.user.operatorId ?? '';

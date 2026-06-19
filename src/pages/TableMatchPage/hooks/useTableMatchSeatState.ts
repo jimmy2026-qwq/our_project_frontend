@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 export function useTableMatchSeatState(
   table: TableDetail | null,

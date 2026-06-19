@@ -1,12 +1,12 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 import {
   type LoadState,
   type TournamentDirectoryState,
   type TournamentOpsState,
-} from '../objects/data';
+} from '../objects/TournamentOps.types';
 import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
 
 interface TournamentOpsSelectionSyncParams {

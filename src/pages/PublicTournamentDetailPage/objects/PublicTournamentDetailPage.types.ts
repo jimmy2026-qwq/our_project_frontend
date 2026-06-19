@@ -5,7 +5,7 @@ import type {
   MahjongRuleset,
   SwissRuleConfig,
 } from '@/objects/tournament';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 export type DataSource = 'api' | 'mock';
 

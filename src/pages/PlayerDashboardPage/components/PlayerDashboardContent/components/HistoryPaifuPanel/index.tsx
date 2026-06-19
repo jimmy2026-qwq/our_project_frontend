@@ -6,7 +6,7 @@ import {
   EmptyState,
 } from '@/components/ui';
 import { PaifuSummaryDialog } from '@/components/mahjong-result/PaifuSummaryDialog';
-import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import { sendAPI } from '@/system/api';
 
 import { formatDateTime } from '../../functions/formatDateTime';

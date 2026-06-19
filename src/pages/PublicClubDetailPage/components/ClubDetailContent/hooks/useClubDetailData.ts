@@ -1,4 +1,4 @@
-﻿import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 import { useClubApplicationInbox } from './useClubApplicationInbox';
@@ -10,7 +10,7 @@ import { useClubDetailPermissions } from './useClubDetailPermissions';
 
 interface UseClubDetailDataParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
 }
 
 export function useClubDetailData({

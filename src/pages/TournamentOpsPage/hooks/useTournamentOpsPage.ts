@@ -1,10 +1,8 @@
-import { useAuth } from '@/app/auth/useAuth';
-import type {
-  AppealSummary,
-  MatchRecordSummary,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
-import { type LoadState, type TournamentOpsState } from '../objects/data';
+import { useAuthContext } from '@/app/auth/useAuthContext';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
+import { type LoadState, type TournamentOpsState } from '../objects/TournamentOps.types';
 import { getActiveTournament } from '../functions/getTournamentOpsState';
 import {
   useTournamentOpsData,
@@ -14,7 +12,7 @@ import { useTournamentOpsWorkbenchEffects } from './useTournamentOpsWorkbenchEff
 import { useTournamentOpsWorkbenchState } from './useTournamentOpsWorkbenchState';
 
 export function useTournamentOpsPage() {
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
   const canManageActions =
     !!session?.user.roles.isRegisteredPlayer &&

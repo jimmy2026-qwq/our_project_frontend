@@ -1,4 +1,10 @@
-import type { MahjongSeatView, MahjongTableView, SeatWind } from '@/objects';
+import {
+  getPaifuTileCode,
+  type MahjongSeatView,
+  type MahjongTableView,
+  type PaifuTile,
+  type SeatWind,
+} from '@/objects';
 import type {
   MeldGroup,
   RiverDiscard,
@@ -113,7 +119,7 @@ function getMeldDisplaySourceTiles(
   ];
 }
 
-function removeFirstMatchingMeldTile(tiles: string[], tile: string) {
+function removeFirstMatchingMeldTile(tiles: PaifuTile[], tile: PaifuTile) {
   const exactMatch = removeFirstMatchingTile(tiles, tile);
 
   if (exactMatch.length !== tiles.length) {
@@ -127,8 +133,8 @@ function removeFirstMatchingMeldTile(tiles: string[], tile: string) {
   );
 }
 
-function normalizeRedFiveForMeldMatch(tile: string) {
-  return /^0[mps]$/.test(tile) ? `5${tile[1]}` : tile;
+function normalizeRedFiveForMeldMatch(tile: PaifuTile) {
+  return tile.rank === 0 ? `5${tile.suit}` : getPaifuTileCode(tile);
 }
 
 function getMeldSidewaysIndex({

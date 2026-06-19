@@ -1,5 +1,5 @@
-import type { AuthSession } from '@/app/auth/AuthSession';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import {
   EMPTY_MEMBER_HUB_OPERATOR,
@@ -35,7 +35,7 @@ export function getClubsById(items: ClubSummary[]) {
 }
 
 export function getFallbackDirectory(
-  session: AuthSession | null,
+  session: AuthContextSession | null,
 ): MemberHubOperatorDirectory {
   const sessionOperatorId =
     session?.user.operatorId ?? session?.user.userId ?? '';

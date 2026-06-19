@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 
 import { Button, StatusPill } from '@/components/ui';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import {
   getPlayerStatusLabel,

@@ -1,8 +1,8 @@
 import { DataTablePanel } from '@/components/ui';
 import { TableCell, TableRow } from '@/components/ui';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
-import type { LoadState } from '../objects/data';
+import type { LoadState } from '../objects/TournamentOps.types';
 
 function getAppealStatusLabel(status: AppealSummary['status']) {
   switch (status) {

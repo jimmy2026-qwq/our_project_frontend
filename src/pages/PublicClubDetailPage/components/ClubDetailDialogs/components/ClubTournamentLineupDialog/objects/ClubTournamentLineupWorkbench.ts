@@ -1,5 +1,5 @@
 import type { TournamentDetailView } from '@/objects/tournament';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import type { EloSort } from './EloSort';
 import type { MemberListItem } from './MemberListItem';

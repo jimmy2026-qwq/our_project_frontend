@@ -1,4 +1,4 @@
-﻿import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 import type { ClubDetailWorkbenchState } from '../../../objects/ClubDetail.types';
@@ -6,7 +6,7 @@ import type { ClubDetailData } from '../hooks/useClubDetailData';
 
 interface BuildClubDetailWorkbenchParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   data: ClubDetailData;
 }
 

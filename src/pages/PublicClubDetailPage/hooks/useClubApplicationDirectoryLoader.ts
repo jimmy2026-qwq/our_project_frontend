@@ -5,7 +5,7 @@ import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import type { ClubDirectoryState } from '../objects/ClubApplication.types';
-import { toClubSummary } from '../objects/ClubDetailClub.mappers';
+import { toClubSummary } from '../functions/ClubDetailClub.mappers';
 
 export function useClubApplicationDirectoryLoader() {
   const loadJoinableClubs =

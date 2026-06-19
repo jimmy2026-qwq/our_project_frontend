@@ -1,9 +1,9 @@
 ﻿import { ReviewClubApplicationAPI } from '@/api/club';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 import { sendAPI } from '@/system/api';
 
 import { upsertTrackedClubApplication } from '../../../functions/getClubApplicationTracker';
-import { toClubApplicationView } from '../../../objects/ClubDetailApplication.mappers';
+import { toClubApplicationView } from '../../../functions/ClubDetailApplication.mappers';
 import type { ClubDetailActionContext } from './useClubDetailActions.types';
 
 export function useClubApplicationActions({

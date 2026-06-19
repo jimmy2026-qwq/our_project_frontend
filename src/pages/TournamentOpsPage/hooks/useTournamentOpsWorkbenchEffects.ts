@@ -1,16 +1,14 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import type {
-  AppealSummary,
-  MatchRecordSummary,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 import type {
   LoadState,
   TournamentDirectoryState,
   TournamentOpsState,
-} from '../objects/data';
+} from '../objects/TournamentOps.types';
 import { useTournamentOpsRefreshNotice } from './useTournamentOpsRefreshNotice';
 import { useTournamentOpsSelectionSync } from './useTournamentOpsSelectionSync';
 import { useTournamentPlayerNamesData } from './useTournamentPlayerNamesData';

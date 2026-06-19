@@ -2,7 +2,7 @@ import { GetPlayerAPI } from '@/api/player';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { sendAPI } from '@/system/api';
 import type { PublicHallViewerContext } from '../../../objects/PublicHallPage.types';
-import { toPlayerProfile } from '../../../objects/PublicHall.mappers';
+import { toPlayerProfile } from '../../../functions/PublicHall.mappers';
 
 export function usePublicHallCurrentPlayer(
   session: PublicHallViewerContext['session'],

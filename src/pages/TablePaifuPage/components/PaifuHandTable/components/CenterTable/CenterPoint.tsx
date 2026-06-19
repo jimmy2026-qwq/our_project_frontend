@@ -1,12 +1,12 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { TablePaifuDetail } from '../../../../types';
+import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import {
   formatPoints,
   getRoundPlayerId,
 } from '../../../../functions/getReplay';
 import { centerPointPositionClasses } from '../../functions/getPaifuTableLayout';
-import type { CenterScoreDisplay } from './CenterTable.types';
+import type { CenterScoreDisplay } from '../../objects/CenterTableDisplay';
 
 interface CenterPointProps {
   isRelativeScoreMode?: boolean;

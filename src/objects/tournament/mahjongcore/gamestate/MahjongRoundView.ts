@@ -1,4 +1,4 @@
-import type { AgariResult, KyokuDescriptor, PaifuTile } from '../../paifumanagement';
+import type { AgariResult, KyokuDescriptor, PaifuTile } from '../../paifu';
 import type { MahjongPendingCallView } from './MahjongPendingCallView';
 import type { MahjongRoundPhase } from './MahjongRoundPhase';
 import type { MahjongTableSticks } from './MahjongTableSticks';

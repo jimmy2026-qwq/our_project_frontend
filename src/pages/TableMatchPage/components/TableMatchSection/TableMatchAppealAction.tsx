@@ -1,7 +1,7 @@
 import { Button } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
-import { getAppealButtonText } from '../../objects/TableMatch.labels';
+import { getAppealButtonText } from '../../functions/TableMatch.labels';
 import type { TableSeat } from '../../objects/TableMatch.types';
 
 interface TableMatchAppealActionProps {

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 
 import { Alert, AlertDescription, AlertTitle, Button } from '@/components/ui';
 
-import { matchBackLinkClassName } from '../objects/TableMatch.labels';
+import { matchBackLinkClassName } from '../functions/TableMatch.labels';
 
 interface TableMatchErrorProps {
   error: string | null;

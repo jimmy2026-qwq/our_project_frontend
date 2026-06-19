@@ -1,16 +1,14 @@
 import { useState } from 'react';
 
-import type {
-  AppealSummary,
-  MatchRecordSummary,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 import {
   DEFAULT_TOURNAMENT_OPS_STATE,
   type LoadState,
   type TournamentOpsState,
-} from '../objects/data';
+} from '../objects/TournamentOps.types';
 import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
 import { useTournamentOpsDirectoryData } from './useTournamentOpsDirectoryData';
 import { useTournamentOpsPanelData } from './useTournamentOpsPanelData';

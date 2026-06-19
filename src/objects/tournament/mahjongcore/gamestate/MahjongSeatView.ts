@@ -1,5 +1,5 @@
-import type { PaifuTile } from '../../paifumanagement';
-import type { SeatWind } from '../../tablemanagement';
+import type { PaifuTile } from '../../paifu';
+import type { SeatWind } from '../../stage/table';
 import type { MahjongDiscard } from './MahjongDiscard';
 import type { MahjongMeld } from './MahjongMeld';
 

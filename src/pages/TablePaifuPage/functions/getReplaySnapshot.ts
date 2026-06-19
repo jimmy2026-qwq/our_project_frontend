@@ -1,6 +1,8 @@
+import { getPaifuRoundActions, getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuRoundSummary, TablePaifuDetail } from '../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import { getReplaySequenceLimit } from './getReplayCore';
 import { applySnapshotAction } from './applyReplaySnapshot';
 import type { MeldGroup, RiverDiscard } from '../objects/ReplaySnapshot.types';
@@ -23,7 +25,7 @@ export function getReplaySnapshot(
   const drawnTileIndexes: Record<string, number | undefined> = {};
   const sequenceLimit = getReplaySequenceLimit(round, replayStep);
 
-  round.actions
+  getPaifuRoundActions(round)
     .filter((action) => action.sequenceNo <= sequenceLimit)
     .forEach((action) => {
       applySnapshotAction({
@@ -43,7 +45,7 @@ export function getReplaySnapshot(
 
 function createInitialHands(round: PaifuRoundSummary) {
   return Object.fromEntries(
-    Object.entries(round.initialHands).map(([playerId, tiles]) => [
+    Object.entries(getPaifuInitialHands(round)).map(([playerId, tiles]) => [
       playerId,
       [...tiles],
     ]),

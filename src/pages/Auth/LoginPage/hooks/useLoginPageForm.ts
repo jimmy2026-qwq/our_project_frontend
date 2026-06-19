@@ -1,13 +1,21 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import {
+  CreateGuestSessionAuthAPI,
+  CurrentSessionAuthAPI,
+  LoginAuthAPI,
+} from '@/api/auth';
+import { mapGuestSession } from '@/app/auth/functions/mapAuthSession';
+import { resolveAuthenticatedAuthSession } from '@/app/auth/functions/resolveAuthenticatedAuthSession';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
+import { sendAPI } from '@/system/api';
 
 import { normalizeAuthInput } from '../../functions/normalizeAuthInput';
 
 export function useLoginPageForm() {
-  const { isReady, session, login, enterGuestMode } = useAuth();
+  const { isReady, session, saveSession } = useAuthContext();
   const { notifyInfo, notifySuccess } = useNotice();
   const navigate = useNavigate();
   const location = useLocation();
@@ -33,10 +41,16 @@ export function useLoginPageForm() {
     setErrorMessage('');
 
     try {
-      const nextSession = await login({
-        username: normalizedUsername,
-        password: normalizedPassword,
-      });
+      const loginResult = await sendAPI(
+        LoginAuthAPI.fromRequest({
+          username: normalizedUsername,
+          password: normalizedPassword,
+        }),
+      );
+      const nextSession = await resolveAuthenticatedAuthSession(
+        loginResult.token,
+      );
+      saveSession(nextSession);
 
       notifySuccess('登录成功', `欢迎回来，${nextSession.user.displayName}。`);
 
@@ -57,7 +71,13 @@ export function useLoginPageForm() {
     setErrorMessage('');
 
     try {
-      await enterGuestMode('Guest');
+      const guestSession = await sendAPI(
+        new CreateGuestSessionAuthAPI({ displayName: 'Guest' }),
+      );
+      const currentSession = await sendAPI(
+        new CurrentSessionAuthAPI({ guestSessionId: guestSession.id }),
+      );
+      saveSession(mapGuestSession(currentSession));
       notifyInfo(
         '已进入游客模式',
         '你可以先浏览公共大厅，登录后再进行完整操作。',

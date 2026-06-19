@@ -5,8 +5,8 @@ import type {
   MahjongRuleset,
   SwissRuleConfig,
 } from '@/objects/tournament';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
 export type DataSource = 'api' | 'mock';
 
@@ -17,7 +17,7 @@ export interface DetailState<T> {
 }
 
 export interface PublicHallViewerContext {
-  session: AuthSession | null;
+  session: AuthContextSession | null;
 }
 
 export interface ClubPublicProfile {

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { ListPublicClubsAPI } from '@/api/club';
 import { ListPublicSchedulesAPI } from '@/api/tournament';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
@@ -17,7 +17,7 @@ import {
 import {
   toPublicClubSummary,
   toPublicSchedule,
-} from '../objects/PublicHall.mappers';
+} from '../functions/PublicHall.mappers';
 import type {
   HomeDataState,
   LoadState,

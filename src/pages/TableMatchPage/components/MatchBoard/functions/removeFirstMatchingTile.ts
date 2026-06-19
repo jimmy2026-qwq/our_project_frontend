@@ -1,8 +1,10 @@
-export function removeFirstMatchingTile(tiles: string[], tile: string) {
+import { isSamePaifuTile, type PaifuTile } from '@/objects';
+
+export function removeFirstMatchingTile(tiles: PaifuTile[], tile: PaifuTile) {
   let removed = false;
 
   return tiles.filter((item) => {
-    if (!removed && item === tile) {
+    if (!removed && isSamePaifuTile(item, tile)) {
       removed = true;
       return false;
     }
@@ -12,8 +14,8 @@ export function removeFirstMatchingTile(tiles: string[], tile: string) {
 }
 
 export function removeFirstMatchingTileBy(
-  tiles: string[],
-  matches: (tile: string) => boolean,
+  tiles: PaifuTile[],
+  matches: (tile: PaifuTile) => boolean,
 ) {
   let removed = false;
 

@@ -14,8 +14,8 @@ import { ApiError } from '@/system/api/http';
 
 import type { ApplicationState } from '../objects/ClubApplication.types';
 import { getTrackedApplication } from '../functions/getTrackedClubApplication';
-import { toClubApplicationViewModel } from '../objects/ClubApplication.mappers';
-import { toClubApplicationView } from '../objects/ClubDetailApplication.mappers';
+import { toClubApplicationViewModel } from '../functions/ClubApplication.mappers';
+import { toClubApplicationView } from '../functions/ClubDetailApplication.mappers';
 
 export function useTrackedClubApplicationLoader() {
   const loadCurrentPendingApplication = useCallback(

@@ -1,7 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { LogoutAuthAPI, RevokeGuestSessionAuthAPI } from '@/api/auth';
+import { readGuestSessionId } from '@/app/auth/functions/authSessionStorage';
+import { useAuthContext } from '@/app/auth/useAuthContext';
+import { sendAPI } from '@/system/api';
 
 import type { PlayerDetailTab } from '../components/PlayerDashboardContent/objects/PlayerDashboardContent.types';
 import { usePlayerDashboardData } from './usePlayerDashboardData';
@@ -9,7 +12,7 @@ import { usePlayerDashboardData } from './usePlayerDashboardData';
 export function usePlayerDashboard() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const { session, logout } = useAuth();
+  const { session, clearSession } = useAuthContext();
   const operatorId = session?.user.operatorId ?? '';
   const [activeTab, setActiveTab] = useState<PlayerDetailTab>(() =>
     resolveInitialTab(searchParams.get('tab')),
@@ -24,7 +27,19 @@ export function usePlayerDashboard() {
   }, [searchParams]);
 
   async function handleLogout() {
-    await logout();
+    if (session) {
+      const guestSessionId = readGuestSessionId(session.token);
+
+      if (guestSessionId) {
+        await sendAPI(
+          new RevokeGuestSessionAuthAPI(guestSessionId, 'guest-exit'),
+        );
+      } else {
+        await sendAPI(new LogoutAuthAPI(session.token));
+      }
+    }
+
+    clearSession();
     navigate('/public');
   }
 

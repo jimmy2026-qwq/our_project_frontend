@@ -1,11 +1,11 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
 import { GetPlayerAPI } from '@/api/player/GetPlayerAPI';
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState } from '../objects/data';
-import { toPlayerProfile } from '../objects/TournamentOps.mappers';
+import type { LoadState } from '../objects/TournamentOps.types';
+import { toPlayerProfile } from '../functions/TournamentOps.mappers';
 
 export function useTournamentPlayerNamesData(
   tables: LoadState<TournamentTableSummary> | null,

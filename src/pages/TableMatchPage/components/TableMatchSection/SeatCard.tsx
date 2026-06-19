@@ -3,7 +3,7 @@ import { StatusPill } from '@/components/ui';
 import {
   getSeatStatusLabel,
   getSeatStatusTone,
-} from '../../objects/TableMatch.labels';
+} from '../../functions/TableMatch.labels';
 
 interface SeatCardProps {
   wind: string;

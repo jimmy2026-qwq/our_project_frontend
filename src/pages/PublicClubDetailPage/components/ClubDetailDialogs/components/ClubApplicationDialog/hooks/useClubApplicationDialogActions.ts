@@ -2,7 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import { useNotice } from '@/app/feedback/useNotice';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 
 import type { HomeClubApplicationState } from '../../../../../objects/ClubApplication.types';
 import { useClubApplicationMutations } from '../../../../../hooks/useClubApplicationMutations';

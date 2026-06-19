@@ -2,4 +2,4 @@
 export { AuthProvider } from './auth/AuthProvider';
 export { AppFeedbackProvider } from './feedback/AppFeedbackProvider';
 export { RealtimeProvider } from './realtime/RealtimeProvider';
-export { DialogProvider } from '@/components/confirmation-dialog/ConfirmationDialogProvider';
+export { ConfirmationDialogProvider } from '@/components/confirmation-dialog/ConfirmationDialogProvider';

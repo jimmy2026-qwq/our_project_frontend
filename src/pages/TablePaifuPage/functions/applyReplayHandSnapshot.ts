@@ -1,10 +1,14 @@
-import type { PaifuAction, PaifuRoundSummary } from '../types';
+import type {
+  PaifuAction,
+  PaifuRound as PaifuRoundSummary,
+  PaifuTile,
+} from '@/objects';
 import { removeFirstTile } from './getReplayCore';
 import { getAddedTileIndex } from './getReplaySnapshotHands';
 
 export function applyHandSnapshot(
   action: PaifuAction,
-  hands: Record<string, string[]>,
+  hands: Record<string, PaifuTile[]>,
   drawnTileIndexes: Record<string, number | undefined>,
   round: PaifuRoundSummary,
 ) {
@@ -20,7 +24,7 @@ export function applyHandSnapshot(
     drawnTileIndexes[action.actor] = getAddedTileIndex({
       afterTiles,
       beforeTiles,
-      preferredTile: action.tile,
+      preferredTile: action.tile ?? undefined,
     });
   } else if (action.handTilesAfterAction) {
     hands[action.actor] = getVisibleHandTilesAfterAction({
@@ -37,7 +41,7 @@ function getVisibleHandTilesAfterAction({
   round,
 }: {
   action: PaifuAction;
-  currentTiles: string[];
+  currentTiles: PaifuTile[];
   round: PaifuRoundSummary;
 }) {
   const afterTiles = [...(action.handTilesAfterAction ?? [])];

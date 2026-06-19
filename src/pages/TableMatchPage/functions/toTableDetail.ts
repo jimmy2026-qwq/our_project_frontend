@@ -1,5 +1,5 @@
 import type { TournamentTableView } from '@/objects';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 export function toTableDetail(item: TournamentTableView): TableDetail {
   return {

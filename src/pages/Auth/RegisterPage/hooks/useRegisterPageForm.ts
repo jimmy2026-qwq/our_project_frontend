@@ -1,13 +1,16 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { RegisterAuthAPI } from '@/api/auth';
+import { resolveAuthenticatedAuthSession } from '@/app/auth/functions/resolveAuthenticatedAuthSession';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
+import { sendAPI } from '@/system/api';
 
 import { normalizeAuthInput } from '../../functions/normalizeAuthInput';
 
 export function useRegisterPageForm() {
-  const { isReady, session, register } = useAuth();
+  const { isReady, session, saveSession } = useAuthContext();
   const { notifySuccess } = useNotice();
   const navigate = useNavigate();
   const [displayName, setDisplayName] = useState('');
@@ -46,11 +49,17 @@ export function useRegisterPageForm() {
     setErrorMessage('');
 
     try {
-      const nextSession = await register({
-        displayName: normalizedDisplayName,
-        username: normalizedUsername,
-        password: normalizedPassword,
-      });
+      const registerResult = await sendAPI(
+        RegisterAuthAPI.fromRequest({
+          displayName: normalizedDisplayName,
+          username: normalizedUsername,
+          password: normalizedPassword,
+        }),
+      );
+      const nextSession = await resolveAuthenticatedAuthSession(
+        registerResult.token,
+      );
+      saveSession(nextSession);
 
       notifySuccess('注册成功', `欢迎你，${nextSession.user.displayName}。`);
       navigate('/', { replace: true });

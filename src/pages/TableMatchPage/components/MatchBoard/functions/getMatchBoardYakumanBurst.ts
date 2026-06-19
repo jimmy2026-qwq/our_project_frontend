@@ -1,11 +1,11 @@
-import type { AgariResult, MahjongSeatView } from '@/objects';
+import type { AgariResult, MahjongSeatView, PaifuTile } from '@/objects';
 import {
   getWinYaku,
   getResultWins,
   isWinOutcome,
 } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { getFirstYakumanYaku } from '@/components/mahjong-result/functions/getFirstYakumanYaku';
-import type { YakumanTileBurstView } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/PaifuOverlays.types';
+import type { YakumanTileBurstView } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/PaifuOverlayViews';
 
 import { removeFirstMatchingTile } from './removeFirstMatchingTile';
 
@@ -90,7 +90,7 @@ function getYakumanBurstTiles({
   featuredTile,
   winnerSeat,
 }: {
-  featuredTile?: string;
+  featuredTile?: PaifuTile;
   winnerSeat?: MahjongSeatView;
 }) {
   const handTiles = winnerSeat?.handTiles ?? [];

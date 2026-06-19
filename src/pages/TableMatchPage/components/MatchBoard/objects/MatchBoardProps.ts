@@ -3,7 +3,7 @@ import type {
   MahjongPublicEventView,
   MahjongTableView,
 } from '@/objects';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 export interface MatchBoardProps {
   actionError: string | null;

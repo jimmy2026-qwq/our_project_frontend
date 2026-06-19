@@ -1,4 +1,4 @@
-import type { AgariResult, MahjongSeatView } from '@/objects';
+import { isSamePaifuTile, type AgariResult, type MahjongSeatView, type PaifuTile } from '@/objects';
 
 export function getResultDisplayHand({
   result,
@@ -6,8 +6,8 @@ export function getResultDisplayHand({
   winnerHand,
 }: {
   result: AgariResult;
-  tile?: string;
-  winnerHand: string[];
+  tile?: PaifuTile;
+  winnerHand: PaifuTile[];
 }) {
   if (result.outcome === 'Tsumo' && tile) {
     return removeFirstTile(winnerHand, tile);
@@ -25,11 +25,11 @@ export function findWinningTileFromTarget(
   return targetSeat?.river?.[targetSeat.river.length - 1]?.tile;
 }
 
-function removeFirstTile(tiles: string[], tile: string) {
+function removeFirstTile(tiles: PaifuTile[], tile: PaifuTile) {
   let removed = false;
 
   return tiles.filter((item) => {
-    if (!removed && item === tile) {
+    if (!removed && isSamePaifuTile(item, tile)) {
       removed = true;
       return false;
     }

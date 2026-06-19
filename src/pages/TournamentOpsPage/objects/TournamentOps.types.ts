@@ -1,5 +1,5 @@
 import type { ListEnvelope, TableStatus } from '@/objects';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 export type DataSource = 'api' | 'mock';
 

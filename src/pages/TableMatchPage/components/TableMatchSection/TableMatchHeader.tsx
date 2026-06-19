@@ -1,12 +1,12 @@
 import { Link } from 'react-router-dom';
 
 import { Badge, Button, StatusPill } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import {
   getTableStatusLabel,
   matchBackLinkClassName,
-} from '../../objects/TableMatch.labels';
+} from '../../functions/TableMatch.labels';
 import type { TableSeat } from '../../objects/TableMatch.types';
 
 interface TableMatchHeaderProps {

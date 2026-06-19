@@ -1,8 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { BootstrapSuperAdminAuthAPI } from '@/api/auth';
+import { resolveAuthenticatedAuthSession } from '@/app/auth/functions/resolveAuthenticatedAuthSession';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
+import { sendAPI } from '@/system/api';
 
 import { normalizeAuthInput } from '../../functions/normalizeAuthInput';
 
@@ -45,7 +48,7 @@ function mapSuperAdminSetupError(error: unknown) {
 }
 
 export function useSuperAdminSetupForm() {
-  const { isReady, session, bootstrapSuperAdmin } = useAuth();
+  const { isReady, session, saveSession } = useAuthContext();
   const { notifySuccess } = useNotice();
   const navigate = useNavigate();
   const [bootstrapKey, setBootstrapKey] = useState('');
@@ -83,12 +86,18 @@ export function useSuperAdminSetupForm() {
     setErrorMessage('');
 
     try {
-      const nextSession = await bootstrapSuperAdmin({
-        bootstrapKey: normalizedBootstrapKey,
-        displayName: normalizedDisplayName,
-        username: normalizedUsername,
-        password: normalizedPassword,
-      });
+      const bootstrapResult = await sendAPI(
+        BootstrapSuperAdminAuthAPI.fromRequest({
+          bootstrapKey: normalizedBootstrapKey,
+          displayName: normalizedDisplayName,
+          username: normalizedUsername,
+          password: normalizedPassword,
+        }),
+      );
+      const nextSession = await resolveAuthenticatedAuthSession(
+        bootstrapResult.token,
+      );
+      saveSession(nextSession);
 
       notifySuccess('超管初始化完成', '欢迎你，' + nextSession.user.displayName + '。');
       navigate('/public', { replace: true });

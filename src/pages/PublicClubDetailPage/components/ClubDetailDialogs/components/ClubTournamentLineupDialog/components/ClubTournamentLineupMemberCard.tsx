@@ -6,7 +6,7 @@ function getPlayerStatusLabel(status?: string) {
   switch (status) {
     case 'Active':
       return '活跃';
-    case 'Inactive':
+    case 'Suspended':
       return '停用';
     case 'Banned':
       return '封禁';

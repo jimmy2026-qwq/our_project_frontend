@@ -1,8 +1,8 @@
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useShowcaseMode } from '@/app/showcaseMode';
 
 export function ShowcaseModeToggle() {
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const [enabled, setEnabled] = useShowcaseMode();
 
   if (!session?.user.roles.isSuperAdmin) {

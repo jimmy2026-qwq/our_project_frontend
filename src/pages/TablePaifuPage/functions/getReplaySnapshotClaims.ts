@@ -1,6 +1,7 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuAction, TablePaifuDetail } from '../types';
+import { isSamePaifuTile, type PaifuAction, type PaifuTile } from '@/objects';
+import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import type { RiverDiscard } from '../objects/ReplaySnapshot.types';
 import { seatOrder } from './getReplayCore';
 import { getPlayerSeat } from './getReplayPlayers';
@@ -22,7 +23,7 @@ export function claimDiscard({
     return explicitClaim;
   }
 
-  return claimLegacyDiscard(rivers, callerSeat, action.tile);
+  return claimLegacyDiscard(rivers, callerSeat, action.tile ?? undefined);
 }
 
 function claimExplicitDiscard({
@@ -70,7 +71,7 @@ function claimDiscardBySequenceNo(
 function claimDiscardFromSeat(
   rivers: Record<SeatWind, RiverDiscard[]>,
   seat: SeatWind,
-  tile: string,
+  tile: PaifuTile,
 ) {
   const claimedIndex = findLastDiscardIndex(rivers[seat], tile);
 
@@ -82,7 +83,7 @@ function claimDiscardFromSeat(
 function claimLegacyDiscard(
   rivers: Record<SeatWind, RiverDiscard[]>,
   callerSeat: SeatWind,
-  tile?: string,
+  tile?: PaifuTile,
 ) {
   if (!tile) {
     return undefined;
@@ -114,9 +115,9 @@ function removeClaimedDiscard(
   return discard ? { discard, seat } : undefined;
 }
 
-function findLastDiscardIndex(river: RiverDiscard[], tile: string) {
+function findLastDiscardIndex(river: RiverDiscard[], tile: PaifuTile) {
   for (let index = river.length - 1; index >= 0; index -= 1) {
-    if (river[index]?.tile === tile) {
+    if (river[index]?.tile && isSamePaifuTile(river[index].tile, tile)) {
       return index;
     }
   }

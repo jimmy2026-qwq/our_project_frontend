@@ -2,9 +2,10 @@ import type { SeatWind } from '@/objects/tournament';
 
 import type {
   PaifuAction,
-  PaifuRoundSummary,
-  TablePaifuDetail,
-} from '../types';
+  PaifuRound as PaifuRoundSummary,
+  PaifuTile,
+} from '@/objects';
+import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import { removeFirstTile } from './getReplayCore';
 import { getPlayerSeat } from './getReplayPlayers';
 import { applyHandSnapshot } from './applyReplayHandSnapshot';
@@ -28,7 +29,7 @@ export function applySnapshotAction({
 }: {
   action: PaifuAction;
   drawnTileIndexes: Record<string, number | undefined>;
-  hands: Record<string, string[]>;
+  hands: Record<string, PaifuTile[]>;
   melds: Record<SeatWind, MeldGroup[]>;
   paifu: TablePaifuDetail;
   pendingRiichiSideways: Record<SeatWind, boolean>;
@@ -78,7 +79,7 @@ function applyRiverSnapshot({
   action: PaifuAction;
   actorSeat: SeatWind;
   drawnTileIndexes: Record<string, number | undefined>;
-  hands: Record<string, string[]>;
+  hands: Record<string, PaifuTile[]>;
   pendingRiichiSideways: Record<SeatWind, boolean>;
   rivers: Record<SeatWind, RiverDiscard[]>;
 }) {

@@ -4,7 +4,7 @@ import { AppealListAPI } from '@/api/tournament';
 import type { AppealListQuery } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import { toAppealSummary } from '../objects/PlayerDashboard.mappers';
+import { toAppealSummary } from '../functions/PlayerDashboard.mappers';
 
 function getAppeals(filters: AppealListQuery) {
   return sendAPI(new AppealListAPI(filters)).then((envelope) => ({

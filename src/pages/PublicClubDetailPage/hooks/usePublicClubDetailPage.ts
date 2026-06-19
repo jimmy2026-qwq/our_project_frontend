@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 
 import { useClubDetailWorkbench } from '../components/ClubDetailContent/hooks/useClubDetailWorkbench';
@@ -10,7 +10,7 @@ import { useClubDetail } from './useClubDetail';
 export function usePublicClubDetailPage() {
   const navigate = useNavigate();
   const { clubId } = useParams();
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const { state, isLoading, refresh } = useClubDetail(clubId, { session });
   const handleRealtimeRefresh = useCallback(() => {
     refresh();

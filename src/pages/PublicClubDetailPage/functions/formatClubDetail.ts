@@ -1,5 +1,5 @@
 import type { TournamentStatus } from '@/objects';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
   Draft: '未发布',

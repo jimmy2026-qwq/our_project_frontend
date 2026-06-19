@@ -1,6 +1,6 @@
 import { Button, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 
 const heroActionClassName =
   'min-h-[42px] min-w-[132px] px-4 text-center text-[0.9rem] leading-5';

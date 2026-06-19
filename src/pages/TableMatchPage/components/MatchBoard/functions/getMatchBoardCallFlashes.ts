@@ -8,7 +8,7 @@ import { getResultWins, isWinOutcome } from '@/components/mahjong-result/functio
 import type {
   ActiveOperation,
   WinningCallFlashView,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/PaifuOverlays.types';
+} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/PaifuOverlayViews';
 
 import { winningCallAnimationMs } from './matchBoardTiming';
 

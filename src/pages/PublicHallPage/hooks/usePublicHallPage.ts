@@ -1,6 +1,6 @@
 import { useCallback, useReducer, useState } from 'react';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 
 import { usePublicHallCurrentPlayer } from '../components/PublicHallLobby/hooks/usePublicHallCurrentPlayer';
 import type {
@@ -14,7 +14,7 @@ import { usePublicHallRefreshNotice } from './usePublicHallRefreshNotice';
 
 export function usePublicHallPage() {
   const { state, setState } = usePublicHallState();
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const operatorId = session?.user.operatorId ?? '';
   const [reloadKey, forceReload] = useReducer((value) => value + 1, 0);
   const [pendingRefresh, setPendingRefresh] = useState(false);

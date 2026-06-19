@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { GetPublicTournamentAPI } from '@/api/tournament';
 import { TournamentGetAPI } from '@/api/tournament';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 
 import type {
@@ -12,7 +12,7 @@ import type {
 import {
   toPublicTournamentDetail,
   toTournamentDetailFromAdminView,
-} from '../../../objects/TournamentDetailTournament.mappers';
+} from '../../../functions/TournamentDetailTournament.mappers';
 
 export async function loadTournamentProfileForWorkbench(tournamentId: string) {
   try {
@@ -62,7 +62,7 @@ export function useTournamentProfileData({
   session,
 }: {
   state: DetailState<TournamentPublicProfile>;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
 }) {
   const [localProfile, setLocalProfile] =
     useState<TournamentPublicProfile | null>(state.item);

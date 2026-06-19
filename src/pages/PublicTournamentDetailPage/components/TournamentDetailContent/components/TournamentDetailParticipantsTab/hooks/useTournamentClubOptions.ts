@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { GetPublicClubAPI, ListPublicClubsAPI, ListClubsAPI } from '@/api/club';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
@@ -10,7 +10,7 @@ import {
   toClubSummary,
   toPublicClubDetail,
   toPublicClubSummary,
-} from '../../../../../objects/TournamentDetailClub.mappers';
+} from '../../../../../functions/TournamentDetailClub.mappers';
 import type {
   DetailState,
   TournamentPublicProfile,
@@ -26,7 +26,7 @@ export function useTournamentClubOptions({
   state,
 }: {
   localProfile: TournamentPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   state: DetailState<TournamentPublicProfile>;
 }) {
   const [availableClubs, setAvailableClubs] = useState<ClubSummary[]>([]);

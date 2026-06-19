@@ -2,14 +2,14 @@ import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { TournamentWhitelistListAPI } from '@/api/tournament';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
 import type {
   DetailState,
   TournamentPublicProfile,
 } from '../../../../../objects/PublicTournamentDetailPage.types';
-import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
 
 export function useTournamentParticipantData({
   localProfile,

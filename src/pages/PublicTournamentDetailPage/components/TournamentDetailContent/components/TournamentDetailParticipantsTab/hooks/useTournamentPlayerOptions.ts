@@ -1,14 +1,14 @@
 import { useEffect, useState } from 'react';
 
 import { ListPlayersAPI } from '@/api/player';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
 
-export function useTournamentPlayerOptions(session: AuthSession | null) {
+export function useTournamentPlayerOptions(session: AuthContextSession | null) {
   const [availablePlayers, setAvailablePlayers] = useState<PlayerProfile[]>([]);
   const [selectedPlayerId, setSelectedPlayerId] = useState('');
 

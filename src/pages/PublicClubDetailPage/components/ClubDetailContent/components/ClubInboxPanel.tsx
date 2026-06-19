@@ -1,6 +1,6 @@
 import { EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 
 import { formatDateTime } from '../../../functions/formatClubDetail';
 import { clubPanelClassNames } from '../styles';

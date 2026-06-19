@@ -1,8 +1,8 @@
-﻿import { useMemo } from 'react';
+import { useMemo } from 'react';
 
-import { useDialog } from '@/app/dialog/useDialog';
+import { useConfirmationDialogActions } from '@/components/confirmation-dialog/useConfirmationDialogActions';
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import type {
   ClubPublicProfile,
   DetailState,
@@ -14,7 +14,7 @@ import { buildClubDetailWorkbench } from '../functions/buildClubDetailWorkbench'
 
 interface UseClubDetailWorkbenchParams {
   state: DetailState<ClubPublicProfile> | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   onRefreshDetail?: () => void;
 }
 
@@ -23,7 +23,7 @@ export function useClubDetailWorkbench({
   session,
   onRefreshDetail,
 }: UseClubDetailWorkbenchParams) {
-  const { confirmDanger } = useDialog();
+  const { confirmDanger } = useConfirmationDialogActions();
   const { notifyMutationResult } = useMutationNotice();
   const profile = state?.item ?? null;
   const data = useClubDetailData({ profile, session });

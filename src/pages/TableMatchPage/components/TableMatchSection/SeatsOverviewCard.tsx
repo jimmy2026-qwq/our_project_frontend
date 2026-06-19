@@ -6,13 +6,13 @@ import {
   CardTitle,
   StatusPill,
 } from '@/components/ui';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import {
   getSeatStatusLabel,
   getSeatStatusTone,
   getTableStatusLabel,
-} from '../../objects/TableMatch.labels';
+} from '../../functions/TableMatch.labels';
 import type { TableSeat, TableSeatMap } from '../../objects/TableMatch.types';
 import { SeatCard } from './SeatCard';
 

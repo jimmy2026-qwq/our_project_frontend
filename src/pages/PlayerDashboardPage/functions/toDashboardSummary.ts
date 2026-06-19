@@ -1,5 +1,5 @@
 import type { Dashboard, DashboardOwner } from '@/objects/opsanalytics';
-import type { DashboardSummary } from '@/pages/objects/OpsAnalyticsDashboard';
+import type { DashboardSummary } from '@/pages/shared_objects/dashboard/OpsAnalyticsDashboard';
 
 function formatPercent(value: number) {
   return (value * 100).toFixed(1) + '%';

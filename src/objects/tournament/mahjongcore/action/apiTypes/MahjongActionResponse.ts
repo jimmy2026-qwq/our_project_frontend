@@ -1,4 +1,4 @@
-import type { PaifuId } from '../../../paifumanagement';
+import type { PaifuId } from '../../../paifu';
 import type { MahjongTableView } from '../../gamestate';
 import type { MahjongPublicEventView } from '../MahjongPublicEventView';
 

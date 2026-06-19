@@ -2,11 +2,11 @@ import { type ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateClubAPI } from '@/api/club';
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
 import { sendAPI } from '@/system/api';
 
-import { toPublicClubSummary } from '../../../../objects/PublicHall.mappers';
+import { toPublicClubSummary } from '../../../../functions/PublicHall.mappers';
 
 export function useCreateClubDialogAction({
   open,
@@ -16,7 +16,7 @@ export function useCreateClubDialogAction({
   onOpenChange: (open: boolean) => void;
 }) {
   const navigate = useNavigate();
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const { notifySuccess, notifyWarning } = useNotice();
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);

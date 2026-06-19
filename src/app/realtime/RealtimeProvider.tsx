@@ -1,6 +1,6 @@
 import { useEffect, type ReactNode } from 'react';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 
 import {
   realtimeBrowserEventName,
@@ -8,7 +8,7 @@ import {
 } from './RealtimeEvent';
 
 export function RealtimeProvider({ children }: { children: ReactNode }) {
-  const { isReady, session } = useAuth();
+  const { isReady, session } = useAuthContext();
 
   useEffect(() => {
     if (!isReady) {

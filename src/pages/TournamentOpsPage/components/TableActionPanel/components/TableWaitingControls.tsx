@@ -6,7 +6,7 @@ import {
   TextareaField,
 } from '@/components/ui';
 import type { SeatWind } from '@/objects/tournament';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 interface TableWaitingControlsProps {
   canOperate: boolean;

@@ -11,7 +11,7 @@ import type {
 } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 
-import { toPublicTournamentDetail } from '../../../../../objects/ClubDetailTournament.mappers';
+import { toPublicTournamentDetail } from '../../../../../functions/ClubDetailTournament.mappers';
 import {
   createFallbackTournamentDetailForLineup,
   getSelectedPlayerIds,

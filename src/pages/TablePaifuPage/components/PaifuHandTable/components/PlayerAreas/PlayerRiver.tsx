@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 
+import { getPaifuTileCode } from '@/objects';
 import type { SeatWind } from '@/objects/tournament';
 
 import type { RiverDiscard } from '../../../../objects/ReplaySnapshot.types';
@@ -35,7 +36,7 @@ export function PlayerRiver({
     >
       {discards.map((discard, index) => (
         <RiverTile
-          key={`${seat}-river-${discard.tile}-${index}`}
+          key={`${seat}-river-${getPaifuTileCode(discard.tile)}-${index}`}
           discard={discard}
           seat={seat}
           style={getRiverTileStyle(index, seat, discards, anchorRowCount)}

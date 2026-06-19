@@ -11,7 +11,7 @@ import type {
 } from '../objects/PublicClubDetailPage.types';
 import { sendAPI } from '@/system/api';
 
-import { toPublicClubDetail } from '../objects/ClubDetailClub.mappers';
+import { toPublicClubDetail } from '../functions/ClubDetailClub.mappers';
 
 async function resolveClubViewerId(
   fallbackViewerId?: string,

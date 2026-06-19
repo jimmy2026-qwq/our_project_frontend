@@ -1,4 +1,4 @@
-import type { TableId } from '../../tablemanagement';
+import type { TableId } from '../../stage/table';
 import type { MahjongLegalAction, MahjongPublicEventView } from '../action';
 import type { MahjongRoundView } from './MahjongRoundView';
 import type { MahjongRuleset } from './MahjongRuleset';

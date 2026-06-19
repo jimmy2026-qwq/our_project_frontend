@@ -6,10 +6,8 @@ import {
 } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import { PaifuSummaryDialog } from '@/components/mahjong-result/PaifuSummaryDialog';
-import type {
-  MatchRecordSummary,
-  TableDetail,
-} from '@/pages/objects/TournamentViews';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
 import type {

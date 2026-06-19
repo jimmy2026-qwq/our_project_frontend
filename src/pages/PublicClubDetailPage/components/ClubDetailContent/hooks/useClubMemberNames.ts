@@ -4,7 +4,7 @@ import { ListClubMembersAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toPlayerProfile } from '../../../objects/ClubDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../functions/ClubDetailPlayer.mappers';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 export function useClubMemberNames(profile: ClubPublicProfile | null) {

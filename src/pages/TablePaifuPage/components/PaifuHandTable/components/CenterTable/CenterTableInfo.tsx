@@ -1,4 +1,8 @@
-import type { PaifuRoundSummary } from '../../../../types';
+import {
+  getPaifuTileCode,
+  type PaifuRound as PaifuRoundSummary,
+  type PaifuTile,
+} from '@/objects';
 import {
   getDoraIndicators,
   getRemainingTileCount,
@@ -6,7 +10,7 @@ import {
 } from '../../../../functions/getReplay';
 import { DoraIndicatorTile } from '../TileViews';
 import { BangziCounter, RemainingTileCount } from './CenterTableCounters';
-import type { TableStickDisplay } from './CenterTable.types';
+import type { TableStickDisplay } from '../../objects/CenterTableDisplay';
 
 interface CenterTableInfoProps {
   isExhaustiveDrawResult: boolean;
@@ -59,7 +63,7 @@ function DoraAndStickCounters({
   doraIndicators,
   tableSticks,
 }: {
-  doraIndicators: string[];
+  doraIndicators: PaifuTile[];
   tableSticks: TableStickDisplay;
 }) {
   return (
@@ -76,7 +80,10 @@ function DoraAndStickCounters({
         <div className="flex h-[45px] min-w-[90px] items-center justify-center gap-0">
           {doraIndicators.length > 0 ? (
             doraIndicators.map((tile, index) => (
-              <DoraIndicatorTile key={`${tile}-${index}`} tile={tile} />
+              <DoraIndicatorTile
+                key={`${getPaifuTileCode(tile)}-${index}`}
+                tile={tile}
+              />
             ))
           ) : (
             <span className="grid h-[36px] min-w-[26px] place-items-center rounded bg-[rgba(255,255,255,0.08)] text-xs text-[#9ab0c1]">

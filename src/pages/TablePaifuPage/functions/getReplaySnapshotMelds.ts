@@ -1,6 +1,11 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuAction } from '../types';
+import {
+  isSamePaifuTile,
+  PaifuTileSuit,
+  type PaifuAction,
+  type PaifuTile,
+} from '@/objects';
 import type { MeldTile } from '../objects/ReplaySnapshot.types';
 import { removeFirstMatchingTile } from './getReplaySnapshotHands';
 import { getOpenMeldSidewaysIndex } from './getReplaySnapshotRelations';
@@ -18,12 +23,12 @@ export function getOpenMeldTiles({
   const revealedTiles =
     action.revealedTiles.length > 0
       ? [...action.revealedTiles]
-      : repeatTile(action.tile, fallbackCount);
+      : repeatTile(action.tile ?? undefined, fallbackCount);
   const tiles =
     action.actionType === 'Chi'
       ? [
           ...(action.tile ? [action.tile] : []),
-          ...removeFirstMatchingTile(revealedTiles, action.tile),
+          ...removeFirstMatchingTile(revealedTiles, action.tile ?? undefined),
         ]
       : revealedTiles;
   const sidewaysIndex = getOpenMeldSidewaysIndex({
@@ -46,7 +51,9 @@ export function getClosedKanTiles(action: PaifuAction): MeldTile[] {
       ? [...action.revealedTiles]
       : repeatTile(baseTile, 4);
   const visibleSecondTile =
-    revealedTiles[1] && revealedTiles[1] !== baseTile
+    revealedTiles[1] &&
+    baseTile &&
+    !isSamePaifuTile(revealedTiles[1], baseTile)
       ? revealedTiles[1]
       : getRedFiveTile(baseTile);
   const tiles = [
@@ -54,7 +61,7 @@ export function getClosedKanTiles(action: PaifuAction): MeldTile[] {
     visibleSecondTile,
     revealedTiles[2] ?? baseTile,
     revealedTiles[3] ?? baseTile,
-  ].filter((tile): tile is string => Boolean(tile));
+  ].filter((tile): tile is PaifuTile => Boolean(tile));
 
   return tiles.map((tile, index) => ({
     tile,
@@ -80,16 +87,18 @@ export function isKanAction(action: PaifuAction) {
   );
 }
 
-function getRedFiveTile(tile?: string) {
-  if (!tile || !tile.startsWith('5')) {
+function getRedFiveTile(tile?: PaifuTile) {
+  if (
+    !tile ||
+    tile.rank !== 5 ||
+    tile.suit === PaifuTileSuit.Honor
+  ) {
     return tile;
   }
 
-  const suit = tile.slice(1);
-
-  return suit === 'm' || suit === 'p' || suit === 's' ? `0${suit}` : tile;
+  return { rank: 0, suit: tile.suit };
 }
 
-function repeatTile(tile: string | undefined, count: number) {
+function repeatTile(tile: PaifuTile | undefined, count: number) {
   return tile ? Array.from({ length: count }, () => tile) : [];
 }

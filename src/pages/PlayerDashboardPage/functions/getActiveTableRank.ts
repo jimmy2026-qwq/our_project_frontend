@@ -1,4 +1,4 @@
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 export function getActiveTableRank(status: TournamentTableSummary['status']) {
   switch (status) {

@@ -1,6 +1,6 @@
 import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplay';
 
-import type { TablePaifuDetail } from '../../../../types';
+import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 
 interface PaifuFinalSettlementOverlayProps {
   onConfirm: () => void;

@@ -2,10 +2,8 @@ import { Link } from 'react-router-dom';
 
 import { StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type {
-  MatchRecordSummary,
-  TableDetail,
-} from '@/pages/objects/TournamentViews';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
 import {

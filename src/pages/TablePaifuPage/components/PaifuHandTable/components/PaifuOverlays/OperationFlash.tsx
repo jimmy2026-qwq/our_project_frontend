@@ -1,5 +1,5 @@
 import { operationPositionClasses } from '../../functions/getPaifuTableLayout';
-import type { ActiveOperation } from './PaifuOverlays.types';
+import type { ActiveOperation } from '../../objects/PaifuOverlayViews';
 
 export function OperationFlash({ operation }: { operation?: ActiveOperation }) {
   if (!operation) {

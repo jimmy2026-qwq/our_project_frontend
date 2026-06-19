@@ -8,7 +8,7 @@ import type { TournamentDetailState } from '../objects/PublicTournamentDetailPag
 import {
   toPublicTournamentDetail,
   toTournamentDetailFromAdminView,
-} from '../objects/TournamentDetailTournament.mappers';
+} from '../functions/TournamentDetailTournament.mappers';
 
 async function loadTournamentDetail(
   tournamentId: string,

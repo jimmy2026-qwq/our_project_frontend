@@ -2,12 +2,10 @@
 import { TournamentTableResetAPI } from '@/api/tournament/TournamentTableResetAPI';
 import { TournamentTableStartAPI } from '@/api/tournament/TournamentTableStartAPI';
 import { TournamentTableUpdateSeatStateAPI } from '@/api/tournament/TournamentTableUpdateSeatStateAPI';
-import { useDialog } from '@/app/dialog/useDialog';
+import { useConfirmationDialogActions } from '@/components/confirmation-dialog/useConfirmationDialogActions';
 
-import type {
-  TableDetail,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import type { SeatWind } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 import { useTableActionRunner } from './useTableActionRunner';
@@ -44,7 +42,7 @@ export function useTournamentTableActions({
   setActionError,
   setIsSubmittingAction,
 }: TournamentTableActionsParams) {
-  const { confirmDanger } = useDialog();
+  const { confirmDanger } = useConfirmationDialogActions();
   const { runTableAction } = useTableActionRunner({
     onRefresh,
     setActionError,

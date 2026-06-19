@@ -1,6 +1,12 @@
+import { getPaifuRoundActions } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuAction, PaifuRoundSummary } from '../types';
+import {
+  isSamePaifuTile,
+  type PaifuAction,
+  type PaifuRound as PaifuRoundSummary,
+  type PaifuTile,
+} from '@/objects';
 
 export const seatOrder: SeatWind[] = ['East', 'South', 'West', 'North'];
 
@@ -38,7 +44,7 @@ export function formatYakuValue(han: number) {
 }
 
 export function getReplayActions(round: PaifuRoundSummary) {
-  return round.actions.filter((action) =>
+  return getPaifuRoundActions(round).filter((action) =>
     Boolean(
       action.actor &&
       (action.actionType === 'Discard' ||
@@ -105,11 +111,14 @@ function isRiichiDeclarationRon(round: PaifuRoundSummary, action: PaifuAction) {
     return false;
   }
 
-  return round.actions.some(
+  const actionTile = action.tile;
+
+  return getPaifuRoundActions(round).some(
     (item) =>
       item.actionType === 'Win' &&
       item.sequenceNo > action.sequenceNo &&
-      item.tile === action.tile,
+      item.tile &&
+      isSamePaifuTile(item.tile, actionTile),
   );
 }
 
@@ -117,7 +126,7 @@ export function getAcceptedRiichiActions(
   round: PaifuRoundSummary,
   sequenceLimit = Number.POSITIVE_INFINITY,
 ) {
-  return round.actions.filter(
+  return getPaifuRoundActions(round).filter(
     (action) =>
       action.actionType === 'Riichi' &&
       action.actor &&
@@ -132,14 +141,14 @@ export function getDoraIndicators(
 ) {
   const sequenceLimit = getReplaySequenceLimit(round, replayStep);
 
-  return round.actions
+  return getPaifuRoundActions(round)
     .filter(
       (action) =>
         action.actionType === 'DoraReveal' &&
         action.tile &&
         action.sequenceNo <= sequenceLimit,
     )
-    .map((action) => action.tile as string);
+    .map((action) => action.tile as PaifuTile);
 }
 
 export function getVisibleDoraIndicatorCount(
@@ -154,7 +163,7 @@ export function getRemainingTileCount(
   replayStep: number,
 ) {
   const sequenceLimit = getReplaySequenceLimit(round, replayStep);
-  const drawCount = round.actions.filter(
+  const drawCount = getPaifuRoundActions(round).filter(
     (action) =>
       action.actionType === 'Draw' && action.sequenceNo <= sequenceLimit,
   ).length;
@@ -166,8 +175,8 @@ export function isWinningRound(round: PaifuRoundSummary) {
   return round.result.outcome === 'Ron' || round.result.outcome === 'Tsumo';
 }
 
-export function removeFirstTile(tiles: string[], tile: string) {
-  const targetIndex = tiles.findIndex((item) => item === tile);
+export function removeFirstTile(tiles: PaifuTile[], tile: PaifuTile) {
+  const targetIndex = tiles.findIndex((item) => isSamePaifuTile(item, tile));
 
   if (targetIndex < 0) {
     return tiles;

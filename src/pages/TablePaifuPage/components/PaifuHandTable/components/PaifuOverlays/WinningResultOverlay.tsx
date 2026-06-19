@@ -1,7 +1,9 @@
-import type {
-  PaifuAction,
-  PaifuRoundSummary,
-} from '../../../../types';
+import { getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
+import {
+  getPaifuTileCode,
+  type PaifuAction,
+  type PaifuRound as PaifuRoundSummary,
+} from '@/objects';
 import { useEffect, useState } from 'react';
 import {
   advanceResultSequenceStep,
@@ -88,7 +90,7 @@ export function WinningResultOverlay({
   }
 
   const winnerHand =
-    replaySnapshot.hands[winnerId] ?? round.initialHands[winnerId] ?? [];
+    replaySnapshot.hands[winnerId] ?? getPaifuInitialHands(round)[winnerId] ?? [];
   const displayHand = round.result.outcome === 'Tsumo' && winningTile
     ? removeFirstTile(winnerHand, winningTile)
     : winnerHand;
@@ -132,7 +134,7 @@ export function WinningResultOverlay({
           <div className="flex items-end justify-center gap-0">
             {displayHand.map((tile, index) => (
               <ResultTile
-                key={`${winnerId}-result-${tile}-${index}`}
+                key={`${winnerId}-result-${getPaifuTileCode(tile)}-${index}`}
                 tile={tile}
               />
             ))}

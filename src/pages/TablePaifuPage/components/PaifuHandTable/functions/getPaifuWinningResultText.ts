@@ -1,7 +1,7 @@
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { isNagashiManganWin } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
-import type { PaifuRoundSummary } from '../../../types';
+import { HandOutcome, type PaifuRound as PaifuRoundSummary } from '@/objects';
 import { formatPoints } from '../../../functions/getReplay';
 
 export function getWinLabel(
@@ -12,7 +12,7 @@ export function getWinLabel(
     return '流局满贯';
   }
 
-  return round.result.outcome === 'Tsumo' ? '自摸' : '荣和';
+  return round.result.outcome === HandOutcome.Tsumo ? '自摸' : '荣和';
 }
 
 export function getPlayerName(

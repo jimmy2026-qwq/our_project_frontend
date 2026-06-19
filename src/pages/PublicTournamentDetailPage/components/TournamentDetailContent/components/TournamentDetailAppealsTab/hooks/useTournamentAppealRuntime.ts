@@ -5,14 +5,14 @@ import {
   AppealListAPI,
   AppealUpdateWorkflowAPI,
 } from '@/api/tournament';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
 import type { AppealDecisionType } from '../../../../../objects/TournamentDetailView.types';
 import { getAppealDecisionLabel } from '../../../../../functions/getTournamentDetailView';
-import { toAppealSummary } from '../../../../../objects/TournamentDetailAppeal.mappers';
+import { toAppealSummary } from '../../../../../functions/TournamentDetailAppeal.mappers';
 
 export function useTournamentAppealRuntime({
   operatorId,

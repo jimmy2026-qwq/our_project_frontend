@@ -1,4 +1,4 @@
-import type { PaifuActionType, PaifuTile } from '../../paifumanagement';
+import type { PaifuActionType, PaifuTile } from '../../paifu';
 
 export interface MahjongPublicEventView {
   sequenceNo: number;

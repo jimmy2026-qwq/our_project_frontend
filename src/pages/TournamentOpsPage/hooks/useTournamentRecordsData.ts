@@ -6,11 +6,11 @@ import type {
   MatchRecordListQuery,
   TournamentMatchRecordView,
 } from '@/objects';
-import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState, TournamentOpsState } from '../objects/data';
-import { toMatchRecordSummary } from '../objects/TournamentOps.mappers';
+import type { LoadState, TournamentOpsState } from '../objects/TournamentOps.types';
+import { toMatchRecordSummary } from '../functions/TournamentOps.mappers';
 
 export function useTournamentRecordsData(
   state: TournamentOpsState,

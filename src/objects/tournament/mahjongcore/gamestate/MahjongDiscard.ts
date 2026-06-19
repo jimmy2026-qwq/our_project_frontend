@@ -1,4 +1,4 @@
-import type { PaifuTile } from '../../paifumanagement';
+import type { PaifuTile } from '../../paifu';
 
 export interface MahjongDiscard {
   sequenceNo: number;

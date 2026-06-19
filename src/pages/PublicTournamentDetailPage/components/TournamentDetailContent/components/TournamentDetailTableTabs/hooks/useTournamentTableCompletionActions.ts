@@ -6,11 +6,11 @@ import {
   TournamentTableUploadPaifuAPI,
 } from '@/api/tournament';
 import { createDemoTablePaifuForTable } from '@/pages/TablePaifuPage/demo';
-import { toBackendPaifu } from '@/pages/TablePaifuPage/objects/TablePaifuData.mappers';
+import { toBackendPaifu } from '@/pages/TablePaifuPage/functions/TablePaifuData.mappers';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
-import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
+import { toTableDetail } from '../../../../../functions/TournamentDetailTable.mappers';
 
 export function useTournamentTableCompletionActions({
   operatorId,

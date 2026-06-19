@@ -1,4 +1,4 @@
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 export const participantText = {
   participants: '\u53c2\u8d5b\u540d\u5355',
@@ -50,7 +50,7 @@ export function getPlayerStatusLabel(status?: string) {
   switch (status) {
     case 'Active':
       return participantText.active;
-    case 'Inactive':
+    case 'Suspended':
       return participantText.inactive;
     case 'Banned':
       return participantText.banned;

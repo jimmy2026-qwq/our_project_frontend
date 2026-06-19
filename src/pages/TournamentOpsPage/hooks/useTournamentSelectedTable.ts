@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
-import type { LoadState } from '../objects/data';
+import type { LoadState } from '../objects/TournamentOps.types';
 
 export function useTournamentSelectedTable(
   tables: LoadState<TournamentTableSummary> | null,

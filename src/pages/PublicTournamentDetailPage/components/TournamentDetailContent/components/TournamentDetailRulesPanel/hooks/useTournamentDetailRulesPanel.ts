@@ -4,7 +4,7 @@ import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import { toPlayerProfile } from '../../../../../objects/TournamentDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
 import {
   describeRuleDetails,
   getCurrentRuleStage,

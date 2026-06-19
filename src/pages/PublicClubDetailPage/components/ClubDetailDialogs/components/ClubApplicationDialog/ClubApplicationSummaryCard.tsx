@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { StatusPill } from '@/components/ui';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 
 import { formatDateTime } from '../../../../functions/getClubApplicationDisplay';
 

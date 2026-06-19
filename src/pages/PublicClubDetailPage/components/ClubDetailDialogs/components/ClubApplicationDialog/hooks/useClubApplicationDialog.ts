@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useAuth } from '@/app/auth/useAuth';
-import type { ClubApplication } from '@/pages/objects/ClubApplicationViews';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import { useAuthContext } from '@/app/auth/useAuthContext';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import type { HomeClubApplicationState } from '../../../../../objects/ClubApplication.types';
 import { getFallbackPlayerName } from '../../../../../functions/getClubApplicationDisplay';
@@ -20,7 +20,7 @@ export function useClubApplicationDialog({
   onMembershipConfirmed?: () => void;
   onApplicationUpdated?: (status: ClubApplication['status'] | null) => void;
 }) {
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const { loadPlayerContext, loadTrackedApplication } =
     useClubApplicationLoaders();
   const [state, setState] = useState<HomeClubApplicationState | null>(null);

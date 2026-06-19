@@ -1,146 +1,71 @@
-import { useCallback, useMemo } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-
-import { useAuth } from '@/app/auth/useAuth';
-import type { RealtimeEvent } from '@/app/realtime/RealtimeEvent';
-import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
-import { useShowcaseMode } from '@/app/showcaseMode';
-
-import {
-  TableMatchError,
-  TableMatchLoading,
-  TableMatchSection,
-} from './components';
-import { useTableMatchData } from './hooks/useTableMatchData';
-import { useTableMatchMahjongState } from './hooks/useTableMatchMahjongState';
-import { useTableMatchPlayerNames } from './hooks/useTableMatchPlayerNames';
-import { useTableMatchReadyAction } from './hooks/useTableMatchReadyAction';
-import { useTableMatchSeatState } from './hooks/useTableMatchSeatState';
+import { TableMatchError, TableMatchLoading } from './components';
+import { MatchBoard } from './components/MatchBoard';
+import { MahjongBridgeNotice } from './components/TableMatchSection/MahjongBridgeNotice';
+import { SeatsOverviewCard } from './components/TableMatchSection/SeatsOverviewCard';
+import { TableMatchHeader } from './components/TableMatchSection/TableMatchHeader';
+import { useTableMatchPageModel } from './hooks/useTableMatchPageModel';
 
 export function TableMatchPage() {
-  const { tableId = '' } = useParams();
-  const navigate = useNavigate();
-  const { session } = useAuth();
-  const operatorId = session?.user.operatorId ?? session?.user.userId ?? '';
-  const [showcaseMode] = useShowcaseMode();
-  const isRegisteredPlayer = !!session?.user.roles.isRegisteredPlayer;
-  const {
-    table,
-    setTable,
-    isLoading,
-    isRefreshing,
-    error,
-    setError,
-    forceReload,
-  } = useTableMatchData(tableId);
-  const { seatMap, ownSeat, canUpdateOwnReady } =
-    useTableMatchSeatState(table, operatorId, isRegisteredPlayer);
-  const matchPlayerId = ownSeat?.playerId ?? '';
-  const readyAction = useTableMatchReadyAction({
-    table,
-    ownSeat,
-    operatorId,
-    setTable,
-    setError,
-  });
-  const mahjongState = useTableMatchMahjongState({
-    operatorId,
-    tableId,
-    viewerPlayerId: matchPlayerId,
-  });
-  const playerIds = useMemo(
-    () =>
-      Array.from(
-        new Set([
-          ...(table?.seats.map((seat) => seat.playerId) ?? []),
-          ...(mahjongState.mahjongTable?.seats.map((seat) => seat.playerId) ??
-            []),
-        ]),
-      ),
-    [mahjongState.mahjongTable, table],
-  );
-  const playerNames = useTableMatchPlayerNames(playerIds);
-  const handleRefresh = useCallback(() => {
-    forceReload();
-    mahjongState.reload();
-  }, [forceReload, mahjongState]);
-  const handleRealtimeRefresh = useCallback(
-    (event: RealtimeEvent) => {
-      if (mahjongState.handleRealtimeMahjongEvent(event)) {
-        return;
-      }
+  const page = useTableMatchPageModel();
 
-      if (
-        event.aggregateType === 'mahjongTable' &&
-        event.aggregateId !== tableId
-      ) {
-        return;
-      }
-
-      handleRefresh();
-    },
-    [handleRefresh, mahjongState, tableId],
-  );
-  const handleAdvanceRound = useCallback(() => {
-    void mahjongState.advanceRound();
-  }, [mahjongState.advanceRound]);
-  useRealtimeRefresh(
-    [
-      'TournamentTableChanged',
-      'MahjongTableChanged',
-      'MahjongActionAccepted',
-      'AppealChanged',
-    ],
-    handleRealtimeRefresh,
-  );
-  const backLink = table?.tournamentId
-    ? `/public/tournaments/${table.tournamentId}`
-    : '/public';
-  const handleConfirmFinalSettlement = useCallback(() => {
-    mahjongState.clearFinalSettlement();
-    navigate(backLink);
-  }, [backLink, mahjongState, navigate]);
-
-  if (isLoading) {
+  if (page.status.isLoading) {
     return <TableMatchLoading />;
   }
 
-  if (error || !table) {
+  if (page.status.error || !page.table) {
     return (
       <TableMatchError
-        error={error}
-        backLink={backLink}
-        onRetry={forceReload}
+        error={page.status.error}
+        backLink={page.navigation.backLink}
+        onRetry={page.onRefresh}
       />
     );
   }
 
   return (
-    <TableMatchSection
-      table={table}
-      backLink={backLink}
-      seatMap={seatMap}
-      ownSeat={ownSeat}
-      isRefreshing={isRefreshing}
-      isMahjongRefreshing={mahjongState.isRefreshing}
-      isMahjongLoading={mahjongState.isLoading}
-      mahjongError={mahjongState.error}
-      finalSettlementTable={mahjongState.finalSettlementTable}
-      mahjongTable={mahjongState.mahjongTable}
-      mahjongAcceptedEvent={mahjongState.acceptedEvent}
-      playerNames={playerNames}
-      showcaseMode={showcaseMode}
-      isRegisteredPlayer={isRegisteredPlayer}
-      operatorId={matchPlayerId}
-      canUpdateOwnReady={canUpdateOwnReady}
-      isUpdatingOwnReady={readyAction.isUpdatingOwnReady}
-      isSubmittingMahjongAction={mahjongState.isSubmittingAction}
-      mahjongActionError={mahjongState.actionError}
-      onRefresh={handleRefresh}
-      onToggleOwnReady={() => void readyAction.handleToggleOwnReady()}
-      onAdvanceRound={handleAdvanceRound}
-      onConfirmFinalSettlement={handleConfirmFinalSettlement}
-      onSubmitMahjongAction={(action) => void mahjongState.submitAction(action)}
-    />
+    <section className="grid gap-6">
+      <TableMatchHeader
+        table={page.table}
+        backLink={page.navigation.backLink}
+        isRefreshing={page.status.isRefreshing}
+        canUpdateOwnReady={page.readyAction.canUpdateOwnReady}
+        isUpdatingOwnReady={page.readyAction.isUpdatingOwnReady}
+        ownSeat={page.seats.ownSeat}
+        onRefresh={page.onRefresh}
+        onToggleOwnReady={page.readyAction.onToggleOwnReady}
+      />
+
+      {page.mahjong.shouldShowMatchBoard && page.mahjong.mahjongTable ? (
+        <MatchBoard
+          actionError={page.mahjong.actionError}
+          finalSettlementTable={page.mahjong.finalSettlementTable}
+          isSubmittingAction={page.mahjong.isSubmittingAction}
+          mahjongTable={page.mahjong.mahjongTable}
+          mahjongAcceptedEvent={page.mahjong.mahjongAcceptedEvent}
+          onConfirmFinalSettlement={page.mahjong.onConfirmFinalSettlement}
+          onAdvanceRound={page.mahjong.onAdvanceRound}
+          onSubmitAction={page.mahjong.onSubmitAction}
+          operatorId={page.viewer.playerId}
+          playerNames={page.players.names}
+          showcaseMode={page.showcaseMode}
+          table={page.table}
+        />
+      ) : (
+        <>
+          <MahjongBridgeNotice
+            error={page.mahjong.error}
+            isLoading={page.mahjong.isLoading}
+            mahjongTable={page.mahjong.mahjongTable}
+          />
+          <SeatsOverviewCard
+            table={page.table}
+            seatMap={page.seats.seatMap}
+            ownSeat={page.seats.ownSeat}
+            playerNames={page.players.names}
+            isRegisteredPlayer={page.viewer.isRegisteredPlayer}
+          />
+        </>
+      )}
+    </section>
   );
 }

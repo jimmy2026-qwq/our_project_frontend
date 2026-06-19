@@ -1,4 +1,4 @@
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import type { EloSort } from '../objects/EloSort';
 import type { MemberListItem } from '../objects/MemberListItem';

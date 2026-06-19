@@ -13,10 +13,8 @@ import type {
   TournamentMatchRecordView,
   TournamentTableView,
 } from '@/objects';
-import type {
-  MatchRecordSummary,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { sendAPI } from '@/system/api';
 
 import { getActiveTableRank } from '../functions/getActiveTableRank';
@@ -24,7 +22,7 @@ import { getStageDisplayName } from '../functions/getStageDisplayName';
 import {
   toMatchRecordSummary,
   toTournamentTableSummary,
-} from '../objects/PlayerDashboard.mappers';
+} from '../functions/PlayerDashboard.mappers';
 import type { RecentTableItem } from '../objects/PlayerDashboard.types';
 
 function getTables(filters: TableListQuery) {

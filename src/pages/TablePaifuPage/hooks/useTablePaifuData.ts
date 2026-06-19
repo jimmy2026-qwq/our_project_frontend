@@ -20,8 +20,8 @@ import {
   collectPaifuPlayerIds,
   getStageDisplayName,
 } from '../functions/getTablePaifuMetadata';
-import { toPaifuSummary } from '../objects/TablePaifuData.mappers';
-import type { TablePaifuDetail } from '../types';
+import { toPaifuSummary } from '../functions/TablePaifuData.mappers';
+import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 
 export function useTablePaifuData(tableId: string) {
   const [paifu, setPaifu] = useState<TablePaifuDetail | null>(null);

@@ -1,4 +1,5 @@
-import type { SeatWind } from '@/objects/tournament';
+import { SeatWinds, type SeatWind } from '@/objects/tournament';
+import type { PaifuTile } from '@/objects';
 
 export const handPositionClasses: Record<SeatWind, string> = {
   East: 'bottom-[20px] left-1/2 w-[min(94%,900px)] -translate-x-1/2 justify-center',
@@ -72,8 +73,8 @@ export const riverTileTopCrop = 4;
 export const riverTileVisibleHeight = riverTileImageHeight - riverTileTopCrop;
 export const riverRowSize = riverTileVisibleHeight;
 
-export function getDisplayTiles(seat: SeatWind, tiles: string[]) {
-  if (seat === 'South' || seat === 'North') {
+export function getDisplayTiles(seat: SeatWind, tiles: PaifuTile[]) {
+  if (seat === SeatWinds.South || seat === SeatWinds.North) {
     return [...tiles].reverse();
   }
 

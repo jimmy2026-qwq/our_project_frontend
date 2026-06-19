@@ -2,7 +2,7 @@ import { type ChangeEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { TournamentCreateAPI } from '@/api/tournament';
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
 import { DEFAULT_MAHJONG_RULESET } from '@/objects';
 import type { TournamentFormat } from '@/objects/tournament';
@@ -34,7 +34,7 @@ export function useCreateTournamentDialogForm({
   onOpenChange: (open: boolean) => void;
 }) {
   const navigate = useNavigate();
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const { notifySuccess, notifyWarning } = useNotice();
   const [name, setName] = useState('');
   const [format, setFormat] = useState<TournamentFormat>('Swiss');

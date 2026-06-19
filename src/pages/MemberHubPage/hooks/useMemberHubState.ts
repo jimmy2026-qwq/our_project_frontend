@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { ListClubsAPI } from '@/api/club/ListClubsAPI';
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import type { ClubListQuery, ListEnvelope } from '@/objects';
-import type { AuthSession } from '@/app/auth/AuthSession';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
@@ -20,7 +20,7 @@ import {
   type MemberHubOperatorDirectory,
   type MemberHubState,
 } from '../objects/MemberHub.types';
-import { toClubSummary } from '../objects/MemberHub.mappers';
+import { toClubSummary } from '../functions/MemberHub.mappers';
 
 function getClubs(filters: ClubListQuery) {
   return sendAPI(new ListClubsAPI(filters)).then(
@@ -30,7 +30,7 @@ function getClubs(filters: ClubListQuery) {
 }
 
 async function loadMemberHubOperatorDirectory(
-  session: AuthSession | null,
+  session: AuthContextSession | null,
 ): Promise<MemberHubOperatorDirectory> {
   const fallback = getFallbackDirectory(session);
   const currentOperatorId = session?.user.operatorId ?? session?.user.userId;
@@ -81,7 +81,7 @@ async function loadMemberHubOperatorDirectory(
 }
 
 export function useMemberHubState() {
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const [directory, setDirectory] = useState<MemberHubOperatorDirectory | null>(
     null,
   );

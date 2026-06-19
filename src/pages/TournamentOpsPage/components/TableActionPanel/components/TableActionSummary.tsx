@@ -1,5 +1,5 @@
 import { EmptyState } from '@/components/ui';
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 import { getTableStatusLabel } from '../../TablesPanel.status';
 

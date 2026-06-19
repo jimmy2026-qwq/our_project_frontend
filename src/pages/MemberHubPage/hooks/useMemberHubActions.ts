@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 
 import { ReviewClubApplicationAPI } from '@/api/club/ReviewClubApplicationAPI';
-import { useDialog } from '@/app/dialog/useDialog';
+import { useConfirmationDialogActions } from '@/components/confirmation-dialog/useConfirmationDialogActions';
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import { useNotice } from '@/app/feedback/useNotice';
 import type {
@@ -12,7 +12,7 @@ import { sendAPI } from '@/system/api';
 
 import { getActiveOperator } from '../functions/getMemberHubOperator';
 import { upsertMemberHubApplicationInboxItem } from '../functions/getMemberHubApplicationInboxBridge';
-import { toClubApplicationView } from '../objects/MemberHub.mappers';
+import { toClubApplicationView } from '../functions/MemberHub.mappers';
 import type {
   MemberHubOperatorDirectory,
   MemberHubState,
@@ -59,7 +59,7 @@ export function useMemberHubActions(
   setState: Dispatch<SetStateAction<MemberHubState>>,
   reload: () => void,
 ) {
-  const { confirmDanger } = useDialog();
+  const { confirmDanger } = useConfirmationDialogActions();
   const { notifyMutationResult } = useMutationNotice();
   const { notifyWarning } = useNotice();
 

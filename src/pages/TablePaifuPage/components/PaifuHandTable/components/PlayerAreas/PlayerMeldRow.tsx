@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 
+import { getPaifuTileCode } from '@/objects';
 import type { SeatWind } from '@/objects/tournament';
 
 import type {
@@ -39,7 +40,7 @@ export function MeldRow({
     >
       {displayTiles.map((meldTile, tileIndex) => (
         <MeldTileView
-          key={`${seat}-meld-${meldIndex}-${meldTile.tile}-${tileIndex}`}
+          key={`${seat}-meld-${meldIndex}-${getPaifuTileCode(meldTile.tile)}-${tileIndex}`}
           meldTile={meldTile}
           seat={seat}
           style={getMeldTileStyle(tileIndex, displayTiles, seat)}

@@ -4,11 +4,11 @@ import {
   TournamentTableGetAPI,
   TournamentTableUpdateOwnReadyAPI,
 } from '@/api/tournament';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import { toTableDetail } from '../../../../../objects/TournamentDetailTable.mappers';
+import { toTableDetail } from '../../../../../functions/TournamentDetailTable.mappers';
 
 export function useTournamentWaitingTableRuntime({
   operatorId,

@@ -4,7 +4,7 @@ import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
 import type { PlayerContextState } from '../objects/ClubApplication.types';
-import { toPlayerProfile } from '../objects/ClubDetailPlayer.mappers';
+import { toPlayerProfile } from '../functions/ClubDetailPlayer.mappers';
 
 export function useClubApplicationPlayerLoader() {
   const loadPlayerContext = useCallback(

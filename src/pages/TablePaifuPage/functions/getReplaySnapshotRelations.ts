@@ -1,6 +1,6 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuAction } from '../types';
+import type { PaifuAction } from '@/objects';
 import { seatOrder } from './getReplayCore';
 
 export function getOpenMeldSidewaysIndex({

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { DEFAULT_MAHJONG_RULESET } from '@/objects';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
 import type { DetailState } from '../../../objects/PublicTournamentDetailPage.types';
 
@@ -17,7 +17,7 @@ import { buildTournamentDetailWorkbench } from '../../../functions/buildTourname
 
 interface UseTournamentDetailWorkbenchParams {
   state: DetailState<TournamentPublicProfile>;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   navigate: NavigateFunction;
   onScheduleSuccess?: () => void;
 }

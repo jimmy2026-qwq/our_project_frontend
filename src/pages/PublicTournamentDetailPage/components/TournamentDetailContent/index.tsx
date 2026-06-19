@@ -1,8 +1,6 @@
 import { Alert } from '@/components/ui';
-import type {
-  AppealSummary,
-  TableDetail,
-} from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { TournamentDetailAppealsTab } from './components/TournamentDetailAppealsTab';
 import { TournamentDetailHomeTab } from './components/TournamentDetailHomeTab';

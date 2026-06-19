@@ -1,4 +1,4 @@
-import type { PaifuTile } from '../../paifumanagement';
+import type { PaifuTile } from '../../paifu';
 import type { MahjongMeldType } from './MahjongMeldType';
 
 export interface MahjongMeld {

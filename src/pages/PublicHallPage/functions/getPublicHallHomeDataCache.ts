@@ -1,9 +1,9 @@
-import { PUBLIC_HALL_CACHE_TTL_MS } from '../objects/PublicHallState';
 import type {
   HomeDataState,
   PublicHallState,
   PublicHallViewerContext,
 } from '../objects/PublicHallPage.types';
+import { PUBLIC_HALL_CACHE_TTL_MS } from '../objects/PublicHallPage.types';
 
 const homeDataCache = new Map<
   string,

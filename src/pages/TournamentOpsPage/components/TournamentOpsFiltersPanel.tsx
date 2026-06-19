@@ -1,10 +1,10 @@
 import { WorkbenchContextPanel } from '@/components/ui';
 import { SelectField, TextInputField } from '@/components/ui';
 import type { TableStatus } from '@/objects';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { getActiveTournament } from '../functions/getTournamentOpsState';
-import type { TournamentContext, TournamentOpsState } from '../objects/data';
+import type { TournamentContext, TournamentOpsState } from '../objects/TournamentOps.types';
 
 interface TournamentOpsFiltersPanelProps {
   tournaments: TournamentContext[];

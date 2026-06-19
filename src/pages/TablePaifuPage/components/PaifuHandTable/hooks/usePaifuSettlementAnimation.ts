@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import type { PaifuRoundSummary } from '../../../types';
+import { HandOutcome } from '@/objects';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import {
   isScoreSettlementRound,
   settlementAnimationDelayMs,
@@ -71,8 +72,10 @@ export function usePaifuSettlementAnimation({
 
   useEffect(() => {
     const shouldKeepSettlement =
-      (round.result.outcome === 'ExhaustiveDraw' && isExhaustiveDrawResult) ||
-      ((round.result.outcome === 'Ron' || round.result.outcome === 'Tsumo') &&
+      (round.result.outcome === HandOutcome.ExhaustiveDraw &&
+        isExhaustiveDrawResult) ||
+      ((round.result.outcome === HandOutcome.Ron ||
+        round.result.outcome === HandOutcome.Tsumo) &&
         settlementProgress !== undefined &&
         replayStep >= maxReplayStep);
 
@@ -91,7 +94,7 @@ export function usePaifuSettlementAnimation({
 
   useEffect(() => {
     if (
-      round.result.outcome === 'ExhaustiveDraw' &&
+      round.result.outcome === HandOutcome.ExhaustiveDraw &&
       isExhaustiveDrawResult &&
       settlementProgress === undefined
     ) {

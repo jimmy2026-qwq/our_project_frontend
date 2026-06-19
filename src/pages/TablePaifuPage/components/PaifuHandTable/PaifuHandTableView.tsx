@@ -1,6 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import type { PaifuRoundSummary, TablePaifuDetail } from '../../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../../objects/TablePaifuDetail';
 import { seatOrder } from '../../functions/getReplay';
 import { CenterTable } from './components/CenterTable';
 import { ExhaustiveDrawStatusMarkers } from './components/PaifuOverlays/ExhaustiveDrawStatusMarkers';

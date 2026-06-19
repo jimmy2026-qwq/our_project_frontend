@@ -1,7 +1,5 @@
-import type {
-  AppealSummary,
-  TableSeatState,
-} from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { TableSeatState } from '@/pages/shared_objects/tournament/TableSeatState';
 import type { AppealDecisionType } from '../objects/TournamentDetailView.types';
 
 export function getSeatStatusTone(seat: TableSeatState) {

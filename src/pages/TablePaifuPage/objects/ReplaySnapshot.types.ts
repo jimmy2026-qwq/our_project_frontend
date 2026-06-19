@@ -1,12 +1,14 @@
+import type { PaifuTile } from '@/objects';
+
 export type RiverDiscard = {
   sequenceNo: number;
   playerId: string;
-  tile: string;
+  tile: PaifuTile;
   sideways?: boolean;
 };
 
 export type MeldTile = {
-  tile: string;
+  tile: PaifuTile;
   sideways?: boolean;
   concealed?: boolean;
 };

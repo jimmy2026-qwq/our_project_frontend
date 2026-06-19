@@ -1,5 +1,5 @@
 import type { AgariResult, MahjongSeatView, MahjongTableView, SeatWind } from '@/objects';
-import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/CenterTable/CenterTable.types';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterTableDisplay';
 import { getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
 import { seatOrder } from './matchBoardSeats';

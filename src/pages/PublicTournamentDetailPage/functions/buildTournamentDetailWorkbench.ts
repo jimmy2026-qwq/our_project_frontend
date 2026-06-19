@@ -1,7 +1,7 @@
-import type { AuthSession } from '@/app/auth/AuthSession';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
 
 import type {
@@ -33,7 +33,7 @@ interface BuildTournamentDetailWorkbenchParams {
   rulesDialogOpen: boolean;
   selectedClubId: string;
   selectedPlayerId: string;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   showMoreInfo: boolean;
   tables: TournamentDetailTableItem[];
   tournamentActionError: string;

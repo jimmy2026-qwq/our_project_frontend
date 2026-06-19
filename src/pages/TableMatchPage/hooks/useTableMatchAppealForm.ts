@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { AppealFileAPI } from '@/api/tournament';
 import { useNotice } from '@/app/feedback/useNotice';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 

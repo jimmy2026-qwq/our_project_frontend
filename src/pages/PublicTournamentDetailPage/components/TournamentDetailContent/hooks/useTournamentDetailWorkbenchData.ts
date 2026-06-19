@@ -1,4 +1,4 @@
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
 import type {
   DetailState,
@@ -20,7 +20,7 @@ export function useTournamentDetailWorkbenchData({
   session,
 }: {
   state: DetailState<TournamentPublicProfile>;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
 }) {
   const { localProfile, setLocalProfile } = useTournamentProfileData({
     state,

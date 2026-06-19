@@ -2,7 +2,7 @@ import type {
   LeaderboardDataState,
   PublicHallState,
 } from '../objects/PublicHallPage.types';
-import { PUBLIC_HALL_CACHE_TTL_MS } from '../objects/PublicHallState';
+import { PUBLIC_HALL_CACHE_TTL_MS } from '../objects/PublicHallPage.types';
 
 const leaderboardCache = new Map<
   string,

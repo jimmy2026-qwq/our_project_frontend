@@ -6,7 +6,7 @@ import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
 import { toDashboardSummary } from '../functions/toDashboardSummary';
-import { toPlayerProfile } from '../objects/PlayerDashboard.mappers';
+import { toPlayerProfile } from '../functions/PlayerDashboard.mappers';
 import type { PlayerClubLink } from '../objects/PlayerDashboard.types';
 
 function getPlayerClubLinks(clubIds: string[]) {

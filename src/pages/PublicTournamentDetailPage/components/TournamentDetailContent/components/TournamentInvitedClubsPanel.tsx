@@ -9,7 +9,7 @@ import {
   SelectField,
   StatusPill,
 } from '@/components/ui';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 const tournamentPanelClassNames = {
   link: 'inline-flex font-semibold text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',

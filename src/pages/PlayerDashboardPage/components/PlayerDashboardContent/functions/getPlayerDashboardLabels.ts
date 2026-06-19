@@ -1,7 +1,5 @@
-import type {
-  AppealSummary,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
 import type { PlayerDetailTab } from '../objects/PlayerDashboardContent.types';
 
@@ -71,7 +69,7 @@ export function getPlayerStatusLabel(status?: string) {
   switch (status) {
     case 'Active':
       return '正常';
-    case 'Inactive':
+    case 'Suspended':
       return '停用';
     case 'Banned':
       return '封禁';

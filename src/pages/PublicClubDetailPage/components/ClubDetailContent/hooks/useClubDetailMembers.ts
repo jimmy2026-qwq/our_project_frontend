@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import type { AuthSession } from '@/app/auth/AuthSession';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import {
   applyContributionTitleOverrides,
@@ -14,7 +14,7 @@ import { useClubRankTree } from './useClubRankTree';
 
 interface UseClubDetailMembersParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   currentPlayerProfile: PlayerProfile | null;
 }
 

@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { ListClubMembersAPI } from '@/api/club';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toPlayerProfile } from '../../../../../objects/ClubDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../../../functions/ClubDetailPlayer.mappers';
 
 interface UseLineupMembersDataParams {
   clubId: string;

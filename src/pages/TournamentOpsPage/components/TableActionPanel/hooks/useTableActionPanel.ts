@@ -2,10 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import type { SeatWind } from '@/objects/tournament';
-import type {
-  TableDetail,
-  TournamentTableSummary,
-} from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { useTournamentSeatStateSync } from './useTournamentSeatStateSync';
 import { useTournamentTableActions } from './useTournamentTableActions';
 import { useTournamentTableDetailData } from './useTournamentTableDetailData';

@@ -2,11 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
 
-import type {
-  PaifuAction,
-  PaifuRoundSummary,
-  TablePaifuDetail,
-} from '../../../types';
+import type { PaifuAction, PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
 import {
   getResultWinForActor,
   getWinYaku,
@@ -26,7 +23,7 @@ import type {
   ActiveOperation,
   YakumanTileBurstView,
   WinningCallFlashView,
-} from '../components/PaifuOverlays/PaifuOverlays.types';
+} from '../objects/PaifuOverlayViews';
 import {
   getOperationFlashDurationMs,
   getWinningCallLabel,
@@ -114,7 +111,10 @@ export function usePaifuOperationFlash({
     }
 
     if (isWinningAction(action)) {
-      const resultWin = getResultWinForActor(round.result, action.actor);
+      const resultWin = getResultWinForActor(
+        round.result,
+        action.actor ?? undefined,
+      );
       const yakumanYaku = resultWin
         ? getFirstYakumanYaku(getWinYaku(round.result, resultWin))
         : undefined;
@@ -123,7 +123,7 @@ export function usePaifuOperationFlash({
         resultWin,
         round,
       });
-      setRevealedWinningPlayerId(action.actor);
+      setRevealedWinningPlayerId(action.actor ?? undefined);
       setActiveOperation(undefined);
       setActiveWinningCall({
         animationMs: winningCallAnimationMs,
@@ -137,7 +137,7 @@ export function usePaifuOperationFlash({
       const yakumanTimerId = yakumanYaku
         ? window.setTimeout(() => {
             setActiveYakumanTileBurst({
-              featuredTile: action.tile,
+              featuredTile: action.tile ?? undefined,
               key: `${action.sequenceNo}-${yakumanYaku.kind}`,
               tiles: yakumanTiles,
               yakuKind: yakumanYaku.kind as MahjongYakuKind,

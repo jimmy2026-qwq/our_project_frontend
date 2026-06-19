@@ -1,7 +1,7 @@
 import type { Role } from '@/objects';
-import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { DashboardSummary } from '@/pages/objects/OpsAnalyticsDashboard';
+import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { DashboardSummary } from '@/pages/shared_objects/dashboard/OpsAnalyticsDashboard';
 
 export type DataSource = 'api' | 'mock';
 

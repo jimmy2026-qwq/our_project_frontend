@@ -2,11 +2,11 @@ import { useEffect, useState } from 'react';
 
 import { AppealListAPI } from '@/api/tournament/appeal/AppealListAPI';
 import type { AppealListQuery } from '@/objects';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState, TournamentOpsState } from '../objects/data';
-import { toAppealSummary } from '../objects/TournamentOps.mappers';
+import type { LoadState, TournamentOpsState } from '../objects/TournamentOps.types';
+import { toAppealSummary } from '../functions/TournamentOps.mappers';
 
 export function useTournamentAppealsData(
   state: TournamentOpsState,

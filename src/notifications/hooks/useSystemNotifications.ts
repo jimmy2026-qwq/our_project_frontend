@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import {
   realtimeBrowserEventName,
   type RealtimeBrowserEvent,
@@ -13,7 +13,7 @@ import { markNotificationRead } from '../functions/markNotificationRead';
 import { toNotificationFromRealtimeEvent } from '../functions/toNotificationFromRealtimeEvent';
 
 export function useSystemNotifications() {
-  const { isReady, session } = useAuth();
+  const { isReady, session } = useAuthContext();
   const operatorId = getNotificationOperatorId(session);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);

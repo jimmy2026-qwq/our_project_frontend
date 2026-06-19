@@ -1,6 +1,6 @@
 import { StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
 import { formatNumber } from '../../../functions/formatClubDetail';

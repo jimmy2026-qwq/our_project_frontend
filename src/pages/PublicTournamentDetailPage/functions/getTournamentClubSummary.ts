@@ -1,4 +1,4 @@
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import type { ClubPublicProfile } from '../objects/PublicTournamentDetailPage.types';
 
@@ -18,7 +18,7 @@ export function toClubPublicProfileSummary(
     allianceCount: profile.relations.filter(
       (relation) => relation === 'Alliance',
     ).length,
-    rivalryCount: profile.relations.filter((relation) => relation === 'Hostile')
+    rivalryCount: profile.relations.filter((relation) => relation === 'Rivalry')
       .length,
     relations: profile.relations,
   };

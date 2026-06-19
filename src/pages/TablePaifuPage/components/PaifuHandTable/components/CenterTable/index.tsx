@@ -1,18 +1,14 @@
 import type { SeatWind } from '@/objects/tournament';
 
-import type { PaifuRoundSummary, TablePaifuDetail } from '../../../../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import { seatOrder } from '../../../../functions/getReplay';
 import { CenterPoint } from './CenterPoint';
 import { CenterTableInfo } from './CenterTableInfo';
 import type {
   CenterScoreDisplay,
   TableStickDisplay,
-} from './CenterTable.types';
-
-export type {
-  CenterScoreDisplay,
-  TableStickDisplay,
-} from './CenterTable.types';
+} from '../../objects/CenterTableDisplay';
 export { RoundPicker } from './RoundPicker';
 
 interface CenterTableProps {

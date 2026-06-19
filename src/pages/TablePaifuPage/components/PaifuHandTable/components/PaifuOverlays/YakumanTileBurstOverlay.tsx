@@ -1,8 +1,8 @@
-import { getMahjongYakuLabel } from '@/objects';
+import { getMahjongYakuLabel, getPaifuTileCode } from '@/objects';
 import type { CSSProperties } from 'react';
 
 import { TileImage } from '../TileViews';
-import type { YakumanTileBurstView } from './PaifuOverlays.types';
+import type { YakumanTileBurstView } from '../../objects/PaifuOverlayViews';
 import { YakumanTileBurstStyles } from './YakumanTileBurstStyles';
 
 interface YakumanTileBurstOverlayProps {
@@ -52,7 +52,7 @@ export function YakumanTileBurstOverlay({
       {burst.tiles.slice(0, burstTileLayouts.length).map((tile, index) => (
         <span
           className="yakuman-burst-tile-anchor"
-          key={`${tile}-${index}`}
+          key={`${getPaifuTileCode(tile)}-${index}`}
           style={getTileStyle(burstTileLayouts[index], index)}
         >
           <span className="yakuman-burst-tile">

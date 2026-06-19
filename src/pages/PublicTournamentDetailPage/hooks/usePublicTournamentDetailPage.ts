@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
-import { useAuth } from '@/app/auth/useAuth';
+import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 
 import { useTournamentDetailHeader } from '../components/TournamentDetailHeader/hooks/useTournamentDetailHeader';
@@ -13,7 +13,7 @@ import type { TournamentDetailState } from '../objects/PublicTournamentDetailPag
 export function usePublicTournamentDetailPage() {
   const { tournamentId } = useParams();
   const navigate = useNavigate();
-  const { session } = useAuth();
+  const { session } = useAuthContext();
   const detail = useTournamentDetail(tournamentId);
   const handleRealtimeRefresh = useCallback(() => {
     detail.refresh();

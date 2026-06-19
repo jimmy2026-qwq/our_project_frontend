@@ -1,4 +1,10 @@
-import type { MahjongPublicEventView, MahjongTableView } from '@/objects';
+import {
+  isPaifuTile,
+  toPaifuTile,
+  type MahjongPublicEventView,
+  type MahjongTableView,
+  type PaifuTile,
+} from '@/objects';
 import { ApiError } from '@/system/api/http';
 
 export const liveMahjongRefreshIntervalMs = 1000;
@@ -60,12 +66,26 @@ export function parseMahjongPublicEventView(
     sequenceNo: value.sequenceNo,
     actor: typeof value.actor === 'string' ? value.actor : null,
     actionType: value.actionType as MahjongPublicEventView['actionType'],
-    tile: typeof value.tile === 'string' ? value.tile : null,
+    tile: parsePaifuTile(value.tile),
     tiles: Array.isArray(value.tiles)
-      ? value.tiles.filter((tile): tile is string => typeof tile === 'string')
+      ? value.tiles
+          .map(parsePaifuTile)
+          .filter((tile): tile is PaifuTile => Boolean(tile))
       : [],
     note: typeof value.note === 'string' ? value.note : null,
   };
+}
+
+function parsePaifuTile(value: unknown): PaifuTile | null {
+  if (typeof value === 'string') {
+    try {
+      return toPaifuTile(value);
+    } catch {
+      return null;
+    }
+  }
+
+  return isPaifuTile(value) ? value : null;
 }
 
 export function isLiveMahjongStatus(status: MahjongTableView['status']) {

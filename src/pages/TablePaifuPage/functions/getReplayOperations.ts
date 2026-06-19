@@ -1,4 +1,4 @@
-import type { PaifuAction, PaifuRoundSummary } from '../types';
+import type { PaifuAction, PaifuRound as PaifuRoundSummary } from '@/objects';
 import { getReplayActions } from './getReplayCore';
 
 export function getInitialRoundIndex(rounds: PaifuRoundSummary[]) {

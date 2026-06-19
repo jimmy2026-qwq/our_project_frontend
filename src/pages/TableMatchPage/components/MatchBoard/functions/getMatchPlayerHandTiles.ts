@@ -1,4 +1,4 @@
-import type { SeatWind } from '@/objects';
+import { isSamePaifuTile, type PaifuTile, type SeatWind } from '@/objects';
 import { getDisplayTiles } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuTableLayout';
 
 export function getMatchDisplayHandTiles({
@@ -6,9 +6,9 @@ export function getMatchDisplayHandTiles({
   seat,
   tiles,
 }: {
-  drawTile?: string | null;
+  drawTile?: PaifuTile | null;
   seat: SeatWind;
-  tiles: string[];
+  tiles: PaifuTile[];
 }) {
   if (!drawTile) {
     return getDisplayTiles(seat, tiles).map((tile) => ({
@@ -34,11 +34,11 @@ export function getMatchDisplayHandTiles({
   return [...baseDisplayTiles, drawnDisplayTile];
 }
 
-function removeFirstMatchingTile(tiles: string[], tile: string) {
+function removeFirstMatchingTile(tiles: PaifuTile[], tile: PaifuTile) {
   let removed = false;
 
   return tiles.filter((item) => {
-    if (!removed && item === tile) {
+    if (!removed && isSamePaifuTile(item, tile)) {
       removed = true;
       return false;
     }

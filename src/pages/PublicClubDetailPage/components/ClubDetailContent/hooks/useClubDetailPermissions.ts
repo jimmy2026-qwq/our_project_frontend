@@ -1,16 +1,16 @@
-﻿import { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { AuthCheckPermissionAPI } from '@/api/auth';
 import { ClubPrivilegeCodes, type ClubPrivilegeCode } from '@/objects/club';
 import type { Permission } from '@/objects/auth';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
 interface UseClubDetailPermissionsParams {
   profile: ClubPublicProfile | null;
-  session: AuthSession | null;
+  session: AuthContextSession | null;
   currentMemberPrivileges: ClubPrivilegeCode[];
 }
 

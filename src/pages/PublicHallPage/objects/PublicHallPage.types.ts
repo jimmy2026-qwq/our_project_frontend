@@ -1,6 +1,6 @@
 import type { ListEnvelope, StageStatus, TournamentStatus } from '@/objects';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { AuthSession } from '@/app/auth/AuthSession';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
 export type DataSource = 'api' | 'mock';
 export type PublicView = 'schedules' | 'clubs' | 'leaderboard';
@@ -53,7 +53,7 @@ export interface HomeDataState {
 }
 
 export interface PublicHallViewerContext {
-  session: AuthSession | null;
+  session: AuthContextSession | null;
 }
 
 export interface LeaderboardDataState {
@@ -68,6 +68,17 @@ export interface PublicHallState {
   leaderboardStatus: 'Active' | 'Inactive' | 'Banned' | '';
   clubActiveOnly: boolean;
 }
+
+export const DEFAULT_PUBLIC_HALL_STATE: PublicHallState = {
+  activeView: 'schedules',
+  scheduleTournamentStatus: 'InProgress',
+  scheduleStageStatus: 'Active',
+  leaderboardClubId: '',
+  leaderboardStatus: 'Active',
+  clubActiveOnly: true,
+};
+
+export const PUBLIC_HALL_CACHE_TTL_MS = 15_000;
 
 export type PublicHallLeaderboardStatus = 'Active' | 'Suspended' | 'Banned';
 

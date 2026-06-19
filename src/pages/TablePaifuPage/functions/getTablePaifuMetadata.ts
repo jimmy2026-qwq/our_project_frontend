@@ -1,9 +1,10 @@
+import { getPaifuRoundActions, getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
 } from '@/objects';
 
-import type { TablePaifuDetail } from '../types';
+import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 
 export function collectPaifuPlayerIds(paifu: TablePaifuDetail) {
   const playerIds = new Set<string>();
@@ -16,8 +17,8 @@ export function collectPaifuPlayerIds(paifu: TablePaifuDetail) {
   paifu.metadata.seats?.forEach((seat) => addPlayerId(seat.playerId));
   paifu.finalStandings.forEach((standing) => addPlayerId(standing.playerId));
   paifu.rounds.forEach((round) => {
-    Object.keys(round.initialHands).forEach(addPlayerId);
-    round.actions.forEach((action) => addPlayerId(action.actor));
+    Object.keys(getPaifuInitialHands(round)).forEach(addPlayerId);
+    getPaifuRoundActions(round).forEach((action) => addPlayerId(action.actor));
     addPlayerId(round.result.winner);
     addPlayerId(round.result.target);
     round.result.wins?.forEach((win) => {

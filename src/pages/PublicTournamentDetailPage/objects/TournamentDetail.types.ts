@@ -1,7 +1,7 @@
 import type { TournamentPublicProfile } from './PublicTournamentDetailPage.types';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
-import type { MatchRecordSummary } from '@/pages/objects/TournamentViews';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import type { TournamentStageRuleDraft } from './TournamentDetailRule.types';
 
 export interface TournamentDetailTableItem {

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { PublicPlayerLeaderboardAPI } from '@/api/player';
-import type { ClubSummary } from '@/pages/objects/ClubSummary';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { sendAPI } from '@/system/api';
 
 import { formatRankLabel } from '../functions/formatRankLabel';
@@ -16,7 +16,7 @@ import {
 import {
   toLeaderboardStatus,
   toLeaderboardStatusFilter,
-} from '../objects/PublicHall.mappers';
+} from '../functions/PublicHall.mappers';
 import type {
   LeaderboardDataState,
   LoadState,

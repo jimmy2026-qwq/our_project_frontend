@@ -1,4 +1,5 @@
-import type { PaifuRoundSummary, TablePaifuDetail } from '../../../../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import {
   getRoundPlayerId,
   isPlayerTenpai,

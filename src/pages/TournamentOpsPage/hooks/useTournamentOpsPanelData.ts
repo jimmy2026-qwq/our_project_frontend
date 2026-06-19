@@ -1,5 +1,5 @@
 import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
-import type { TournamentContext, TournamentOpsState } from '../objects/data';
+import type { TournamentContext, TournamentOpsState } from '../objects/TournamentOps.types';
 import { useTournamentAppealsData } from './useTournamentAppealsData';
 import { useTournamentRecordsData } from './useTournamentRecordsData';
 import { useTournamentTablesData } from './useTournamentTablesData';

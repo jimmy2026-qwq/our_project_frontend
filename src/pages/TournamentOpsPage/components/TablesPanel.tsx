@@ -1,9 +1,9 @@
 import { DataPanel, ListRow } from '@/components/ui';
 import { EmptyState } from '@/components/ui';
 import { Badge, Button } from '@/components/ui';
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
-import type { LoadState } from '../objects/data';
+import type { LoadState } from '../objects/TournamentOps.types';
 import {
   getTableStatusBadgeClassName,
   getTableStatusLabel,

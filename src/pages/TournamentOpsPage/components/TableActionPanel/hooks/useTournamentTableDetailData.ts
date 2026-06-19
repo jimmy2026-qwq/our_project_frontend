@@ -1,10 +1,10 @@
 import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
 import { TournamentTableGetAPI } from '@/api/tournament/TournamentTableGetAPI';
-import type { TableDetail } from '@/pages/objects/TournamentViews';
+import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 
-import { toTableDetail } from '../../../objects/TournamentOps.mappers';
+import { toTableDetail } from '../../../functions/TournamentOps.mappers';
 
 export function useTournamentTableDetailData(
   reloadKey: number,

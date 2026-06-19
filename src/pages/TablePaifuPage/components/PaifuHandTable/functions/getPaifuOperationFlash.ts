@@ -1,8 +1,14 @@
+import { getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import {
   getResultWinForActor,
 } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
-import type { PaifuAction, PaifuRoundSummary } from '../../../types';
+import {
+  HandOutcome,
+  PaifuActionType,
+  type PaifuAction,
+  type PaifuRound as PaifuRoundSummary,
+} from '@/objects';
 import { removeFirstTile } from '../../../functions/getReplay';
 
 export const winningCallAnimationMs = 500;
@@ -25,18 +31,19 @@ export function getYakumanBurstTilesForPaifuAction({
 }) {
   const tiles =
     action.handTilesAfterAction ??
-    (resultWin?.winner ? round.initialHands[resultWin.winner] : undefined) ??
+    (resultWin?.winner ? getPaifuInitialHands(round)[resultWin.winner] : undefined) ??
     [];
 
   return action.tile ? [action.tile, ...removeFirstTile(tiles, action.tile)] : tiles;
 }
 
 export function getWinningCallLabel(round: PaifuRoundSummary) {
-  return round.result.outcome === 'Tsumo' ? '自摸' : '和';
+  return round.result.outcome === HandOutcome.Tsumo ? '自摸' : '和';
 }
 
 export function getOperationFlashDurationMs(action: PaifuAction) {
-  return action.actionType === 'Chi' || action.actionType === 'Pon'
+  return action.actionType === PaifuActionType.Chi ||
+    action.actionType === PaifuActionType.Pon
     ? 500
     : 1500;
 }

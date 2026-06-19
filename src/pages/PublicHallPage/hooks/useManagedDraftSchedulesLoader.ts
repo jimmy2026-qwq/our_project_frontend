@@ -6,7 +6,7 @@ import { sendAPI } from '@/system/api';
 import {
   toStageStatus,
   toTournamentDirectoryEntry,
-} from '../objects/PublicHall.mappers';
+} from '../functions/PublicHall.mappers';
 import type {
   PublicHallViewerContext,
   PublicSchedule,

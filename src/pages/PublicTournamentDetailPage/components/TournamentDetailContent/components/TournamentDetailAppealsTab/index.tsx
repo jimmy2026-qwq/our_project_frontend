@@ -1,6 +1,6 @@
 import { Alert, Button, EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { AppealSummary } from '@/pages/objects/TournamentViews';
+import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
 import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';

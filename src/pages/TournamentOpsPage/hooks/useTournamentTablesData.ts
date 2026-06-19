@@ -6,11 +6,11 @@ import type {
   TableListQuery,
   TournamentTableView,
 } from '@/objects';
-import type { TournamentTableSummary } from '@/pages/objects/TournamentViews';
+import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState, TournamentOpsState } from '../objects/data';
-import { toTournamentTableSummary } from '../objects/TournamentOps.mappers';
+import type { LoadState, TournamentOpsState } from '../objects/TournamentOps.types';
+import { toTournamentTableSummary } from '../functions/TournamentOps.mappers';
 
 export function useTournamentTablesData(
   state: TournamentOpsState,

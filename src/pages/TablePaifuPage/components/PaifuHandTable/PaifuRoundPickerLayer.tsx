@@ -1,6 +1,6 @@
 import type { Dispatch, SetStateAction } from 'react';
 
-import type { PaifuRoundSummary } from '../../types';
+import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import { RoundPicker } from './components/CenterTable';
 import type { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
 

@@ -1,6 +1,7 @@
+import { getPaifuTileCode, type PaifuTile } from '@/objects';
 import type { SeatWind } from '@/objects/tournament';
 
-import type { TablePaifuDetail } from '../../../../types';
+import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import {
   getPlayerDisplayName,
   getRoundPlayerId,
@@ -21,7 +22,7 @@ export function PlayerHand({
   shouldRevealHand,
 }: {
   drawnTileIndex?: number;
-  hands: Record<string, string[]>;
+  hands: Record<string, PaifuTile[]>;
   paifu: TablePaifuDetail;
   seat: SeatWind;
   shouldRevealHand: boolean;
@@ -62,7 +63,7 @@ export function PlayerHand({
             <HandBackTile key={`${seat}-back-${index}`} seat={seat} />
           ) : (
             <HandTile
-              key={`${seat}-${tile}-${index}`}
+              key={`${seat}-${getPaifuTileCode(tile)}-${index}`}
               className={getDrawnTileGapClassName({
                 displayIndex: index,
                 isDrawnTile,
@@ -84,7 +85,7 @@ function getDisplayHandTiles({
 }: {
   drawnTileIndex?: number;
   seat: SeatWind;
-  tiles: string[];
+  tiles: PaifuTile[];
 }) {
   if (
     drawnTileIndex === undefined ||
@@ -97,7 +98,7 @@ function getDisplayHandTiles({
     }));
   }
 
-  const drawnTile = tiles[drawnTileIndex] as string;
+  const drawnTile = tiles[drawnTileIndex] as PaifuTile;
   const baseTiles = tiles.filter((_, index) => index !== drawnTileIndex);
   const drawnDisplayTile = {
     isDrawnTile: true,

@@ -1,10 +1,8 @@
-import type {
-  ClubApplication,
-  ClubApplicationView,
-} from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
+import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import type { ClubContributionAuditEntry } from '@/objects';
 import type { ClubPrivilegeCode } from '@/objects/club';
-import type { PlayerProfile } from '@/pages/objects/PlayerProfile';
+import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import type { ClubPublicProfile } from './PublicClubDetailPage.types';
 
 export interface ClubAdminMemberEntry extends PlayerProfile {

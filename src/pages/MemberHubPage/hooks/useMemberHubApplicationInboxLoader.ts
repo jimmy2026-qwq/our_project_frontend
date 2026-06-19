@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { ListClubApplicationsAPI } from '@/api/club/ListClubApplicationsAPI';
 import type { ClubApplicationListQuery, ListEnvelope, Role } from '@/objects';
-import type { ClubApplicationView } from '@/pages/objects/ClubApplicationViews';
+import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
@@ -10,7 +10,7 @@ import { readMemberHubApplicationsByClub } from '../functions/getMemberHubApplic
 import {
   toClubApplicationView,
   toClubApplicationViewFromInboxItem,
-} from '../objects/MemberHub.mappers';
+} from '../functions/MemberHub.mappers';
 import type { ApplicationInboxState } from '../objects/MemberHub.types';
 
 function getClubApplications(
