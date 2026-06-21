@@ -15,6 +15,7 @@ import {
   riverTileVisibleHeight,
 } from '../../objects/paifuTableLayout';
 
+/** 牌谱玩家区域中的河牌展示。 */
 export function PlayerRiver({
   rivers,
   seat,
@@ -46,6 +47,7 @@ export function PlayerRiver({
   );
 }
 
+/** 河牌中的单张弃牌，带摸切和立直横置状态。 */
 function RiverTile({
   discard,
   seat,

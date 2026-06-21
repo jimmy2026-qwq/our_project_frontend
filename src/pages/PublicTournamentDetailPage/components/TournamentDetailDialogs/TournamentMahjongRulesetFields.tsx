@@ -4,6 +4,7 @@ import type { MahjongRuleset } from '@/objects/tournament';
 import { TournamentGameLengthOptions } from './TournamentGameLengthOptions';
 import { TournamentRulesetBooleanFields } from './TournamentRulesetBooleanFields';
 
+/** 赛事规则弹窗中编辑麻将规则数值字段的表单区域。 */
 export function TournamentMahjongRulesetFields({
   disabled,
   ruleset,

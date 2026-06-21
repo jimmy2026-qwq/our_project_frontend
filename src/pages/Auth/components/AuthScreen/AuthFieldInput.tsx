@@ -5,6 +5,7 @@ interface AuthFieldInputProps {
   field: AuthField;
 }
 
+/** 根据认证字段配置渲染对应的输入框。 */
 export function AuthFieldInput({ field }: AuthFieldInputProps) {
   return (
     <label htmlFor={field.id} className="grid gap-2">

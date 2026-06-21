@@ -16,6 +16,7 @@ import { useMatchBoardModel } from './hooks/useMatchBoardModel';
 import type { MatchBoardProps } from './objects/MatchBoardProps';
 import { matchBoardSeatOrder } from './objects/matchBoardSeatOrder';
 
+/** 实时麻将牌桌的完整四家桌面和交互操作区域。 */
 export function MatchBoard(props: MatchBoardProps) {
   useMahjongTileImagePreload();
 

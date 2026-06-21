@@ -6,6 +6,7 @@ import { getLeaderboardStatusLabel } from '../../functions/getPublicHallLabels';
 
 import { hallSectionClassNames } from '../PublicHallSection.styles';
 
+/** 玩家排行榜中的单行名次和玩家信息。 */
 export function LeaderboardRow({
   canManagePlayers,
   clubs,

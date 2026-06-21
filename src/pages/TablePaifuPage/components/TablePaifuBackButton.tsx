@@ -2,6 +2,7 @@ interface TablePaifuBackButtonProps {
   onBack: () => void;
 }
 
+/** 牌谱页顶部返回上一层牌桌或详情页的操作按钮。 */
 export function TablePaifuBackButton({ onBack }: TablePaifuBackButtonProps) {
   return (
     <button

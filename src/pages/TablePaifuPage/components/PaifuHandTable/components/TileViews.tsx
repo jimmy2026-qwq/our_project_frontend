@@ -12,6 +12,7 @@ import {
   maxTileImageRetryCount,
 } from '../functions/getMahjongTileImage';
 
+/** 使用麻将牌图片资源渲染一张牌。 */
 export function TileImage({
   className,
   style,
@@ -59,6 +60,7 @@ export function TileImage({
   );
 }
 
+/** 玩家手牌中的明牌牌面。 */
 export function HandTile({
   className = '',
   seat,
@@ -88,6 +90,7 @@ export function HandTile({
   );
 }
 
+/** 玩家手牌中的背面暗牌。 */
 export function HandBackTile({ seat }: { seat: SeatWind }) {
   return (
     <span
@@ -100,14 +103,17 @@ export function HandBackTile({ seat }: { seat: SeatWind }) {
   );
 }
 
+/** 结果面板中使用的普通牌面。 */
 export function ResultTile({ tile }: { tile: PaifuTileInput }) {
   return <TileImage className="block w-[52px] select-none" tile={tile} />;
 }
 
+/** 宝牌或里宝牌指示牌的牌面。 */
 export function DoraIndicatorTile({ tile }: { tile: PaifuTileInput }) {
   return <TileImage className="block w-[28px] select-none" tile={tile} />;
 }
 
+/** 结果面板中用于隐藏里宝牌等信息的背面牌。 */
 export function ResultBackTile({
   className = 'w-[28px]',
 }: {
@@ -123,6 +129,7 @@ export function ResultBackTile({
   );
 }
 
+/** 牌图加载失败时显示的文本备选牌面。 */
 function TileImageFallback({
   className,
   style,

@@ -24,6 +24,7 @@ interface MatchCenterTableProps {
   seatsByDisplaySeat: Record<SeatWind, MahjongSeatView | null>;
 }
 
+/** 实时对局桌面中央的局况、骰点/棒数和轮到谁提示区域。 */
 export function MatchCenterTable({
   isRelativeScoreMode = false,
   mahjongTable,

@@ -13,6 +13,7 @@ import {
 import { getStatusTone } from '../../../functions/getTournamentDetailStatus';
 import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
 
+/** 赛事详情首页中的基础信息和关键指标面板。 */
 export function TournamentOverviewPanel({
   profile,
   showMoreInfo,

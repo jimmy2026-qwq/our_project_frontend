@@ -7,6 +7,7 @@ import { getTournamentStatusLabel } from '../../../functions/formatClubDetail';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 import { clubPanelClassNames } from '../styles';
 
+/** 俱乐部详情页展示近期参赛记录和阵容入口的面板。 */
 export function ClubRecentTournamentsPanel({
   tournaments,
   canManageLineup,

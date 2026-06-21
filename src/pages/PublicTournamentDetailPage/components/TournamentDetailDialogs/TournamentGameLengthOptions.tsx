@@ -10,6 +10,7 @@ const gameLengthOptions: Array<{ value: MahjongGameLength; label: string }> = [
   { value: MahjongGameLengths.Hanchan, label: '半庄战' },
 ];
 
+/** 赛事规则弹窗中选择麻将半庄/东风等局长的选项组。 */
 export function TournamentGameLengthOptions({
   disabled,
   ruleset,

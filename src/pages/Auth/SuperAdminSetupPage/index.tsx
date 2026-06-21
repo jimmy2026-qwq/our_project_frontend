@@ -6,6 +6,7 @@ import { AuthScreenIntro } from '../components/AuthScreen/AuthScreenIntro';
 import { outlineButtonClassName } from '../components/AuthScreen/AuthScreen.styles';
 import { useSuperAdminSetupForm } from './hooks/useSuperAdminSetupForm';
 
+/** 首次部署时引导创建超级管理员账号的页面。 */
 export function SuperAdminSetupPage() {
   const form = useSuperAdminSetupForm();
   const eyebrow = '初始化超管';

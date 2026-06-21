@@ -6,6 +6,7 @@ import {
 } from '../../../functions/formatClubDetail';
 import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
 
+/** 俱乐部详情页展示公开招募、荣誉和基础信息的面板。 */
 export function ClubPublicInfoPanel({
   profile,
   featuredPlayerNames,

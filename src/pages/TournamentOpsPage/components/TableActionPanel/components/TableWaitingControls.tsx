@@ -30,6 +30,7 @@ interface TableWaitingControlsProps {
   onUpdateSeatState: () => void;
 }
 
+/** 牌桌等待准备阶段的开始、重置和归档操作按钮组。 */
 export function TableWaitingControls({
   canOperate,
   isSubmitting,

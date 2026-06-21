@@ -15,6 +15,7 @@ interface CenterPointProps {
   seat: SeatWind;
 }
 
+/** 牌谱桌面中心的局况、剩余牌数和供托/本场信息区域。 */
 export function CenterPoint({
   isRelativeScoreMode = false,
   onToggleRelativeScoreMode,

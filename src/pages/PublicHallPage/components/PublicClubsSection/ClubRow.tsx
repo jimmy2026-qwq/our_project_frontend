@@ -18,6 +18,7 @@ import {
 } from '../../functions/getPublicHallLabels';
 import { hallSectionClassNames } from '../PublicHallSection.styles';
 
+/** 公共俱乐部目录中的单个俱乐部条目。 */
 export function ClubRow({
   club,
   clubNamesById,

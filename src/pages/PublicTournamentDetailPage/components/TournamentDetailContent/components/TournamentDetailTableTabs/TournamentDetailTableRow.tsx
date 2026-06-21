@@ -16,6 +16,7 @@ import type {
   TournamentDetailWorkbenchState,
 } from '../../../../objects/TournamentDetail.types';
 
+/** 赛事详情牌桌列表中的单桌摘要行。 */
 export function TournamentDetailTableRow({
   finalizingArchiveTableId,
   operatorId,

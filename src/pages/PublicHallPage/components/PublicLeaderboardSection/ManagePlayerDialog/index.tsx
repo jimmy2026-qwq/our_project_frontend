@@ -25,6 +25,7 @@ import {
   useManagePlayerDialogAction,
 } from './hooks/useManagePlayerDialogAction';
 
+/** 公共大厅中创建或维护当前玩家资料的弹窗。 */
 export function ManagePlayerDialog({
   open,
   player,

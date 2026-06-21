@@ -2,10 +2,12 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 简洁键值对列表容器。 */
 export function KeyValueList({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="key-value-list" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
+/** 简洁键值对列表中的一项。 */
 export function KeyValueItem({
   label,
   value,

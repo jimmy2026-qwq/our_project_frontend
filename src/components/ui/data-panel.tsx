@@ -7,6 +7,7 @@ import { Table, TableBody, TableHead, TableHeader, TableRow } from './table';
 
 type DataSource = 'api' | 'mock';
 
+/** 带标题、说明和数据来源标记的通用数据面板。 */
 export function DataPanel({
   title,
   description,
@@ -40,6 +41,7 @@ export function DataPanel({
   );
 }
 
+/** 带表头、数据行和空状态的数据表面板。 */
 export function DataTablePanel({
   title,
   description,

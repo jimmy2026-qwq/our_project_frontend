@@ -14,6 +14,7 @@ import {
 
 import { participantText } from '../functions/getTournamentDetailParticipantsText';
 
+/** 邀请玩家或俱乐部加入赛事的弹窗。 */
 export function InviteParticipantDialog({
   open,
   title,

@@ -9,6 +9,7 @@ import {
 } from '../../../functions/formatClubDetail';
 import { clubPanelClassNames } from '../styles';
 
+/** 俱乐部详情页展示近期贡献变动记录的面板。 */
 export function ClubContributionChangesPanel({
   isLoading,
   changes,

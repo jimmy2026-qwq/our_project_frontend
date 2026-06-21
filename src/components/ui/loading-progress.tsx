@@ -18,6 +18,7 @@ function clampProgress(value: number) {
   return Math.max(0, Math.min(100, value));
 }
 
+/** 可显示确定进度或循环动效的加载进度条。 */
 export function LoadingProgress({
   className,
   label = '加载中',

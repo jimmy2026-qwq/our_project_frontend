@@ -15,6 +15,7 @@ import {
   getAppealStatusTone,
 } from '../../../../functions/getTournamentDetailView';
 
+/** 赛事详情页中展示申诉工单列表的标签页。 */
 export function TournamentDetailAppealsTab({
   appeals,
   appealsError,
@@ -66,6 +67,7 @@ export function TournamentDetailAppealsTab({
   );
 }
 
+/** 申诉列表中的单条工单行。 */
 function AppealRow({
   appeal,
   canManageAppeals,

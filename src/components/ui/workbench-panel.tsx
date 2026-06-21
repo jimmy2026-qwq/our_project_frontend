@@ -22,6 +22,7 @@ export interface DashboardPanelShellProps {
   fallback?: ReactNode;
 }
 
+/** 工作台数据面板的统一外壳，负责标题、接口路径和数据来源提示。 */
 export function DashboardPanelShell({
   title,
   path,
@@ -45,6 +46,7 @@ export function DashboardPanelShell({
   );
 }
 
+/** 后台接口缺失或使用占位数据时展示的警告说明。 */
 export function DashboardFallbackNotice({
   title = '数据占位',
   children,
@@ -68,6 +70,7 @@ export function DashboardFallbackNotice({
   );
 }
 
+/** 运营上下文区域，通常包裹筛选条件和当前操作对象说明。 */
 export function OpsContextPanel({
   title,
   description,
@@ -93,6 +96,7 @@ export function OpsContextPanel({
   );
 }
 
+/** 带重新加载按钮的工作台上下文筛选面板。 */
 export function WorkbenchContextPanel({
   title,
   description,
@@ -124,6 +128,7 @@ export function WorkbenchContextPanel({
   );
 }
 
+/** 工作台说明面板，支持来源标记和补充提示区。 */
 export function WorkbenchGuidePanel({
   title,
   description,

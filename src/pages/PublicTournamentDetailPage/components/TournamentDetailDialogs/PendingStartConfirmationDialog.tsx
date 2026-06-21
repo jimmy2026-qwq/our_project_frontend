@@ -17,6 +17,7 @@ type PendingStartConfirmation = {
   unreadyPlayerNames: string[];
 };
 
+/** 开始赛事前确认待处理事项的确认弹窗。 */
 export function PendingStartConfirmationDialog({
   pendingStartConfirmation,
   isSubmittingTableAction,

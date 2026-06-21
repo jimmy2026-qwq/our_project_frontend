@@ -8,6 +8,7 @@ import {
 } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 
+/** 玩家仪表盘中展示本人申诉工单摘要的面板。 */
 export function AppealTicketsPanel({ items }: { items: AppealSummary[] }) {
   return (
     <section className={detailShellClassNames.list}>

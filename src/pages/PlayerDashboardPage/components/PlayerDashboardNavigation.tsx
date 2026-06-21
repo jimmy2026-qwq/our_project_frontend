@@ -4,6 +4,7 @@ import { playerDashboardTabs } from './PlayerDashboardContent/functions/getPlaye
 import type { PlayerDetailTab } from './PlayerDashboardContent/objects/PlayerDashboardContent.types';
 import { detailShellClassNames } from './PlayerDashboardShell.styles';
 
+/** 玩家仪表盘内不同信息标签页之间的导航。 */
 export function PlayerDashboardNavigation({
   activeTab,
   onActiveTabChange,

@@ -14,6 +14,7 @@ interface SeatCardProps {
   className?: string;
 }
 
+/** 实时牌桌座位概览中的单个座位卡。 */
 export function SeatCard({
   wind,
   playerId,

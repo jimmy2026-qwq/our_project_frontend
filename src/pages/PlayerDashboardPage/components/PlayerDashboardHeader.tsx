@@ -4,6 +4,7 @@ import { Button } from '@/components/ui';
 
 import { detailShellClassNames } from './PlayerDashboardShell.styles';
 
+/** 玩家仪表盘顶部的昵称、段位、俱乐部和状态摘要。 */
 export function PlayerDashboardHeader({
   playerName,
   onLogout,

@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cva, cx, type VariantProps } from '@/components/ui/cx';
 
+/** 指标卡片的响应式网格容器。 */
 export function StatGrid({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
@@ -38,6 +39,7 @@ function normalizeAccent(accent?: string | null): StatAccent {
   return 'default';
 }
 
+/** 展示一个标签、主数值和可选补充内容的指标卡。 */
 export function StatCard({
   label,
   value,

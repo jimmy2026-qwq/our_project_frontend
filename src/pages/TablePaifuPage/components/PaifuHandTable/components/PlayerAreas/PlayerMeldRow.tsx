@@ -16,6 +16,7 @@ import {
   riverTileVisibleHeight,
 } from '../../objects/paifuTableLayout';
 
+/** 牌谱回放中单组副露或杠子的牌面排列。 */
 export function MeldRow({
   meld,
   meldIndex,
@@ -50,6 +51,7 @@ export function MeldRow({
   );
 }
 
+/** 根据副露牌是否横置或背面渲染单张副露牌。 */
 function MeldTileView({
   meldTile,
   seat,
@@ -102,6 +104,7 @@ function MeldTileView({
   );
 }
 
+/** 副露中用于暗杠等场景的背面牌。 */
 function MeldBackTile({ style }: { style: CSSProperties }) {
   return (
     <span

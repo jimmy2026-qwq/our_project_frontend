@@ -15,6 +15,7 @@ import {
 import { ConfirmationDialogContext } from '@/components/confirmation-dialog/useConfirmationDialogContext';
 import { useQueuedConfirmationDialogState } from './useQueuedConfirmationDialogState';
 
+/** 向应用提供队列式确认弹窗，并集中渲染当前待确认操作。 */
 export function ConfirmationDialogProvider({
   children,
 }: {

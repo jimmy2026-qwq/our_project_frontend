@@ -21,6 +21,7 @@ function getApplicationStatusLabel(status: ClubApplicationView['status']) {
   }
 }
 
+/** 俱乐部详情页展示入会申请和管理员待办的面板。 */
 export function ClubInboxPanel({
   isInboxLoading,
   applicationInbox,

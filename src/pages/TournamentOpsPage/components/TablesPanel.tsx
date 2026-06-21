@@ -16,6 +16,7 @@ interface TablesPanelProps {
   playerNames: Record<string, string>;
 }
 
+/** 赛事运营页中展示牌桌列表和牌桌操作入口的面板。 */
 export function TablesPanel({
   payload,
   selectedTableId,

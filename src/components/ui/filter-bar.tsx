@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 页面筛选条件和右上角操作的卡片式容器。 */
 export function FilterBar({
   title,
   action,

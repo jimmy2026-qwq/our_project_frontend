@@ -22,6 +22,7 @@ const tournamentDetailFrameClassNames = {
     'inline-flex w-fit text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',
 };
 
+/** 公开赛事详情页的外层布局框架。 */
 export const PublicTournamentDetailFrame = ({
   children,
 }: {
@@ -42,6 +43,7 @@ export const PublicTournamentDetailFrame = ({
   );
 };
 
+/** 公开赛事详情页加载中的占位状态。 */
 export const PublicTournamentDetailLoading = () => {
   return (
     <section className={tournamentDetailFrameClassNames.loadingRoot}>
@@ -67,6 +69,7 @@ export const PublicTournamentDetailLoading = () => {
   );
 };
 
+/** 公开赛事详情页找不到赛事时的错误状态。 */
 export const PublicTournamentDetailNotFound = ({
   title,
 }: {

@@ -2,6 +2,7 @@ import type { FieldsetHTMLAttributes, HTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 表单字段集合的分组容器。 */
 export function Fieldset({ className, ...props }: FieldsetHTMLAttributes<HTMLFieldSetElement>) {
   return (
     <fieldset
@@ -12,10 +13,12 @@ export function Fieldset({ className, ...props }: FieldsetHTMLAttributes<HTMLFie
   );
 }
 
+/** 字段集合的 legend 标题。 */
 export function FieldsetLegend({ className, ...props }: HTMLAttributes<HTMLLegendElement>) {
   return <legend data-slot="fieldset-legend" className={cx('px-2 text-[0.84rem] font-medium tracking-[0.06em] text-[#ecc57a]', className)} {...props} />;
 }
 
+/** 字段集合内部说明或控件区域。 */
 export function FieldsetBody({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="fieldset-body" className={cx('grid gap-2 leading-[1.7] text-[#9ab0c1]', className)} {...props} />;
 }

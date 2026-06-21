@@ -2,6 +2,7 @@ import { Navigate, Outlet, useLocation } from 'react-router-dom';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
 
+/** 路由守卫：要求存在任意有效登录或游客会话。 */
 export function RequireAuth() {
   const { isReady, session } = useAuthContext();
   const location = useLocation();

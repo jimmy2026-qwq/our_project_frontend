@@ -2,6 +2,7 @@ import { getMahjongYakuLabel } from '@/objects';
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { formatYakuValue } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
+/** 实时结果覆盖层中展示和牌役种的列表。 */
 export function YakuList({
   className,
   compact = false,

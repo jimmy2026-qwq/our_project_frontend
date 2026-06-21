@@ -5,6 +5,7 @@ import { AuthScreenFrame } from '../components/AuthScreen/AuthScreenFrame';
 import { AuthScreenIntro } from '../components/AuthScreen/AuthScreenIntro';
 import { useRegisterPageForm } from './hooks/useRegisterPageForm';
 
+/** 注册正式账号并创建玩家展示身份的页面。 */
 export function RegisterPage() {
   const form = useRegisterPageForm();
   const eyebrow = '创建账号';

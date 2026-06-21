@@ -62,6 +62,7 @@ export interface ButtonProps
   extends ButtonHTMLAttributes<HTMLButtonElement>,
     VariantProps<typeof buttonVariants> {}
 
+/** 统一项目内按钮的尺寸、色调、焦点态和禁用态。 */
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
   {
     className,

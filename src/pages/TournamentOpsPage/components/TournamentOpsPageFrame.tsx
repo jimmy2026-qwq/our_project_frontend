@@ -5,6 +5,7 @@ import { SectionIntro } from '@/components/ui';
 const tournamentOpsSectionClassName =
   'grid gap-[22px] rounded-[32px] bg-[rgba(9,21,33,0.86)] px-[30px] py-7';
 
+/** 赛事运营页的整体背景和内容宽度框架。 */
 export function TournamentOpsPageFrame({ children }: { children: ReactNode }) {
   return (
     <section className={tournamentOpsSectionClassName}>

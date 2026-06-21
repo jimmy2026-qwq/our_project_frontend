@@ -26,6 +26,7 @@ interface PublicHallActiveViewProps {
   onStateChange: (patch: Partial<PublicHallState>) => void;
 }
 
+/** 根据大厅当前标签页切换赛事、俱乐部或排行榜内容。 */
 export function PublicHallActiveView({
   canCreateClub,
   canCreateTournament,

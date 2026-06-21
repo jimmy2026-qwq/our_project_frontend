@@ -40,6 +40,7 @@ const contributionTitlePresets = [
   labels: Record<string, string>;
 }>;
 
+/** 贡献称号配置中选择预设称号模板的下拉控件。 */
 export function ClubContributionTitlePresetSelect({
   disabled,
   onSelect,

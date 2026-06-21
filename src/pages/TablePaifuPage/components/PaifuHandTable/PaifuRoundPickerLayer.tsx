@@ -4,6 +4,7 @@ import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import { RoundPicker } from './components/CenterTable';
 import type { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
 
+/** 覆盖在牌谱桌面上的小局快速选择层。 */
 export function PaifuRoundPickerLayer({
   onSelectRound,
   replay,

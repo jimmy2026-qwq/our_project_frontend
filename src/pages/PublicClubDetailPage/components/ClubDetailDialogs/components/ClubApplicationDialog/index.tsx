@@ -17,6 +17,7 @@ import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { ClubApplicationSummaryCard } from './ClubApplicationSummaryCard';
 import { useClubApplicationDialog } from './hooks/useClubApplicationDialog';
 
+/** 提交、查看或撤回俱乐部入会申请的弹窗。 */
 export function ClubApplicationDialog({
   club,
   open,

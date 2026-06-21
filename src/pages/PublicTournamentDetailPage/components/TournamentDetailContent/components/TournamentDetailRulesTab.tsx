@@ -2,6 +2,7 @@ import { TournamentCurrentRulesPanel } from './TournamentDetailRulesPanel';
 import { detailShellClassNames } from '../../detailShell.styles';
 import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
 
+/** 赛事详情页中展示当前规则和阶段规则的标签页。 */
 export function TournamentDetailRulesTab({
   workbench,
   onOpenRulesDialog,

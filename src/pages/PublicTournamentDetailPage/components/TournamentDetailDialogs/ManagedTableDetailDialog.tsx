@@ -20,6 +20,7 @@ import {
   getSeatStatusTone,
 } from '../../functions/getTournamentDetailView';
 
+/** 管理端查看和操作单张赛事牌桌的详情弹窗。 */
 export function ManagedTableDetailDialog({
   selectedManageTable,
   tableDetail,

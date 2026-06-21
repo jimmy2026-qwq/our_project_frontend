@@ -7,6 +7,7 @@ interface PaifuFinalSettlementOverlayProps {
   paifu: TablePaifuDetail;
 }
 
+/** 牌谱回放结束时展示终局排名和点数的覆盖层。 */
 export function PaifuFinalSettlementOverlay({
   onConfirm,
   paifu,

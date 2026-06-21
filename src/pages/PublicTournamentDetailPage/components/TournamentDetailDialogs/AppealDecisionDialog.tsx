@@ -20,6 +20,7 @@ import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSumm
 
 import { getAppealDecisionLabel } from '../../functions/getTournamentDetailView';
 
+/** 运营人员裁定申诉工单的弹窗表单。 */
 export function AppealDecisionDialog({
   selectedAppealAction,
   appealVerdict,

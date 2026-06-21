@@ -19,6 +19,7 @@ const tournamentPanelClassNames = {
   link: 'inline-flex font-semibold text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',
 };
 
+/** 赛事详情页中展示各阶段牌桌和可用牌桌操作的面板。 */
 export function TournamentTablesPanel({
   visibleTables,
   playerNames,

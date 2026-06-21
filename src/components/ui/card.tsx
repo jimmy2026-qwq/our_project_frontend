@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 提供后台和公开页通用的玻璃质感内容卡片容器。 */
 export function Card({ className, ...props }: HTMLAttributes<HTMLElement>) {
   return (
     <article
@@ -18,14 +19,17 @@ export function Card({ className, ...props }: HTMLAttributes<HTMLElement>) {
   );
 }
 
+/** 卡片顶部标题区容器。 */
 export function CardHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="card-header" className={cx('p-[22px]', className)} {...props} />;
 }
 
+/** 卡片主标题文本。 */
 export function CardTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return <h3 data-slot="card-title" className={cx('m-0 text-[#f2f7fb]', className)} {...props} />;
 }
 
+/** 卡片标题下方的辅助说明文本。 */
 export function CardDescription({ className, ...props }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p
@@ -36,10 +40,12 @@ export function CardDescription({ className, ...props }: HTMLAttributes<HTMLPara
   );
 }
 
+/** 卡片主体内容区。 */
 export function CardContent({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="card-content" className={cx('p-[22px]', className)} {...props} />;
 }
 
+/** 卡片底部操作区。 */
 export function CardFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="card-footer" className={cx('p-[22px]', className)} {...props} />;
 }

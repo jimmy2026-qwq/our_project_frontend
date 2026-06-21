@@ -8,6 +8,7 @@ interface RoundPickerProps {
   selectedRoundIndex: number;
 }
 
+/** 在牌谱多小局之间切换的轮次选择器。 */
 export function RoundPicker({
   onOpenSettlement,
   onSelectRound,

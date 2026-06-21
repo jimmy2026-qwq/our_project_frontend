@@ -28,6 +28,7 @@ const LABEL_SUBMITTING = '\u521b\u5efa\u4e2d...';
 const FORMAT_SWISS = '\u745e\u58eb\u8f6e';
 const FORMAT_KNOCKOUT = '\u6dd8\u6c70\u8d5b';
 
+/** 公共大厅中新建赛事并进入详情页的弹窗表单。 */
 export function CreateTournamentDialog({
   open,
   onOpenChange,

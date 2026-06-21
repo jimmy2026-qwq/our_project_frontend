@@ -17,6 +17,7 @@ const portalSectionClassNames = {
     'm-0 leading-[1.8] text-[#c7d6e2] [text-shadow:0_1px_12px_rgba(3,8,14,0.18)]',
 };
 
+/** 公共大厅和门户页使用的分区容器。 */
 export function PortalSection({
   eyebrow,
   title,

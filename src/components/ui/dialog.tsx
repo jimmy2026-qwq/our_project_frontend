@@ -3,9 +3,12 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 
 import { cx } from '@/components/ui/cx';
 
+/** Radix Dialog 根组件的项目内导出。 */
 export const Dialog = DialogPrimitive.Root;
+/** Radix Dialog Portal 的项目内导出。 */
 export const DialogPortal = DialogPrimitive.Portal;
 
+/** 弹窗打开时覆盖页面的半透明背景层。 */
 export const DialogOverlay = forwardRef<
   ElementRef<typeof DialogPrimitive.Overlay>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
@@ -23,6 +26,7 @@ export const DialogOverlay = forwardRef<
   );
 });
 
+/** 弹窗内容面板，统一尺寸、圆角、边框和背景。 */
 export const DialogSurface = forwardRef<
   ElementRef<typeof DialogPrimitive.Content>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
@@ -42,18 +46,22 @@ export const DialogSurface = forwardRef<
   );
 });
 
+/** 弹窗标题区域布局容器。 */
 export function DialogHeader({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="dialog-header" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
+/** 弹窗主体内容区域布局容器。 */
 export function DialogBody({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="dialog-body" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
+/** 弹窗底部按钮和辅助操作区域。 */
 export function DialogFooter({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return <div data-slot="dialog-footer" className={cx('grid gap-2.5', className)} {...props} />;
 }
 
+/** 弹窗无障碍标题文本。 */
 export const DialogTitle = forwardRef<
   ElementRef<typeof DialogPrimitive.Title>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
@@ -68,6 +76,7 @@ export const DialogTitle = forwardRef<
   );
 });
 
+/** 弹窗无障碍描述文本。 */
 export const DialogDescription = forwardRef<
   ElementRef<typeof DialogPrimitive.Description>,
   ComponentPropsWithoutRef<typeof DialogPrimitive.Description>

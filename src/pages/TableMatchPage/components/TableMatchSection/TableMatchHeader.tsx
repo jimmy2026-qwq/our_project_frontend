@@ -20,6 +20,7 @@ interface TableMatchHeaderProps {
   onToggleOwnReady: () => void;
 }
 
+/** 实时牌桌页顶部的赛事、阶段、桌号和状态信息。 */
 export function TableMatchHeader({
   table,
   backLink,

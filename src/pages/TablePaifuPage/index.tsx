@@ -5,6 +5,7 @@ import { usePaifuHandTable } from './components/PaifuHandTable/hooks/usePaifuHan
 import { PaifuHandTableView } from './components/PaifuHandTable/PaifuHandTableView';
 import { useTablePaifuPageModel } from './hooks/useTablePaifuPageModel';
 
+/** 根据路由加载牌谱并渲染回放桌面、加载和错误状态。 */
 export function TablePaifuPage() {
   const page = useTablePaifuPageModel();
   const table = usePaifuHandTable({

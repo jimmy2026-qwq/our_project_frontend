@@ -1,5 +1,6 @@
 import { LoadingSection } from '@/components/ui';
 
+/** 赛事运营页加载期间的进度状态。 */
 export function TournamentOpsLoading() {
   return (
     <LoadingSection

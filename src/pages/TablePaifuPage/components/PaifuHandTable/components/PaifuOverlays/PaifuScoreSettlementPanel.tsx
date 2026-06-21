@@ -4,6 +4,7 @@ import {
   getPlayerName,
 } from '../../functions/getPaifuWinningResultText';
 
+/** 牌谱结果覆盖层中的分数变化明细面板。 */
 export function ScoreSettlementPanel({
   playerNames,
   round,

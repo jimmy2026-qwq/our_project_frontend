@@ -9,6 +9,7 @@ import {
   loadingClassNames,
 } from './PlayerDashboardShell.styles';
 
+/** 玩家仪表盘加载期间的骨架和进度状态。 */
 export function PlayerDashboardLoading() {
   return (
     <PlayerDashboardFrame>
@@ -35,6 +36,7 @@ export function PlayerDashboardLoading() {
   );
 }
 
+/** 尚未创建玩家档案时展示的空状态。 */
 export function PlayerDashboardEmpty() {
   return (
     <PlayerDashboardFrame>

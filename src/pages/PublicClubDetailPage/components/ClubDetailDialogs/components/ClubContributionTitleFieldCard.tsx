@@ -6,6 +6,7 @@ import {
 
 import type { ClubContributionTitleField } from '../../../objects/ClubDetail.types';
 
+/** 贡献称号设置弹窗中的单条称号字段卡。 */
 export function ClubContributionTitleFieldCard({
   canManage,
   draftLabel,

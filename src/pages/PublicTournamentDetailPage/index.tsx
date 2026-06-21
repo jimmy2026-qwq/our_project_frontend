@@ -13,6 +13,7 @@ import { TournamentDetailHeader } from './components/TournamentDetailHeader';
 import { TournamentRulesDialog } from './components/TournamentDetailDialogs/TournamentRulesDialog';
 import { usePublicTournamentDetailPage } from './hooks/usePublicTournamentDetailPage';
 
+/** 根据路由加载公开赛事详情并协调管理操作弹窗。 */
 export function PublicTournamentDetailPage() {
   const page = usePublicTournamentDetailPage();
 

@@ -6,6 +6,7 @@ interface TableActionAlertsProps {
   error?: string | null;
 }
 
+/** 牌桌操作面板中的错误、提示和接口占位提醒。 */
 export function TableActionAlerts({
   operatorId,
   canManageActions,

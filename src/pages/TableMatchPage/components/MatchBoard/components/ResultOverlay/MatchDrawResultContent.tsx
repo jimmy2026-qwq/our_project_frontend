@@ -3,6 +3,7 @@ import { HandOutcome, type AgariResult } from '@/objects';
 import { ResultFooter } from './MatchResultSettlementPanels';
 import { getDrawLabel, getPlayerName } from '../../functions/getMatchResultText';
 
+/** 流局结果覆盖层中的听牌状态和分数变化内容。 */
 export function DrawResultContent({
   nextLabel,
   onAdvance,

@@ -10,6 +10,7 @@ import {
   participantText,
 } from '../functions/getTournamentDetailParticipantsText';
 
+/** 参与者分组标题旁的展开收起箭头。 */
 export function ToggleArrow({
   expanded,
   label,
@@ -31,6 +32,7 @@ export function ToggleArrow({
   );
 }
 
+/** 可折叠的参赛者分组区域。 */
 export function ParticipantSection({
   title,
   count,
@@ -92,6 +94,7 @@ export function ParticipantSection({
   );
 }
 
+/** 参赛玩家列表中的单行玩家信息。 */
 export function PlayerRow({ player }: { player: PlayerProfile }) {
   return (
     <article className="grid gap-2 rounded-[18px] border border-[rgba(176,223,229,0.14)] px-4 py-3 sm:grid-cols-[1fr_auto] sm:items-center">
@@ -112,6 +115,7 @@ export function PlayerRow({ player }: { player: PlayerProfile }) {
   );
 }
 
+/** 展示俱乐部阶段阵容成员的紧凑名单。 */
 export function LineupRoster({
   activePlayers,
   reservePlayers,

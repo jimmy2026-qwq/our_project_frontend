@@ -3,6 +3,7 @@ const bangziImages = {
   riichi: '/mahjong-soul/riichi_bangzi.png',
 } as const;
 
+/** 用点棒图形展示本场棒或立直棒数量。 */
 export function BangziCounter({
   count,
   label,
@@ -27,6 +28,7 @@ export function BangziCounter({
   );
 }
 
+/** 展示当前小局剩余牌山数量。 */
 export function RemainingTileCount({ count }: { count: number }) {
   return (
     <div className="grid justify-items-center gap-0.5">
@@ -43,6 +45,7 @@ export function RemainingTileCount({ count }: { count: number }) {
   );
 }
 
+/** 单个本场棒或立直棒图片。 */
 function BangziImage({ type }: { type: keyof typeof bangziImages }) {
   return (
     <img

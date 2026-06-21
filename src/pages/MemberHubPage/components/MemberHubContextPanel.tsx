@@ -7,6 +7,7 @@ import type {
   MemberHubState,
 } from '../objects/MemberHub.types';
 
+/** 成员中心顶部展示当前玩家、俱乐部和刷新入口的上下文面板。 */
 export function MemberHubContextPanel({
   directory,
   state,

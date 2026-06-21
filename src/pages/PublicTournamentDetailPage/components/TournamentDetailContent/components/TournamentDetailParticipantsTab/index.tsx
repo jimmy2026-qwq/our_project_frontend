@@ -12,6 +12,7 @@ import {
 import { useTournamentDetailParticipantsTab } from './hooks/useTournamentDetailParticipantsTab';
 import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
 
+/** 赛事详情页中的参赛玩家、俱乐部和白名单标签页。 */
 export function TournamentDetailParticipantsTab({
   workbench,
   onInviteClub,

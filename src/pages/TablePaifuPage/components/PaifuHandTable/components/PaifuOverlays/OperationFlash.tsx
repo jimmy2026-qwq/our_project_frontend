@@ -1,6 +1,7 @@
 import { operationPositionClasses } from '../../objects/paifuTableLayout';
 import type { ActiveOperation } from '../../objects/PaifuOverlayViews';
 
+/** 回放中短暂提示当前操作类型的闪烁标记。 */
 export function OperationFlash({ operation }: { operation?: ActiveOperation }) {
   if (!operation) {
     return null;

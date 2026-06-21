@@ -17,6 +17,7 @@ import type {
 import { getPlayerStatusLabel } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 
+/** 玩家主页中复用的玻璃质感详情卡。 */
 function ShellDetailCard({
   title,
   children,
@@ -34,6 +35,7 @@ function ShellDetailCard({
   );
 }
 
+/** 玩家主页详情卡中的键值列表容器。 */
 function ShellDetailList({ children }: { children: ReactNode }) {
   return (
     <DescriptionList className={detailShellClassNames.detailList}>
@@ -42,6 +44,7 @@ function ShellDetailList({ children }: { children: ReactNode }) {
   );
 }
 
+/** 玩家主页详情卡中的单个键值项。 */
 function ShellDetailListItem({
   label,
   value,
@@ -80,6 +83,7 @@ function formatClubLinks(clubs: PlayerClubLink[]) {
   );
 }
 
+/** 玩家仪表盘主页，展示身份、俱乐部、段位和权限概览。 */
 export function PlayerHomePanel({
   player,
   playerClubs,

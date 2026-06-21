@@ -3,6 +3,7 @@ import { StatusPill } from '@/components/ui';
 import type { MemberListItem } from '../objects/MemberListItem';
 import { ClubTournamentLineupMemberCard } from './ClubTournamentLineupMemberCard';
 
+/** 阵容弹窗中的可筛选成员列表。 */
 export function ClubTournamentLineupMemberList({
   isLoading,
   selectedPlayerIds,

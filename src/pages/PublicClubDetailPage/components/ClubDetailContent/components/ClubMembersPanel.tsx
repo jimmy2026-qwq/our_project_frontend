@@ -6,6 +6,7 @@ import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
 import { clubPanelClassNames } from '../styles';
 import { ClubMemberRow } from './ClubMemberRow';
 
+/** 俱乐部详情页展示成员列表和贡献称号入口的面板。 */
 export function ClubMembersPanel({
   isLoading,
   members,
@@ -73,6 +74,7 @@ export function ClubMembersPanel({
   );
 }
 
+/** 打开贡献称号管理弹窗的按钮。 */
 function ContributionTitlesButton({ onClick }: { onClick: () => void }) {
   return (
     <div className="flex justify-end">

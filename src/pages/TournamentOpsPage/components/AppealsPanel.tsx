@@ -22,6 +22,7 @@ function getAppealStatusLabel(status: AppealSummary['status']) {
   }
 }
 
+/** 赛事运营页中查看和处理申诉工单的面板。 */
 export function AppealsPanel({
   payload,
 }: {

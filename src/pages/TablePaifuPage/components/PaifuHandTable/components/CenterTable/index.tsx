@@ -24,6 +24,7 @@ interface CenterTableProps {
   tableSticks: TableStickDisplay;
 }
 
+/** 牌谱回放桌面中央的状态信息与轮次导航。 */
 export function CenterTable({
   isExhaustiveDrawResult,
   isRelativeScoreMode,

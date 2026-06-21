@@ -11,6 +11,7 @@ import { MemberHubLoading } from './components/MemberHubLoading';
 import { MemberHubPageShell } from './components/MemberHubPageShell';
 import { useMemberHubPage } from './hooks/useMemberHubPage';
 
+/** 加载成员相关数据并渲染成员中心页面。 */
 export function MemberHubPage() {
   const page = useMemberHubPage();
 

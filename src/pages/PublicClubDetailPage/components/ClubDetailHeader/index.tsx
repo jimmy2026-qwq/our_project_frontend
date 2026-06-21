@@ -8,6 +8,7 @@ interface ClubDetailHeaderProps {
   onNavigateBack: () => void;
 }
 
+/** 俱乐部详情页顶部的名称、荣誉、统计和操作区。 */
 export function ClubDetailHeader({
   workbench,
   onApply,

@@ -20,6 +20,7 @@ import {
 import { ClubRow } from './ClubRow';
 import { CreateClubDialog } from './CreateClubDialog';
 
+/** 公共大厅中展示俱乐部目录和创建俱乐部入口的区块。 */
 export function PublicClubsSection({
   payload,
   state,

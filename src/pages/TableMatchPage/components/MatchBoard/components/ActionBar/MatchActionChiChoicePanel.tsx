@@ -5,6 +5,7 @@ import {
 } from '@/objects';
 import { TileImage } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 
+/** 吃牌有多种组合时让玩家选择具体吃法的面板。 */
 export function ChiChoicePanel({
   actions,
   disabled,

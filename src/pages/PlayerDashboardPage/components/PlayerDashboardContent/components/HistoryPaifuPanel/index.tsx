@@ -12,6 +12,7 @@ import { sendAPI } from '@/system/api';
 import { formatDateTime } from '../../functions/formatDateTime';
 import { detailShellClassNames } from '../../../PlayerDashboardShell.styles';
 
+/** 玩家仪表盘中展示历史牌谱和对局记录的面板。 */
 export function HistoryPaifuPanel({ items }: { items: MatchRecordSummary[] }) {
   const [summaryRecord, setSummaryRecord] = useState<MatchRecordSummary | null>(
     null,

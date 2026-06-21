@@ -1,3 +1,4 @@
+/** 规则面板中只读布尔规则的勾选展示项。 */
 export function ReadonlyRuleCheckbox({
   label,
   checked,

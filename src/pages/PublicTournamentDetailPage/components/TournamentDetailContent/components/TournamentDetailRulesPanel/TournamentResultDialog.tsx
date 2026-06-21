@@ -17,6 +17,7 @@ type TournamentResultRow = ReturnType<
   typeof useTournamentDetailRulesPanel
 >['playerDisplayRows'][number];
 
+/** 展示赛事结算或最终结果明细的弹窗。 */
 export function TournamentResultDialog({
   open,
   rows,

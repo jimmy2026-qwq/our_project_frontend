@@ -13,6 +13,7 @@ const winningCallPositionClasses: Record<SeatWind, string> = {
     'left-[calc(50%-272px)] top-1/2 -translate-x-1/2 -translate-y-1/2',
 };
 
+/** 和牌瞬间显示荣和、自摸或役满等醒目标识。 */
 export function WinningCallFlash({
   flash,
 }: {

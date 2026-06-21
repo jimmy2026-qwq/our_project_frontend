@@ -38,6 +38,7 @@ function getMemberBadgeTone(member: ClubAdminMemberEntry) {
   return member.isAdmin ? 'success' : 'warning';
 }
 
+/** 俱乐部成员列表中的单个成员行。 */
 export function ClubMemberRow({
   canAdjustContributions,
   canAssignAdmins,

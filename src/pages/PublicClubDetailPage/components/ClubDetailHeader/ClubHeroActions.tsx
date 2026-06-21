@@ -6,6 +6,7 @@ import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplic
 const heroActionClassName =
   'min-h-[42px] min-w-[132px] px-4 text-center text-[0.9rem] leading-5';
 
+/** 俱乐部详情页头图区域中的申请、管理和关系操作按钮组。 */
 export function ClubHeroActions({
   isClubMember,
   canApply,

@@ -28,6 +28,7 @@ interface ClubDetailContentProps {
   controls: ClubDetailControls;
 }
 
+/** 俱乐部详情页主体内容，组合公开信息、成员、申请和赛事记录。 */
 export function ClubDetailContent({
   state,
   workbench,
@@ -155,6 +156,7 @@ export function ClubDetailContent({
   );
 }
 
+/** 俱乐部详情内容区复用的面板网格框架。 */
 function PanelFrame({ children }: { children: ReactNode }) {
   return (
     <div

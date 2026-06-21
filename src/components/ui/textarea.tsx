@@ -2,6 +2,7 @@ import type { TextareaHTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 项目统一样式的多行文本输入框。 */
 export function Textarea({ className, ...props }: TextareaHTMLAttributes<HTMLTextAreaElement>) {
   return (
     <textarea

@@ -14,6 +14,7 @@ import { TableNavigationActions } from './components/TableNavigationActions';
 import { TableWaitingControls } from './components/TableWaitingControls';
 import { useTableActionPanel } from './hooks/useTableActionPanel';
 
+/** 赛事运营页中针对选中牌桌执行操作的控制面板。 */
 export function TableActionPanel({
   table,
   operatorId,

@@ -15,6 +15,7 @@ interface TournamentOpsFiltersPanelProps {
   onStateChange: (patch: Partial<TournamentOpsState>) => void;
 }
 
+/** 赛事运营页顶部选择赛事、阶段和刷新数据的筛选面板。 */
 export function TournamentOpsFiltersPanel({
   tournaments,
   activeTournament,

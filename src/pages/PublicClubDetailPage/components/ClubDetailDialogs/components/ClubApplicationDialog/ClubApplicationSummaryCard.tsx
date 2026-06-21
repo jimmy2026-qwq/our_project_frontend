@@ -36,6 +36,7 @@ function getApplicationStatusLabel(status?: ClubApplication['status']) {
   }
 }
 
+/** 入会申请弹窗中展示俱乐部招募规则和当前申请状态的摘要卡。 */
 export function ClubApplicationSummaryCard({
   application,
 }: {

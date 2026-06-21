@@ -6,6 +6,7 @@ interface MahjongBridgeNoticeProps {
   mahjongTable: MahjongTableView | null;
 }
 
+/** 实时牌桌连接麻将核心状态机时的桥接状态提示。 */
 export function MahjongBridgeNotice({
   error,
   isLoading,

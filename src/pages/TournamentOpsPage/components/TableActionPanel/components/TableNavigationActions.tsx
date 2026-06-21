@@ -10,6 +10,7 @@ interface TableNavigationActionsProps {
   onOpenPaifuPage: () => void;
 }
 
+/** 跳转实时牌桌和牌谱页面的导航按钮组。 */
 export function TableNavigationActions({
   table,
   canManageActions,

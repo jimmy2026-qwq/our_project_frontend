@@ -2,6 +2,7 @@ import type { AgariResult } from '@/objects';
 
 import { ScoreSettlementPanel } from './MatchResultSettlementPanels';
 
+/** 计分调整结果的文字内容区。 */
 export function ScoreResultContent({
   nextLabel,
   onAdvance,

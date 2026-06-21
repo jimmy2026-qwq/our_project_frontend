@@ -36,6 +36,7 @@ interface MatchPlayerHandProps {
   shouldForceBacks?: boolean;
 }
 
+/** 实时牌桌中玩家手牌、摸牌和可点击出牌区域。 */
 export function MatchPlayerHand({
   discardActions,
   dimUnavailableTiles = false,
@@ -133,6 +134,7 @@ export function MatchPlayerHand({
   );
 }
 
+/** 玩家手牌中可提交弃牌动作的牌按钮。 */
 function DiscardTileButton({
   action,
   className,

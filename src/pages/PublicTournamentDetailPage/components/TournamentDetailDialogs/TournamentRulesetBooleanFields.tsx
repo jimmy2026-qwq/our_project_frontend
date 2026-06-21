@@ -1,6 +1,7 @@
 import { CheckboxField } from '@/components/ui';
 import type { MahjongRuleset } from '@/objects/tournament';
 
+/** 赛事规则弹窗中一组布尔麻将规则开关。 */
 export function TournamentRulesetBooleanFields({
   disabled,
   ruleset,

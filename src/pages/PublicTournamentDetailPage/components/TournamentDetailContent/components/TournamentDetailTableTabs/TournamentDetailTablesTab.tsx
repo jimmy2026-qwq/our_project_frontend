@@ -16,6 +16,7 @@ import type {
 } from '../../../../objects/TournamentDetail.types';
 import { TournamentDetailTableRow } from './TournamentDetailTableRow';
 
+/** 赛事详情中按阶段展示牌桌列表的标签页。 */
 export function TournamentDetailTablesTab({
   operatorId,
   participantWaitingTableDetails,

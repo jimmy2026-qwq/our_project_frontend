@@ -13,6 +13,7 @@ interface TableMatchAppealActionProps {
   onOpenAppeal: () => void;
 }
 
+/** 实时牌桌页打开申诉弹窗的操作入口。 */
 export function TableMatchAppealAction({
   status,
   ownSeat,

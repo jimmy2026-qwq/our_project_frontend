@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 加载中内容占位骨架。 */
 export function Skeleton({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div

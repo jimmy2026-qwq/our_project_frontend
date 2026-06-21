@@ -9,6 +9,7 @@ import {
 } from './AuthScreen.styles';
 import type { AuthScreenProps } from './AuthScreen.types';
 
+/** 登录、注册和初始化页面共用的认证卡片。 */
 export function AuthScreenCard({
   eyebrow,
   title,
@@ -74,6 +75,7 @@ export function AuthScreenCard({
   );
 }
 
+/** 认证卡片顶部的标题、说明和附加内容。 */
 function AuthScreenCardHeader({
   eyebrow,
   title,
@@ -92,6 +94,7 @@ function AuthScreenCardHeader({
   );
 }
 
+/** 认证表单中的错误提示区域。 */
 function AuthScreenError({ message }: { message: string }) {
   return (
     <div className={cx('min-h-16', message ? 'opacity-100' : 'opacity-0')}>
@@ -107,6 +110,7 @@ function AuthScreenError({ message }: { message: string }) {
   );
 }
 
+/** 认证卡片底部的提交按钮和辅助链接区域。 */
 function AuthScreenActions({
   secondaryAction,
   extraActions,

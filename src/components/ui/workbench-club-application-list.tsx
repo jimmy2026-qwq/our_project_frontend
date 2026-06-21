@@ -49,6 +49,7 @@ function getApplicationStatusLabel(status: ClubApplicationStatus) {
   }
 }
 
+/** 工作台和俱乐部页共用的入会申请列表。 */
 export function ClubApplicationList({
   items,
   emptyText,

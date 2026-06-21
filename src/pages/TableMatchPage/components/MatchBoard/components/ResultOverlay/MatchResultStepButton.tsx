@@ -1,3 +1,4 @@
+/** 结果覆盖层中推进下一步或关闭结果的按钮。 */
 export function ResultStepButton({
   className = '',
   label,

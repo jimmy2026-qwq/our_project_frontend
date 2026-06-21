@@ -3,6 +3,7 @@ import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/Paifu
 import { centerPointPositionClasses } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
 import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
+/** 实时对局中央点位，用于承载桌面状态和当前回合提示。 */
 export function MatchCenterPoint({
   isRelativeScoreMode = false,
   onToggleRelativeScoreMode,

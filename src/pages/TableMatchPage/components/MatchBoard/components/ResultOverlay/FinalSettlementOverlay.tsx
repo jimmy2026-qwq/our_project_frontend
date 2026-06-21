@@ -9,6 +9,7 @@ interface FinalSettlementOverlayProps {
   playerNames: Record<string, string>;
 }
 
+/** 整桌对局结束后的最终名次和分数结算覆盖层。 */
 export function FinalSettlementOverlay({
   mahjongTable,
   onConfirm,

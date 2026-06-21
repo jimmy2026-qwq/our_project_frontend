@@ -1,5 +1,6 @@
 import { WorkbenchBacklogPanel } from '@/components/ui';
 
+/** 提醒运营页仍有接口缺口或占位数据的说明块。 */
 export function MissingApiNotes() {
   return (
     <WorkbenchBacklogPanel

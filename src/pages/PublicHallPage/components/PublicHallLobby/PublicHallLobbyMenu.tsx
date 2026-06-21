@@ -16,6 +16,7 @@ interface PublicHallLobbyMenuProps {
   onActiveViewChange: (activeView: PublicView) => void;
 }
 
+/** 公共大厅顶部在赛事、俱乐部和排行榜之间切换的菜单。 */
 export function PublicHallLobbyMenu({
   activeView,
   entries,

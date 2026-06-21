@@ -13,6 +13,7 @@ import {
 
 import { useCreateClubDialogAction } from './hooks/useCreateClubDialogAction';
 
+/** 公共大厅中新建俱乐部的弹窗表单。 */
 export function CreateClubDialog({
   open,
   onOpenChange,

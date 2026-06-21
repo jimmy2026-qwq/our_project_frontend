@@ -27,6 +27,7 @@ import { ScoreSettlementPanel } from './PaifuScoreSettlementPanel';
 import { PaifuWinningYakuList } from './PaifuWinningYakuList';
 import { WinningTile } from './WinningResultIndicators';
 
+/** 牌谱小局和牌结果的主覆盖层。 */
 export function WinningResultOverlay({
   action,
   onConfirm,

@@ -6,6 +6,7 @@ import { Textarea } from './textarea';
 
 const DEFAULT_FIELD_CLASS = '';
 
+/** 表单字段组的纵向间距容器。 */
 export function FieldGroup({
   children,
   className = DEFAULT_FIELD_CLASS,
@@ -16,6 +17,7 @@ export function FieldGroup({
   return <div className={cx('grid gap-[14px]', className)}>{children}</div>;
 }
 
+/** 带标签的下拉选择字段。 */
 export function SelectField({
   label,
   children,
@@ -34,6 +36,7 @@ export function SelectField({
   );
 }
 
+/** 带标签的单行文本输入字段。 */
 export function TextInputField({
   label,
   className = DEFAULT_FIELD_CLASS,
@@ -50,6 +53,7 @@ export function TextInputField({
   );
 }
 
+/** 带标签的多行文本输入字段。 */
 export function TextareaField({
   label,
   className = DEFAULT_FIELD_CLASS,
@@ -66,6 +70,7 @@ export function TextareaField({
   );
 }
 
+/** 带标签的复选框字段。 */
 export function CheckboxField({
   label,
   className,

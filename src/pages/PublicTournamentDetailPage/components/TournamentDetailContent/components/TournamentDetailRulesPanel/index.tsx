@@ -20,6 +20,7 @@ import { RuleDetailsDialog } from './RuleDetailsDialog';
 import { TournamentResultDialog } from './TournamentResultDialog';
 import { useTournamentDetailRulesPanel } from './hooks/useTournamentDetailRulesPanel';
 
+/** 汇总赛事当前麻将规则、赛制规则和结算规则的面板。 */
 export function TournamentCurrentRulesPanel({
   workbench,
   onOpenRulesDialog,

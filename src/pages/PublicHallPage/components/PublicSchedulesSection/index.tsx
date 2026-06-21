@@ -24,6 +24,7 @@ import {
 import { CreateTournamentDialog } from './CreateTournamentDialog';
 import { ScheduleRow } from './ScheduleRow';
 
+/** 公共大厅中展示赛事赛程和创建赛事入口的区块。 */
 export function PublicSchedulesSection({
   payload,
   state,

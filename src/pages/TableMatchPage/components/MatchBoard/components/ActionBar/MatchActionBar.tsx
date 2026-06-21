@@ -20,6 +20,7 @@ interface MatchActionBarProps {
   onSubmitAction: (action: MahjongLegalAction) => void;
 }
 
+/** 实时牌桌底部展示可执行麻将动作的操作栏。 */
 export function MatchActionBar({
   actionError,
   actions,

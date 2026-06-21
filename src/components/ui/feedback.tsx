@@ -7,6 +7,7 @@ import { Skeleton } from './skeleton';
 import { SectionIntro } from './layout';
 import { cx } from './cx';
 
+/** 在面板或详情页中标记数据来自 API 还是 mock。 */
 export function SourceBadge({
   source,
   warning,
@@ -38,6 +39,7 @@ export function SourceBadge({
   );
 }
 
+/** 根据上下文渲染块级或列表项形式的空状态。 */
 export function EmptyState({ children, asListItem = false }: { children: ReactNode; asListItem?: boolean }) {
   if (asListItem) {
     return (
@@ -50,6 +52,7 @@ export function EmptyState({ children, asListItem = false }: { children: ReactNo
   return <EmptyStateBlock description={children} />;
 }
 
+/** 带骨架条的加载中卡片。 */
 export function LoadingCard({ children }: { children: ReactNode }) {
   return (
     <Card>
@@ -63,6 +66,7 @@ export function LoadingCard({ children }: { children: ReactNode }) {
   );
 }
 
+/** 带章节标题和加载卡片的完整加载区域。 */
 export function LoadingSection({
   eyebrow,
   title,

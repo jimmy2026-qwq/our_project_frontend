@@ -18,6 +18,7 @@ interface DashboardPlaceholderProps extends DashboardPanelProps {
   roleNote: string;
 }
 
+/** 成员中心仪表盘中的俱乐部、赛事和申请数量指标。 */
 function DashboardMetrics({
   loadState,
 }: Pick<DashboardPanelProps, 'loadState'>) {
@@ -42,6 +43,7 @@ function DashboardMetrics({
   );
 }
 
+/** 成员中心在暂无 dashboard 数据时展示的占位说明。 */
 export function DashboardPlaceholder({
   title,
   path,
@@ -67,6 +69,7 @@ export function DashboardPlaceholder({
   );
 }
 
+/** 成员中心 dashboard 主面板，展示统计指标和入口说明。 */
 export function DashboardPanel({
   title,
   path,

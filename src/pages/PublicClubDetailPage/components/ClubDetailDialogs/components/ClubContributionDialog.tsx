@@ -19,6 +19,7 @@ import { formatNumber } from '../../../functions/formatClubDetail';
 
 import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
 
+/** 调整成员俱乐部贡献值的弹窗表单。 */
 export function ClubContributionDialog({
   open,
   member,

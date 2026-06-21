@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { Button, type ButtonProps } from './button';
 import { cx } from '@/components/ui/cx';
 
+/** 页面或面板章节顶部的眉标、标题、说明和操作区。 */
 export function SectionIntro({
   eyebrow,
   title,
@@ -38,6 +39,7 @@ export function SectionIntro({
   );
 }
 
+/** 管理表单和筛选器使用的双列工具栏布局。 */
 export function ControlToolbar({
   children,
   className,
@@ -58,6 +60,7 @@ export function ControlToolbar({
   );
 }
 
+/** 公共大厅筛选控件的弹性排列容器。 */
 export function PortalFilters({
   children,
   className,
@@ -81,6 +84,7 @@ export function PortalFilters({
   );
 }
 
+/** 带刷新动作的筛选行。 */
 export function FilterActionRow({
   children,
   onRefresh,
@@ -100,6 +104,7 @@ export function FilterActionRow({
   );
 }
 
+/** 继承统一按钮样式的轻量动作按钮别名。 */
 export function ActionButton({
   className,
   variant = 'default',
@@ -111,6 +116,7 @@ export function ActionButton({
   );
 }
 
+/** 面板标题、说明和右侧附加内容的统一头部。 */
 export function PanelHead({
   title,
   description,
@@ -131,6 +137,7 @@ export function PanelHead({
   );
 }
 
+/** 紧凑排列多个行内操作按钮。 */
 export function InlineActions({ children }: { children: ReactNode }) {
   return <div className="flex gap-2">{children}</div>;
 }

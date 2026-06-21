@@ -23,6 +23,7 @@ import { sendAPI } from '@/system/api';
 import type { ClubRelationDraft } from '../../ClubDetailContent/hooks/useClubRelationActions';
 import { ClubRelationDialogFields } from './ClubRelationDialogFields';
 
+/** 提交或更新俱乐部对外关系的弹窗。 */
 export function ClubRelationDialog({
   clubId,
   mode,

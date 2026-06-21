@@ -21,6 +21,7 @@ import {
 import { LeaderboardRow } from './LeaderboardRow';
 import { ManagePlayerDialog } from './ManagePlayerDialog';
 
+/** 公共大厅的玩家排行榜区块。 */
 export function PublicLeaderboardSection({
   payload,
   state,

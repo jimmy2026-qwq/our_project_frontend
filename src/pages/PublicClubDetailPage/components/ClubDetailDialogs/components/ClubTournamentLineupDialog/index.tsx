@@ -13,6 +13,7 @@ import {
 } from './components/ClubTournamentLineupDialog.panels';
 import type { ClubTournamentItem } from './objects/ClubTournamentItem';
 
+/** 俱乐部为赛事阶段提交或调整阵容的弹窗。 */
 export function ClubTournamentLineupDialog({
   clubId,
   operatorId,

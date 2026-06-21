@@ -1,3 +1,4 @@
+/** 认证页面左侧或顶部的品牌介绍文案区。 */
 export function AuthScreenIntro({
   eyebrow,
   title,

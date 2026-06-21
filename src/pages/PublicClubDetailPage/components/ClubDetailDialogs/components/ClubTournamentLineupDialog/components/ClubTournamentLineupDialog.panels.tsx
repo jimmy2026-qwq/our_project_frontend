@@ -9,6 +9,7 @@ import {
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
 export { ClubTournamentLineupBody } from './ClubTournamentLineupBody';
 
+/** 阵容弹窗顶部的赛事、阶段和参赛状态摘要。 */
 export function ClubTournamentLineupHeader({
   tournament,
 }: {
@@ -25,6 +26,7 @@ export function ClubTournamentLineupHeader({
   );
 }
 
+/** 阵容弹窗底部的提交和关闭操作区。 */
 export function ClubTournamentLineupFooter({
   isSubmitting,
   selectedPlayerIds,

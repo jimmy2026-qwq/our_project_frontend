@@ -2,6 +2,7 @@ import type { InputHTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 项目统一样式的单行输入框。 */
 export function Input({ className, type = 'text', ...props }: InputHTMLAttributes<HTMLInputElement>) {
   return (
     <input

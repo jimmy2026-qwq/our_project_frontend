@@ -23,14 +23,17 @@ export interface AlertProps
   extends HTMLAttributes<HTMLDivElement>,
     VariantProps<typeof alertVariants> {}
 
+/** 用于表单、面板和流程反馈的提示容器。 */
 export function Alert({ className, variant = 'default', ...props }: AlertProps) {
   return <div data-slot="alert" role="alert" className={cx(alertVariants({ variant }), className)} {...props} />;
 }
 
+/** 提示框的标题文本。 */
 export function AlertTitle({ className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
   return <h5 data-slot="alert-title" className={cx('m-0 text-[0.98rem] text-[#f2f7fb]', className)} {...props} />;
 }
 
+/** 提示框的正文说明区域。 */
 export function AlertDescription({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div

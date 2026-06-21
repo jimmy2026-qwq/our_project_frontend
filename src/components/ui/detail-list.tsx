@@ -5,6 +5,7 @@ import { DescriptionItem, DescriptionList } from './description-list';
 import { Separator } from './separator';
 import { StatCard, StatGrid } from './stat';
 
+/** 详情列表中带主内容和右侧附加信息的一行。 */
 export function ListRow({
   main,
   aside,
@@ -28,6 +29,7 @@ export function ListRow({
   );
 }
 
+/** 详情页指标卡片的响应式网格。 */
 export function MetricGrid({ children }: { children: ReactNode }) {
   return (
     <StatGrid className="mt-[18px] grid gap-3 md:grid-cols-3">
@@ -36,6 +38,7 @@ export function MetricGrid({ children }: { children: ReactNode }) {
   );
 }
 
+/** 详情页中单个指标的展示卡。 */
 export function MetricCard({
   label,
   value,
@@ -55,6 +58,7 @@ export function MetricCard({
   );
 }
 
+/** 详情页键值信息列表。 */
 export function DetailList({ children }: { children: ReactNode }) {
   return (
     <DescriptionList className="m-0 grid gap-3 p-0 [&_dd]:m-0 [&_dd]:font-semibold [&_dt]:text-[#c7d6e2]">
@@ -63,6 +67,7 @@ export function DetailList({ children }: { children: ReactNode }) {
   );
 }
 
+/** 详情页键值信息列表中的单项。 */
 export function DetailListItem({
   label,
   value,
@@ -78,12 +83,14 @@ export function DetailListItem({
   );
 }
 
+/** 使用列表语义呈现多条详情行。 */
 export function DetailRows({ children }: { children: ReactNode }) {
   return (
     <ul className="m-0 grid list-none gap-3 p-0">{children}</ul>
   );
 }
 
+/** 详情列表中带标题和正文的一行。 */
 export function DetailRow({
   title,
   detail,

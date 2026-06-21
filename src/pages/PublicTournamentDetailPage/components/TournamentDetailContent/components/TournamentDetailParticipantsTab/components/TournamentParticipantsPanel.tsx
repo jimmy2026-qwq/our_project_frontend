@@ -10,6 +10,7 @@ import { LineupRoster, ToggleArrow } from './TournamentParticipantsShared';
 import type { LineupSubmission } from '../hooks/useTournamentDetailParticipantsLineup';
 import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
 
+/** 参赛俱乐部列表中的单个俱乐部行。 */
 function ClubParticipantRow({
   club,
   clubExpanded,
@@ -91,6 +92,7 @@ function ClubParticipantRow({
   );
 }
 
+/** 展示参赛俱乐部及其可提交阵容的列表。 */
 export function ClubParticipantList({
   workbench,
   expandedClubIds,

@@ -4,6 +4,7 @@ import { getStageStatusLabel } from '../../../functions/getTournamentDetailLabel
 import { getStatusTone } from '../../../functions/getTournamentDetailStatus';
 import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
 
+/** 赛事详情页展示阶段进度、赛制和轮次的面板。 */
 export function TournamentStagesPanel({
   stages,
 }: {

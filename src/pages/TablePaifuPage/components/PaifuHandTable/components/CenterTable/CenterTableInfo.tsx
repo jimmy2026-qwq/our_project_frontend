@@ -21,6 +21,7 @@ interface CenterTableInfoProps {
   tableSticks: TableStickDisplay;
 }
 
+/** 牌谱中心桌面上的局名、庄家、宝牌和棒数信息。 */
 export function CenterTableInfo({
   isExhaustiveDrawResult,
   isRoundPickerOpen,
@@ -59,6 +60,7 @@ export function CenterTableInfo({
   );
 }
 
+/** 中心桌面中宝牌指示牌与棒数计数的组合区。 */
 function DoraAndStickCounters({
   doraIndicators,
   tableSticks,

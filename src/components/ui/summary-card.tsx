@@ -2,6 +2,7 @@ import type { ElementType, ReactNode } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 信息摘要卡片的网格容器。 */
 export function InfoSummaryGrid({
   children,
   className,
@@ -16,6 +17,7 @@ export function InfoSummaryGrid({
   );
 }
 
+/** 带标签、标题和正文的摘要卡片。 */
 export function InfoSummaryCard({
   label,
   title,
@@ -49,6 +51,7 @@ export function InfoSummaryCard({
   );
 }
 
+/** 展示标题、副标题、摘要和详情区域的元数据卡。 */
 export function MetadataCard({
   title,
   subtitle,

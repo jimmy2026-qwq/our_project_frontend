@@ -8,6 +8,7 @@ interface TableActionSummaryProps {
   playerNames: Record<string, string>;
 }
 
+/** 牌桌操作面板顶部的当前桌次和状态摘要。 */
 export function TableActionSummary({
   table,
   playerNames,

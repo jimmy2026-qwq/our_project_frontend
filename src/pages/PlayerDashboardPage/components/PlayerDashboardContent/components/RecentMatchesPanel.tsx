@@ -7,6 +7,7 @@ import type { RecentTableItem } from '../../../objects/PlayerDashboard.types';
 import { getRecentTableStatusLabel } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 
+/** 玩家仪表盘中展示最近参与牌桌的面板。 */
 export function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
   return (
     <section className={detailShellClassNames.list}>

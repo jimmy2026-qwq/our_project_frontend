@@ -1,3 +1,4 @@
+/** 控制牌谱回放播放、暂停、步进和速度的工具条。 */
 export function ReplayControls({
   handVisibilityLabel,
   onCyclePerspective,

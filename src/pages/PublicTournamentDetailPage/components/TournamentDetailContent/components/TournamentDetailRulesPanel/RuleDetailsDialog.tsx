@@ -34,6 +34,7 @@ const gameLengthOptions: Array<{ value: MahjongGameLength; label: string }> = [
   { value: MahjongGameLengths.Hanchan, label: '半庄战' },
 ];
 
+/** 展开查看完整赛事规则配置的详情弹窗。 */
 export function RuleDetailsDialog({
   open,
   stage,

@@ -15,6 +15,7 @@ const tournamentPanelClassNames = {
   link: 'inline-flex font-semibold text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',
 };
 
+/** 展示已邀请参赛俱乐部及其接受状态的面板。 */
 export function TournamentInvitedClubsPanel({
   invitedClubs,
   lineupSubmissionCounts,

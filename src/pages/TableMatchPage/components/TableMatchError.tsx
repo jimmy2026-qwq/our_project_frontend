@@ -10,6 +10,7 @@ interface TableMatchErrorProps {
   onRetry: () => void;
 }
 
+/** 实时牌桌页加载失败或缺少桌面状态时的错误提示。 */
 export function TableMatchError({
   error,
   backLink,

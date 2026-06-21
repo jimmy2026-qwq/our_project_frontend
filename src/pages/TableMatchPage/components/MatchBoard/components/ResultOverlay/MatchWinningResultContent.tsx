@@ -25,6 +25,7 @@ import { ScoreSettlementPanel } from './MatchResultSettlementPanels';
 import { ResultStepButton } from './MatchResultStepButton';
 import { YakuList } from './MatchResultYakuList';
 
+/** 实时对局和牌结果的主体内容。 */
 export function WinningResultContent({
   nextLabel,
   onAdvance,
@@ -85,6 +86,7 @@ export function WinningResultContent({
   );
 }
 
+/** 多家和牌时单个赢家的结果卡片。 */
 function SingleWinPanel({
   headline,
   nextLabel,
@@ -178,6 +180,7 @@ function SingleWinPanel({
   );
 }
 
+/** 和牌结果顶部的赢家、放铳/自摸和点数概览。 */
 function WinHeadlinePanel({
   headline,
 }: {

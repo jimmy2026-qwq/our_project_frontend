@@ -14,6 +14,7 @@ import {
   labelPositionClasses,
 } from '../../objects/paifuTableLayout';
 
+/** 牌谱玩家区域中的手牌、摸牌和玩家名称信息。 */
 export function PlayerHand({
   drawnTileIndex,
   hands,

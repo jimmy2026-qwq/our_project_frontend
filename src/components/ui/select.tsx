@@ -2,6 +2,7 @@ import type { SelectHTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 项目统一样式的下拉选择框。 */
 export function Select({ className, children, ...props }: SelectHTMLAttributes<HTMLSelectElement>) {
   return (
     <select

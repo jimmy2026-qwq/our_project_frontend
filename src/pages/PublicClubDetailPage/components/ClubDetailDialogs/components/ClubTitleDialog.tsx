@@ -17,6 +17,7 @@ import {
 
 import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
 
+/** 为单个俱乐部成员设置或清除展示称号的弹窗。 */
 export function ClubTitleDialog({
   open,
   member,

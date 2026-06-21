@@ -26,6 +26,7 @@ interface AppealDialogProps {
   onSubmit: () => void;
 }
 
+/** 玩家在实时牌桌中提交申诉的弹窗表单。 */
 export function AppealDialog({
   open,
   appealDescription,

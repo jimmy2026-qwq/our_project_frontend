@@ -2,6 +2,7 @@ interface TablePaifuEmptyProps {
   error: string | null;
 }
 
+/** 牌谱不存在或加载失败时展示的空状态。 */
 export function TablePaifuEmpty({ error }: TablePaifuEmptyProps) {
   return (
     <div className="grid min-h-[60vh] place-items-center text-[#c7d6e2]">

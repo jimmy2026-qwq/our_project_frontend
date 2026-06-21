@@ -9,6 +9,7 @@ import {
 } from './components/PublicClubDetailFrame';
 import { usePublicClubDetailPage } from './hooks/usePublicClubDetailPage';
 
+/** 根据路由加载俱乐部详情并协调申请、成员和关系操作。 */
 export function PublicClubDetailPage() {
   const page = usePublicClubDetailPage();
 

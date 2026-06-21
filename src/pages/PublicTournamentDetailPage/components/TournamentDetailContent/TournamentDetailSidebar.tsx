@@ -8,6 +8,7 @@ export type TournamentDetailContentTabItem = {
   label: string;
 };
 
+/** 赛事详情页右侧的上下文、权限和快捷操作侧栏。 */
 export function TournamentDetailSidebar({
   activeTab,
   tabItems,

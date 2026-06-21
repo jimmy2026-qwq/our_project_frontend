@@ -27,6 +27,7 @@ interface ClubDetailDialogsProps {
   onRefreshDetail?: () => void;
 }
 
+/** 俱乐部详情页集中挂载的所有管理和申请弹窗。 */
 export function ClubDetailDialogs({
   workbench,
   clubSummary,

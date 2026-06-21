@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
+/** 带标题、说明、右侧区域和主体内容的信息卡。 */
 export function InfoCard({
   title,
   description,

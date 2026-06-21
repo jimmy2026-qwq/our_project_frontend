@@ -5,6 +5,7 @@ import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/Match
 import { formatDateTime } from '../functions/formatTournamentOpsDateTime';
 import type { LoadState } from '../objects/TournamentOps.types';
 
+/** 赛事运营页中展示对局记录和牌谱摘要的面板。 */
 export function RecordsPanel({
   payload,
 }: {

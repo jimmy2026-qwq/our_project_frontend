@@ -8,6 +8,7 @@ interface PublicHallPlayerCardProps {
   showLoginEntry: boolean;
 }
 
+/** 公共大厅中展示当前玩家身份和入口动作的卡片。 */
 export function PublicHallPlayerCard({
   displayName,
   eloText,

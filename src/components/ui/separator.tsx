@@ -2,6 +2,7 @@ import type { HTMLAttributes } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 水平或垂直分隔线。 */
 export function Separator({
   className,
   orientation = 'horizontal',

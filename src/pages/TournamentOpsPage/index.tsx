@@ -11,6 +11,7 @@ import { TournamentOpsPageFrame } from './components/TournamentOpsPageFrame';
 import { TournamentOpsFiltersPanel } from './components/TournamentOpsFiltersPanel';
 import { useTournamentOpsPage } from './hooks/useTournamentOpsPage';
 
+/** 聚合赛事运营数据并渲染运营工作台页面。 */
 export function TournamentOpsPage() {
   const page = useTournamentOpsPage();
 

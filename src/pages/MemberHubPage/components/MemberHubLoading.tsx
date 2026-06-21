@@ -1,5 +1,6 @@
 import { LoadingSection } from '@/components/ui';
 
+/** 成员中心加载期间的进度状态。 */
 export function MemberHubLoading() {
   return (
     <LoadingSection

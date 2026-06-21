@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react';
 
+/** 认证页面的全屏居中背景框架。 */
 export function AuthScreenFrame({ children }: { children: ReactNode }) {
   return (
     <main

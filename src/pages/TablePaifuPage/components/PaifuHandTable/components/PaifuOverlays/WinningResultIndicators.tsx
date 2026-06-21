@@ -8,6 +8,7 @@ interface IndicatorPanelProps {
   visible?: boolean;
 }
 
+/** 和牌结果中展示宝牌、里宝牌等指示牌的面板。 */
 export function IndicatorPanel({
   label,
   shownCount,
@@ -36,6 +37,7 @@ export function IndicatorPanel({
   );
 }
 
+/** 在结果覆盖层中突出显示和牌牌。 */
 export function WinningTile({
   label,
   tile,

@@ -6,6 +6,7 @@ import type { MemberStatusFilter } from '../objects/MemberStatusFilter';
 import { ClubTournamentLineupFilters } from './ClubTournamentLineupFilters';
 import { ClubTournamentLineupMemberList } from './ClubTournamentLineupMemberList';
 
+/** 俱乐部赛事阵容弹窗的成员选择主体区域。 */
 export function ClubTournamentLineupBody({
   isLoading,
   selectedStageId,

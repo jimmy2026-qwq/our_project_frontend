@@ -10,6 +10,7 @@ export interface WorkbenchResultField {
   value: ReactNode;
 }
 
+/** 展示工作台操作结果中的关键字段摘要。 */
 export function WorkbenchResultSummary({
   headline,
   items,
@@ -50,6 +51,7 @@ export interface WorkbenchBacklogItem {
   detail: ReactNode;
 }
 
+/** 展示暂未接入或待处理能力的工作台 backlog 面板。 */
 export function WorkbenchBacklogPanel({
   title,
   description,

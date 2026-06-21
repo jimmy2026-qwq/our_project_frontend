@@ -13,6 +13,7 @@ interface MatchResultOverlayProps {
   scoreStepActionLabel?: string;
 }
 
+/** 实时对局一局结束后的结果覆盖层。 */
 export function MatchResultOverlay({
   onComplete,
   playerNames,

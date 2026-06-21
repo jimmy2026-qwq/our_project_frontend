@@ -21,6 +21,7 @@ import { normalizeMahjongRuleset, TournamentFormats } from '@/objects/tournament
 import type { TournamentStageRuleDraft } from '../../objects/TournamentDetailRule.types';
 import { TournamentMahjongRulesetFields } from './TournamentMahjongRulesetFields';
 
+/** 创建或编辑赛事阶段规则的弹窗表单。 */
 export function TournamentRulesDialog({
   open,
   draft,

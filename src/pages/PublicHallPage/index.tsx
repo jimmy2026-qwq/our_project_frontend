@@ -10,6 +10,7 @@ import { PublicHallPlayerCard } from './components/PublicHallLobby/PublicHallPla
 import { lobbyClassNames } from './components/PublicHallLobby/styles';
 import { usePublicHallPage } from './hooks/usePublicHallPage';
 
+/** 公共大厅首页，加载赛程、俱乐部和排行榜数据。 */
 export function PublicHallHomePage() {
   const page = usePublicHallPage();
 

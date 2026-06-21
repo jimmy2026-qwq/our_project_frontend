@@ -24,6 +24,7 @@ export interface PaifuSummaryRecord {
   seatResults?: PaifuSummarySeatResult[];
 }
 
+/** 展示一条牌谱归档记录的座位名次、终局点数和分差摘要。 */
 export function PaifuSummaryDialog({
   open,
   playerNames,
@@ -60,6 +61,7 @@ export function PaifuSummaryDialog({
   );
 }
 
+/** 根据牌谱是否含座位结果渲染摘要文本或逐座位成绩行。 */
 function PaifuSummaryRows({
   playerNames,
   record,

@@ -3,6 +3,7 @@ import { FieldGroup, SelectField } from '@/components/ui';
 import type { EloSort } from '../objects/EloSort';
 import type { MemberStatusFilter } from '../objects/MemberStatusFilter';
 
+/** 阵容弹窗中筛选成员姓名和状态的控件组。 */
 export function ClubTournamentLineupFilters({
   isLoading,
   selectedStageId,

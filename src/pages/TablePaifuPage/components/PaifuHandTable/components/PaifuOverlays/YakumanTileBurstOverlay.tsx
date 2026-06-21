@@ -33,6 +33,7 @@ const burstTileLayouts: BurstTileLayout[] = [
   { x: 0, y: -270, rotate: 0, delay: 112 },
 ];
 
+/** 役满和牌时覆盖桌面的牌面爆发动画层。 */
 export function YakumanTileBurstOverlay({
   burst,
 }: YakumanTileBurstOverlayProps) {

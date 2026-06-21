@@ -1,5 +1,6 @@
 // 役满爆牌动画依赖 keyframes、CSS 变量和多层径向渐变组合。
 // Tailwind 无法稳定表达/渲染这个效果，所以这里刻意保留原生 CSS。
+/** 注入役满牌面爆发动画所需的局部样式。 */
 export function YakumanTileBurstStyles() {
   return (
     <style>{`

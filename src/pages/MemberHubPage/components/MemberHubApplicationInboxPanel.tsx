@@ -21,6 +21,7 @@ interface ApplicationInboxPanelProps {
   onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
 }
 
+/** 成员中心中展示俱乐部入会申请收件箱的面板。 */
 export function ApplicationInboxPanel({
   directory,
   state,

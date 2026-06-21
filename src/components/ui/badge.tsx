@@ -28,6 +28,7 @@ export interface BadgeProps
   extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof badgeVariants> {}
 
+/** 轻量状态、来源或分类标签。 */
 export function Badge({ className, variant = 'default', ...props }: BadgeProps) {
   return <span data-slot="badge" className={cx(badgeVariants({ variant }), className)} {...props} />;
 }

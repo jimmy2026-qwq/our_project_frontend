@@ -6,6 +6,7 @@ import { AuthScreenIntro } from '../components/AuthScreen/AuthScreenIntro';
 import { outlineButtonClassName } from '../components/AuthScreen/AuthScreen.styles';
 import { useLoginPageForm } from './hooks/useLoginPageForm';
 
+/** 用户名密码登录页面。 */
 export function LoginPage() {
   const form = useLoginPageForm();
   const eyebrow = '账号登录';

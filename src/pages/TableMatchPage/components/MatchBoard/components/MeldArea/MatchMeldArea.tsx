@@ -16,6 +16,7 @@ const meldBoxPositionClasses: Record<SeatWind, string> = {
   [SeatWinds.North]: 'left-[126px] bottom-[20%] -rotate-90',
 };
 
+/** 实时牌桌上按座位展示副露的区域。 */
 export function MatchMeldArea({ melds }: MatchMeldAreaProps) {
   return (
     <>
@@ -26,6 +27,7 @@ export function MatchMeldArea({ melds }: MatchMeldAreaProps) {
   );
 }
 
+/** 某个座位的副露盒子。 */
 function SeatMeldBox({
   melds,
   seat,

@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 空数据、不可用或等待配置时使用的虚线提示块。 */
 export function EmptyStateBlock({
   title,
   description,

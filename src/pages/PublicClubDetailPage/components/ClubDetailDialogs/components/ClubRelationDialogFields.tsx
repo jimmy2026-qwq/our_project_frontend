@@ -16,6 +16,7 @@ const relationOptions: Array<{ value: ClubRelationKind; label: string }> = [
   { value: ClubRelationKinds.Neutral, label: '中立' },
 ];
 
+/** 俱乐部关系弹窗中的目标俱乐部、关系类型和备注字段。 */
 export function ClubRelationDialogFields({
   isLoading,
   isSubmitting,

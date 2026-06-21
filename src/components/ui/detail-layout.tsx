@@ -4,6 +4,7 @@ import { cx } from '@/components/ui/cx';
 import { Card, CardContent, CardHeader, CardTitle } from './card';
 import { SourceBadge } from './feedback';
 
+/** 详情页顶部的大型信息区，承载标题、摘要、动作和数据来源提示。 */
 export function DetailHero({
   eyebrow,
   title,
@@ -53,6 +54,7 @@ export function DetailHero({
   );
 }
 
+/** 详情页内部的分组卡片。 */
 export function DetailCard({
   title,
   children,
@@ -70,6 +72,7 @@ export function DetailCard({
   );
 }
 
+/** 详情页的返回入口、头图和正文容器。 */
 export function DetailPageShell({
   backLink,
   hero,
@@ -88,6 +91,7 @@ export function DetailPageShell({
   );
 }
 
+/** 目录页中可复用的条目卡片。 */
 export function DirectoryCard({
   className,
   top,

@@ -25,6 +25,7 @@ interface SeatsOverviewCardProps {
   isRegisteredPlayer: boolean;
 }
 
+/** 实时牌桌页展示四个座位玩家、准备和连接状态的卡片。 */
 export function SeatsOverviewCard({
   table,
   seatMap,
@@ -73,6 +74,7 @@ export function SeatsOverviewCard({
   );
 }
 
+/** 根据座位顺序排布四家座位卡。 */
 function SeatsLayout({
   table,
   seatMap,

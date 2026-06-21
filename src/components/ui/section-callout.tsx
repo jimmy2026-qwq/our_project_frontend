@@ -2,6 +2,7 @@ import type { HTMLAttributes, ReactNode } from 'react';
 
 import { cx } from '@/components/ui/cx';
 
+/** 章节内用于强调规则、提醒或补充说明的小提示框。 */
 export function SectionCallout({
   title,
   description,

@@ -22,6 +22,7 @@ const clubDetailFrameClassNames = {
     'inline-flex w-fit text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',
 };
 
+/** 公开俱乐部详情页的外层布局框架。 */
 export const PublicClubDetailFrame = ({
   children,
 }: {
@@ -39,6 +40,7 @@ export const PublicClubDetailFrame = ({
   );
 };
 
+/** 公开俱乐部详情页加载中的占位状态。 */
 export const PublicClubDetailLoading = () => {
   return (
     <section className={clubDetailFrameClassNames.loadingRoot}>
@@ -64,6 +66,7 @@ export const PublicClubDetailLoading = () => {
   );
 };
 
+/** 公开俱乐部详情页找不到俱乐部时的错误状态。 */
 export const PublicClubDetailNotFound = ({ title }: { title: string }) => {
   return (
     <DetailPageShell

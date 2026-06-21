@@ -24,6 +24,7 @@ export interface StatusPillProps
   extends HTMLAttributes<HTMLSpanElement>,
     VariantProps<typeof statusPillVariants> {}
 
+/** 面向状态文本的紧凑圆角标签。 */
 export function StatusPill({ className, tone = 'neutral', ...props }: StatusPillProps) {
   return <span data-slot="status-pill" className={cx(statusPillVariants({ tone }), className)} {...props} />;
 }

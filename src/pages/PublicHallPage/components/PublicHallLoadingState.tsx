@@ -22,6 +22,7 @@ interface PublicHallLoadingProps {
   progressMessage?: string;
 }
 
+/** 公共大厅主要区块加载时的占位状态。 */
 export const PublicHallLoading = ({
   eyebrow = '公共大厅',
   title = '正在加载公共大厅...',
@@ -49,6 +50,7 @@ export const PublicHallLoading = ({
   );
 };
 
+/** 公共大厅加载失败时展示的错误状态。 */
 export const PublicHallError = ({ message }: { message: string }) => {
   return (
     <section className={hallLoadingClassNames.root}>
@@ -63,6 +65,7 @@ export const PublicHallError = ({ message }: { message: string }) => {
   );
 };
 
+/** 公共大厅排行榜区块加载时的占位状态。 */
 export const PublicHallLeaderboardLoading = () => {
   return (
     <PortalSection

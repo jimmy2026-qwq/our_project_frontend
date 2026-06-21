@@ -14,6 +14,7 @@ import type {
   MeldTile,
 } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
 
+/** 实时牌桌中单组副露或杠子的牌面排列。 */
 export function MeldRow({
   meld,
   meldIndex,
@@ -48,6 +49,7 @@ export function MeldRow({
   );
 }
 
+/** 根据横置、背面或普通状态渲染一张副露牌。 */
 function MeldTileView({
   meldTile,
   seat,
@@ -100,6 +102,7 @@ function MeldTileView({
   );
 }
 
+/** 实时牌桌副露中的背面牌。 */
 function MeldBackTile({ style }: { style: CSSProperties }) {
   return (
     <span

@@ -25,6 +25,7 @@ const meldBoxHorizontalPadding = 16;
 const meldBoxVerticalPadding = 16;
 const meldBoxRowGap = 4;
 
+/** 牌谱玩家区域中展示该玩家所有副露的区域。 */
 export function PlayerMelds({
   melds,
   seat,

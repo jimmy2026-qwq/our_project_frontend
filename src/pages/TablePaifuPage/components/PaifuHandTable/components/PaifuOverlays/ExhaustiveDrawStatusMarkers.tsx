@@ -7,6 +7,7 @@ import {
 import { replaySeatOrder as seatOrder } from '../../../../objects/replaySeatInfo';
 import { operationPositionClasses } from '../../objects/paifuTableLayout';
 
+/** 流局时标记各玩家听牌或未听状态。 */
 export function ExhaustiveDrawStatusMarkers({
   paifu,
   round,

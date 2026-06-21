@@ -7,6 +7,7 @@ import type {
   TournamentDetailWorkbenchState,
 } from '../../../../objects/TournamentDetail.types';
 
+/** 赛事详情桌次区域中的管理操作标签页。 */
 export function TournamentDetailManageTab({
   isSubmittingTableAction,
   waitingTables,

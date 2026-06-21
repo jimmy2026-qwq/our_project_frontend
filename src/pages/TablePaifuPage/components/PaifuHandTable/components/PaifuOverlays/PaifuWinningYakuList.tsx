@@ -4,6 +4,7 @@ import { getMahjongYakuLabel } from '@/objects';
 import { formatYakuValue } from '../../../../functions/getReplayCore';
 import { IndicatorPanel } from './WinningResultIndicators';
 
+/** 和牌结果中展示役种和番数的列表。 */
 export function PaifuWinningYakuList({
   doraIndicatorCount,
   doraIndicators,

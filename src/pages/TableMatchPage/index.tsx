@@ -5,6 +5,7 @@ import { SeatsOverviewCard } from './components/TableMatchSection/SeatsOverviewC
 import { TableMatchHeader } from './components/TableMatchSection/TableMatchHeader';
 import { useTableMatchPageModel } from './hooks/useTableMatchPageModel';
 
+/** 根据路由加载实时牌桌状态并渲染对局交互页。 */
 export function TableMatchPage() {
   const page = useTableMatchPageModel();
 

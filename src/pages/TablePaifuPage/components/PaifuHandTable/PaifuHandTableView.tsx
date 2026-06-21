@@ -37,6 +37,7 @@ interface PaifuHandTableViewProps {
   setIsFinalSettlementOpen: Dispatch<SetStateAction<boolean>>;
 }
 
+/** 牌谱回放页的完整四家桌面视图。 */
 export function PaifuHandTableView({
   displayPaifu,
   handVisibilityMode,
@@ -156,6 +157,7 @@ export function PaifuHandTableView({
   );
 }
 
+/** 牌谱桌面顶部的赛事、牌桌和记录标题。 */
 function PaifuHandTableTitle({ paifu }: { paifu: TablePaifuDetail }) {
   return (
     <div className="absolute right-5 top-5 z-[15] grid max-w-[min(28rem,calc(100%-2.5rem))] justify-items-end gap-1 rounded-2xl border border-[rgba(176,223,229,0.18)] bg-[rgba(7,18,28,0.72)] px-4 py-3 text-right shadow-[0_12px_32px_rgba(0,0,0,0.28)] backdrop-blur">
@@ -169,6 +171,7 @@ function PaifuHandTableTitle({ paifu }: { paifu: TablePaifuDetail }) {
   );
 }
 
+/** 根据当前回放状态选择展示和牌、流局或终局覆盖层。 */
 function PaifuTableOverlays({
   displayPaifu,
   replay,

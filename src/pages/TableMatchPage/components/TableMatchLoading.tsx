@@ -1,5 +1,6 @@
 import { LoadingProgress } from '@/components/ui';
 
+/** 实时牌桌页加载桌面状态时的进度提示。 */
 export function TableMatchLoading() {
   return (
     <section className="grid gap-6">

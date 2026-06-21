@@ -20,6 +20,7 @@ import type {
 import { ClubContributionTitleFieldCard } from './ClubContributionTitleFieldCard';
 import { ClubContributionTitlePresetSelect } from './ClubContributionTitlePresetSelect';
 
+/** 管理俱乐部贡献区间称号的弹窗。 */
 export function ClubContributionTitlesDialog({
   open,
   fields,

@@ -10,6 +10,7 @@ interface TabsContextValue {
 
 const TabsContext = createContext<TabsContextValue | null>(null);
 
+/** 管理当前激活值的标签页根容器。 */
 export function Tabs({
   value,
   onValueChange,
@@ -28,6 +29,7 @@ export function Tabs({
   );
 }
 
+/** 标签页按钮列表容器。 */
 export function TabsList({ className, ...props }: HTMLAttributes<HTMLDivElement>) {
   return (
     <div
@@ -43,6 +45,7 @@ export function TabsList({ className, ...props }: HTMLAttributes<HTMLDivElement>
   );
 }
 
+/** 可切换当前标签页的按钮。 */
 export function TabsTrigger({
   value,
   className,
@@ -83,6 +86,7 @@ export function TabsTrigger({
   );
 }
 
+/** 与标签值对应的内容面板。 */
 export function TabsContent({
   value,
   className,

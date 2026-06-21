@@ -16,6 +16,7 @@ function getPlayerStatusLabel(status?: string) {
   }
 }
 
+/** 阵容弹窗中单个成员的出场、座位和替补设置卡片。 */
 export function ClubTournamentLineupMemberCard({
   member,
   onTogglePlayer,

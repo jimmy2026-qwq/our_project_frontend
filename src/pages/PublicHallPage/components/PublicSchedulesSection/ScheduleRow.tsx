@@ -10,6 +10,7 @@ import {
 import { getStatusTone } from '../../functions/getPublicHallStatus';
 import { hallSectionClassNames } from '../PublicHallSection.styles';
 
+/** 公共赛程列表中的单场赛事阶段行。 */
 export function ScheduleRow({ item }: { item: PublicSchedule }) {
   return (
     <article

@@ -21,6 +21,7 @@ import type {
 } from '../../objects/TournamentDetail.types';
 import type { TournamentDetailTab } from '../../objects/TournamentDetailView.types';
 
+/** 赛事详情页主体内容，管理标签页切换和各业务面板组合。 */
 export function TournamentDetailContent({
   activeTab,
   appeals,

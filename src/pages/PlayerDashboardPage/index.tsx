@@ -13,6 +13,7 @@ import {
 } from './components/PlayerDashboardStatus';
 import { usePlayerDashboard } from './hooks/usePlayerDashboard';
 
+/** 加载当前玩家资料并渲染玩家仪表盘的页面。 */
 export function PlayerDashboardPage() {
   const page = usePlayerDashboard();
 

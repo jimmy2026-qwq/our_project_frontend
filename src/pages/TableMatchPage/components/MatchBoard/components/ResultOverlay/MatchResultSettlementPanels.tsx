@@ -14,6 +14,7 @@ import {
 } from '../../functions/getMatchResultText';
 import { ResultStepButton } from './MatchResultStepButton';
 
+/** 结果覆盖层底部的提示和行动区域。 */
 export function ResultFooter({
   nextLabel,
   onAdvance,
@@ -72,6 +73,7 @@ export function ResultFooter({
   );
 }
 
+/** 实时结果覆盖层中的分数结算列表。 */
 export function ScoreSettlementPanel({
   nextLabel,
   onAdvance,
