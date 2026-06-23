@@ -1,8 +1,7 @@
-export const SeatWinds = {
-  East: 'East',
-  South: 'South',
-  West: 'West',
-  North: 'North',
-} as const;
+﻿export enum SeatWind {
+  East = 'East',
+  South = 'South',
+  West = 'West',
+  North = 'North',
 
-export type SeatWind = (typeof SeatWinds)[keyof typeof SeatWinds];
+}

@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
-import type { PlayerContextState } from '../objects/ClubApplication.types';
-import { toPlayerProfile } from '../functions/ClubDetailPlayer.mappers';
+import type { PlayerContextState } from '@/pages/PublicClubDetailPage/objects/application/PlayerContextState';
+import { toPlayerProfile } from '../functions/toClubDetailPlayerData';
 
 export function useClubApplicationPlayerLoader() {
   const loadPlayerContext = useCallback(
@@ -16,12 +16,10 @@ export function useClubApplicationPlayerLoader() {
 
         return {
           player,
-          source: 'api',
         };
       } catch (error) {
         return {
           player: null,
-          source: 'api',
           warning:
             error instanceof Error
               ? error.message

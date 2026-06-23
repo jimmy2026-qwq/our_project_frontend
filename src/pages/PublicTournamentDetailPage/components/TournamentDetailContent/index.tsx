@@ -1,4 +1,4 @@
-import { Alert } from '@/components/ui';
+﻿import { Alert } from '@/components/ui';
 import type { AppealDecisionType } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
@@ -10,16 +10,11 @@ import { TournamentDetailRulesTab } from './components/TournamentDetailRulesTab'
 import { AppealDialog } from '@/pages/TableMatchPage/components/TableMatchSection/AppealDialog';
 import { TournamentDetailManageTab } from './components/TournamentDetailTableTabs/TournamentDetailManageTab';
 import { TournamentDetailTablesTab } from './components/TournamentDetailTableTabs/TournamentDetailTablesTab';
-import {
-  TournamentDetailSidebar,
-  type TournamentDetailContentTabItem,
-} from './TournamentDetailSidebar';
+import { TournamentDetailSidebar, type TournamentDetailContentTabItem } from './TournamentDetailSidebar';
 import { detailShellClassNames } from '../detailShell.styles';
-import type {
-  TournamentDetailTableItem,
-  TournamentDetailWorkbenchState,
-} from '../../objects/TournamentDetail.types';
-import type { TournamentDetailTab } from '../../objects/TournamentDetailView.types';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { TournamentDetailTab } from '@/pages/PublicTournamentDetailPage/objects/navigation/TournamentDetailTab';
 
 /** 赛事详情页主体内容，管理标签页切换和各业务面板组合。 */
 export function TournamentDetailContent({
@@ -115,21 +110,21 @@ export function TournamentDetailContent({
           <Alert variant="danger">{workbench.tournamentActionError}</Alert>
         ) : null}
 
-        {activeTab === 'home' ? (
+        {activeTab === TournamentDetailTab.Home ? (
           <TournamentDetailHomeTab
             workbench={workbench}
             onToggleShowMore={onToggleShowMore}
           />
         ) : null}
 
-        {activeTab === 'rules' ? (
+        {activeTab === TournamentDetailTab.Rules ? (
           <TournamentDetailRulesTab
             workbench={workbench}
             onOpenRulesDialog={onOpenRulesDialog}
           />
         ) : null}
 
-        {activeTab === 'participants' ? (
+        {activeTab === TournamentDetailTab.Participants ? (
           <TournamentDetailParticipantsTab
             workbench={workbench}
             onInviteClub={onInviteClub}
@@ -139,7 +134,7 @@ export function TournamentDetailContent({
           />
         ) : null}
 
-        {activeTab === 'tables' ? (
+        {activeTab === TournamentDetailTab.Tables ? (
           <TournamentDetailTablesTab
             operatorId={operatorId}
             participantWaitingTableDetails={participantWaitingTableDetails}
@@ -155,7 +150,7 @@ export function TournamentDetailContent({
           />
         ) : null}
 
-        {activeTab === 'manage' ? (
+        {activeTab === TournamentDetailTab.Manage ? (
           <TournamentDetailManageTab
             isSubmittingTableAction={isSubmittingTableAction}
             waitingTables={waitingTables}
@@ -165,7 +160,7 @@ export function TournamentDetailContent({
           />
         ) : null}
 
-        {activeTab === 'appeals' ? (
+        {activeTab === TournamentDetailTab.Appeals ? (
           <TournamentDetailAppealsTab
             appeals={appeals}
             appealsError={appealsError}

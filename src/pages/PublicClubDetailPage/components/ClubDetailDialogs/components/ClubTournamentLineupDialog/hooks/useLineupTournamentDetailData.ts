@@ -1,24 +1,14 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import {
-  GetPublicTournamentAPI,
-  TournamentGetAPI,
-  TournamentStageDirectoryAPI,
-} from '@/api/tournament';
+import { GetPublicTournamentAPI, TournamentGetAPI, TournamentStageDirectoryAPI } from '@/api/tournament';
 import type {
   TournamentDetailView,
   TournamentOperationsStageView,
 } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 
-import { toPublicTournamentDetail } from '../../../../../functions/ClubDetailTournament.mappers';
-import {
-  createFallbackTournamentDetailForLineup,
-  getSelectedPlayerIds,
-  mergeTournamentStages,
-  toDetailStageFromPublicStage,
-  toDetailStageFromStageDirectoryEntry,
-} from '../functions/getLineupTournamentDetail';
+import { toPublicTournamentDetail } from '../../../../../functions/toClubDetailTournamentData';
+import { createFallbackTournamentDetailForLineup, getSelectedPlayerIds, mergeTournamentStages, toDetailStageFromPublicStage, toDetailStageFromStageDirectoryEntry } from '../functions/getLineupTournamentDetail';
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
 
 interface UseLineupTournamentDetailDataParams {

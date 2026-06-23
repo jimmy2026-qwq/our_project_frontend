@@ -1,4 +1,4 @@
-import type { CreateTournamentStageRequest } from '../../stage/apiTypes/CreateTournamentStageRequest';
+import type { CreateTournamentStageRequest } from '../../stage/lifecycle/apiTypes/CreateTournamentStageRequest';
 
 export interface CreateTournamentRequest {
   name: string;

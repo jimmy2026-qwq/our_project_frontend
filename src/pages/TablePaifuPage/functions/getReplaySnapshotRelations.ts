@@ -3,6 +3,15 @@ import type { SeatWind } from '@/objects/tournament';
 import { PaifuActionType, type PaifuAction } from '@/objects';
 import { replaySeatOrder as seatOrder } from '../objects/replaySeatInfo';
 
+const ClaimRelations = {
+  Upper: 'upper',
+  Opposite: 'opposite',
+  Lower: 'lower',
+  Self: 'self',
+} as const;
+
+type ClaimRelation = (typeof ClaimRelations)[keyof typeof ClaimRelations];
+
 export function getOpenMeldSidewaysIndex({
   action,
   callerSeat,
@@ -28,53 +37,59 @@ export function getOpenMeldSidewaysIndex({
   );
 }
 
-function getSidewaysIndexByRelation(relation: string, tileCount: number) {
+function getSidewaysIndexByRelation(
+  relation: ClaimRelation,
+  tileCount: number,
+) {
   if (tileCount >= 4) {
-    if (relation === 'upper') {
+    if (relation === ClaimRelations.Upper) {
       return 0;
     }
 
-    if (relation === 'opposite') {
+    if (relation === ClaimRelations.Opposite) {
       return 1;
     }
 
-    if (relation === 'lower') {
+    if (relation === ClaimRelations.Lower) {
       return 3;
     }
   }
 
-  if (relation === 'upper') {
+  if (relation === ClaimRelations.Upper) {
     return 0;
   }
 
-  if (relation === 'opposite') {
+  if (relation === ClaimRelations.Opposite) {
     return 1;
   }
 
-  if (relation === 'lower') {
+  if (relation === ClaimRelations.Lower) {
     return 2;
   }
 
   return undefined;
 }
 
-function getClaimRelation(callerSeat: SeatWind, claimedSeat: SeatWind) {
+function getClaimRelation(
+  callerSeat: SeatWind,
+  claimedSeat: SeatWind,
+): ClaimRelation {
   const callerIndex = seatOrder.indexOf(callerSeat);
   const claimedIndex = seatOrder.indexOf(claimedSeat);
   const relation =
     (claimedIndex - callerIndex + seatOrder.length) % seatOrder.length;
 
   if (relation === 3) {
-    return 'upper';
+    return ClaimRelations.Upper;
   }
 
   if (relation === 2) {
-    return 'opposite';
+    return ClaimRelations.Opposite;
   }
 
   if (relation === 1) {
-    return 'lower';
+    return ClaimRelations.Lower;
   }
 
-  return 'self';
+  return ClaimRelations.Self;
 }

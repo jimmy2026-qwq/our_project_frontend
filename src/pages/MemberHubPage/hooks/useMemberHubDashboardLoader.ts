@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
-import { OpsAnalyticsClubDashboardAPI } from '@/api/opsanalytics/OpsAnalyticsClubDashboardAPI';
-import { OpsAnalyticsPlayerDashboardAPI } from '@/api/opsanalytics/OpsAnalyticsPlayerDashboardAPI';
+import { OpsAnalyticsClubDashboardAPI, OpsAnalyticsPlayerDashboardAPI } from '@/api/opsanalytics';
 import { sendAPI } from '@/system/api';
 
 import { toDashboardSummary } from '../functions/toDashboardSummary';
-import type { DashboardLoadState } from '../objects/MemberHub.types';
+import type { DashboardLoadState } from '../objects/state/DashboardLoadState';
+
 
 export function useMemberHubDashboardLoader() {
   const loadPlayerDashboard = useCallback(
@@ -17,11 +17,10 @@ export function useMemberHubDashboardLoader() {
         const response = await sendAPI(
           new OpsAnalyticsPlayerDashboardAPI({ playerId, operatorId }),
         );
-        return { dashboard: toDashboardSummary(response), source: 'api' };
+        return { dashboard: toDashboardSummary(response) };
       } catch (error) {
         return {
           dashboard: null,
-          source: 'api',
           warning:
             error instanceof Error
               ? error.message
@@ -38,11 +37,10 @@ export function useMemberHubDashboardLoader() {
         const response = await sendAPI(
           new OpsAnalyticsClubDashboardAPI({ clubId, operatorId }),
         );
-        return { dashboard: toDashboardSummary(response), source: 'api' };
+        return { dashboard: toDashboardSummary(response) };
       } catch (error) {
         return {
           dashboard: null,
-          source: 'api',
           warning:
             error instanceof Error
               ? error.message

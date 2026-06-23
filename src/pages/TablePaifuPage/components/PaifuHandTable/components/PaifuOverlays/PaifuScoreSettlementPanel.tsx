@@ -1,8 +1,5 @@
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
-import {
-  formatDelta,
-  getPlayerName,
-} from '../../functions/getPaifuWinningResultText';
+import { formatDelta, getPlayerName } from '../../functions/getPaifuWinningResultText';
 
 /** 牌谱结果覆盖层中的分数变化明细面板。 */
 export function ScoreSettlementPanel({

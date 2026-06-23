@@ -1,7 +1,5 @@
-import type {
-  MemberHubOperatorDirectory,
-  MemberHubState,
-} from '../objects/MemberHub.types';
+﻿import type { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import type { MemberHubState } from '../objects/state/MemberHubState';
 import { getActiveOperator } from './getMemberHubOperator';
 
 export function normalizeMemberHubClubId(

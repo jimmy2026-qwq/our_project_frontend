@@ -1,14 +1,6 @@
 import { Link } from 'react-router-dom';
 
-import {
-  Button,
-  DetailCard,
-  DetailRow,
-  DetailRows,
-  EmptyState,
-  SelectField,
-  StatusPill,
-} from '@/components/ui';
+import { Button, DetailCard, DetailRow, DetailRows, EmptyState, SelectField, StatusPill } from '@/components/ui';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 const tournamentPanelClassNames = {

@@ -1,9 +1,9 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
-import { TableStatuses } from '@/objects';
+import { TableStatus } from '@/objects';
 
-import type { RecentTableItem } from '../../../objects/PlayerDashboard.types';
+import type { RecentTableItem } from '../../../objects/RecentTableItem';
 import { getRecentTableStatusLabel } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 
@@ -15,9 +15,9 @@ export function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
         {items.length > 0 ? (
           items.map((table) => {
             const hasResult =
-              table.status === TableStatuses.Scoring ||
-              table.status === TableStatuses.AppealInProgress ||
-              table.status === TableStatuses.Archived;
+              table.status === TableStatus.Scoring ||
+              table.status === TableStatus.AppealInProgress ||
+              table.status === TableStatus.Archived;
 
             return (
               <article
@@ -38,7 +38,7 @@ export function RecentMatchesPanel({ items }: { items: RecentTableItem[] }) {
                     >
                       查看赛事
                     </Link>
-                    {table.status === TableStatuses.WaitingPreparation ? (
+                    {table.status === TableStatus.WaitingPreparation ? (
                       <span className={detailShellClassNames.actionDisabled}>
                         等待开桌
                       </span>

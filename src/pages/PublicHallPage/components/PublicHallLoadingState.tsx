@@ -72,7 +72,6 @@ export const PublicHallLeaderboardLoading = () => {
       eyebrow="排行榜"
       title="选手排行榜"
       description="正在获取公共大厅的最新排行榜数据。"
-      source="api"
     >
       <div className={hallLoadingClassNames.leaderboardCard}>
         <LoadingProgress

@@ -1,16 +1,7 @@
-import {
-  Dialog,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-} from '@/components/ui';
+import { Dialog, DialogOverlay, DialogPortal, DialogSurface } from '@/components/ui';
 
 import { useClubTournamentLineupWorkbench } from './hooks/useClubTournamentLineupDialog';
-import {
-  ClubTournamentLineupBody,
-  ClubTournamentLineupFooter,
-  ClubTournamentLineupHeader,
-} from './components/ClubTournamentLineupDialog.panels';
+import { ClubTournamentLineupBody, ClubTournamentLineupFooter, ClubTournamentLineupHeader } from './components/ClubTournamentLineupDialog.panels';
 import type { ClubTournamentItem } from './objects/ClubTournamentItem';
 
 /** 俱乐部为赛事阶段提交或调整阵容的弹窗。 */

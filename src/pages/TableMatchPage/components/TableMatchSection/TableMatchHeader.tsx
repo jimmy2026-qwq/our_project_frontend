@@ -1,13 +1,10 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { Badge, Button, StatusPill } from '@/components/ui';
-import { TableStatuses, type TableSeat } from '@/objects';
+import { TableStatus, type TableSeat } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
-import {
-  getTableStatusLabel,
-  matchBackLinkClassName,
-} from '../../functions/TableMatch.labels';
+import { getTableStatusLabel, matchBackLinkClassName } from '../../functions/TableMatch.labels';
 
 interface TableMatchHeaderProps {
   table: TableDetail;
@@ -38,7 +35,7 @@ export function TableMatchHeader({
           <Badge>牌桌对局</Badge>
           <StatusPill
             tone={
-              table.status === TableStatuses.InProgress
+              table.status === TableStatus.InProgress
                 ? 'success'
                 : 'warning'
             }

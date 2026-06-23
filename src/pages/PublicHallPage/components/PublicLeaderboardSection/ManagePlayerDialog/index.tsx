@@ -1,29 +1,12 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import {
-  ActionButton,
-  FieldGroup,
-  SelectField,
-  TextareaField,
-  TextInputField,
-} from '@/components/ui';
-import {
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-} from '@/components/ui';
-import type { PlayerLeaderboardEntry } from '../../../objects/PublicHallPage.types';
+import { ActionButton, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, FieldGroup, SelectField, TextareaField, TextInputField } from '@/components/ui';
 
-import {
-  type PlayerAdminAction,
-  useManagePlayerDialogAction,
-} from './hooks/useManagePlayerDialogAction';
+import type { PlayerLeaderboardEntry } from '../../../objects/leaderboard/PlayerLeaderboardEntry';
+
+
+import { PlayerAdminAction } from './objects/PlayerAdminAction';
+import { useManagePlayerDialogAction } from './hooks/useManagePlayerDialogAction';
 
 /** 公共大厅中创建或维护当前玩家资料的弹窗。 */
 export function ManagePlayerDialog({
@@ -37,7 +20,9 @@ export function ManagePlayerDialog({
   onOpenChange: (open: boolean) => void;
   onCompleted?: () => void;
 }) {
-  const [action, setAction] = useState<PlayerAdminAction>('ban');
+  const [action, setAction] = useState<PlayerAdminAction>(
+    PlayerAdminAction.Ban,
+  );
   const [reason, setReason] = useState('');
   const { canSubmit, isSubmitting, handleSubmit } = useManagePlayerDialogAction(
     {
@@ -52,7 +37,7 @@ export function ManagePlayerDialog({
 
   useEffect(() => {
     if (!open) {
-      setAction('ban');
+      setAction(PlayerAdminAction.Ban);
       setReason('');
     }
   }, [open]);
@@ -93,10 +78,12 @@ export function ManagePlayerDialog({
                 }
                 disabled={isSubmitting}
               >
-                <option value="ban">封禁玩家</option>
-                <option value="grantSuperAdmin">授权超管</option>
+                <option value={PlayerAdminAction.Ban}>封禁玩家</option>
+                <option value={PlayerAdminAction.GrantSuperAdmin}>
+                  授权超管
+                </option>
               </SelectField>
-              {action === 'ban' ? (
+              {action === PlayerAdminAction.Ban ? (
                 <TextareaField
                   label="封禁原因"
                   rows={4}
@@ -117,7 +104,7 @@ export function ManagePlayerDialog({
               >
                 {isSubmitting
                   ? '提交中...'
-                  : action === 'grantSuperAdmin'
+                  : action === PlayerAdminAction.GrantSuperAdmin
                     ? '确认授权'
                     : '确认封禁'}
               </ActionButton>

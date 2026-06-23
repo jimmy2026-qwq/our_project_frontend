@@ -2,7 +2,9 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
+import { RealtimeAggregateTypes } from '@/app/realtime/RealtimeAggregateType';
 import type { RealtimeEvent } from '@/app/realtime/RealtimeEvent';
+import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 import { useShowcaseMode } from '@/app/showcaseMode';
 import type {
@@ -128,7 +130,7 @@ export function useTableMatchPageModel(): TableMatchPageModel {
       }
 
       if (
-        event.aggregateType === 'mahjongTable' &&
+        event.aggregateType === RealtimeAggregateTypes.MahjongTable &&
         event.aggregateId !== tableId
       ) {
         return;
@@ -157,10 +159,10 @@ export function useTableMatchPageModel(): TableMatchPageModel {
 
   useRealtimeRefresh(
     [
-      'TournamentTableChanged',
-      'MahjongTableChanged',
-      'MahjongActionAccepted',
-      'AppealChanged',
+      RealtimeEventTypes.TournamentTableChanged,
+      RealtimeEventTypes.MahjongTableChanged,
+      RealtimeEventTypes.MahjongActionAccepted,
+      RealtimeEventTypes.AppealChanged,
     ],
     handleRealtimeRefresh,
   );

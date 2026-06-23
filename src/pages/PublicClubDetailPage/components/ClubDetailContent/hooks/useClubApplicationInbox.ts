@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { ListClubApplicationsAPI } from '@/api/club';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
@@ -7,8 +7,8 @@ import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplic
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toClubApplicationView } from '../../../functions/ClubDetailApplication.mappers';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import { toClubApplicationView } from '../../../functions/toClubDetailApplicationData';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 interface UseClubApplicationInboxParams {
   profile: ClubPublicProfile | null;

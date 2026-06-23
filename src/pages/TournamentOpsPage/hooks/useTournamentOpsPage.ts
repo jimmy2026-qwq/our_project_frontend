@@ -1,13 +1,11 @@
-import { useAuthContext } from '@/app/auth/useAuthContext';
+﻿import { useAuthContext } from '@/app/auth/useAuthContext';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
-import { type LoadState, type TournamentOpsState } from '../objects/TournamentOps.types';
+import type { LoadState } from '../objects/LoadState';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
 import { getActiveTournament } from '../functions/getTournamentOpsState';
-import {
-  useTournamentOpsData,
-  useTournamentOpsState,
-} from './useTournamentOpsData';
+import { useTournamentOpsData, useTournamentOpsState } from './useTournamentOpsData';
 import { useTournamentOpsWorkbenchEffects } from './useTournamentOpsWorkbenchEffects';
 import { useTournamentOpsWorkbenchState } from './useTournamentOpsWorkbenchState';
 
@@ -92,6 +90,5 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api' as const,
   };
 }

@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import {
-  AUTH_SESSION_STORAGE_KEY,
-  persistSession,
-  readPersistedSession,
-} from '@/app/auth/functions/authSessionStorage';
+import { AUTH_SESSION_STORAGE_KEY, persistSession, readPersistedSession } from '@/app/auth/functions/authSessionStorage';
 import { restoreAuthSessionOnce } from '@/app/auth/functions/restoreAuthSessionOnce';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import type { AuthContextValue } from '@/app/auth/useAuthContext';

@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetClubAPI } from '@/api/club';
 import type { ClubRankNode } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 export function useClubRankTree(profile: ClubPublicProfile | null) {
   const [clubRankTree, setClubRankTree] = useState<ClubRankNode[]>([]);

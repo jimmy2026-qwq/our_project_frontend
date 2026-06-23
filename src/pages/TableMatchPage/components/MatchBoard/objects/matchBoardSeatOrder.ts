@@ -1,8 +1,8 @@
-import { SeatWinds, type SeatWind } from '@/objects';
+﻿import { SeatWind } from '@/objects';
 
 export const matchBoardSeatOrder: SeatWind[] = [
-  SeatWinds.East,
-  SeatWinds.South,
-  SeatWinds.West,
-  SeatWinds.North,
+  SeatWind.East,
+  SeatWind.South,
+  SeatWind.West,
+  SeatWind.North,
 ];

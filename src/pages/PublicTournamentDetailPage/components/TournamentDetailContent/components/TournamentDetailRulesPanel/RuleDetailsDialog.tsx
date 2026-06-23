@@ -1,32 +1,10 @@
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  FieldGroup,
-  TextInputField,
-} from '@/components/ui';
-import {
-  MahjongGameLengths,
-  normalizeMahjongRuleset,
-  TournamentFormats,
-  type MahjongGameLength,
-} from '@/objects/tournament';
+﻿import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, FieldGroup, TextInputField } from '@/components/ui';
+import { MahjongGameLengths, normalizeMahjongRuleset, TournamentFormat, type MahjongGameLength } from '@/objects/tournament';
 
-import {
-  getStageAdvanceCount,
-} from '../../../../functions/getTournamentDetailRules';
+import { getStageAdvanceCount } from '../../../../functions/getTournamentDetailRules';
 import { useTournamentDetailRulesPanel } from './hooks/useTournamentDetailRulesPanel';
 import { ReadonlyRuleCheckbox } from './ReadonlyRuleCheckbox';
-import {
-  describeKnockoutSeeding,
-  describeSwissPairing,
-} from './functions/getRuleDetailsDialogLabels';
+import { describeKnockoutSeeding, describeSwissPairing } from './functions/getRuleDetailsDialogLabels';
 
 const gameLengthOptions: Array<{ value: MahjongGameLength; label: string }> = [
   { value: MahjongGameLengths.OneKyoku, label: '一局战' },
@@ -47,7 +25,7 @@ export function RuleDetailsDialog({
   onOpenChange: (open: boolean) => void;
 }) {
   const ruleset = normalizeMahjongRuleset(stage?.mahjongRuleset);
-  const format = stage?.format ?? TournamentFormats.Swiss;
+  const format = stage?.format ?? TournamentFormat.Swiss;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -64,8 +42,8 @@ export function RuleDetailsDialog({
                   <span className="leading-7 text-[#f2f7fb]">赛制</span>
                   <div className="grid grid-cols-2 gap-2">
                     {[
-                      { value: TournamentFormats.Swiss, label: '瑞士轮' },
-                      { value: TournamentFormats.Knockout, label: '淘汰赛' },
+                      { value: TournamentFormat.Swiss, label: '瑞士轮' },
+                      { value: TournamentFormat.Knockout, label: '淘汰赛' },
                     ].map((option) => (
                       <button
                         key={option.value}
@@ -86,7 +64,7 @@ export function RuleDetailsDialog({
                 <div className="grid gap-3 md:grid-cols-2">
                   <TextInputField
                     label={
-                      format === TournamentFormats.Knockout
+                      format === TournamentFormat.Knockout
                         ? '入围人数'
                         : '晋级人数'
                     }
@@ -101,10 +79,10 @@ export function RuleDetailsDialog({
                   />
                   <TextInputField
                     label={
-                      format === TournamentFormats.Knockout ? '种子' : '配桌'
+                      format === TournamentFormat.Knockout ? '种子' : '配桌'
                     }
                     value={
-                      format === TournamentFormats.Knockout
+                      format === TournamentFormat.Knockout
                         ? describeKnockoutSeeding(stage.knockoutRule)
                         : describeSwissPairing(stage.swissRule)
                     }
@@ -163,7 +141,7 @@ export function RuleDetailsDialog({
                       label="All last 庄家一位即止"
                       checked={ruleset.allLastDealerFinishAsTop}
                     />
-                    {format === TournamentFormats.Swiss ? (
+                    {format === TournamentFormat.Swiss ? (
                       <ReadonlyRuleCheckbox
                         label="积分带入"
                         checked={stage.swissRule?.carryOverPoints !== false}

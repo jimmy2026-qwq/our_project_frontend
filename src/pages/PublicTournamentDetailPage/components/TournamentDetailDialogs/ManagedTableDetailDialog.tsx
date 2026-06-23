@@ -1,24 +1,9 @@
-import {
-  Alert,
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  StatusPill,
-} from '@/components/ui';
+﻿import { Alert, Button, Dialog, DialogBody, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, StatusPill } from '@/components/ui';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { detailShellClassNames } from '../detailShell.styles';
-import type { TournamentDetailTableItem } from '../../objects/TournamentDetail.types';
-import {
-  getSeatStatusLabel,
-  getSeatStatusTone,
-} from '../../functions/getTournamentDetailView';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import { getSeatStatusLabel, getSeatStatusTone } from '../../functions/getTournamentDetailView';
 
 /** 管理端查看和操作单张赛事牌桌的详情弹窗。 */
 export function ManagedTableDetailDialog({

@@ -1,23 +1,18 @@
-import {
-  getPaifuTileCode,
-  MahjongMeldTypes,
-  type MahjongSeatView,
-  type MahjongTableView,
-  type PaifuTile,
-  type SeatWind,
-} from '@/objects';
-import type {
-  MeldGroup,
-  RiverDiscard,
-} from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
+﻿import { getPaifuTileCode, MahjongMeldTypes, type SeatWind, type MahjongSeatView, type MahjongTableView, type PaifuTile } from '@/objects';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
+import type { RiverDiscard } from '@/pages/TablePaifuPage/objects/RiverDiscard';
 
 import { matchBoardSeatOrder } from '../objects/matchBoardSeatOrder';
-import {
-  removeFirstMatchingTile,
-  removeFirstMatchingTileBy,
-} from './removeFirstMatchingTile';
+import { removeFirstMatchingTile, removeFirstMatchingTileBy } from './removeFirstMatchingTile';
 
-type ClaimRelation = 'upper' | 'opposite' | 'lower' | 'self';
+const ClaimRelations = {
+  Upper: 'upper',
+  Opposite: 'opposite',
+  Lower: 'lower',
+  Self: 'self',
+} as const;
+
+type ClaimRelation = (typeof ClaimRelations)[keyof typeof ClaimRelations];
 
 export function getMahjongSeatMap(
   mahjongTable: MahjongTableView,
@@ -168,10 +163,20 @@ function getSidewaysIndexByRelation(
   tileCount: number,
 ) {
   if (tileCount >= 4) {
-    return { upper: 0, opposite: 1, lower: 3, self: undefined }[relation];
+    return {
+      [ClaimRelations.Upper]: 0,
+      [ClaimRelations.Opposite]: 1,
+      [ClaimRelations.Lower]: 3,
+      [ClaimRelations.Self]: undefined,
+    }[relation];
   }
 
-  return { upper: 0, opposite: 1, lower: 2, self: undefined }[relation];
+  return {
+    [ClaimRelations.Upper]: 0,
+    [ClaimRelations.Opposite]: 1,
+    [ClaimRelations.Lower]: 2,
+    [ClaimRelations.Self]: undefined,
+  }[relation];
 }
 
 function getClaimRelation(
@@ -185,14 +190,14 @@ function getClaimRelation(
     matchBoardSeatOrder.length;
 
   if (relation === 3) {
-    return 'upper';
+    return ClaimRelations.Upper;
   }
 
   if (relation === 2) {
-    return 'opposite';
+    return ClaimRelations.Opposite;
   }
 
-  return relation === 1 ? 'lower' : 'self';
+  return relation === 1 ? ClaimRelations.Lower : ClaimRelations.Self;
 }
 
 function createSeatRecord<T>(factory: (seat: SeatWind) => T) {

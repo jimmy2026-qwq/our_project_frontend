@@ -1,13 +1,10 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import { participantText } from '../functions/getTournamentDetailParticipantsText';
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import {
-  type LineupSubmission,
-  useLineupPlayers,
-} from './useTournamentDetailParticipantsLineup';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { useLineupPlayers, type LineupSubmission } from './useTournamentDetailParticipantsLineup';
 
 export function useTournamentDetailParticipantsTab(
   workbench: TournamentDetailWorkbenchState,

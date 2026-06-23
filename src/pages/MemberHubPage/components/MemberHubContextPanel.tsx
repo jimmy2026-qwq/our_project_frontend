@@ -1,11 +1,9 @@
+﻿import { Role } from '@/objects';
 import { SelectField, WorkbenchContextPanel } from '@/components/ui';
-import { Roles } from '@/objects';
 
-import type {
-  MemberHubOperator,
-  MemberHubOperatorDirectory,
-  MemberHubState,
-} from '../objects/MemberHub.types';
+import { MemberHubOperator } from '../objects/operator/MemberHubOperator';
+import { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import { MemberHubState } from '../objects/state/MemberHubState';
 
 /** 成员中心顶部展示当前玩家、俱乐部和刷新入口的上下文面板。 */
 export function MemberHubContextPanel({
@@ -68,7 +66,7 @@ export function MemberHubContextPanel({
       >
         {clubOptions.map((club) => {
           const disabled =
-            activeOperator.role !== Roles.ClubAdmin ||
+            activeOperator.role !== Role.ClubAdmin ||
             !activeOperator.managedClubIds.includes(club.id);
 
           return (

@@ -1,11 +1,8 @@
-import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+﻿import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
-import {
-  getRoundPlayerId,
-  isPlayerTenpai,
-} from '../../../../functions/getReplayPlayers';
+import { getRoundPlayerId, isPlayerTenpai } from '../../../../functions/getReplayPlayers';
 import { replaySeatOrder as seatOrder } from '../../../../objects/replaySeatInfo';
-import { operationPositionClasses } from '../../objects/paifuTableLayout';
+import { operationPositionClasses } from '../../objects/layout/operationPositionClasses';
 
 /** 流局时标记各玩家听牌或未听状态。 */
 export function ExhaustiveDrawStatusMarkers({

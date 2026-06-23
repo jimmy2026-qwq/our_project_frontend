@@ -1,21 +1,8 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import {
-  ActionButton,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  FieldGroup,
-  TextInputField,
-} from '@/components/ui';
+import { ActionButton, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, FieldGroup, TextInputField } from '@/components/ui';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
 
 /** 为单个俱乐部成员设置或清除展示称号的弹窗。 */
 export function ClubTitleDialog({

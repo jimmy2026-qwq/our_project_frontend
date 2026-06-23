@@ -1,8 +1,8 @@
-import { DetailCard, DetailRow, DetailRows, StatusPill } from '@/components/ui';
+﻿import { DetailCard, DetailRow, DetailRows, StatusPill } from '@/components/ui';
 
 import { getStageStatusLabel } from '../../../functions/getTournamentDetailLabels';
 import { getStatusTone } from '../../../functions/getTournamentDetailStatus';
-import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
 
 /** 赛事详情页展示阶段进度、赛制和轮次的面板。 */
 export function TournamentStagesPanel({

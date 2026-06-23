@@ -1,7 +1,6 @@
-export const RankPlatforms = {
-  Tenhou: 'Tenhou',
-  MahjongSoul: 'MahjongSoul',
-  Custom: 'Custom',
-} as const;
+﻿export enum RankPlatform {
+  Tenhou = 'Tenhou',
+  MahjongSoul = 'MahjongSoul',
+  Custom = 'Custom',
 
-export type RankPlatform = (typeof RankPlatforms)[keyof typeof RankPlatforms];
+}

@@ -4,10 +4,7 @@ import { EmptyState, LoadingProgress } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 
 import { PlayerDashboardFrame } from './PlayerDashboardFrame';
-import {
-  detailShellClassNames,
-  loadingClassNames,
-} from './PlayerDashboardShell.styles';
+import { detailShellClassNames, loadingClassNames } from './PlayerDashboardShell.styles';
 
 /** 玩家仪表盘加载期间的骨架和进度状态。 */
 export function PlayerDashboardLoading() {

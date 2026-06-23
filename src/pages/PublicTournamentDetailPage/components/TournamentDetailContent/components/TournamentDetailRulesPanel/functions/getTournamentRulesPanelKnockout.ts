@@ -1,10 +1,8 @@
-import type {
-  KnockoutBracketMatchLike,
-  KnockoutBracketResultLike,
-  KnockoutBracketRoundLike,
-  KnockoutBracketSnapshotLike,
-  PlayerListRow,
-} from '../objects/TournamentRulesPanel.types';
+﻿import type { KnockoutBracketMatchLike } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/KnockoutBracketMatchLike';
+import type { KnockoutBracketResultLike } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/KnockoutBracketResultLike';
+import type { KnockoutBracketRoundLike } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/KnockoutBracketRoundLike';
+import type { KnockoutBracketSnapshotLike } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/KnockoutBracketSnapshotLike';
+import type { PlayerListRow } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/PlayerListRow';
 import { isRecord } from './normalizeTournamentRulesPanelValues';
 
 function getCompletedKnockoutMatches(bracket: unknown) {

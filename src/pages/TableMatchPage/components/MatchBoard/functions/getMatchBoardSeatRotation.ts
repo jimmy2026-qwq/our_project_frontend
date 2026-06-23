@@ -1,4 +1,4 @@
-import { SeatWinds, type MahjongTableView, type SeatWind } from '@/objects';
+﻿import { SeatWind, type MahjongTableView } from '@/objects';
 
 import { matchBoardSeatOrder } from '../objects/matchBoardSeatOrder';
 
@@ -8,7 +8,7 @@ export function getSeatRotation(
 ): Record<SeatWind, SeatWind> {
   const viewerSeat =
     (mahjongTable.seats ?? []).find((seat) => seat.playerId === operatorId)
-      ?.seat ?? SeatWinds.East;
+      ?.seat ?? SeatWind.East;
 
   return createSeatRotation(viewerSeat);
 }

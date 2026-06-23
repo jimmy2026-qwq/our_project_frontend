@@ -1,16 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  SelectField,
-} from '@/components/ui';
+import { Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, SelectField } from '@/components/ui';
 
 import { participantText } from '../functions/getTournamentDetailParticipantsText';
 

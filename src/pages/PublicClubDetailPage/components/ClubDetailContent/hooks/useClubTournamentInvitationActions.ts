@@ -1,8 +1,8 @@
 ﻿import { AcceptClubTournamentAPI, DeclineClubTournamentAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 
 export function useClubTournamentInvitationActions({
   confirmDanger,
@@ -26,7 +26,7 @@ export function useClubTournamentInvitationActions({
     );
 
     notifyMutationResult(
-      { source: 'api' as const },
+      {},
       {
         successTitle: '已通过赛事邀请',
         successMessage: `${workbench.profile.name} 已加入 ${tournament.name}。`,
@@ -64,7 +64,7 @@ export function useClubTournamentInvitationActions({
     );
 
     notifyMutationResult(
-      { source: 'api' as const },
+      {},
       {
         successTitle: '已拒绝赛事邀请',
         successMessage: `${tournament.name} 的邀请已经处理。`,

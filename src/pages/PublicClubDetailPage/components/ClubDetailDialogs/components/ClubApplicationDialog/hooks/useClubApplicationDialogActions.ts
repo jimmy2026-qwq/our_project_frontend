@@ -1,10 +1,10 @@
-import type { Dispatch, SetStateAction } from 'react';
+﻿import type { Dispatch, SetStateAction } from 'react';
 
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import { useNotice } from '@/app/feedback/useNotice';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 
-import type { HomeClubApplicationState } from '../../../../../objects/ClubApplication.types';
+import type { HomeClubApplicationState } from '@/pages/PublicClubDetailPage/objects/application/HomeClubApplicationState';
 import { useClubApplicationMutations } from '../../../../../hooks/useClubApplicationMutations';
 
 export function useClubApplicationDialogActions({
@@ -36,7 +36,6 @@ export function useClubApplicationDialogActions({
               ...current,
               application: {
                 application: result.application,
-                source: result.source,
                 warning: result.warning,
               },
             }
@@ -71,7 +70,6 @@ export function useClubApplicationDialogActions({
               ...current,
               application: {
                 application: result.application,
-                source: result.source,
                 warning: result.warning,
               },
             }

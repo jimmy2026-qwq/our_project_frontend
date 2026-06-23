@@ -1,23 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 import type { NavigateFunction } from 'react-router-dom';
 
 import { DEFAULT_MAHJONG_RULESET } from '@/objects';
-import { TournamentFormats } from '@/objects/tournament';
+import { TournamentFormat } from '@/objects/tournament';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
-import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
-import type { DetailState } from '../../../objects/PublicTournamentDetailPage.types';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
 
-import {
-  createRuleDraftFromStage,
-  getCurrentRuleStage,
-} from '../../../functions/getTournamentDetailRules';
-import type { TournamentStageRuleDraft } from '../../../objects/TournamentDetailRule.types';
+import { createRuleDraftFromStage, getCurrentRuleStage } from '../../../functions/getTournamentDetailRules';
+import type { TournamentStageRuleDraft } from '@/pages/PublicTournamentDetailPage/objects/stage/TournamentStageRuleDraft';
 import { useTournamentDetailActions } from './useTournamentDetailActions';
 import { useTournamentDetailWorkbenchData } from './useTournamentDetailWorkbenchData';
 import { buildTournamentDetailWorkbench } from '../../../functions/buildTournamentDetailWorkbench';
 
 interface UseTournamentDetailWorkbenchParams {
-  state: DetailState<TournamentPublicProfile>;
+  state: TournamentDetailState;
   session: AuthContextSession | null;
   navigate: NavigateFunction;
   onScheduleSuccess?: () => void;
@@ -51,7 +47,7 @@ export function useTournamentDetailWorkbench({
   const [publishBlockedOpen, setPublishBlockedOpen] = useState(false);
   const [rulesDialogOpen, setRulesDialogOpen] = useState(false);
   const [ruleDraft, setRuleDraft] = useState<TournamentStageRuleDraft>({
-    format: TournamentFormats.Swiss,
+    format: TournamentFormat.Swiss,
     advanceCount: 8,
     mahjongRuleset: DEFAULT_MAHJONG_RULESET,
   });

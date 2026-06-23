@@ -1,5 +1,5 @@
-import { loadTournamentProfileForWorkbench } from './useTournamentDetailWorkbenchData';
-import type { UseTournamentDetailActionsParams } from './useTournamentDetailActions.types';
+﻿import { loadTournamentProfileForWorkbench } from './useTournamentDetailWorkbenchData';
+import type { UseTournamentDetailActionsParams } from '../objects/actions/UseTournamentDetailActionsParams';
 import { useTournamentInviteActions } from '../components/TournamentDetailParticipantsTab/hooks/useTournamentInviteActions';
 import { useTournamentLifecycleActions } from '../../TournamentDetailHeader/hooks/useTournamentLifecycleActions';
 import { useTournamentRulesActions } from '../components/TournamentDetailRulesPanel/hooks/useTournamentRulesActions';

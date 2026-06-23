@@ -1,15 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-} from '@/components/ui';
+import { Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle } from '@/components/ui';
 
 type PendingStartConfirmation = {
   tableId: string;

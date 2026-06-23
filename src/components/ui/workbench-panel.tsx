@@ -10,12 +10,9 @@ import { FilterBar } from './filter-bar';
 import { InfoCard } from './info-card';
 import { ControlToolbar } from './layout';
 
-type DataSource = 'api' | 'mock';
-
 export interface DashboardPanelShellProps {
   title: string;
   path: string;
-  source?: DataSource;
   warning?: string;
   className?: string;
   children?: ReactNode;
@@ -26,7 +23,6 @@ export interface DashboardPanelShellProps {
 export function DashboardPanelShell({
   title,
   path,
-  source,
   warning,
   className,
   children,
@@ -36,7 +32,6 @@ export function DashboardPanelShell({
     <DataPanel
       title={title}
       description={path}
-      source={source}
       warning={warning}
       className={className}
     >
@@ -128,11 +123,10 @@ export function WorkbenchContextPanel({
   );
 }
 
-/** 工作台说明面板，支持来源标记和补充提示区。 */
+/** 工作台说明面板，支持补充警告提示区。 */
 export function WorkbenchGuidePanel({
   title,
   description,
-  source,
   warning,
   noteTitle,
   noteBody,
@@ -141,7 +135,6 @@ export function WorkbenchGuidePanel({
 }: {
   title: ReactNode;
   description?: ReactNode;
-  source?: DataSource;
   warning?: string;
   noteTitle?: ReactNode;
   noteBody?: ReactNode;
@@ -153,7 +146,7 @@ export function WorkbenchGuidePanel({
       className={className}
       title={title}
       description={description}
-      aside={<SourceBadge source={source} warning={warning} />}
+      aside={<SourceBadge warning={warning} />}
     >
       {noteTitle || noteBody ? (
         <Fieldset>

@@ -1,6 +1,6 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 
-import { TableStatuses } from '@/objects';
+import { TableStatus } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { getTableSeatMap } from '../functions/getTableSeatMap';
@@ -27,12 +27,12 @@ export function useTableMatchSeatState(
       isRegisteredPlayer &&
       !!operatorId &&
       !!ownSeat &&
-      table?.status === TableStatuses.WaitingPreparation &&
+      table?.status === TableStatus.WaitingPreparation &&
       !ownSeat.disconnected,
     canFileAppeal:
       isRegisteredPlayer &&
       !!operatorId &&
       !!ownSeat &&
-      table?.status === TableStatuses.Scoring,
+      table?.status === TableStatus.Scoring,
   };
 }

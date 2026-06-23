@@ -1,19 +1,16 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 
 import { useConfirmationDialogActions } from '@/components/confirmation-dialog/useConfirmationDialogActions';
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
-import type {
-  ClubPublicProfile,
-  DetailState,
-} from '../../../objects/PublicClubDetailPage.types';
+import type { ClubDetailState } from '@/pages/PublicClubDetailPage/objects/state/ClubDetailState';
 
 import { useClubDetailActions } from './useClubDetailActions';
 import { useClubDetailData } from './useClubDetailData';
 import { buildClubDetailWorkbench } from '../functions/buildClubDetailWorkbench';
 
 interface UseClubDetailWorkbenchParams {
-  state: DetailState<ClubPublicProfile> | null;
+  state: ClubDetailState | null;
   session: AuthContextSession | null;
   onRefreshDetail?: () => void;
 }

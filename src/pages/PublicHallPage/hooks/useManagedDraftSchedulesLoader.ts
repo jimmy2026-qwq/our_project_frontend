@@ -1,17 +1,12 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { TournamentGetAPI, TournamentListAPI } from '@/api/tournament';
-import { StageStatuses, TournamentStatuses } from '@/objects';
+import { StageStatus, TournamentStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import {
-  toStageStatus,
-  toTournamentDirectoryEntry,
-} from '../functions/PublicHall.mappers';
-import type {
-  PublicHallViewerContext,
-  PublicSchedule,
-} from '../objects/PublicHallPage.types';
+import { toStageStatus, toTournamentDirectoryEntry } from '../functions/toPublicHallData';
+import type { PublicHallViewerContext } from '../objects/state/PublicHallViewerContext';
+import { PublicSchedule } from '../objects/schedule/PublicSchedule';
 
 export function useManagedDraftSchedulesLoader() {
   return useCallback(
@@ -52,7 +47,7 @@ export function useManagedDraftSchedulesLoader() {
                 tournamentStatus: TournamentStatuses.Draft,
                 stageId: `${detail.tournamentId}-draft-stage`,
                 stageName: 'Draft stage',
-                stageStatus: StageStatuses.Pending,
+                stageStatus: StageStatus.Pending,
                 scheduledAt: detail.startsAt,
                 isUnpublished: true,
               } satisfies PublicSchedule,

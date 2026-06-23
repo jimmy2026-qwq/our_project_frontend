@@ -1,19 +1,14 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import {
-  Alert,
-  EmptyState,
-} from '@/components/ui';
+import { Alert, EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import { PaifuSummaryDialog } from '@/components/mahjong-result/PaifuSummaryDialog';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
-import type {
-  TournamentDetailTableItem,
-  TournamentDetailWorkbenchState,
-} from '../../../../objects/TournamentDetail.types';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 import { TournamentDetailTableRow } from './TournamentDetailTableRow';
 
 /** 赛事详情中按阶段展示牌桌列表的标签页。 */

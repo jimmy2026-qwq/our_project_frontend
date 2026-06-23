@@ -1,7 +1,4 @@
-import {
-  FieldGroup,
-  SelectField,
-} from '@/components/ui';
+import { FieldGroup, SelectField } from '@/components/ui';
 
 const contributionTitlePresets = [
   {

@@ -1,25 +1,12 @@
-import {
-  TournamentStageConfigureRulesAPI,
-  TournamentStageCreateAPI,
-} from '@/api/tournament';
-import {
-  AdvancementRuleTypes,
-  KnockoutSeedingPolicies,
-  normalizeMahjongRuleset,
-  SwissPairingMethods,
-  TournamentFormats,
-} from '@/objects';
+﻿import { TournamentStageConfigureRulesAPI, TournamentStageCreateAPI } from '@/api/tournament';
+import { AdvancementRuleTypes, KnockoutSeedingPolicies, normalizeMahjongRuleset, SwissPairingMethod, TournamentFormat } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import {
-  createRuleDraftFromStage,
-  getDefaultRoundCount,
-  normalizeKnockoutBracketSize,
-} from '../../../../../functions/getTournamentDetailRules';
+import { createRuleDraftFromStage, getDefaultRoundCount, normalizeKnockoutBracketSize } from '../../../../../functions/getTournamentDetailRules';
 import type {
   RefreshTournamentProfile,
-  UseTournamentDetailActionsParams,
-} from '../../../hooks/useTournamentDetailActions.types';
+} from '../../../objects/RefreshTournamentProfile';
+import type { UseTournamentDetailActionsParams } from '../../../objects/actions/UseTournamentDetailActionsParams';
 
 export function useTournamentRulesActions({
   currentRuleStage,
@@ -55,7 +42,7 @@ export function useTournamentRulesActions({
       return;
     }
 
-    const isKnockout = ruleDraft.format === TournamentFormats.Knockout;
+    const isKnockout = ruleDraft.format === TournamentFormat.Knockout;
     const advanceCount = isKnockout
       ? normalizeKnockoutBracketSize(ruleDraft.advanceCount)
       : Math.max(1, Math.floor(ruleDraft.advanceCount || 0));
@@ -84,7 +71,7 @@ export function useTournamentRulesActions({
               pairingMethod: isKnockout
                 ? undefined
                 : (currentRuleStage.swissRule?.pairingMethod ??
-                  SwissPairingMethods.BalancedElo),
+                  SwissPairingMethod.BalancedElo),
               carryOverPoints: isKnockout
                 ? undefined
                 : (currentRuleStage.swissRule?.carryOverPoints ?? true),
@@ -122,7 +109,7 @@ export function useTournamentRulesActions({
             targetTableCount: isKnockout ? advanceCount / 4 : undefined,
             pairingMethod: isKnockout
               ? undefined
-              : SwissPairingMethods.BalancedElo,
+              : SwissPairingMethod.BalancedElo,
             carryOverPoints: isKnockout ? undefined : true,
             maxRounds: isKnockout
               ? undefined

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 
 import { LogoutAuthAPI, RevokeGuestSessionAuthAPI } from '@/api/auth';
@@ -6,7 +6,7 @@ import { readGuestSessionId } from '@/app/auth/functions/authSessionStorage';
 import { useAuthContext } from '@/app/auth/useAuthContext';
 import { sendAPI } from '@/system/api';
 
-import type { PlayerDetailTab } from '../components/PlayerDashboardContent/objects/PlayerDashboardContent.types';
+import { PlayerDetailTab } from '@/pages/PlayerDashboardPage/components/PlayerDashboardContent/objects/PlayerDetailTab';
 import { usePlayerDashboardData } from './usePlayerDashboardData';
 
 export function usePlayerDashboard() {
@@ -53,14 +53,14 @@ export function usePlayerDashboard() {
 }
 
 function resolveInitialTab(value: string | null): PlayerDetailTab {
-  return resolveQueryTab(value) ?? 'home';
+  return resolveQueryTab(value) ?? PlayerDetailTab.Home;
 }
 
 function resolveQueryTab(value: string | null): PlayerDetailTab | null {
   switch (value) {
-    case 'recent':
-    case 'history':
-    case 'appeals':
+    case PlayerDetailTab.Recent:
+    case PlayerDetailTab.History:
+    case PlayerDetailTab.Appeals:
       return value;
     default:
       return null;

@@ -1,4 +1,4 @@
-import type { TrackedClubApplicationItem } from '../objects/ClubApplication.types';
+﻿import type { TrackedClubApplicationItem } from '@/pages/PublicClubDetailPage/objects/application/TrackedClubApplicationItem';
 
 const STORAGE_KEY = 'riichi-nexus.club-application-tracker';
 
@@ -58,8 +58,7 @@ function normalizeTrackedClubApplicationItem(
     typeof item.applicantName !== 'string' ||
     typeof item.message !== 'string' ||
     typeof item.status !== 'string' ||
-    typeof item.submittedAt !== 'string' ||
-    typeof item.source !== 'string'
+    typeof item.submittedAt !== 'string'
   ) {
     return null;
   }
@@ -73,7 +72,6 @@ function normalizeTrackedClubApplicationItem(
     message: item.message,
     status: item.status,
     submittedAt: item.submittedAt,
-    source: item.source,
   };
 }
 

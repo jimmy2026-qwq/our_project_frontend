@@ -1,16 +1,7 @@
-import {
-  HandOutcome,
-  type AgariResult,
-  type MahjongSeatView,
-  type PaifuTile,
-} from '@/objects';
-import {
-  getWinYaku,
-  getResultWins,
-  isWinOutcome,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+﻿import { HandOutcome, type AgariResult, type MahjongSeatView, type PaifuTile } from '@/objects';
+import { getWinYaku, getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { getFirstYakumanYaku } from '@/components/mahjong-result/functions/getFirstYakumanYaku';
-import type { YakumanTileBurstView } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/PaifuOverlayViews';
+import type { YakumanTileBurstView } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/YakumanTileBurstView';
 
 import { removeFirstMatchingTile } from './removeFirstMatchingTile';
 

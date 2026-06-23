@@ -1,23 +1,11 @@
-import {
-  MahjongTableStatuses,
-  SeatWinds,
-  TableStatuses,
-  type MahjongLegalAction,
-} from '@/objects';
+﻿import { MahjongTableStatuses, SeatWind, TableStatus, type MahjongLegalAction } from '@/objects';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
 import { getCurrentRoundKey, getResultKey, getTurnActionDelayKey } from '../functions/getMatchBoardKeys';
 import { getMatchBoardActionState } from '../functions/getMatchBoardActionState';
-import {
-  createMatchScoreDisplays,
-  shouldCompleteTableAfterCurrentResult,
-} from '../functions/getMatchBoardSettlement';
-import {
-  getMahjongSeatMap,
-  getMelds,
-  getRivers,
-} from '../functions/getMatchBoardSeats';
+import { createMatchScoreDisplays, shouldCompleteTableAfterCurrentResult } from '../functions/getMatchBoardSettlement';
+import { getMahjongSeatMap, getMelds, getRivers } from '../functions/getMatchBoardSeats';
 import { getSeatRotation } from '../functions/getMatchBoardSeatRotation';
 import type { MatchBoardProps } from '../objects/MatchBoardProps';
 import { useMatchBoardAnimations } from './useMatchBoardAnimations';
@@ -58,7 +46,7 @@ export function useMatchBoardModel({
     result && isWinOutcome(result.outcome),
   );
   const isCurrentEastPlayer = seats.some(
-    (seat) => seat.seat === SeatWinds.East && seat.playerId === operatorId,
+    (seat) => seat.seat === SeatWind.East && seat.playerId === operatorId,
   );
   const terminalSettlementTable =
     finalSettlementTable ??
@@ -68,7 +56,7 @@ export function useMatchBoardModel({
       : null);
   const canAdvanceAfterSettlement =
     !terminalSettlementTable &&
-    table.status !== TableStatuses.Archived &&
+    table.status !== TableStatus.Archived &&
     mahjongTable.status !== MahjongTableStatuses.Archived &&
     mahjongTable.status !== MahjongTableStatuses.Finished;
   const resultSequence = useMatchResultSequence({
@@ -105,7 +93,7 @@ export function useMatchBoardModel({
     [result, seatMap, resultSequence.settlementProgress],
   );
   const scoreStepActionLabel =
-    table.status === TableStatuses.Archived ||
+    table.status === TableStatus.Archived ||
     mahjongTable.status === MahjongTableStatuses.Archived
       ? '关闭结算'
       : shouldCompleteTableAfterCurrentResult(mahjongTable)

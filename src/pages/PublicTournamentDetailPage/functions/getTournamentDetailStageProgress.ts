@@ -1,7 +1,7 @@
-import { StageStatuses, TournamentStatuses } from '@/objects';
+﻿import { StageStatus, TournamentStatuses } from '@/objects';
 
-import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
-import type { TournamentDetailTableItem } from '../objects/TournamentDetail.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
 
 type TournamentStageView = NonNullable<
   TournamentPublicProfile['stages']
@@ -9,8 +9,8 @@ type TournamentStageView = NonNullable<
 
 export function isTournamentStageCompleted(stage: TournamentStageView) {
   return (
-    stage.status === StageStatuses.Completed ||
-    stage.status === StageStatuses.Archived
+    stage.status === StageStatus.Completed ||
+    stage.status === StageStatus.Archived
   );
 }
 

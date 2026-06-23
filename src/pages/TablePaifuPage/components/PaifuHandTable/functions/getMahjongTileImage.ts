@@ -1,9 +1,4 @@
-import {
-  getPaifuTileCode,
-  PaifuTileSuit,
-  type NumberedPaifuTileSuit,
-  type PaifuTileInput,
-} from '@/objects';
+import { getPaifuTileCode, PaifuTileSuit, type NumberedPaifuTileSuit, type PaifuTileInput } from '@/objects';
 
 const tileImageBasePath = '/mahjong-soul/tiles/individual';
 export const maxTileImageRetryCount = 1;

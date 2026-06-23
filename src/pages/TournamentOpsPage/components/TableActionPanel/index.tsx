@@ -1,14 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from '@/components/ui';
-import { TableStatuses } from '@/objects';
+﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui';
+import { TableStatus } from '@/objects';
 
 import { TableActionAlerts } from './components/TableActionAlerts';
-import type { TableActionPanelProps } from './TableActionPanel.types';
+import type { TableActionPanelProps } from './objects/TableActionPanelProps';
 import { TableActionSummary } from './components/TableActionSummary';
 import { TableNavigationActions } from './components/TableNavigationActions';
 import { TableWaitingControls } from './components/TableWaitingControls';
@@ -33,8 +27,8 @@ export function TableActionPanel({
   const selectedSeat =
     action.tableDetail?.seats.find((seat) => seat.seat === action.seatWind) ??
     null;
-  const isWaitingTable = table?.status === TableStatuses.WaitingPreparation;
-  const isArchivedTable = table?.status === TableStatuses.Archived;
+  const isWaitingTable = table?.status === TableStatus.WaitingPreparation;
+  const isArchivedTable = table?.status === TableStatus.Archived;
   const isStartedTable = Boolean(table && !isWaitingTable && !isArchivedTable);
 
   return (

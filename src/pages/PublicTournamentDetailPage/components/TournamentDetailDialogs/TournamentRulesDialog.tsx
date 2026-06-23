@@ -1,24 +1,9 @@
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  FieldGroup,
-  SelectField,
-  TextInputField,
-} from '@/components/ui';
+﻿import { Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, FieldGroup, SelectField, TextInputField } from '@/components/ui';
 import type {
   MahjongRuleset,
-  TournamentFormat,
 } from '@/objects/tournament';
-import { normalizeMahjongRuleset, TournamentFormats } from '@/objects/tournament';
-import type { TournamentStageRuleDraft } from '../../objects/TournamentDetailRule.types';
+import { normalizeMahjongRuleset, TournamentFormat } from '@/objects/tournament';
+import type { TournamentStageRuleDraft } from '@/pages/PublicTournamentDetailPage/objects/stage/TournamentStageRuleDraft';
 import { TournamentMahjongRulesetFields } from './TournamentMahjongRulesetFields';
 
 /** 创建或编辑赛事阶段规则的弹窗表单。 */
@@ -78,12 +63,12 @@ export function TournamentRulesDialog({
                 }
                 disabled={isSubmitting}
               >
-                <option value={TournamentFormats.Swiss}>瑞士轮</option>
-                <option value={TournamentFormats.Knockout}>淘汰赛</option>
+                <option value={TournamentFormat.Swiss}>瑞士轮</option>
+                <option value={TournamentFormat.Knockout}>淘汰赛</option>
               </SelectField>
               <TextInputField
                 label={
-                  draft.format === TournamentFormats.Knockout
+                  draft.format === TournamentFormat.Knockout
                     ? '入围人数'
                     : '晋级人数'
                 }

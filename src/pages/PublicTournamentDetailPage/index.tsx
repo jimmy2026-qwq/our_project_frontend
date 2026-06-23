@@ -1,8 +1,4 @@
-import {
-  PublicTournamentDetailFrame,
-  PublicTournamentDetailLoading,
-  PublicTournamentDetailNotFound,
-} from './components/PublicTournamentDetailFrame';
+import { PublicTournamentDetailFrame, PublicTournamentDetailLoading, PublicTournamentDetailNotFound } from './components/PublicTournamentDetailFrame';
 import { detailShellClassNames } from './components/detailShell.styles';
 import { TournamentDetailContent } from './components/TournamentDetailContent';
 import { AppealDecisionDialog } from './components/TournamentDetailDialogs/AppealDecisionDialog';

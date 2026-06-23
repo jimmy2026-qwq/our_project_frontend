@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetClubAPI } from '@/api/club';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
@@ -8,7 +8,7 @@ import { sendAPI } from '@/system/api';
 
 import { hasClubAdminOverride } from '../../../functions/getClubAdminOverrides';
 import { useClubApplicationLoaders } from '../../../hooks/useClubApplicationLoaders';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 interface UseClubDetailMembershipParams {
   profile: ClubPublicProfile | null;

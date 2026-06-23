@@ -1,23 +1,17 @@
-import type { CSSProperties } from 'react';
+﻿import type { CSSProperties } from 'react';
 
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+import { SeatWind } from '@/objects/tournament';
 
-import type {
-  MeldGroup,
-  MeldTile,
-} from '../../../../objects/ReplaySnapshot.types';
-import {
-  riverRowSize,
-  riverTileImageWidth,
-  riverTileVisibleHeight,
-} from '../../objects/paifuTableLayout';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
+import type { MeldTile } from '../../../../objects/MeldTile';
+import { riverRowSize, riverTileImageWidth, riverTileVisibleHeight } from '../../objects/layout/riverTileLayout';
 import { MeldRow } from './PlayerMeldRow';
 
 const meldBoxPositionClasses: Record<SeatWind, string> = {
-  [SeatWinds.East]: 'bottom-[126px] right-[18%]',
-  [SeatWinds.South]: 'right-[126px] top-[20%] rotate-90',
-  [SeatWinds.West]: 'left-[18%] top-[150px] rotate-180',
-  [SeatWinds.North]: 'left-[126px] bottom-[20%] -rotate-90',
+  [SeatWind.East]: 'bottom-[126px] right-[18%]',
+  [SeatWind.South]: 'right-[126px] top-[20%] rotate-90',
+  [SeatWind.West]: 'left-[18%] top-[150px] rotate-180',
+  [SeatWind.North]: 'left-[126px] bottom-[20%] -rotate-90',
 };
 const meldBoxMinWidth = 176;
 const meldBoxMaxWidth = 286;

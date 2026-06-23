@@ -2,6 +2,7 @@ import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
+import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 
 import { useClubDetailWorkbench } from '../components/ClubDetailContent/hooks/useClubDetailWorkbench';
@@ -16,7 +17,11 @@ export function usePublicClubDetailPage() {
     refresh();
   }, [refresh]);
   useRealtimeRefresh(
-    ['ClubChanged', 'ClubApplicationChanged', 'ClubMemberChanged'],
+    [
+      RealtimeEventTypes.ClubChanged,
+      RealtimeEventTypes.ClubApplicationChanged,
+      RealtimeEventTypes.ClubMemberChanged,
+    ],
     handleRealtimeRefresh,
   );
   const controls = useClubDetailWorkbench({

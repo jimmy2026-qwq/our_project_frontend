@@ -1,11 +1,9 @@
-import { Button, EmptyState } from '@/components/ui';
+﻿import { Button, EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
-import type {
-  TournamentDetailTableItem,
-  TournamentDetailWorkbenchState,
-} from '../../../../objects/TournamentDetail.types';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 赛事详情桌次区域中的管理操作标签页。 */
 export function TournamentDetailManageTab({

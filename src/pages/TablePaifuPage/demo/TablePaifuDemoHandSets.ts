@@ -1,17 +1,4 @@
-import {
-  eastDealerRiichiInitialHand,
-  eastDealerTenpaiHand,
-  eastNineTerminals,
-  northManzuHand,
-  northNotenHand,
-  northRoundOneHand,
-  southAfterOpenKan,
-  southNineGatesTenpai,
-  southNotenHand,
-  westNotenHand,
-  westRoundOneHand,
-  westSouzuHand,
-} from './TablePaifuDemoHands';
+import { eastDealerRiichiInitialHand, eastDealerTenpaiHand, eastNineTerminals, northManzuHand, northNotenHand, northRoundOneHand, southAfterOpenKan, southNineGatesTenpai, southNotenHand, westNotenHand, westRoundOneHand, westSouzuHand } from './TablePaifuDemoHands';
 
 export const roundOneInitialHands = {
   'player-east': eastNineTerminals,

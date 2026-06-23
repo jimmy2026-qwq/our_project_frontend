@@ -1,7 +1,6 @@
-export const AppealDecisionTypes = {
-  Resolve: 'Resolve',
-  Reject: 'Reject',
-  Escalate: 'Escalate',
-} as const;
+﻿export enum AppealDecisionType {
+  Resolve = 'Resolve',
+  Reject = 'Reject',
+  Escalate = 'Escalate',
 
-export type AppealDecisionType = (typeof AppealDecisionTypes)[keyof typeof AppealDecisionTypes];
+}

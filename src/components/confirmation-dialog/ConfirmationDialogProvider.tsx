@@ -1,17 +1,6 @@
 import type { ReactNode } from 'react';
 
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-} from '@/components/ui';
+import { Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle } from '@/components/ui';
 import { ConfirmationDialogContext } from '@/components/confirmation-dialog/useConfirmationDialogContext';
 import { useQueuedConfirmationDialogState } from './useQueuedConfirmationDialogState';
 

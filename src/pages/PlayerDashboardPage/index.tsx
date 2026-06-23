@@ -1,4 +1,4 @@
-import { AppealTicketsPanel } from './components/PlayerDashboardContent/components/AppealTicketsPanel';
+﻿import { AppealTicketsPanel } from './components/PlayerDashboardContent/components/AppealTicketsPanel';
 import { HistoryPaifuPanel } from './components/PlayerDashboardContent/components/HistoryPaifuPanel';
 import { PlayerHomePanel } from './components/PlayerDashboardContent/components/PlayerHomePanel';
 import { RecentMatchesPanel } from './components/PlayerDashboardContent/components/RecentMatchesPanel';
@@ -7,10 +7,8 @@ import { PlayerDashboardHeader } from './components/PlayerDashboardHeader';
 import { PlayerDashboardNavigation } from './components/PlayerDashboardNavigation';
 import { PlayerDashboardPanel } from './components/PlayerDashboardPanel';
 import { detailShellClassNames } from './components/PlayerDashboardShell.styles';
-import {
-  PlayerDashboardEmpty,
-  PlayerDashboardLoading,
-} from './components/PlayerDashboardStatus';
+import { PlayerDashboardEmpty, PlayerDashboardLoading } from './components/PlayerDashboardStatus';
+import { PlayerDetailTab } from '@/pages/PlayerDashboardPage/components/PlayerDashboardContent/objects/PlayerDetailTab';
 import { usePlayerDashboard } from './hooks/usePlayerDashboard';
 
 /** 加载当前玩家资料并渲染玩家仪表盘的页面。 */
@@ -40,7 +38,7 @@ export function PlayerDashboardPage() {
           />
 
           <div className={detailShellClassNames.content}>
-            {page.activeTab === 'home' ? (
+            {page.activeTab === PlayerDetailTab.Home ? (
               <PlayerDashboardPanel>
                 <PlayerHomePanel
                   player={page.data.player}
@@ -50,19 +48,19 @@ export function PlayerDashboardPage() {
               </PlayerDashboardPanel>
             ) : null}
 
-            {page.activeTab === 'recent' ? (
+            {page.activeTab === PlayerDetailTab.Recent ? (
               <PlayerDashboardPanel>
                 <RecentMatchesPanel items={page.data.recentTables} />
               </PlayerDashboardPanel>
             ) : null}
 
-            {page.activeTab === 'history' ? (
+            {page.activeTab === PlayerDetailTab.History ? (
               <PlayerDashboardPanel>
                 <HistoryPaifuPanel items={page.data.archivedRecords} />
               </PlayerDashboardPanel>
             ) : null}
 
-            {page.activeTab === 'appeals' ? (
+            {page.activeTab === PlayerDetailTab.Appeals ? (
               <PlayerDashboardPanel>
                 <AppealTicketsPanel items={page.data.appeals} />
               </PlayerDashboardPanel>

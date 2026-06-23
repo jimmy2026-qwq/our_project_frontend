@@ -1,4 +1,4 @@
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 import { useClubContributionMemberActions } from './useClubContributionMemberActions';
 import { useClubTitleActions } from './useClubTitleActions';
 

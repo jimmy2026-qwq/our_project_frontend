@@ -1,5 +1,5 @@
 import { inputClassName } from './AuthScreen.styles';
-import type { AuthField } from './AuthScreen.types';
+import type { AuthField } from './objects/AuthField';
 
 interface AuthFieldInputProps {
   field: AuthField;

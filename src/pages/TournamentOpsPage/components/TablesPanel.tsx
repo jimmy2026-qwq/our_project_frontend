@@ -1,13 +1,10 @@
-import { DataPanel, ListRow } from '@/components/ui';
-import { EmptyState } from '@/components/ui';
-import { Badge, Button } from '@/components/ui';
+﻿import { DataPanel, ListRow, EmptyState, Badge, Button } from '@/components/ui';
+
+
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
-import type { LoadState } from '../objects/TournamentOps.types';
-import {
-  getTableStatusBadgeClassName,
-  getTableStatusLabel,
-} from './TablesPanel.status';
+import type { LoadState } from '../objects/LoadState';
+import { getTableStatusBadgeClassName, getTableStatusLabel } from './TablesPanel.status';
 
 interface TablesPanelProps {
   payload: LoadState<TournamentTableSummary>;
@@ -27,7 +24,6 @@ export function TablesPanel({
     <DataPanel
       title="牌桌队列"
       description="当前所选赛事阶段下的牌桌列表。"
-      source={payload.source}
       warning={payload.warning}
     >
       <ul className="m-0 grid list-none gap-0 p-0">

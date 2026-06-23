@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { GetPublicTournamentAPI } from '@/api/tournament';
-import { TournamentPaifuGetAPI } from '@/api/tournament/TournamentPaifuGetAPI';
-import { TournamentPaifuListAPI } from '@/api/tournament/TournamentPaifuListAPI';
+import { TournamentPaifuGetAPI } from '@/api/tournament/paifu/TournamentPaifuGetAPI';
+import { TournamentPaifuListAPI } from '@/api/tournament/paifu/TournamentPaifuListAPI';
 import type {
   ListEnvelope,
   Paifu,
@@ -16,11 +16,8 @@ import { ApiError } from '@/system/api/http';
 
 import { createDemoTablePaifu } from '../demo';
 import { getInitialRoundIndex } from '../functions/getReplayOperations';
-import {
-  collectPaifuPlayerIds,
-  getStageDisplayName,
-} from '../functions/getTablePaifuMetadata';
-import { toPaifuSummary } from '../functions/TablePaifuData.mappers';
+import { collectPaifuPlayerIds, getStageDisplayName } from '../functions/getTablePaifuMetadata';
+import { toPaifuSummary } from '../functions/toTablePaifuData';
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 
 export function useTablePaifuData(tableId: string) {

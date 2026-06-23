@@ -3,12 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { RouterProvider } from 'react-router-dom';
 
 import { AppErrorBoundary } from '@/app/AppErrorBoundary';
-import {
-  AppFeedbackProvider,
-  AuthProvider,
-  ConfirmationDialogProvider,
-  RealtimeProvider,
-} from '@/app/AppProviders';
+import { AppFeedbackProvider, AuthProvider, ConfirmationDialogProvider, RealtimeProvider } from '@/app/AppProviders';
 import { router } from '@/router';
 
 import './index.css';

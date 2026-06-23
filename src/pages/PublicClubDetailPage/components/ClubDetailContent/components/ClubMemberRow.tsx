@@ -1,8 +1,8 @@
-import { StatusPill } from '@/components/ui';
+﻿import { StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
 import { formatNumber } from '../../../functions/formatClubDetail';
 import { clubPanelClassNames } from '../styles';
 

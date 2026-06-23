@@ -1,7 +1,7 @@
-import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+﻿import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
-import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
 
 export function getTournamentDetailParticipantOptions({
   availableClubs,

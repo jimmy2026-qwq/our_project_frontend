@@ -1,6 +1,6 @@
-import { SeatWinds, type MahjongSeatView, type SeatWind } from '@/objects';
-import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterTableDisplay';
-import { centerPointPositionClasses } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
+﻿import { SeatWind, type MahjongSeatView } from '@/objects';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterScoreDisplay';
+import { centerPointPositionClasses } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/layout/centerPointPositionClasses';
 import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
 /** 实时对局中央点位，用于承载桌面状态和当前回合提示。 */
@@ -29,7 +29,7 @@ export function MatchCenterPoint({
       ? points - referencePoints
       : points;
   const canToggleScoreMode =
-    seat === SeatWinds.East && Boolean(onToggleRelativeScoreMode);
+    seat === SeatWind.East && Boolean(onToggleRelativeScoreMode);
   const scoreClassName = [
     'rounded-lg bg-[rgba(2,12,20,0.48)] px-2 py-1 font-semibold',
     getMainScoreClassName(isRelativeScoreMode, displayScore),

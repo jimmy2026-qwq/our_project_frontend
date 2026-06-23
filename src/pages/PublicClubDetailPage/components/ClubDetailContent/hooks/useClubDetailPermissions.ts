@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { AuthCheckPermissionAPI } from '@/api/auth';
 import { ClubPrivilegeCodes, type ClubPrivilegeCode } from '@/objects/club';
-import type { Permission } from '@/objects/auth';
+import { Permission } from '@/objects/auth';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 interface UseClubDetailPermissionsParams {
   profile: ClubPublicProfile | null;
@@ -77,10 +77,10 @@ export function useClubDetailPermissions({
       ).catch(() => false);
 
     void Promise.all([
-      check('AssignClubAdmin'),
-      check('ManageClubOperations'),
-      check('SetClubTitle'),
-      check('ManageClubMembership'),
+      check(Permission.AssignClubAdmin),
+      check(Permission.ManageClubOperations),
+      check(Permission.SetClubTitle),
+      check(Permission.ManageClubMembership),
     ]).then(
       ([
         nextCanAssignAdmins,
@@ -123,7 +123,7 @@ export function useClubDetailPermissions({
     void sendAPI(
       new AuthCheckPermissionAPI({
         operatorId,
-        permission: 'ViewAuditTrail',
+        permission: Permission.ViewAuditTrail,
         clubId: profile.id,
       }),
     )

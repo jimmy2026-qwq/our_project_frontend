@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { TournamentListAPI } from '@/api/tournament/TournamentListAPI';
-import { TournamentStageDirectoryAPI } from '@/api/tournament/TournamentStageDirectoryAPI';
+import { TournamentListAPI } from '@/api/tournament/competition/TournamentListAPI';
+import { TournamentStageDirectoryAPI } from '@/api/tournament/stage/TournamentStageDirectoryAPI';
 import type {
   ListEnvelope,
   TournamentStageDirectoryEntry,
@@ -9,14 +9,9 @@ import type {
 } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import type {
-  TournamentContext,
-  TournamentDirectoryState,
-} from '../objects/TournamentOps.types';
-import {
-  toTournamentDirectoryEntry,
-  type TournamentDirectoryEntryView,
-} from '../functions/TournamentOps.mappers';
+import type { TournamentContext } from '../objects/TournamentContext';
+import type { TournamentDirectoryState } from '../objects/TournamentDirectoryState';
+import { toTournamentDirectoryEntry, type TournamentDirectoryEntryView } from '../functions/toTournamentOpsData';
 
 export function useTournamentOpsDirectoryData(reloadKey = 0) {
   const [directory, setDirectory] = useState<TournamentDirectoryState | null>(
@@ -66,12 +61,10 @@ async function loadTournamentDirectory(): Promise<TournamentDirectoryState> {
 
     return {
       items: items.filter((tournament) => tournament.stages.length > 0),
-      source: 'api',
     };
   } catch (error) {
     return {
       items: [],
-      source: 'api',
       warning:
         error instanceof Error
           ? error.message

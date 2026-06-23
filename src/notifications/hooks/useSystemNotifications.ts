@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
-import {
-  realtimeBrowserEventName,
-  type RealtimeBrowserEvent,
-} from '@/app/realtime/RealtimeEvent';
+import { realtimeBrowserEventName, type RealtimeBrowserEvent } from '@/app/realtime/RealtimeEvent';
 import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 import type { Notification } from '@/objects/notification';
 import { getNotificationOperatorId } from '../functions/getNotificationOperatorId';

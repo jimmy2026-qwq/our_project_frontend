@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { GetPublicClubAPI } from '@/api/club';
 import { OpsAnalyticsPlayerDashboardAPI } from '@/api/opsanalytics';
@@ -6,8 +6,8 @@ import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
 import { toDashboardSummary } from '../functions/toDashboardSummary';
-import { toPlayerProfile } from '../functions/PlayerDashboard.mappers';
-import type { PlayerClubLink } from '../objects/PlayerDashboard.types';
+import { toPlayerProfile } from '../functions/toPlayerDashboardData';
+import type { PlayerClubLink } from '../objects/PlayerClubLink';
 
 function getPlayerClubLinks(clubIds: string[]) {
   return Promise.all(

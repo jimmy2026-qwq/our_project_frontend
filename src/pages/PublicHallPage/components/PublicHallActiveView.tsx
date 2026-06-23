@@ -1,13 +1,9 @@
-import type {
-  HomeDataState,
-  LeaderboardDataState,
-  PublicHallState,
-} from '../objects/PublicHallPage.types';
+﻿import type { HomeDataState } from '../objects/state/HomeDataState';
+import type { LeaderboardDataState } from '../objects/state/LeaderboardDataState';
+import type { PublicHallState } from '../objects/state/PublicHallState';
+import { PublicView } from '../objects/navigation/PublicView';
 
-import {
-  PublicHallError,
-  PublicHallLeaderboardLoading,
-} from './PublicHallLoadingState';
+import { PublicHallError, PublicHallLeaderboardLoading } from './PublicHallLoadingState';
 import { PublicClubsSection } from './PublicClubsSection';
 import { PublicLeaderboardSection } from './PublicLeaderboardSection';
 import { PublicSchedulesSection } from './PublicSchedulesSection';
@@ -40,7 +36,7 @@ export function PublicHallActiveView({
   onRefresh,
   onStateChange,
 }: PublicHallActiveViewProps) {
-  if (state.activeView === 'clubs') {
+  if (state.activeView === PublicView.Clubs) {
     return (
       <PublicClubsSection
         payload={data.clubs}
@@ -52,7 +48,7 @@ export function PublicHallActiveView({
     );
   }
 
-  if (state.activeView === 'leaderboard') {
+  if (state.activeView === PublicView.Leaderboard) {
     if (isLeaderboardLoading && !leaderboardData) {
       return <PublicHallLeaderboardLoading />;
     }

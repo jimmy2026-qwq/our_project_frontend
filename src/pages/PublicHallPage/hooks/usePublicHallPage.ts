@@ -1,12 +1,10 @@
-import { useCallback, useReducer, useState } from 'react';
+﻿import { useCallback, useReducer, useState } from 'react';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
 
 import { usePublicHallCurrentPlayer } from '../components/PublicHallLobby/hooks/usePublicHallCurrentPlayer';
-import type {
-  PublicHallState,
-  PublicView,
-} from '../objects/PublicHallPage.types';
+import type { PublicHallState } from '../objects/state/PublicHallState';
+import { PublicView } from '../objects/navigation/PublicView';
 import { usePublicHallState } from './usePublicHallState';
 import { usePublicHallHomeData } from './usePublicHallHomeData';
 import { usePublicHallLeaderboardData } from './usePublicHallLeaderboardData';
@@ -78,19 +76,19 @@ export function usePublicHallPage() {
     !session.user.roles.isRegisteredPlayer;
   const lobbyEntries = [
     {
-      id: 'schedules' as const,
+      id: PublicView.Schedules,
       label: '赛事大厅',
       heading: '公开赛程',
       detail: data ? `${data.schedules.envelope.total} 场赛程` : '',
     },
     {
-      id: 'clubs' as const,
+      id: PublicView.Clubs,
       label: '俱乐部',
       heading: '俱乐部名录',
       detail: data ? `${data.clubs.envelope.total} 家俱乐部` : '',
     },
     {
-      id: 'leaderboard' as const,
+      id: PublicView.Leaderboard,
       label: '排行榜',
       heading: '选手排名',
       detail: leaderboardData

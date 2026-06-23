@@ -1,27 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
 import { ListPublicClubsAPI } from '@/api/club';
-import {
-  ActionButton,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-} from '@/components/ui';
-import type {
-  ClubRelationKind,
-  PublicClubDirectoryEntry,
-} from '@/objects/club';
-import { ClubRelationKinds } from '@/objects/club';
+import { ActionButton, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle } from '@/components/ui';
+import type { PublicClubDirectoryEntry } from '@/objects/club';
+import { ClubRelationKind } from '@/objects/club';
 import { sendAPI } from '@/system/api';
 
 import type { ClubRelationDraft } from '../../ClubDetailContent/hooks/useClubRelationActions';
 import { ClubRelationDialogFields } from './ClubRelationDialogFields';
+
+export const ClubRelationDialogModes = {
+  Manage: 'manage',
+  Request: 'request',
+} as const;
+
+type ClubRelationDialogMode =
+  (typeof ClubRelationDialogModes)[keyof typeof ClubRelationDialogModes];
 
 /** 提交或更新俱乐部对外关系的弹窗。 */
 export function ClubRelationDialog({
@@ -33,7 +27,7 @@ export function ClubRelationDialog({
   onSubmit,
 }: {
   clubId: string;
-  mode: 'manage' | 'request';
+  mode: ClubRelationDialogMode;
   open: boolean;
   isSubmitting: boolean;
   onOpenChange: (open: boolean) => void;
@@ -44,7 +38,7 @@ export function ClubRelationDialog({
   const [loadError, setLoadError] = useState('');
   const [targetClubId, setTargetClubId] = useState('');
   const [relation, setRelation] = useState<ClubRelationKind>(
-    ClubRelationKinds.Alliance,
+    ClubRelationKind.Alliance,
   );
   const [note, setNote] = useState('');
   const selectableClubs = useMemo(
@@ -56,12 +50,12 @@ export function ClubRelationDialog({
     !isLoading &&
     targetClubId.trim().length > 0 &&
     targetClubId !== clubId;
-  const isRequestMode = mode === 'request';
+  const isRequestMode = mode === ClubRelationDialogModes.Request;
 
   useEffect(() => {
     if (!open) {
       setTargetClubId('');
-      setRelation(ClubRelationKinds.Alliance);
+      setRelation(ClubRelationKind.Alliance);
       setNote('');
       setLoadError('');
       return;

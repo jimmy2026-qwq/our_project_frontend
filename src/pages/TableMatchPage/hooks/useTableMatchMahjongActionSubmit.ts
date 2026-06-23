@@ -11,10 +11,7 @@ import type {
 } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import {
-  createIdempotencyKey,
-  getMahjongErrorMessage,
-} from '../functions/getTableMatchMahjongState';
+import { createIdempotencyKey, getMahjongErrorMessage } from '../functions/getTableMatchMahjongState';
 
 interface UseTableMatchMahjongActionSubmitParams {
   lastHandledFlashSequenceNoRef: MutableRefObject<number>;

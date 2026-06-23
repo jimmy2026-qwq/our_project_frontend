@@ -1,15 +1,10 @@
-import { HandOutcome, type SeatWind } from '@/objects';
+﻿import { HandOutcome } from '@/objects';
 
-import type {
-  CenterScoreDisplay,
-  TableStickDisplay,
-} from '../objects/CenterTableDisplay';
-import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterScoreDisplay';
+import type { TableStickDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/TableStickDisplay';
+import type { PaifuRound as PaifuRoundSummary, SeatWind } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
-import {
-  getCurrentRiichiStickCount,
-  getPlayerPointsBeforeSettlement,
-} from '../../../functions/getReplayPoints';
+import { getCurrentRiichiStickCount, getPlayerPointsBeforeSettlement } from '../../../functions/getReplayPoints';
 import { getRoundPlayerId } from '../../../functions/getReplayPlayers';
 import { replaySeatOrder as seatOrder } from '../../../objects/replaySeatInfo';
 

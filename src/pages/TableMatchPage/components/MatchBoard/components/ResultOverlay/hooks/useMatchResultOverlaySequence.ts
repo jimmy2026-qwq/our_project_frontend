@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { AgariResult } from '@/objects';
-import {
-  getResultSequenceStep,
-  getResultWins,
-  isWinOutcome,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getResultSequenceStep, getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
 import { getOverlayResultKey } from '../../../functions/getMatchResultOverlayKey';
 

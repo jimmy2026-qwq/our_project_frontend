@@ -1,40 +1,51 @@
+﻿import { ClubApplicationStatuses, PlayerStatus, StageStatus, TournamentStatuses } from '@/objects';
+
+type StatusTone = 'neutral' | 'info' | 'success' | 'warning' | 'danger';
+
+const successStatuses = new Set<string>([
+  TournamentStatuses.Completed,
+  StageStatus.Active,
+  StageStatus.Completed,
+  ClubApplicationStatuses.Approved,
+  PlayerStatus.Active,
+]);
+
+const infoStatuses = new Set<string>([
+  TournamentStatuses.RegistrationOpen,
+  TournamentStatuses.Scheduled,
+  TournamentStatuses.InProgress,
+  StageStatus.Ready,
+]);
+
+const warningStatuses = new Set<string>([
+  TournamentStatuses.Draft,
+  StageStatus.Pending,
+  ClubApplicationStatuses.Pending,
+  PlayerStatus.Suspended,
+]);
+
+const dangerStatuses = new Set<string>([
+  TournamentStatuses.Cancelled,
+  ClubApplicationStatuses.Rejected,
+  PlayerStatus.Banned,
+]);
+
 export const getStatusTone = (
   value: string,
-): 'neutral' | 'info' | 'success' | 'warning' | 'danger' => {
-  const normalized = value.toLowerCase();
-
-  if (
-    normalized.includes('active') ||
-    normalized.includes('approved') ||
-    normalized.includes('completed')
-  ) {
+): StatusTone => {
+  if (successStatuses.has(value)) {
     return 'success';
   }
 
-  if (
-    normalized.includes('progress') ||
-    normalized.includes('registration') ||
-    normalized.includes('scheduled') ||
-    normalized.includes('ready') ||
-    normalized.includes('scoring')
-  ) {
+  if (infoStatuses.has(value)) {
     return 'info';
   }
 
-  if (
-    normalized.includes('pending') ||
-    normalized.includes('draft') ||
-    normalized.includes('open')
-  ) {
+  if (warningStatuses.has(value)) {
     return 'warning';
   }
 
-  if (
-    normalized.includes('banned') ||
-    normalized.includes('cancelled') ||
-    normalized.includes('reject') ||
-    normalized.includes('appeal')
-  ) {
+  if (dangerStatuses.has(value)) {
     return 'danger';
   }
 

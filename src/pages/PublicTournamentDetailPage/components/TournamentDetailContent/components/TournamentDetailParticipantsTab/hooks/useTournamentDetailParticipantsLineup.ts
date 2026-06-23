@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { toPlayerProfile } from '../../../../../functions/toTournamentDetailPlayerData';
 
 export type LineupSubmission = NonNullable<
   NonNullable<

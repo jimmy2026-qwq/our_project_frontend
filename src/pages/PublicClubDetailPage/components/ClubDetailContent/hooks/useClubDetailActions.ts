@@ -1,6 +1,6 @@
 ﻿import { useClubApplicationActions } from './useClubApplicationActions';
 import { useClubContributionTitleActions } from './useClubContributionTitleActions';
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 import { useClubMemberAdminActions } from './useClubMemberAdminActions';
 import { useClubRelationActions } from './useClubRelationActions';
 import { useClubTournamentInvitationActions } from './useClubTournamentInvitationActions';

@@ -1,16 +1,13 @@
-import { GetPlayerAPI } from '@/api/player';
-import {
-  TournamentInviteClubAPI,
-  TournamentRegisterPlayerAPI,
-} from '@/api/tournament';
+﻿import { GetPlayerAPI } from '@/api/player';
+import { TournamentInviteClubAPI, TournamentRegisterPlayerAPI } from '@/api/tournament';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
 import type {
   RefreshTournamentProfile,
-  UseTournamentDetailActionsParams,
-} from '../../../hooks/useTournamentDetailActions.types';
-import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
+} from '../../../objects/RefreshTournamentProfile';
+import type { UseTournamentDetailActionsParams } from '../../../objects/actions/UseTournamentDetailActionsParams';
+import { toPlayerProfile } from '../../../../../functions/toTournamentDetailPlayerData';
 
 export function useTournamentInviteActions({
   availableClubs,

@@ -1,23 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
-import {
-  ActionButton,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  FieldGroup,
-  TextareaField,
-  TextInputField,
-} from '@/components/ui';
+import { ActionButton, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, FieldGroup, TextareaField, TextInputField } from '@/components/ui';
 import { formatNumber } from '../../../functions/formatClubDetail';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
 
 /** 调整成员俱乐部贡献值的弹窗表单。 */
 export function ClubContributionDialog({

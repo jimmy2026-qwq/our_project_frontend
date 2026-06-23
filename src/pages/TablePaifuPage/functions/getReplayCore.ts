@@ -2,14 +2,7 @@ import { getPaifuRoundActions } from '@/pages/TablePaifuPage/functions/getPaifuR
 import type { SeatWind } from '@/objects/tournament';
 import { replaySeatLabels } from '../objects/replaySeatInfo';
 
-import {
-  HandOutcome,
-  PaifuActionType,
-  isSamePaifuTile,
-  type PaifuAction,
-  type PaifuRound as PaifuRoundSummary,
-  type PaifuTile,
-} from '@/objects';
+import { HandOutcome, PaifuActionType, isSamePaifuTile, type PaifuAction, type PaifuRound as PaifuRoundSummary, type PaifuTile } from '@/objects';
 
 const roundWindLabels: Record<SeatWind, string> = replaySeatLabels;
 const replayActionTypes = new Set<PaifuAction['actionType']>([

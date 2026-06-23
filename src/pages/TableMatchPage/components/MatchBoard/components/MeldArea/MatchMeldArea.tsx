@@ -1,5 +1,5 @@
-import { SeatWinds, type SeatWind } from '@/objects';
-import type { MeldGroup } from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
+﻿import { SeatWind } from '@/objects';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
 
 import { MeldRow } from './MatchMeldRow';
 import { getMeldBoxStyle } from '../../functions/getMatchMeldAreaStyle';
@@ -10,10 +10,10 @@ interface MatchMeldAreaProps {
 }
 
 const meldBoxPositionClasses: Record<SeatWind, string> = {
-  [SeatWinds.East]: 'bottom-[126px] right-[18%]',
-  [SeatWinds.South]: 'right-[126px] top-[20%] rotate-90',
-  [SeatWinds.West]: 'left-[18%] top-[150px] rotate-180',
-  [SeatWinds.North]: 'left-[126px] bottom-[20%] -rotate-90',
+  [SeatWind.East]: 'bottom-[126px] right-[18%]',
+  [SeatWind.South]: 'right-[126px] top-[20%] rotate-90',
+  [SeatWind.West]: 'left-[18%] top-[150px] rotate-180',
+  [SeatWind.North]: 'left-[126px] bottom-[20%] -rotate-90',
 };
 
 /** 实时牌桌上按座位展示副露的区域。 */

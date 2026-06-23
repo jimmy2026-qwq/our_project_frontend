@@ -1,15 +1,15 @@
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+﻿import { SeatWind } from '@/objects/tournament';
 
 export const replaySeatOrder: SeatWind[] = [
-  SeatWinds.East,
-  SeatWinds.South,
-  SeatWinds.West,
-  SeatWinds.North,
+  SeatWind.East,
+  SeatWind.South,
+  SeatWind.West,
+  SeatWind.North,
 ];
 
 export const replaySeatLabels: Record<SeatWind, string> = {
-  [SeatWinds.East]: '\u4e1c',
-  [SeatWinds.South]: '\u5357',
-  [SeatWinds.West]: '\u897f',
-  [SeatWinds.North]: '\u5317',
+  [SeatWind.East]: '\u4e1c',
+  [SeatWind.South]: '\u5357',
+  [SeatWind.West]: '\u897f',
+  [SeatWind.North]: '\u5317',
 };

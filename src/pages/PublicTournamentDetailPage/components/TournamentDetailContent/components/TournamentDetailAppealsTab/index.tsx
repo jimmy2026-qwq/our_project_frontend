@@ -1,19 +1,11 @@
-import { Alert, Button, EmptyState, StatusPill } from '@/components/ui';
+﻿import { Alert, Button, EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import {
-  AppealDecisionTypes,
-  AppealStatuses,
-  type AppealDecisionType,
-} from '@/objects';
+import { AppealDecisionType, AppealStatus } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
-import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
-import {
-  formatDateTime,
-  getAppealStatusLabel,
-  getAppealStatusTone,
-} from '../../../../functions/getTournamentDetailView';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { formatDateTime, getAppealStatusLabel, getAppealStatusTone } from '../../../../functions/getTournamentDetailView';
 
 /** 赛事详情页中展示申诉工单列表的标签页。 */
 export function TournamentDetailAppealsTab({
@@ -94,7 +86,7 @@ function AppealRow({
   const appealResultText =
     appeal.resolution ?? appeal.verdict ?? '\u5f85\u5904\u7406';
   const appealStatusText =
-    appeal.status === AppealStatuses.Open
+    appeal.status === AppealStatus.Open
       ? appealResultText
       : getAppealStatusLabel(appeal.status) || appealResultText;
   const assigneeLabel = appeal.assigneeId
@@ -117,8 +109,8 @@ function AppealRow({
         <span>{`处理人：${assigneeLabel}`}</span>
         <span>{`处理结果：${appeal.resolution ?? appeal.verdict ?? '待处理'}`}</span>
         <span>{`最近更新：${formatDateTime(appeal.updatedAt ?? appeal.createdAt)}`}</span>
-        {appeal.status !== AppealStatuses.Resolved &&
-        appeal.status !== AppealStatuses.Rejected ? (
+        {appeal.status !== AppealStatus.Resolved &&
+        appeal.status !== AppealStatus.Rejected ? (
           <div className={detailShellClassNames.actionRow}>
             {canManageAppeals && !isAppealClaimed ? (
               <Button
@@ -134,7 +126,7 @@ function AppealRow({
               <Button
                 size="sm"
                 onClick={() =>
-                  onOpenAppealAction(appeal, AppealDecisionTypes.Resolve)
+                  onOpenAppealAction(appeal, AppealDecisionType.Resolve)
                 }
                 disabled={submittingAppealId === appeal.id || !isAppealClaimed}
               >
@@ -146,7 +138,7 @@ function AppealRow({
                 variant="secondary"
                 size="sm"
                 onClick={() =>
-                  onOpenAppealAction(appeal, AppealDecisionTypes.Reject)
+                  onOpenAppealAction(appeal, AppealDecisionType.Reject)
                 }
                 disabled={submittingAppealId === appeal.id || !isAppealClaimed}
               >
@@ -154,12 +146,12 @@ function AppealRow({
               </Button>
             ) : null}
             {canManageAppeals &&
-            appeal.status !== AppealStatuses.Escalated ? (
+            appeal.status !== AppealStatus.Escalated ? (
               <Button
                 variant="outline"
                 size="sm"
                 onClick={() =>
-                  onOpenAppealAction(appeal, AppealDecisionTypes.Escalate)
+                  onOpenAppealAction(appeal, AppealDecisionType.Escalate)
                 }
                 disabled={submittingAppealId === appeal.id}
               >

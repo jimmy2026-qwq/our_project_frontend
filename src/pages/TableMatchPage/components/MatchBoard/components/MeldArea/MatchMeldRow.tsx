@@ -1,18 +1,10 @@
-import type { CSSProperties } from 'react';
+﻿import type { CSSProperties } from 'react';
 
-import { SeatWinds, type SeatWind } from '@/objects';
+import { SeatWind } from '@/objects';
 import { TileImage } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
-import {
-  riverRowSize,
-  riverTileImageHeight,
-  riverTileImageWidth,
-  riverTileTopCrop,
-  riverTileVisibleHeight,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
-import type {
-  MeldGroup,
-  MeldTile,
-} from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
+import { riverRowSize, riverTileImageHeight, riverTileImageWidth, riverTileTopCrop, riverTileVisibleHeight } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/layout/riverTileLayout';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
+import type { MeldTile } from '@/pages/TablePaifuPage/objects/MeldTile';
 
 /** 实时牌桌中单组副露或杠子的牌面排列。 */
 export function MeldRow({
@@ -143,19 +135,19 @@ function getMeldTileStyle(
 function getSidewaysTileTopOffset(seat: SeatWind) {
   const bottomAlignedOffset = riverRowSize - riverTileImageWidth;
 
-  return seat === SeatWinds.South || seat === SeatWinds.North
+  return seat === SeatWind.South || seat === SeatWind.North
     ? bottomAlignedOffset / 2
     : bottomAlignedOffset;
 }
 
 function getMeldTileFaceClass(seat: SeatWind) {
-  return seat === SeatWinds.South || seat === SeatWinds.North
+  return seat === SeatWind.South || seat === SeatWind.North
     ? 'rotate-180'
     : '';
 }
 
 function getMeldDisplayTiles(seat: SeatWind, meld: MeldGroup) {
-  return seat === SeatWinds.South || seat === SeatWinds.North
+  return seat === SeatWind.South || seat === SeatWind.North
     ? [...meld.tiles].reverse()
     : meld.tiles;
 }

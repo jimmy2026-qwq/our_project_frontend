@@ -1,14 +1,11 @@
-import type {
+﻿import type {
   KnockoutRuleConfig,
   SwissRuleConfig,
 } from '@/objects/tournament';
-import {
-  KnockoutSeedingPolicies,
-  SwissPairingMethods,
-} from '@/objects/tournament';
+import { KnockoutSeedingPolicies, SwissPairingMethod } from '@/objects/tournament';
 
 export function describeSwissPairing(rule?: SwissRuleConfig | null) {
-  return rule?.pairingMethod === SwissPairingMethods.Snake
+  return rule?.pairingMethod === SwissPairingMethod.Snake
     ? '蛇形分组'
     : '均衡 ELO';
 }

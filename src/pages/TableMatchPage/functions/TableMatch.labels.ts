@@ -1,17 +1,17 @@
-import { TableStatuses } from '@/objects';
+﻿import { TableStatus } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 export function getTableStatusLabel(status: TableDetail['status']) {
   switch (status) {
-    case TableStatuses.WaitingPreparation:
+    case TableStatus.WaitingPreparation:
       return '等待准备';
-    case TableStatuses.InProgress:
+    case TableStatus.InProgress:
       return '进行中';
-    case TableStatuses.Scoring:
+    case TableStatus.Scoring:
       return '等待申诉';
-    case TableStatuses.AppealInProgress:
+    case TableStatus.AppealInProgress:
       return '申诉处理中';
-    case TableStatuses.Archived:
+    case TableStatus.Archived:
       return '已归档';
     default:
       return status;
@@ -49,7 +49,7 @@ export function getSeatStatusLabel(detail: {
 }
 
 export function getAppealButtonText(status: TableDetail['status']) {
-  if (status === TableStatuses.AppealInProgress) {
+  if (status === TableStatus.AppealInProgress) {
     return '申诉处理中';
   }
 

@@ -1,22 +1,12 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 
-import {
-  ActionButton,
-  CheckboxField,
-  EmptyState,
-  FilterActionRow,
-  PortalSection,
-} from '@/components/ui';
+import { ActionButton, CheckboxField, EmptyState, FilterActionRow, PortalSection } from '@/components/ui';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
-import type {
-  LoadState,
-  PublicHallState,
-} from '../../objects/PublicHallPage.types';
 
-import {
-  hallSectionClassNames,
-  publicHallSectionSlots,
-} from '../PublicHallSection.styles';
+import type { LoadState } from '../../objects/state/LoadState';
+import { PublicHallState } from '../../objects/state/PublicHallState';
+
+import { hallSectionClassNames, publicHallSectionSlots } from '../PublicHallSection.styles';
 import { ClubRow } from './ClubRow';
 import { CreateClubDialog } from './CreateClubDialog';
 
@@ -65,7 +55,6 @@ export function PublicClubsSection({
           </div>
         }
         description="查看当前公共大厅可浏览的俱乐部信息、成员规模和基础战力概览。"
-        source={payload.source}
         warning={payload.warning}
       >
         <FilterActionRow

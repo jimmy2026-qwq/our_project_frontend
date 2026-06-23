@@ -1,7 +1,7 @@
 ﻿import { AppealFileAPI } from '@/api/tournament/appeal/AppealFileAPI';
-import { TournamentTableResetAPI } from '@/api/tournament/TournamentTableResetAPI';
-import { TournamentTableStartAPI } from '@/api/tournament/TournamentTableStartAPI';
-import { TournamentTableUpdateSeatStateAPI } from '@/api/tournament/TournamentTableUpdateSeatStateAPI';
+import { TournamentTableResetAPI } from '@/api/tournament/stage/table/TournamentTableResetAPI';
+import { TournamentTableStartAPI } from '@/api/tournament/stage/table/TournamentTableStartAPI';
+import { TournamentTableUpdateSeatStateAPI } from '@/api/tournament/stage/table/TournamentTableUpdateSeatStateAPI';
 import { useConfirmationDialogActions } from '@/components/confirmation-dialog/useConfirmationDialogActions';
 
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';

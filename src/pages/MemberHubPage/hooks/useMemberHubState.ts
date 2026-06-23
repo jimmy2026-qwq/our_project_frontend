@@ -1,26 +1,20 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { ListClubsAPI } from '@/api/club/ListClubsAPI';
+import { ListClubsAPI } from '@/api/club';
 import { useAuthContext } from '@/app/auth/useAuthContext';
-import { Roles, type ClubListQuery, type ListEnvelope } from '@/objects';
+import { Role, type ClubListQuery, type ListEnvelope } from '@/objects';
+import { mapEnvelope } from '@/system/api';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
-import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { sendAPI } from '@/system/api';
-import { mapEnvelope } from '@/system/api/http';
+import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 import { createMemberHubState } from '../functions/createMemberHubState';
-import {
-  getClubsById,
-  getFallbackDirectory,
-  getUniqueOperators,
-} from '../functions/getMemberHubOperator';
-import {
-  DEFAULT_MEMBER_HUB_STATE,
-  type MemberHubOperator,
-  type MemberHubOperatorDirectory,
-  type MemberHubState,
-} from '../objects/MemberHub.types';
-import { toClubSummary } from '../functions/MemberHub.mappers';
+import { getClubsById, getFallbackDirectory, getUniqueOperators } from '../functions/getMemberHubOperator';
+import { DEFAULT_MEMBER_HUB_STATE } from '../objects/state/MemberHubState';
+import type { MemberHubOperator } from '../objects/operator/MemberHubOperator';
+import type { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import type { MemberHubState } from '../objects/state/MemberHubState';
+import { toClubSummary } from '../functions/toMemberHubData';
 
 function getClubs(filters: ClubListQuery) {
   return sendAPI(new ListClubsAPI(filters)).then(
@@ -52,7 +46,7 @@ async function loadMemberHubOperatorDirectory(
       operators.push({
         id: currentOperatorId,
         label: `${currentDisplayName} / ${isAdmin ? '俱乐部管理员' : '注册选手'}`,
-        role: isAdmin ? Roles.ClubAdmin : Roles.RegisteredPlayer,
+        role: isAdmin ? Role.ClubAdmin : Role.RegisteredPlayer,
         playerId: currentOperatorId,
         managedClubIds: isAdmin
           ? currentOperatorClubs.items.map((club) => club.id)
@@ -67,7 +61,6 @@ async function loadMemberHubOperatorDirectory(
     return {
       items: getUniqueOperators(operators),
       clubsById: getClubsById(currentOperatorClubs.items),
-      source: 'api',
     };
   } catch (error) {
     return {

@@ -1,12 +1,9 @@
-import { EmptyState, StatusPill } from '@/components/ui';
+﻿import { EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { ClubContributionAuditEntry } from '@/objects';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
-import {
-  formatDateTime,
-  formatNumber,
-} from '../../../functions/formatClubDetail';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import { formatDateTime, formatNumber } from '../../../functions/formatClubDetail';
 import { clubPanelClassNames } from '../styles';
 
 /** 俱乐部详情页展示近期贡献变动记录的面板。 */

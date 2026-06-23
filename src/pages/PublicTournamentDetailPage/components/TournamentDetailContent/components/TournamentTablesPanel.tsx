@@ -1,19 +1,10 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
-import {
-  DetailCard,
-  DetailRow,
-  DetailRows,
-  EmptyState,
-  StatusPill,
-} from '@/components/ui';
-import { TableStatuses } from '@/objects';
+import { DetailCard, DetailRow, DetailRows, EmptyState, StatusPill } from '@/components/ui';
+import { TableStatus } from '@/objects';
 
-import {
-  getTableStatusLabel,
-  getTableStatusTone,
-} from '../../../functions/getTournamentTableStatus';
-import type { TournamentDetailTableItem } from '../../../objects/TournamentDetail.types';
+import { getTableStatusLabel, getTableStatusTone } from '../../../functions/getTournamentTableStatus';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
 
 const tournamentPanelClassNames = {
   link: 'inline-flex font-semibold text-[#8fe8e1] no-underline hover:text-[#b2f4ef]',
@@ -40,11 +31,11 @@ export function TournamentTablesPanel({
               const playerLabel = table.playerIds
                 .map((playerId) => playerNames[playerId] ?? playerId)
                 .join(' / ');
-              const isFinished = table.status === TableStatuses.Archived;
+              const isFinished = table.status === TableStatus.Archived;
               const hasResult =
                 isFinished ||
-                table.status === TableStatuses.Scoring ||
-                table.status === TableStatuses.AppealInProgress;
+                table.status === TableStatus.Scoring ||
+                table.status === TableStatus.AppealInProgress;
 
               return (
                 <DetailRow

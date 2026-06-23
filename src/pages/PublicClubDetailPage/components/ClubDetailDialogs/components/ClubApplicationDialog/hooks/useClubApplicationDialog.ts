@@ -1,11 +1,11 @@
-import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useRef, useState } from 'react';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
 import { ClubApplicationStatuses } from '@/objects';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
-import type { HomeClubApplicationState } from '../../../../../objects/ClubApplication.types';
+import type { HomeClubApplicationState } from '@/pages/PublicClubDetailPage/objects/application/HomeClubApplicationState';
 import { getFallbackPlayerName } from '../../../../../functions/getClubApplicationDisplay';
 import { useClubApplicationLoaders } from '../../../../../hooks/useClubApplicationLoaders';
 import { useClubApplicationDialogActions } from './useClubApplicationDialogActions';
@@ -66,7 +66,6 @@ export function useClubApplicationDialog({
           withdrawNote: '计划有变动',
           clubs: {
             items: [club],
-            source: 'api',
           },
           playerContext,
           application,

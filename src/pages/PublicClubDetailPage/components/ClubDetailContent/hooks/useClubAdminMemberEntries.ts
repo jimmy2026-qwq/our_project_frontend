@@ -1,10 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useState } from 'react';
 
-import {
-  GetClubAPI,
-  ListClubMemberPrivilegesAPI,
-  ListClubMembersAPI,
-} from '@/api/club';
+import { GetClubAPI, ListClubMemberPrivilegesAPI, ListClubMembersAPI } from '@/api/club';
 import type { ClubMemberPrivilegeSnapshotView, ListEnvelope } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
@@ -12,9 +8,9 @@ import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import { hasClubAdminOverride } from '../../../functions/getClubAdminOverrides';
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
-import { toPlayerProfile } from '../../../functions/ClubDetailPlayer.mappers';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import { toPlayerProfile } from '../../../functions/toClubDetailPlayerData';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 interface UseClubAdminMemberEntriesParams {
   profile: ClubPublicProfile | null;

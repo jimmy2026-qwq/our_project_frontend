@@ -1,6 +1,5 @@
-export const SwissPairingMethods = {
-  BalancedElo: 'balanced-elo',
-  Snake: 'snake',
-} as const;
+﻿export enum SwissPairingMethod {
+  BalancedElo = 'balanced-elo',
+  Snake = 'snake',
 
-export type SwissPairingMethod = (typeof SwissPairingMethods)[keyof typeof SwissPairingMethods];
+}

@@ -5,5 +5,5 @@ export * from './AdvancedStatsRecomputeTaskStatus';
 export * from './AdvancedStatsTaskQueueSummary';
 export * from './Dashboard';
 export * from './DashboardOwner';
-export * from './advancedstats';
+export * from './AdvancedStatsRecomputeTaskId';
 export * from './apiTypes';

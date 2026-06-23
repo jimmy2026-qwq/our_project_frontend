@@ -1,14 +1,12 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
-import {
-  DEFAULT_TOURNAMENT_OPS_STATE,
-  type LoadState,
-  type TournamentOpsState,
-} from '../objects/TournamentOps.types';
+import { DEFAULT_TOURNAMENT_OPS_STATE } from '../objects/TournamentOpsState';
+import type { LoadState } from '../objects/LoadState';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
 import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
 import { useTournamentOpsDirectoryData } from './useTournamentOpsDirectoryData';
 import { useTournamentOpsPanelData } from './useTournamentOpsPanelData';
@@ -57,6 +55,5 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api',
   };
 }

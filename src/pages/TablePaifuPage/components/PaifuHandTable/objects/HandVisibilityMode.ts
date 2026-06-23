@@ -1,1 +1,4 @@
-export type HandVisibilityMode = 'self' | 'all';
+export enum HandVisibilityMode {
+  Self = 'self',
+  All = 'all',
+}

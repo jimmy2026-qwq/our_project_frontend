@@ -1,0 +1,1 @@
+export const PUBLIC_HALL_CACHE_TTL_MS = 15_000;

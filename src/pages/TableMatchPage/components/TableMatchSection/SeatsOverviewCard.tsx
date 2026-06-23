@@ -1,19 +1,8 @@
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-  StatusPill,
-} from '@/components/ui';
-import { SeatWinds, type TableSeat } from '@/objects/tournament';
+﻿import { Card, CardContent, CardDescription, CardHeader, CardTitle, StatusPill } from '@/components/ui';
+import { SeatWind, type TableSeat } from '@/objects/tournament';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
-import {
-  getSeatStatusLabel,
-  getSeatStatusTone,
-  getTableStatusLabel,
-} from '../../functions/TableMatch.labels';
+import { getSeatStatusLabel, getSeatStatusTone, getTableStatusLabel } from '../../functions/TableMatch.labels';
 import type { TableSeatMap } from '../../functions/getTableSeatMap';
 import { SeatCard } from './SeatCard';
 
@@ -89,25 +78,25 @@ function SeatsLayout({
   return (
     <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_220px_minmax(0,1fr)] md:grid-rows-[auto_auto_auto]">
       <SeatCard
-        wind={SeatWinds.North}
-        playerId={seatMap[SeatWinds.North]?.playerId ?? 'Unassigned'}
+        wind={SeatWind.North}
+        playerId={seatMap[SeatWind.North]?.playerId ?? 'Unassigned'}
         playerName={getSeatPlayerName(
-          seatMap[SeatWinds.North]?.playerId,
+          seatMap[SeatWind.North]?.playerId,
           playerNames,
         )}
-        ready={seatMap[SeatWinds.North]?.ready ?? false}
-        disconnected={seatMap[SeatWinds.North]?.disconnected ?? false}
+        ready={seatMap[SeatWind.North]?.ready ?? false}
+        disconnected={seatMap[SeatWind.North]?.disconnected ?? false}
         className="md:col-start-2 md:row-start-1"
       />
       <SeatCard
-        wind={SeatWinds.West}
-        playerId={seatMap[SeatWinds.West]?.playerId ?? 'Unassigned'}
+        wind={SeatWind.West}
+        playerId={seatMap[SeatWind.West]?.playerId ?? 'Unassigned'}
         playerName={getSeatPlayerName(
-          seatMap[SeatWinds.West]?.playerId,
+          seatMap[SeatWind.West]?.playerId,
           playerNames,
         )}
-        ready={seatMap[SeatWinds.West]?.ready ?? false}
-        disconnected={seatMap[SeatWinds.West]?.disconnected ?? false}
+        ready={seatMap[SeatWind.West]?.ready ?? false}
+        disconnected={seatMap[SeatWind.West]?.disconnected ?? false}
         className="md:col-start-1 md:row-start-2"
       />
       <div className="rounded-[28px] border border-[rgba(236,197,122,0.22)] bg-[radial-gradient(circle_at_top,rgba(236,197,122,0.16),transparent_55%),linear-gradient(180deg,rgba(17,38,52,0.92),rgba(8,20,30,0.96))] p-6 text-center shadow-[0_18px_48px_rgba(0,0,0,0.22)] md:col-start-2 md:row-start-2">
@@ -121,25 +110,25 @@ function SeatsLayout({
         </div>
       </div>
       <SeatCard
-        wind={SeatWinds.East}
-        playerId={seatMap[SeatWinds.East]?.playerId ?? 'Unassigned'}
+        wind={SeatWind.East}
+        playerId={seatMap[SeatWind.East]?.playerId ?? 'Unassigned'}
         playerName={getSeatPlayerName(
-          seatMap[SeatWinds.East]?.playerId,
+          seatMap[SeatWind.East]?.playerId,
           playerNames,
         )}
-        ready={seatMap[SeatWinds.East]?.ready ?? false}
-        disconnected={seatMap[SeatWinds.East]?.disconnected ?? false}
+        ready={seatMap[SeatWind.East]?.ready ?? false}
+        disconnected={seatMap[SeatWind.East]?.disconnected ?? false}
         className="md:col-start-3 md:row-start-2"
       />
       <SeatCard
-        wind={SeatWinds.South}
-        playerId={seatMap[SeatWinds.South]?.playerId ?? 'Unassigned'}
+        wind={SeatWind.South}
+        playerId={seatMap[SeatWind.South]?.playerId ?? 'Unassigned'}
         playerName={getSeatPlayerName(
-          seatMap[SeatWinds.South]?.playerId,
+          seatMap[SeatWind.South]?.playerId,
           playerNames,
         )}
-        ready={seatMap[SeatWinds.South]?.ready ?? false}
-        disconnected={seatMap[SeatWinds.South]?.disconnected ?? false}
+        ready={seatMap[SeatWind.South]?.ready ?? false}
+        disconnected={seatMap[SeatWind.South]?.disconnected ?? false}
         className="md:col-start-2 md:row-start-3"
       />
     </div>

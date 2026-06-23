@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useReducer, useRef, useState } from 'react';
 
 import { MahjongCoreGetTableAPI } from '@/api/tournament/mahjongcore';
+import { RealtimeAggregateTypes } from '@/app/realtime/RealtimeAggregateType';
 import type { RealtimeEvent } from '@/app/realtime/RealtimeEvent';
+import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 import type { MahjongPublicEventView, MahjongTableView } from '@/objects';
 import { sendAPI } from '@/system/api';
 
@@ -157,8 +159,8 @@ export function useTableMatchMahjongState({
   const handleRealtimeMahjongEvent = useCallback(
     (event: RealtimeEvent) => {
       if (
-        event.eventType !== 'MahjongActionAccepted' ||
-        event.aggregateType !== 'mahjongTable' ||
+        event.eventType !== RealtimeEventTypes.MahjongActionAccepted ||
+        event.aggregateType !== RealtimeAggregateTypes.MahjongTable ||
         event.aggregateId !== tableId
       ) {
         return false;

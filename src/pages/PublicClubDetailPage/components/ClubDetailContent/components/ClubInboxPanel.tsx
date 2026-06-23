@@ -1,6 +1,6 @@
 import { EmptyState, StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import { ClubApplicationStatuses } from '@/objects';
+import { ClubApplicationReviewDecisions, ClubApplicationStatuses, type ClubApplicationReviewDecision } from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
 
 import { formatDateTime } from '../../../functions/formatClubDetail';
@@ -29,7 +29,10 @@ export function ClubInboxPanel({
 }: {
   isInboxLoading: boolean;
   applicationInbox: ClubApplicationView[];
-  onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
+  onReview: (
+    applicationId: string,
+    decision: ClubApplicationReviewDecision,
+  ) => void;
 }) {
   if (isInboxLoading) {
     return <p className="m-0 text-[#9ab0c1]">正在加载申请处理列表...</p>;
@@ -70,7 +73,12 @@ export function ClubInboxPanel({
                     <button
                       type="button"
                       className={clubPanelClassNames.action}
-                      onClick={() => onReview(item.applicationId, 'approve')}
+                      onClick={() =>
+                        onReview(
+                          item.applicationId,
+                          ClubApplicationReviewDecisions.Approve,
+                        )
+                      }
                     >
                       通过
                     </button>
@@ -80,7 +88,12 @@ export function ClubInboxPanel({
                         clubPanelClassNames.action,
                         clubPanelClassNames.actionDanger,
                       )}
-                      onClick={() => onReview(item.applicationId, 'reject')}
+                      onClick={() =>
+                        onReview(
+                          item.applicationId,
+                          ClubApplicationReviewDecisions.Reject,
+                        )
+                      }
                     >
                       拒绝
                     </button>

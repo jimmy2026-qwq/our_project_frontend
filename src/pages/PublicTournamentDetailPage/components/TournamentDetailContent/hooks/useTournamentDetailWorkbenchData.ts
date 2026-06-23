@@ -1,13 +1,7 @@
-import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+﻿import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
-import type {
-  DetailState,
-  TournamentPublicProfile,
-} from '../../../objects/PublicTournamentDetailPage.types';
-import {
-  loadTournamentProfileForWorkbench,
-  useTournamentProfileData,
-} from './useTournamentProfileData';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
+import { loadTournamentProfileForWorkbench, useTournamentProfileData } from './useTournamentProfileData';
 import { useTournamentClubOptions } from '../components/TournamentDetailParticipantsTab/hooks/useTournamentClubOptions';
 import { useTournamentParticipantData } from '../components/TournamentDetailParticipantsTab/hooks/useTournamentParticipantData';
 import { useTournamentPlayerOptions } from '../components/TournamentDetailParticipantsTab/hooks/useTournamentPlayerOptions';
@@ -19,7 +13,7 @@ export function useTournamentDetailWorkbenchData({
   state,
   session,
 }: {
-  state: DetailState<TournamentPublicProfile>;
+  state: TournamentDetailState;
   session: AuthContextSession | null;
 }) {
   const { localProfile, setLocalProfile } = useTournamentProfileData({

@@ -1,12 +1,12 @@
-import type { SeatWind } from '@/objects/tournament';
+﻿import type { SeatWind } from '@/objects/tournament';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+import type { HandVisibilityMode } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/HandVisibilityMode';
 import type { TablePaifuDetail } from '../../objects/TablePaifuDetail';
 import { getRoundPlayerId } from '../../functions/getReplayPlayers';
 import { PlayerHand } from './components/PlayerAreas/PlayerHand';
 import { shouldRevealPaifuHand } from './functions/shouldRevealPaifuHand';
 import type { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
-import type { HandVisibilityMode } from './objects/HandVisibilityMode';
 
 /** 将单个座位的手牌、副露和河牌组合成牌谱玩家区域。 */
 export function PaifuPlayerHand({

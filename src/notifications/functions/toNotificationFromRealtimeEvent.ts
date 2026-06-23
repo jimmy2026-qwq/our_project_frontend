@@ -1,8 +1,5 @@
 import type { RealtimeEvent } from '@/app/realtime/RealtimeEvent';
-import {
-  isNotificationType,
-  type Notification,
-} from '@/objects/notification';
+import { isNotificationType, type Notification } from '@/objects/notification';
 
 // Converts realtime payloads into the same shape returned by notification APIs.
 export function toNotificationFromRealtimeEvent(

@@ -1,10 +1,6 @@
-import {
-  ActionButton,
-  FieldGroup,
-  TextInputField,
-} from '@/components/ui';
+﻿import { ActionButton, FieldGroup, TextInputField } from '@/components/ui';
 
-import type { ClubContributionTitleField } from '../../../objects/ClubDetail.types';
+import type { ClubContributionTitleField } from '@/pages/PublicClubDetailPage/objects/contribution/ClubContributionTitleField';
 
 /** 贡献称号设置弹窗中的单条称号字段卡。 */
 export function ClubContributionTitleFieldCard({

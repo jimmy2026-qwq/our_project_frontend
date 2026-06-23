@@ -1,10 +1,10 @@
-import type { StageStatus, TournamentStatus } from '@/objects';
-import { StageStatuses, TournamentStatuses } from '@/objects';
-import { ClubRelationKinds } from '@/objects/club';
+﻿import { StageStatus, TournamentStatuses, type TournamentStatus } from '@/objects';
+import { ClubRelationKind } from '@/objects/club';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
-import type { PlayerLeaderboardEntry } from '../objects/PublicHallPage.types';
-import { PublicHallLeaderboardDisplayStatuses } from '../objects/PublicHallLeaderboardDisplayStatus';
+import type { PlayerLeaderboardEntry } from '../objects/leaderboard/PlayerLeaderboardEntry';
+
+import { PublicHallLeaderboardDisplayStatus } from '@/pages/PublicHallPage/objects/PublicHallLeaderboardDisplayStatus';
 
 export const TOURNAMENT_STATUS_FILTER_OPTIONS: ReadonlyArray<{
   value?: TournamentStatus;
@@ -25,11 +25,11 @@ export const STAGE_STATUS_FILTER_OPTIONS: ReadonlyArray<{
   label: string;
 }> = [
   { label: '全部阶段' },
-  { value: StageStatuses.Pending, label: '未开始' },
-  { value: StageStatuses.Ready, label: '已就绪' },
-  { value: StageStatuses.Active, label: '进行中' },
-  { value: StageStatuses.Completed, label: '已完成' },
-  { value: StageStatuses.Archived, label: '已归档' },
+  { value: StageStatus.Pending, label: '未开始' },
+  { value: StageStatus.Ready, label: '已就绪' },
+  { value: StageStatus.Active, label: '进行中' },
+  { value: StageStatus.Completed, label: '已完成' },
+  { value: StageStatus.Archived, label: '已归档' },
 ];
 
 export function formatDateTime(value: string) {
@@ -60,7 +60,7 @@ export function getStageStatusLabel(status: StageStatus) {
 export function getRelationLabel(relation: ClubSummary['relations'][number]) {
   const relationKind =
     typeof relation === 'string' ? relation : relation.relation;
-  return relationKind === ClubRelationKinds.Alliance ? '联盟' : '对抗';
+  return relationKind === ClubRelationKind.Alliance ? '联盟' : '对抗';
 }
 
 export function formatRelationList(relations: ClubSummary['relations']) {
@@ -70,11 +70,11 @@ export function formatRelationList(relations: ClubSummary['relations']) {
 export function getLeaderboardStatusLabel(
   status: PlayerLeaderboardEntry['status'],
 ) {
-  return (
-    {
-      [PublicHallLeaderboardDisplayStatuses.Active]: '活跃',
-      [PublicHallLeaderboardDisplayStatuses.Inactive]: '未活跃',
-      [PublicHallLeaderboardDisplayStatuses.Banned]: '封禁',
-    } as const
-  )[status];
+  const labels: Record<PublicHallLeaderboardDisplayStatus, string> = {
+    [PublicHallLeaderboardDisplayStatus.Active]: '活跃',
+    [PublicHallLeaderboardDisplayStatus.Inactive]: '未活跃',
+    [PublicHallLeaderboardDisplayStatus.Banned]: '封禁',
+  };
+
+  return labels[status];
 }

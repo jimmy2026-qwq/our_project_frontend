@@ -1,15 +1,13 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import {
-  PlatformAdminBanPlayerAPI,
-  PlatformAdminGrantSuperAdminAPI,
-} from '@/api/platformadmin';
+import { PlatformAdminBanPlayerAPI, PlatformAdminGrantSuperAdminAPI } from '@/api/platformadmin';
 import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
-import type { PlayerLeaderboardEntry } from '../../../../objects/PublicHallPage.types';
+import type { PlayerLeaderboardEntry } from '../../../../objects/leaderboard/PlayerLeaderboardEntry';
+
 import { sendAPI } from '@/system/api';
 
-export type PlayerAdminAction = 'ban' | 'grantSuperAdmin';
+import { PlayerAdminAction } from '../objects/PlayerAdminAction';
 
 export function useManagePlayerDialogAction({
   open,
@@ -35,7 +33,8 @@ export function useManagePlayerDialogAction({
     !!player &&
     !!operatorId &&
     !isSubmitting &&
-    (action === 'grantSuperAdmin' || trimmedReason.length > 0);
+    (action === PlayerAdminAction.GrantSuperAdmin ||
+      trimmedReason.length > 0);
 
   useEffect(() => {
     if (!open) {
@@ -52,7 +51,7 @@ export function useManagePlayerDialogAction({
       return;
     }
 
-    if (action === 'ban' && !trimmedReason) {
+    if (action === PlayerAdminAction.Ban && !trimmedReason) {
       notifyWarning('请填写封禁原因', '封禁玩家时需要留下审计原因。');
       return;
     }
@@ -60,7 +59,7 @@ export function useManagePlayerDialogAction({
     try {
       setIsSubmitting(true);
 
-      if (action === 'grantSuperAdmin') {
+      if (action === PlayerAdminAction.GrantSuperAdmin) {
         await sendAPI(
           new PlatformAdminGrantSuperAdminAPI(player.playerId, { operatorId }),
         );

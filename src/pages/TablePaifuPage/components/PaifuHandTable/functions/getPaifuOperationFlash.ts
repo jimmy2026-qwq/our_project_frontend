@@ -1,14 +1,7 @@
 import { getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
-import {
-  getResultWinForActor,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getResultWinForActor } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
-import {
-  HandOutcome,
-  PaifuActionType,
-  type PaifuAction,
-  type PaifuRound as PaifuRoundSummary,
-} from '@/objects';
+import { HandOutcome, PaifuActionType, type PaifuAction, type PaifuRound as PaifuRoundSummary } from '@/objects';
 import { removeFirstTile } from '../../../functions/getReplayCore';
 
 export const winningCallAnimationMs = 500;

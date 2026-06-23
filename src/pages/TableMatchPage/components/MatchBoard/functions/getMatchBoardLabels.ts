@@ -1,24 +1,12 @@
-import type { ButtonProps } from '@/components/ui';
-import {
-  MahjongCommandTypes,
-  MahjongRoundPhases,
-  MahjongTableStatuses,
-  SeatWinds,
-  type KyokuDescriptor,
-  type MahjongCommandType,
-  type MahjongLegalAction,
-  type MahjongRoundPhase,
-  type MahjongSeatView,
-  type MahjongTableStatus,
-  type SeatWind,
-} from '@/objects';
+﻿import type { ButtonProps } from '@/components/ui';
+import { MahjongCommandTypes, MahjongRoundPhases, MahjongTableStatuses, SeatWind, type KyokuDescriptor, type MahjongCommandType, type MahjongLegalAction, type MahjongRoundPhase, type MahjongSeatView, type MahjongTableStatus } from '@/objects';
 
 export function getSeatLabel(seat: SeatWind) {
   const labels: Record<SeatWind, string> = {
-    [SeatWinds.East]: '东',
-    [SeatWinds.South]: '南',
-    [SeatWinds.West]: '西',
-    [SeatWinds.North]: '北',
+    [SeatWind.East]: '东',
+    [SeatWind.South]: '南',
+    [SeatWind.West]: '西',
+    [SeatWind.North]: '北',
   };
 
   return labels[seat];

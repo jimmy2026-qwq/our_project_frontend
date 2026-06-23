@@ -1,9 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
-import { TableStatuses } from '@/objects';
+import { TableStatus } from '@/objects';
 
-import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
-import type { TournamentDetailTab } from '../../../objects/TournamentDetailView.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { TournamentDetailTab } from '@/pages/PublicTournamentDetailPage/objects/navigation/TournamentDetailTab';
 
 export function useTournamentRuntimeTabs({
   operatorId,
@@ -22,7 +22,7 @@ export function useTournamentRuntimeTabs({
     }
 
     if (!workbench.canManageTournament && isAdminOnlyTab(activeTab)) {
-      setActiveTab('home');
+      setActiveTab(TournamentDetailTab.Home);
     }
   }, [activeTab, workbench]);
 
@@ -49,20 +49,20 @@ export function useTournamentRuntimeTabs({
   const waitingTables = useMemo(
     () =>
       (workbench?.visibleTables ?? []).filter(
-        (table) => table.status === TableStatuses.WaitingPreparation,
+        (table) => table.status === TableStatus.WaitingPreparation,
       ),
     [workbench?.visibleTables],
   );
   const canManageAppeals = !!workbench?.canManageTournament && !!operatorId;
   const tabItems: Array<{ id: TournamentDetailTab; label: string }> = [
-    { id: 'home', label: '赛事概览' },
-    { id: 'rules', label: '规则说明' },
-    { id: 'participants', label: '参赛名单' },
-    { id: 'tables', label: '赛事牌桌' },
+    { id: TournamentDetailTab.Home, label: '赛事概览' },
+    { id: TournamentDetailTab.Rules, label: '规则说明' },
+    { id: TournamentDetailTab.Participants, label: '参赛名单' },
+    { id: TournamentDetailTab.Tables, label: '赛事牌桌' },
     ...(workbench?.canManageTournament
       ? [
-          { id: 'manage' as const, label: '牌桌管理' },
-          { id: 'appeals' as const, label: '查看申诉' },
+          { id: TournamentDetailTab.Manage, label: '牌桌管理' },
+          { id: TournamentDetailTab.Appeals, label: '查看申诉' },
         ]
       : []),
   ];
@@ -78,21 +78,21 @@ export function useTournamentRuntimeTabs({
 
 function resolveInitialTab(): TournamentDetailTab {
   if (typeof window === 'undefined') {
-    return 'home';
+    return TournamentDetailTab.Home;
   }
 
   const tab = new URLSearchParams(window.location.search).get('tab');
-  return resolveTab(tab) ?? 'home';
+  return resolveTab(tab) ?? TournamentDetailTab.Home;
 }
 
 function resolveTab(value: string | null): TournamentDetailTab | null {
   switch (value) {
-    case 'home':
-    case 'rules':
-    case 'participants':
-    case 'tables':
-    case 'manage':
-    case 'appeals':
+    case TournamentDetailTab.Home:
+    case TournamentDetailTab.Rules:
+    case TournamentDetailTab.Participants:
+    case TournamentDetailTab.Tables:
+    case TournamentDetailTab.Manage:
+    case TournamentDetailTab.Appeals:
       return value;
     default:
       return null;
@@ -100,7 +100,10 @@ function resolveTab(value: string | null): TournamentDetailTab | null {
 }
 
 function isAdminOnlyTab(tab: TournamentDetailTab): boolean {
-  return tab === 'manage' || tab === 'appeals';
+  return (
+    tab === TournamentDetailTab.Manage ||
+    tab === TournamentDetailTab.Appeals
+  );
 }
 
 function persistTabInUrl(tab: TournamentDetailTab): void {
@@ -110,7 +113,7 @@ function persistTabInUrl(tab: TournamentDetailTab): void {
 
   const url = new URL(window.location.href);
 
-  if (tab === 'home') {
+  if (tab === TournamentDetailTab.Home) {
     url.searchParams.delete('tab');
   } else {
     url.searchParams.set('tab', tab);

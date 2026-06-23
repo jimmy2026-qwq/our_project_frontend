@@ -1,6 +1,6 @@
-import { TournamentOverviewPanel } from './TournamentOverviewPanel';
+﻿import { TournamentOverviewPanel } from './TournamentOverviewPanel';
 import { detailShellClassNames } from '../../detailShell.styles';
-import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 赛事详情页默认首页标签，组合概览、阶段和邀请信息。 */
 export function TournamentDetailHomeTab({

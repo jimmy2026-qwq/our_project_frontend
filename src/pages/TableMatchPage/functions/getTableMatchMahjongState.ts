@@ -1,12 +1,4 @@
-import {
-  isPaifuTile,
-  MahjongTableStatuses,
-  PaifuActionType,
-  toPaifuTile,
-  type MahjongPublicEventView,
-  type MahjongTableView,
-  type PaifuTile,
-} from '@/objects';
+import { isPaifuTile, MahjongTableStatuses, PaifuActionType, toPaifuTile, type MahjongPublicEventView, type MahjongTableView, type PaifuTile } from '@/objects';
 import { ApiError } from '@/system/api/http';
 
 export const liveMahjongRefreshIntervalMs = 1000;

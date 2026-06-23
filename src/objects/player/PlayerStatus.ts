@@ -1,7 +1,6 @@
-export const PlayerStatuses = {
-  Active: 'Active',
-  Suspended: 'Suspended',
-  Banned: 'Banned',
-} as const;
+﻿export enum PlayerStatus {
+  Active = 'Active',
+  Suspended = 'Suspended',
+  Banned = 'Banned',
 
-export type PlayerStatus = (typeof PlayerStatuses)[keyof typeof PlayerStatuses];
+}

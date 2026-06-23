@@ -2,12 +2,7 @@ import type { AgariResult, MahjongSeatView } from '@/objects';
 import { useCallback, useEffect, useState } from 'react';
 
 import { createMatchYakumanTileBurstData } from '../functions/getMatchBoardYakumanBurst';
-import {
-  resultRevealDelayMs,
-  winningCallVisibleMs,
-  yakumanTileBurstSettleDelayMs,
-  yakumanTileBurstVisibleMs,
-} from '../functions/matchBoardTiming';
+import { resultRevealDelayMs, winningCallVisibleMs, yakumanTileBurstSettleDelayMs, yakumanTileBurstVisibleMs } from '../functions/matchBoardTiming';
 import type { ResultSequencePlayback } from '../objects/ResultSequencePlayback';
 import { useMatchSettlementAnimation } from './useMatchSettlementAnimation';
 

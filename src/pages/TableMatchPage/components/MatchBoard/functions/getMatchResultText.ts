@@ -1,10 +1,6 @@
 import { HandOutcome, type AgariResult } from '@/objects';
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import {
-  getResultSequenceStep,
-  getResultWins,
-  isNagashiManganWin,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getResultSequenceStep, getResultWins, isNagashiManganWin } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
 type ResultSequenceStep = NonNullable<ReturnType<typeof getResultSequenceStep>>;

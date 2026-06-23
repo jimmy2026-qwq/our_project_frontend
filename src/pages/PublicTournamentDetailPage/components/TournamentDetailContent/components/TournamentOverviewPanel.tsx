@@ -1,17 +1,8 @@
-import {
-  Button,
-  DetailCard,
-  DetailList,
-  DetailListItem,
-  StatusPill,
-} from '@/components/ui';
+﻿import { Button, DetailCard, DetailList, DetailListItem, StatusPill } from '@/components/ui';
 
-import {
-  formatDateTime,
-  getTournamentStatusLabel,
-} from '../../../functions/getTournamentDetailLabels';
+import { formatDateTime, getTournamentStatusLabel } from '../../../functions/getTournamentDetailLabels';
 import { getStatusTone } from '../../../functions/getTournamentDetailStatus';
-import type { TournamentPublicProfile } from '../../../objects/PublicTournamentDetailPage.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
 
 /** 赛事详情首页中的基础信息和关键指标面板。 */
 export function TournamentOverviewPanel({

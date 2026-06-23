@@ -1,10 +1,11 @@
-import { WorkbenchContextPanel } from '@/components/ui';
-import { SelectField, TextInputField } from '@/components/ui';
-import { AppealStatuses, TableStatuses, type TableStatus } from '@/objects';
+﻿import { WorkbenchContextPanel, SelectField, TextInputField } from '@/components/ui';
+
+import { AppealStatus, TableStatus } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { getActiveTournament } from '../functions/getTournamentOpsState';
-import type { TournamentContext, TournamentOpsState } from '../objects/TournamentOps.types';
+import type { TournamentContext } from '../objects/TournamentContext';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
 
 interface TournamentOpsFiltersPanelProps {
   tournaments: TournamentContext[];
@@ -79,11 +80,11 @@ export function TournamentOpsFiltersPanel({
         }
       >
         <option value="">全部</option>
-        <option value={TableStatuses.WaitingPreparation}>等待开始</option>
-        <option value={TableStatuses.InProgress}>对局中</option>
-        <option value={TableStatuses.Scoring}>结算中</option>
-        <option value={TableStatuses.Archived}>已结束</option>
-        <option value={TableStatuses.AppealInProgress}>申诉处理中</option>
+        <option value={TableStatus.WaitingPreparation}>等待开始</option>
+        <option value={TableStatus.InProgress}>对局中</option>
+        <option value={TableStatus.Scoring}>结算中</option>
+        <option value={TableStatus.Archived}>已结束</option>
+        <option value={TableStatus.AppealInProgress}>申诉处理中</option>
       </SelectField>
       <TextInputField
         label="玩家编号"
@@ -106,10 +107,10 @@ export function TournamentOpsFiltersPanel({
         }
       >
         <option value="">全部</option>
-        <option value={AppealStatuses.Open}>处理中</option>
-        <option value={AppealStatuses.Resolved}>已处理</option>
-        <option value={AppealStatuses.Rejected}>已驳回</option>
-        <option value={AppealStatuses.Escalated}>已升级</option>
+        <option value={AppealStatus.Open}>处理中</option>
+        <option value={AppealStatus.Resolved}>已处理</option>
+        <option value={AppealStatus.Rejected}>已驳回</option>
+        <option value={AppealStatus.Escalated}>已升级</option>
       </SelectField>
     </WorkbenchContextPanel>
   );

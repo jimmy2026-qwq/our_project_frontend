@@ -1,22 +1,14 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import {
-  AppealAdjudicateAPI,
-  AppealListAPI,
-  AppealUpdateWorkflowAPI,
-} from '@/api/tournament';
-import {
-  AppealDecisionTypes,
-  AppealTableResolutions,
-  type AppealDecisionType,
-} from '@/objects';
+import { AppealAdjudicateAPI, AppealListAPI, AppealUpdateWorkflowAPI } from '@/api/tournament';
+import { AppealDecisionType, AppealTableResolutions } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 import { getAppealDecisionLabel } from '../../../../../functions/getTournamentDetailView';
-import { toAppealSummary } from '../../../../../functions/TournamentDetailAppeal.mappers';
+import { toAppealSummary } from '../../../../../functions/toTournamentDetailAppealData';
 
 export function useTournamentAppealRuntime({
   operatorId,
@@ -90,11 +82,11 @@ export function useTournamentAppealRuntime({
   ) {
     setSelectedAppealAction({ appeal, decision });
     setAppealActionError('');
-    setShouldResetTableOnResolve(decision === AppealDecisionTypes.Resolve);
+    setShouldResetTableOnResolve(decision === AppealDecisionType.Resolve);
     setAppealVerdict(
-      decision === AppealDecisionTypes.Resolve
+      decision === AppealDecisionType.Resolve
         ? '已核实申诉内容，工单处理完成。'
-        : decision === AppealDecisionTypes.Reject
+        : decision === AppealDecisionType.Reject
           ? '已核实当前情况，申诉不成立。'
           : '当前申诉需要进一步升级处理。',
     );
@@ -150,7 +142,7 @@ export function useTournamentAppealRuntime({
           decision: selectedAppealAction.decision,
           verdict,
           tableResolution:
-            selectedAppealAction.decision === AppealDecisionTypes.Resolve &&
+            selectedAppealAction.decision === AppealDecisionType.Resolve &&
             shouldResetTableOnResolve
               ? AppealTableResolutions.ForceReset
               : undefined,

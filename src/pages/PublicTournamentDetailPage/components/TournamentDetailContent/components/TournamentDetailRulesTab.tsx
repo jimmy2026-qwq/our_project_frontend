@@ -1,6 +1,6 @@
-import { TournamentCurrentRulesPanel } from './TournamentDetailRulesPanel';
+﻿import { TournamentCurrentRulesPanel } from './TournamentDetailRulesPanel';
 import { detailShellClassNames } from '../../detailShell.styles';
-import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 赛事详情页中展示当前规则和阶段规则的标签页。 */
 export function TournamentDetailRulesTab({

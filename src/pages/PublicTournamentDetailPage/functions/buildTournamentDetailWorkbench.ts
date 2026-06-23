@@ -1,19 +1,14 @@
-import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+﻿import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { TournamentStatuses } from '@/objects';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
-import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
 
-import type {
-  TournamentDetailTableItem,
-  TournamentDetailWorkbenchState,
-} from '../objects/TournamentDetail.types';
-import type { TournamentStageRuleDraft } from '../objects/TournamentDetailRule.types';
-import {
-  getNextStageLineupSubmissionCounts,
-  getNextStageMissingLineupClubNames,
-} from './getNextStageLineup';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import type { TournamentStageRuleDraft } from '@/pages/PublicTournamentDetailPage/objects/stage/TournamentStageRuleDraft';
+import { getNextStageLineupSubmissionCounts, getNextStageMissingLineupClubNames } from './getNextStageLineup';
 import { getTournamentDetailHeaderAction } from './getTournamentDetailHeaderAction';
 import { getTournamentDetailParticipantOptions } from './getTournamentDetailParticipantOptions';
 import { getTournamentDetailStageProgress } from './getTournamentDetailStageProgress';

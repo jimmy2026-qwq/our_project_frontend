@@ -1,7 +1,5 @@
-import type {
-  TournamentContext,
-  TournamentOpsState,
-} from '../objects/TournamentOps.types';
+﻿import type { TournamentContext } from '../objects/TournamentContext';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
 
 export function getActiveTournament(
   tournaments: TournamentContext[],

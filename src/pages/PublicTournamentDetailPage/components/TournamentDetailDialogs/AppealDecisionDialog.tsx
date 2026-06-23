@@ -1,21 +1,5 @@
-import {
-  Alert,
-  Button,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  Textarea,
-} from '@/components/ui';
-import {
-  AppealDecisionTypes,
-  type AppealDecisionType,
-} from '@/objects';
+﻿import { Alert, Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, Textarea } from '@/components/ui';
+import { AppealDecisionType } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { getAppealDecisionLabel } from '../../functions/getTournamentDetailView';
@@ -46,7 +30,7 @@ export function AppealDecisionDialog({
   onSubmit: () => void;
 }) {
   const isResolveAction =
-    selectedAppealAction?.decision === AppealDecisionTypes.Resolve;
+    selectedAppealAction?.decision === AppealDecisionType.Resolve;
 
   return (
     <Dialog

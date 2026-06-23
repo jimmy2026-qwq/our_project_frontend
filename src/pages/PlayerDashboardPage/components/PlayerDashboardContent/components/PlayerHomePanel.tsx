@@ -1,19 +1,11 @@
-import type { ReactNode } from 'react';
+﻿import type { ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 
-import {
-  DescriptionItem,
-  DescriptionList,
-  EmptyState,
-  MetricCard,
-  MetricGrid,
-} from '@/components/ui';
+import { DescriptionItem, DescriptionList, EmptyState, MetricCard, MetricGrid } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 
-import type {
-  PlayerClubLink,
-  PlayerDashboardData,
-} from '../../../objects/PlayerDashboard.types';
+import type { PlayerClubLink } from '../../../objects/PlayerClubLink';
+import type { PlayerDashboardData } from '../../../objects/PlayerDashboardData';
 import { getPlayerStatusLabel } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 

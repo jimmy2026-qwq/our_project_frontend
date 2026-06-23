@@ -1,19 +1,9 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import {
-  Button,
-  DetailCard,
-  DetailList,
-  DetailListItem,
-  StatusPill,
-} from '@/components/ui';
+import { Button, DetailCard, DetailList, DetailListItem, StatusPill } from '@/components/ui';
 
-import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
-import {
-  describeAdvancementRule,
-  getRuleSummaryLabel,
-  getTournamentFormatLabel,
-} from '../../../../functions/getTournamentDetailRules';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { describeAdvancementRule, getRuleSummaryLabel, getTournamentFormatLabel } from '../../../../functions/getTournamentDetailRules';
 import { getStageStatusLabel } from '../../../../functions/getTournamentDetailLabels';
 import { getStatusTone } from '../../../../functions/getTournamentDetailStatus';
 import { RuleDetailsDialog } from './RuleDetailsDialog';

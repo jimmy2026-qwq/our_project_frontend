@@ -1,6 +1,6 @@
-import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
+﻿import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
-import type { HomeClubApplicationState } from '../objects/ClubApplication.types';
+import type { HomeClubApplicationState } from '@/pages/PublicClubDetailPage/objects/application/HomeClubApplicationState';
 
 export function formatDateTime(value: string) {
   const timestamp = Date.parse(value);

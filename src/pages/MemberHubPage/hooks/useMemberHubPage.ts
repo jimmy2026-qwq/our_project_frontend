@@ -1,9 +1,11 @@
-import { useReducer } from 'react';
+﻿import { useReducer } from 'react';
 
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
+import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 
 import { getActiveOperator } from '../functions/getMemberHubOperator';
-import { DEFAULT_MEMBER_HUB_DIRECTORY } from '../objects/MemberHub.types';
+import { DEFAULT_MEMBER_HUB_DIRECTORY } from '../objects/operator/MemberHubOperatorDirectory';
+
 import { useMemberHubActions } from './useMemberHubActions';
 import { useMemberHubData } from './useMemberHubData';
 import { useMemberHubState } from './useMemberHubState';
@@ -13,11 +15,11 @@ export function useMemberHubPage() {
   const [reloadKey, forceReload] = useReducer((value: number) => value + 1, 0);
   useRealtimeRefresh(
     [
-      'ClubChanged',
-      'ClubApplicationChanged',
-      'ClubMemberChanged',
-      'PlayerChanged',
-      'TournamentChanged',
+      RealtimeEventTypes.ClubChanged,
+      RealtimeEventTypes.ClubApplicationChanged,
+      RealtimeEventTypes.ClubMemberChanged,
+      RealtimeEventTypes.PlayerChanged,
+      RealtimeEventTypes.TournamentChanged,
     ],
     () => forceReload(),
   );

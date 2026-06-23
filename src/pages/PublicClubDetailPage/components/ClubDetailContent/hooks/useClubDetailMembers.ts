@@ -1,13 +1,10 @@
-import { useMemo } from 'react';
+﻿import { useMemo } from 'react';
 
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
-import {
-  applyContributionTitleOverrides,
-  buildContributionTitleFields,
-} from '../functions/buildClubDetailContributionTitles';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import { applyContributionTitleOverrides, buildContributionTitleFields } from '../functions/buildClubDetailContributionTitles';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 import { useClubAdminMemberEntries } from './useClubAdminMemberEntries';
 import { useClubMemberNames } from './useClubMemberNames';
 import { useClubRankTree } from './useClubRankTree';

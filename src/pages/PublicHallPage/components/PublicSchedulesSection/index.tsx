@@ -1,28 +1,18 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import {
-  ActionButton,
-  EmptyState,
-  FilterActionRow,
-  PortalSection,
-  SelectField,
-} from '@/components/ui';
-import type { PublicSchedule } from '../../objects/PublicHallPage.types';
-import type {
-  LoadState,
-  PublicHallState,
-} from '../../objects/PublicHallPage.types';
-import {
-  STAGE_STATUS_FILTER_OPTIONS,
-  TOURNAMENT_STATUS_FILTER_OPTIONS,
-} from '../../functions/getPublicHallLabels';
+import { ActionButton, EmptyState, FilterActionRow, PortalSection, SelectField } from '@/components/ui';
 
-import {
-  hallSectionClassNames,
-  publicHallSectionSlots,
-} from '../PublicHallSection.styles';
+import type { PublicSchedule } from '../../objects/schedule/PublicSchedule';
+
+import type { LoadState } from '../../objects/state/LoadState';
+import type { PublicHallState } from '../../objects/state/PublicHallState';
+import { STAGE_STATUS_FILTER_OPTIONS, TOURNAMENT_STATUS_FILTER_OPTIONS } from '../../functions/getPublicHallLabels';
+
+import { hallSectionClassNames, publicHallSectionSlots } from '../PublicHallSection.styles';
 import { CreateTournamentDialog } from './CreateTournamentDialog';
 import { ScheduleRow } from './ScheduleRow';
+
+const allFilterOptionKey = 'all';
 
 /** 公共大厅中展示赛事赛程和创建赛事入口的区块。 */
 export function PublicSchedulesSection({
@@ -62,7 +52,6 @@ export function PublicSchedulesSection({
           </div>
         }
         description="查看当前公共大厅中的公开赛事、赛事状态和阶段进度。"
-        source={payload.source}
         warning={payload.warning}
       >
         <FilterActionRow
@@ -83,7 +72,10 @@ export function PublicSchedulesSection({
             }
           >
             {TOURNAMENT_STATUS_FILTER_OPTIONS.map((option) => (
-              <option key={option.value ?? 'all'} value={option.value ?? ''}>
+              <option
+                key={option.value ?? allFilterOptionKey}
+                value={option.value ?? ''}
+              >
                 {option.label}
               </option>
             ))}
@@ -102,7 +94,10 @@ export function PublicSchedulesSection({
             }
           >
             {STAGE_STATUS_FILTER_OPTIONS.map((option) => (
-              <option key={option.value ?? 'all'} value={option.value ?? ''}>
+              <option
+                key={option.value ?? allFilterOptionKey}
+                value={option.value ?? ''}
+              >
                 {option.label}
               </option>
             ))}

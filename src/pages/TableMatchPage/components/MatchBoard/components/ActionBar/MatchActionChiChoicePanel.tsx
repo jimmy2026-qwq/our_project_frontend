@@ -1,8 +1,4 @@
-import {
-  getPaifuTileCode,
-  type MahjongLegalAction,
-  type PaifuTile,
-} from '@/objects';
+import { getPaifuTileCode, type MahjongLegalAction, type PaifuTile } from '@/objects';
 import { TileImage } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 
 /** 吃牌有多种组合时让玩家选择具体吃法的面板。 */

@@ -1,7 +1,7 @@
 ﻿import { useState } from 'react';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 export function useClubDetailDialogs() {
   const [isApplicationDialogOpen, setIsApplicationDialogOpen] = useState(false);

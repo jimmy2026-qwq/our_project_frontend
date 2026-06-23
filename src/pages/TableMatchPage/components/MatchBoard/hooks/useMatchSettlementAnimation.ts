@@ -1,8 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {
-  settlementAnimationDelayMs,
-  settlementAnimationDurationMs,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuHandTableReplay';
+import { settlementAnimationDelayMs, settlementAnimationDurationMs } from '@/pages/TablePaifuPage/components/PaifuHandTable/functions/getPaifuHandTableReplay';
 
 import { settlementAnimationStartDelayMs } from '../functions/matchBoardTiming';
 

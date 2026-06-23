@@ -1,12 +1,13 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { AppealListAPI } from '@/api/tournament/appeal/AppealListAPI';
 import type { AppealListQuery } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState, TournamentOpsState } from '../objects/TournamentOps.types';
-import { toAppealSummary } from '../functions/TournamentOps.mappers';
+import type { LoadState } from '../objects/LoadState';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
+import { toAppealSummary } from '../functions/toTournamentOpsData';
 
 export function useTournamentAppealsData(
   state: TournamentOpsState,
@@ -56,7 +57,7 @@ async function loadAppeals(
       offset: 0,
     });
 
-    return { envelope, source: 'api' };
+    return { envelope };
   } catch (error) {
     return {
       ...createEmptyLoadState<AppealSummary>(),
@@ -83,6 +84,5 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api',
   };
 }

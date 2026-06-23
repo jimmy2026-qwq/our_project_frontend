@@ -1,8 +1,8 @@
-import { getMahjongYakuLabel, getPaifuTileCode } from '@/objects';
+﻿import { getMahjongYakuLabel, getPaifuTileCode } from '@/objects';
 import type { CSSProperties } from 'react';
 
 import { TileImage } from '../TileViews';
-import type { YakumanTileBurstView } from '../../objects/PaifuOverlayViews';
+import type { YakumanTileBurstView } from '../../objects/YakumanTileBurstView';
 import { YakumanTileBurstStyles } from './YakumanTileBurstStyles';
 
 interface YakumanTileBurstOverlayProps {

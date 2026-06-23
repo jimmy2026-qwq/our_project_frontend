@@ -1,23 +1,15 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
-import { ListClubApplicationsAPI } from '@/api/club/ListClubApplicationsAPI';
-import {
-  ClubApplicationStatuses,
-  Roles,
-  type ClubApplicationListQuery,
-  type ListEnvelope,
-  type Role,
-} from '@/objects';
+import { ListClubApplicationsAPI } from '@/api/club/membership/ListClubApplicationsAPI';
+import { ClubApplicationStatuses, Role, type ClubApplicationListQuery, type ListEnvelope } from '@/objects';
 import type { ClubApplicationView } from '@/pages/shared_objects/club/ClubApplicationView';
+import { mapEnvelope } from '@/system/api';
 import { sendAPI } from '@/system/api';
-import { mapEnvelope } from '@/system/api/http';
 
 import { readMemberHubApplicationsByClub } from '../functions/getMemberHubApplicationInboxBridge';
-import {
-  toClubApplicationView,
-  toClubApplicationViewFromInboxItem,
-} from '../functions/MemberHub.mappers';
-import type { ApplicationInboxState } from '../objects/MemberHub.types';
+import { toClubApplicationView, toClubApplicationViewFromInboxItem } from '../functions/toMemberHubData';
+import type { ApplicationInboxState } from '../objects/state/ApplicationInboxState';
+
 
 function getClubApplications(
   clubId: string,
@@ -36,10 +28,9 @@ export function useMemberHubApplicationInboxLoader() {
       operatorId: string,
       role: Role,
     ): Promise<ApplicationInboxState> => {
-      if (role !== Roles.ClubAdmin) {
+      if (role !== Role.ClubAdmin) {
         return {
           items: [],
-          source: 'api',
         };
       }
 
@@ -53,14 +44,12 @@ export function useMemberHubApplicationInboxLoader() {
 
         return {
           items: envelope.items,
-          source: 'api',
         };
       } catch (error) {
         return {
           items: readMemberHubApplicationsByClub(clubId).map(
             toClubApplicationViewFromInboxItem,
           ),
-          source: 'api',
           warning:
             error instanceof Error
               ? error.message

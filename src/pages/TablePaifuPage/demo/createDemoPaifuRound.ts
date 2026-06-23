@@ -1,10 +1,4 @@
-import {
-  toPaifuTile,
-  type PaifuAction,
-  type PaifuRound as PaifuRoundSummary,
-  type PaifuTile,
-  type PaifuTileInput,
-} from '@/objects';
+import { toPaifuTile, type PaifuAction, type PaifuRound as PaifuRoundSummary, type PaifuTile, type PaifuTileInput } from '@/objects';
 
 import { demoSeats } from './TablePaifuDemoSeats';
 

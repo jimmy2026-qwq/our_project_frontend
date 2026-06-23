@@ -1,13 +1,10 @@
-import { type ReactNode } from 'react';
+﻿import { type ReactNode } from 'react';
 
 import { Alert, EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 
-import type {
-  ClubPublicProfile,
-  DetailState,
-} from '../../objects/PublicClubDetailPage.types';
-import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
+import type { ClubDetailState } from '@/pages/PublicClubDetailPage/objects/state/ClubDetailState';
+import type { ClubDetailWorkbenchState } from '@/pages/PublicClubDetailPage/objects/state/workbench/ClubDetailWorkbenchState';
 import { clubDetailShellClassNames } from '../ClubDetailShell.styles';
 import { ClubContributionChangesPanel } from './components/ClubContributionChangesPanel';
 import { ClubInboxPanel } from './components/ClubInboxPanel';
@@ -15,6 +12,7 @@ import { ClubMembersPanel } from './components/ClubMembersPanel';
 import { ClubPublicInfoPanel } from './components/ClubPublicInfoPanel';
 import { ClubRecentTournamentsPanel } from './components/ClubRecentTournamentsPanel';
 import { useClubDetailContent } from './hooks/useClubDetailContent';
+import { ClubDetailTab } from './objects/ClubDetailTab';
 import type { useClubDetailWorkbench } from './hooks/useClubDetailWorkbench';
 
 type ClubDetailControls = Omit<
@@ -23,7 +21,7 @@ type ClubDetailControls = Omit<
 >;
 
 interface ClubDetailContentProps {
-  state: DetailState<ClubPublicProfile>;
+  state: ClubDetailState;
   workbench: ClubDetailWorkbenchState;
   controls: ClubDetailControls;
 }
@@ -57,7 +55,7 @@ export function ClubDetailContent({
       </aside>
 
       <div className={clubDetailShellClassNames.content}>
-        {activeTab === 'home' ? (
+        {activeTab === ClubDetailTab.Home ? (
           <PanelFrame>
             <ClubPublicInfoPanel
               profile={workbench.profile}
@@ -71,7 +69,7 @@ export function ClubDetailContent({
           </PanelFrame>
         ) : null}
 
-        {activeTab === 'tournaments' ? (
+        {activeTab === ClubDetailTab.Tournaments ? (
           <PanelFrame>
             <ClubRecentTournamentsPanel
               tournaments={workbench.profile.activeTournaments}
@@ -90,7 +88,7 @@ export function ClubDetailContent({
           </PanelFrame>
         ) : null}
 
-        {activeTab === 'applications' ? (
+        {activeTab === ClubDetailTab.Applications ? (
           <PanelFrame>
             {workbench.canReviewApplications ? (
               <ClubInboxPanel
@@ -108,7 +106,7 @@ export function ClubDetailContent({
           </PanelFrame>
         ) : null}
 
-        {activeTab === 'members' ? (
+        {activeTab === ClubDetailTab.Members ? (
           <PanelFrame>
             <ClubMembersPanel
               isLoading={workbench.isClubMembersLoading}
@@ -138,7 +136,7 @@ export function ClubDetailContent({
           </PanelFrame>
         ) : null}
 
-        {activeTab === 'contributionChanges' ? (
+        {activeTab === ClubDetailTab.ContributionChanges ? (
           <PanelFrame>
             <ClubContributionChangesPanel
               isLoading={workbench.isContributionChangesLoading}

@@ -1,11 +1,11 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 
 import { useNotice } from '@/app/feedback/useNotice';
 
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
 import type { ClubTournamentLineupWorkbench } from '../objects/ClubTournamentLineupWorkbench';
-import type { EloSort } from '../objects/EloSort';
-import type { MemberStatusFilter } from '../objects/MemberStatusFilter';
+import { EloSort } from '@/pages/PublicClubDetailPage/components/ClubDetailDialogs/components/ClubTournamentLineupDialog/objects/EloSort';
+import { MemberStatusFilter } from '@/pages/PublicClubDetailPage/components/ClubDetailDialogs/components/ClubTournamentLineupDialog/objects/MemberStatusFilter';
 import { getVisibleLineupMembers } from '../functions/getLineupMembers';
 import { useLineupMembersData } from './useLineupMembersData';
 import { useLineupSubmission } from './useLineupSubmission';
@@ -25,8 +25,10 @@ export function useClubTournamentLineupWorkbench({
   open,
 }: UseClubTournamentLineupWorkbenchParams) {
   const { notifySuccess, notifyWarning } = useNotice();
-  const [statusFilter, setStatusFilter] = useState<MemberStatusFilter>('all');
-  const [eloSort, setEloSort] = useState<EloSort>('desc');
+  const [statusFilter, setStatusFilter] = useState<MemberStatusFilter>(
+    MemberStatusFilter.All,
+  );
+  const [eloSort, setEloSort] = useState<EloSort>(EloSort.Desc);
   const { members, isLoadingMembers } = useLineupMembersData({
     clubId,
     open,

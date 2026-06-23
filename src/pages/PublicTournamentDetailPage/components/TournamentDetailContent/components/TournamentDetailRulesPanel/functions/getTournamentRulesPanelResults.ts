@@ -1,18 +1,13 @@
-import { AdvancementRuleTypes, StageStatuses, TournamentFormats } from '@/objects';
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
+﻿import { AdvancementRuleTypes, StageStatus, TournamentFormat } from '@/objects';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 import { getCurrentRuleStage } from '../../../../../functions/getTournamentDetailRules';
 
 import { getKnockoutResultRows } from './getTournamentRulesPanelKnockout';
-import type {
-  KnockoutBracketSnapshotLike,
-  PlayerListRow,
-  QualifiedStandingEntry,
-  StageSnapshotWithQualifiedPlayers,
-} from '../objects/TournamentRulesPanel.types';
-import {
-  isRecord,
-  normalizePlayerIds,
-} from './normalizeTournamentRulesPanelValues';
+import type { KnockoutBracketSnapshotLike } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/KnockoutBracketSnapshotLike';
+import type { PlayerListRow } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/PlayerListRow';
+import type { QualifiedStandingEntry } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/QualifiedStandingEntry';
+import type { StageSnapshotWithQualifiedPlayers } from '@/pages/PublicTournamentDetailPage/components/TournamentDetailContent/components/TournamentDetailRulesPanel/objects/StageSnapshotWithQualifiedPlayers';
+import { isRecord, normalizePlayerIds } from './normalizeTournamentRulesPanelValues';
 
 export type { PlayerListRow };
 
@@ -24,7 +19,7 @@ export function getQualifiedPlayerIds(
   }
 
   if (
-    stage.format === TournamentFormats.Knockout ||
+    stage.format === TournamentFormat.Knockout ||
     stage.advancementRule?.ruleType === AdvancementRuleTypes.KnockoutElimination
   ) {
     const knockoutResultPlayerIds = getKnockoutResultRows(
@@ -116,8 +111,8 @@ export function isCompletedStage(
   stage: ReturnType<typeof getCurrentRuleStage>,
 ) {
   return (
-    stage?.status === StageStatuses.Completed ||
-    stage?.status === StageStatuses.Archived
+    stage?.status === StageStatus.Completed ||
+    stage?.status === StageStatus.Archived
   );
 }
 

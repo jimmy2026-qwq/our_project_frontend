@@ -1,19 +1,12 @@
-import type { CSSProperties } from 'react';
+﻿import type { CSSProperties } from 'react';
 
 import { getPaifuTileCode } from '@/objects';
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+import { SeatWind } from '@/objects/tournament';
 
-import type { RiverDiscard } from '../../../../objects/ReplaySnapshot.types';
+import type { RiverDiscard } from '@/pages/TablePaifuPage/objects/RiverDiscard';
 import { TileImage } from '../TileViews';
-import {
-  riverPositionClasses,
-  riverRowSize,
-  riverTileFaceClasses,
-  riverTileImageHeight,
-  riverTileImageWidth,
-  riverTileTopCrop,
-  riverTileVisibleHeight,
-} from '../../objects/paifuTableLayout';
+import { riverPositionClasses, riverTileFaceClasses } from '../../objects/layout/riverPositionClasses';
+import { riverRowSize, riverTileImageHeight, riverTileImageWidth, riverTileTopCrop, riverTileVisibleHeight } from '../../objects/layout/riverTileLayout';
 
 /** 牌谱玩家区域中的河牌展示。 */
 export function PlayerRiver({
@@ -102,7 +95,7 @@ function getRiverTileStyle(
   const tileWidth = getRiverTileWidth(discards[index]);
   const rowCount = Math.max(2, Math.ceil(discards.length / 6));
   const maxRowWidth = getRiverMaxRowWidth(discards, rowCount);
-  const reverseFlow = seat !== SeatWinds.East;
+  const reverseFlow = seat !== SeatWind.East;
   const left = reverseFlow
     ? maxRowWidth - previousWidth - tileWidth
     : previousWidth;
@@ -120,7 +113,7 @@ function getRiverTileStyle(
 }
 
 function getRiverAnchorRowCount(seat: SeatWind, rowCount: number) {
-  return seat === SeatWinds.East ? rowCount : 2;
+  return seat === SeatWind.East ? rowCount : 2;
 }
 
 function getRiverTileWidth(discard: RiverDiscard) {

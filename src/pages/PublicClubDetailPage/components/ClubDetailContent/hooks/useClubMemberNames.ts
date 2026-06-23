@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { ListClubMembersAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toPlayerProfile } from '../../../functions/ClubDetailPlayer.mappers';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import { toPlayerProfile } from '../../../functions/toClubDetailPlayerData';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 export function useClubMemberNames(profile: ClubPublicProfile | null) {
   const [clubMemberNames, setClubMemberNames] = useState<string[]>([]);

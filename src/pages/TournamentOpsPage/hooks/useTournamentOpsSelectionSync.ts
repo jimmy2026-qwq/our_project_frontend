@@ -1,13 +1,11 @@
-import { useEffect, type Dispatch, type SetStateAction } from 'react';
+﻿import { useEffect, type Dispatch, type SetStateAction } from 'react';
 
-import { TableStatuses } from '@/objects';
+import { TableStatus } from '@/objects';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 
-import {
-  type LoadState,
-  type TournamentDirectoryState,
-  type TournamentOpsState,
-} from '../objects/TournamentOps.types';
+import type { LoadState } from '../objects/LoadState';
+import type { TournamentDirectoryState } from '../objects/TournamentDirectoryState';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
 import { normalizeTournamentOpsState } from '../functions/getTournamentOpsState';
 
 interface TournamentOpsSelectionSyncParams {
@@ -55,7 +53,7 @@ export function useTournamentOpsSelectionSync({
 
     const preferredTable =
       tables.envelope.items.find(
-        (table) => table.status === TableStatuses.WaitingPreparation,
+        (table) => table.status === TableStatus.WaitingPreparation,
       ) ??
       tables.envelope.items[0] ??
       null;

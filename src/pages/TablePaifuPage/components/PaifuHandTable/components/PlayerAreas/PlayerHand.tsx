@@ -1,18 +1,13 @@
-import { getPaifuTileCode, type PaifuTile } from '@/objects';
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+﻿import { getPaifuTileCode, type PaifuTile } from '@/objects';
+import { SeatWind } from '@/objects/tournament';
 
 import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
-import {
-  getPlayerDisplayName,
-  getRoundPlayerId,
-} from '../../../../functions/getReplayPlayers';
+import { getPlayerDisplayName, getRoundPlayerId } from '../../../../functions/getReplayPlayers';
 import { replaySeatLabels } from '../../../../objects/replaySeatInfo';
 import { HandBackTile, HandTile } from '../TileViews';
 import { getDisplayTiles } from '../../functions/getPaifuTableLayout';
-import {
-  handPositionClasses,
-  labelPositionClasses,
-} from '../../objects/paifuTableLayout';
+import { handPositionClasses } from '../../objects/layout/handPositionClasses';
+import { labelPositionClasses } from '../../objects/layout/labelPositionClasses';
 
 /** 牌谱玩家区域中的手牌、摸牌和玩家名称信息。 */
 export function PlayerHand({
@@ -110,7 +105,7 @@ function getDisplayHandTiles({
     tile,
   }));
 
-  if (seat === SeatWinds.South || seat === SeatWinds.North) {
+  if (seat === SeatWind.South || seat === SeatWind.North) {
     return [drawnDisplayTile, ...baseDisplayTiles];
   }
 

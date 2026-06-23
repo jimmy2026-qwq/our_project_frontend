@@ -1,9 +1,9 @@
-import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
+﻿import type { ClubDetailWorkbenchState } from '@/pages/PublicClubDetailPage/objects/state/workbench/ClubDetailWorkbenchState';
 
 import { ClubApplicationDialog } from './components/ClubApplicationDialog';
 import { ClubContributionDialog } from './components/ClubContributionDialog';
 import { ClubContributionTitlesDialog } from './components/ClubContributionTitlesDialog';
-import { ClubRelationDialog } from './components/ClubRelationDialog';
+import { ClubRelationDialog, ClubRelationDialogModes } from './components/ClubRelationDialog';
 import { ClubTitleDialog } from './components/ClubTitleDialog';
 import { ClubTournamentLineupDialog } from './components/ClubTournamentLineupDialog';
 import type { useClubDetailWorkbench } from '../ClubDetailContent/hooks/useClubDetailWorkbench';
@@ -107,7 +107,11 @@ export function ClubDetailDialogs({
       {workbench.canManageRelations || workbench.canRequestRelationChange ? (
         <ClubRelationDialog
           clubId={workbench.profile.id}
-          mode={workbench.canManageRelations ? 'manage' : 'request'}
+          mode={
+            workbench.canManageRelations
+              ? ClubRelationDialogModes.Manage
+              : ClubRelationDialogModes.Request
+          }
           open={workbench.isRelationDialogOpen}
           isSubmitting={workbench.isRelationSubmitting}
           onOpenChange={controls.setIsRelationDialogOpen}

@@ -1,22 +1,20 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { TournamentWhitelistListAPI } from '@/api/tournament';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import { sendAPI } from '@/system/api';
 
-import type {
-  DetailState,
-  TournamentPublicProfile,
-} from '../../../../../objects/PublicTournamentDetailPage.types';
-import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
+import { toPlayerProfile } from '../../../../../functions/toTournamentDetailPlayerData';
 
 export function useTournamentParticipantData({
   localProfile,
   state,
 }: {
   localProfile: TournamentPublicProfile | null;
-  state: DetailState<TournamentPublicProfile>;
+  state: TournamentDetailState;
 }) {
   const [participantPlayers, setParticipantPlayers] = useState<PlayerProfile[]>(
     [],

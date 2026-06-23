@@ -1,22 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
-import {
-  ActionButton,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-} from '@/components/ui';
+import { ActionButton, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle } from '@/components/ui';
 
-import type {
-  ClubContributionTitleDraft,
-  ClubContributionTitleField,
-} from '../../../objects/ClubDetail.types';
+import type { ClubContributionTitleDraft } from '@/pages/PublicClubDetailPage/objects/contribution/ClubContributionTitleDraft';
+import type { ClubContributionTitleField } from '@/pages/PublicClubDetailPage/objects/contribution/ClubContributionTitleField';
 import { ClubContributionTitleFieldCard } from './ClubContributionTitleFieldCard';
 import { ClubContributionTitlePresetSelect } from './ClubContributionTitlePresetSelect';
 

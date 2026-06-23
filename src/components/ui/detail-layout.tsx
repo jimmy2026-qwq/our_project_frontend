@@ -4,14 +4,13 @@ import { cx } from '@/components/ui/cx';
 import { Card, CardContent, CardHeader, CardTitle } from './card';
 import { SourceBadge } from './feedback';
 
-/** 详情页顶部的大型信息区，承载标题、摘要、动作和数据来源提示。 */
+/** 详情页顶部的大型信息区，承载标题、摘要、动作和警告提示。 */
 export function DetailHero({
   eyebrow,
   title,
   tagline,
   summary,
   actions,
-  source,
   warning,
 }: {
   eyebrow: string;
@@ -19,7 +18,6 @@ export function DetailHero({
   tagline?: ReactNode;
   summary: ReactNode;
   actions?: ReactNode;
-  source?: 'api' | 'mock';
   warning?: string;
 }) {
   return (
@@ -49,7 +47,7 @@ export function DetailHero({
           {summary}
         </p>
       </div>
-      <SourceBadge source={source} warning={warning} />
+      <SourceBadge warning={warning} />
     </section>
   );
 }

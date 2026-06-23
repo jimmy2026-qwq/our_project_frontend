@@ -5,10 +5,7 @@ import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail'
 
 import { getDemoTablePaifuRounds } from './getDemoTablePaifuRounds';
 import { demoFinalStandings } from './TablePaifuDemoFinalStandings';
-import {
-  demoPlayerIdBySeat,
-  demoSeats,
-} from './TablePaifuDemoSeats';
+import { demoPlayerIdBySeat, demoSeats } from './TablePaifuDemoSeats';
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 
 // Demo boundary: see README.md. This directory is temporary frontend-only data.

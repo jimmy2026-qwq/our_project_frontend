@@ -1,4 +1,4 @@
-import { type ChangeEvent, useEffect, useState } from 'react';
+﻿import { useEffect, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { CreateClubAPI } from '@/api/club';
@@ -6,7 +6,7 @@ import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
 import { sendAPI } from '@/system/api';
 
-import { toPublicClubSummary } from '../../../../functions/PublicHall.mappers';
+import { toPublicClubSummary } from '../../../../functions/toPublicHallData';
 
 export function useCreateClubDialogAction({
   open,

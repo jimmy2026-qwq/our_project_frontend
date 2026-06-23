@@ -1,0 +1,1 @@
+export { MahjongCoreArchiveTableAPI } from './MahjongCoreArchiveTableAPI';

@@ -1,4 +1,4 @@
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+﻿import { SeatWind } from '@/objects/tournament';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
@@ -12,7 +12,7 @@ export function getInitialPerspectiveSeat(
     (seat) => seat.playerId === viewerPlayerId,
   )?.seat;
 
-  return viewerSeat ?? firstOccupiedSeat(paifu) ?? SeatWinds.East;
+  return viewerSeat ?? firstOccupiedSeat(paifu) ?? SeatWind.East;
 }
 
 export function getNextPerspectiveSeat(

@@ -1,6 +1,6 @@
 import type { NotificationId } from './NotificationId';
 import type { NotificationType } from './NotificationType';
-import type { PlayerId } from '../player/playerprofile';
+import type { PlayerId } from '../player';
 
 export interface Notification {
   id: NotificationId;

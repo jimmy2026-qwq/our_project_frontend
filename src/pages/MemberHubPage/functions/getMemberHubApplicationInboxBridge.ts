@@ -1,4 +1,4 @@
-import type { MemberHubApplicationInboxItem } from '../objects/MemberHub.types';
+﻿import type { MemberHubApplicationInboxItem } from '../objects/application/MemberHubApplicationInboxItem';
 
 const STORAGE_KEY = 'riichi-nexus.member-hub-application-inbox';
 
@@ -47,8 +47,7 @@ function normalizeMemberHubApplicationInboxItem(
     typeof item.applicantName !== 'string' ||
     typeof item.message !== 'string' ||
     typeof item.status !== 'string' ||
-    typeof item.submittedAt !== 'string' ||
-    typeof item.source !== 'string'
+    typeof item.submittedAt !== 'string'
   ) {
     return null;
   }
@@ -62,7 +61,6 @@ function normalizeMemberHubApplicationInboxItem(
     message: item.message,
     status: item.status,
     submittedAt: item.submittedAt,
-    source: item.source,
   };
 }
 

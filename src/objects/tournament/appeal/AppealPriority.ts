@@ -1,8 +1,7 @@
-export const AppealPriorities = {
-  Low: 'Low',
-  Normal: 'Normal',
-  High: 'High',
-  Critical: 'Critical',
-} as const;
+﻿export enum AppealPriority {
+  Low = 'Low',
+  Normal = 'Normal',
+  High = 'High',
+  Critical = 'Critical',
 
-export type AppealPriority = (typeof AppealPriorities)[keyof typeof AppealPriorities];
+}

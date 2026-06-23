@@ -1,40 +1,20 @@
-import { useCallback, useEffect, useState } from 'react';
+﻿import { useCallback, useEffect, useState } from 'react';
 
 import type { SeatWind } from '@/objects/tournament';
 
 import type { PaifuAction, PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
-import {
-  getResultWinForActor,
-  getWinYaku,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getResultWinForActor, getWinYaku } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { getFirstYakumanYaku } from '@/components/mahjong-result/functions/getFirstYakumanYaku';
 
 import type { MahjongYakuKind } from '@/objects';
 
-import {
-  isAbortiveDrawAction,
-  isRiichiAction,
-  isWinningAction,
-  getOperationText,
-} from '../../../functions/getReplayOperations';
+import { isAbortiveDrawAction, isRiichiAction, isWinningAction, getOperationText } from '../../../functions/getReplayOperations';
 import { getPlayerSeat } from '../../../functions/getReplayPlayers';
-import type {
-  ActiveOperation,
-  YakumanTileBurstView,
-  WinningCallFlashView,
-} from '../objects/PaifuOverlayViews';
-import {
-  getOperationFlashDurationMs,
-  getWinningCallLabel,
-  getYakumanBurstTilesForPaifuAction,
-  riichiCallVisibleMs,
-  winningCallAnimationMs,
-  winningCallRevealDelayMs,
-  winningCallVisibleMs,
-  yakumanTileBurstSettleDelayMs,
-  yakumanTileBurstVisibleMs,
-} from '../functions/getPaifuOperationFlash';
+import type { ActiveOperation } from '../objects/ActiveOperation';
+import type { YakumanTileBurstView } from '../objects/YakumanTileBurstView';
+import type { WinningCallFlashView } from '../objects/WinningCallFlashView';
+import { getOperationFlashDurationMs, getWinningCallLabel, getYakumanBurstTilesForPaifuAction, riichiCallVisibleMs, winningCallAnimationMs, winningCallRevealDelayMs, winningCallVisibleMs, yakumanTileBurstSettleDelayMs, yakumanTileBurstVisibleMs } from '../functions/getPaifuOperationFlash';
 
 export function usePaifuOperationFlash({
   isExhaustiveDrawResult,

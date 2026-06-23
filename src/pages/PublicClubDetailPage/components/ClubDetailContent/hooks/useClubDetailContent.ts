@@ -1,26 +1,22 @@
-import { useMemo, useState } from 'react';
+﻿import { useMemo, useState } from 'react';
 
-import type { ClubDetailWorkbenchState } from '../../../objects/ClubDetail.types';
-
-export type ClubDetailTab =
-  | 'home'
-  | 'tournaments'
-  | 'applications'
-  | 'members'
-  | 'contributionChanges';
+import type { ClubDetailWorkbenchState } from '@/pages/PublicClubDetailPage/objects/state/workbench/ClubDetailWorkbenchState';
+import { ClubDetailTab } from '../objects/ClubDetailTab';
 
 export function useClubDetailContent(workbench: ClubDetailWorkbenchState) {
-  const [activeTab, setActiveTab] = useState<ClubDetailTab>('home');
+  const [activeTab, setActiveTab] = useState<ClubDetailTab>(
+    ClubDetailTab.Home,
+  );
   const tabItems = useMemo<Array<{ id: ClubDetailTab; label: string }>>(
     () => [
-      { id: 'home', label: '俱乐部主页' },
-      { id: 'tournaments', label: '相关赛事' },
+      { id: ClubDetailTab.Home, label: '俱乐部主页' },
+      { id: ClubDetailTab.Tournaments, label: '相关赛事' },
       ...(workbench.canReviewApplications
-        ? [{ id: 'applications' as const, label: '申请处理' }]
+        ? [{ id: ClubDetailTab.Applications, label: '申请处理' }]
         : []),
-      { id: 'members', label: '成员列表' },
+      { id: ClubDetailTab.Members, label: '成员列表' },
       ...(workbench.canViewContributionChanges
-        ? [{ id: 'contributionChanges' as const, label: '贡献变化' }]
+        ? [{ id: ClubDetailTab.ContributionChanges, label: '贡献变化' }]
         : []),
     ],
     [workbench.canReviewApplications, workbench.canViewContributionChanges],

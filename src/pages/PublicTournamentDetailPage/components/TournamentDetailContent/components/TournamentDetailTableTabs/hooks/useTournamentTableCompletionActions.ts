@@ -1,16 +1,12 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import {
-  TournamentTableFinalizeArchiveAPI,
-  TournamentTableGetAPI,
-  TournamentTableUploadPaifuAPI,
-} from '@/api/tournament';
+import { TournamentTableFinalizeArchiveAPI, TournamentTableGetAPI, TournamentTableUploadPaifuAPI } from '@/api/tournament';
 import { createDemoTablePaifuForTable } from '@/pages/TablePaifuPage/demo';
-import { toBackendPaifu } from '@/pages/TablePaifuPage/functions/TablePaifuData.mappers';
+import { toBackendPaifu } from '@/pages/TablePaifuPage/functions/toTablePaifuData';
 import { sendAPI } from '@/system/api';
 
-import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
-import { toTableDetail } from '../../../../../functions/TournamentDetailTable.mappers';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import { toTableDetail } from '../../../../../functions/toTournamentDetailTableData';
 
 export function useTournamentTableCompletionActions({
   operatorId,

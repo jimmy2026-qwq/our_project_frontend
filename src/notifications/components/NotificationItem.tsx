@@ -1,14 +1,12 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { Badge } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import type { Notification } from '@/objects/notification';
+import { NotificationTypes, type Notification } from '@/objects/notification';
+import { TournamentDetailTab } from '@/pages/PublicTournamentDetailPage/objects/navigation/TournamentDetailTab';
 
 import { formatNotificationTime } from '../functions/formatNotificationTime';
-import {
-  getNotificationBadgeLabel,
-  getNotificationBadgeVariant,
-} from '../functions/getNotificationBadge';
+import { getNotificationBadgeLabel, getNotificationBadgeVariant } from '../functions/getNotificationBadge';
 import { notificationCenterClassNames } from '../styles';
 
 interface NotificationItemProps {
@@ -80,13 +78,13 @@ function notificationActionUrl(notification: Notification) {
   const actionUrl = notification.actionUrl;
 
   if (
-    notification.notificationType !== 'TournamentAppealFiled' ||
+    notification.notificationType !== NotificationTypes.TournamentAppealFiled ||
     !actionUrl?.startsWith('/public/tournaments/')
   ) {
     return actionUrl;
   }
 
   const url = new URL(actionUrl, window.location.origin);
-  url.searchParams.set('tab', 'appeals');
+  url.searchParams.set('tab', TournamentDetailTab.Appeals);
   return `${url.pathname}${url.search}${url.hash}`;
 }

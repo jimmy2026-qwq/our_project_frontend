@@ -1,3 +1,5 @@
+export * from './apiTypes';
+export * from './MahjongCoreShowcaseModeView';
 export * from './MahjongDiscard';
 export * from './MahjongGameLength';
 export * from './MahjongMeld';
@@ -10,4 +12,3 @@ export * from './MahjongSeatView';
 export * from './MahjongTableStatus';
 export * from './MahjongTableSticks';
 export * from './MahjongTableView';
-export * from './apiTypes';

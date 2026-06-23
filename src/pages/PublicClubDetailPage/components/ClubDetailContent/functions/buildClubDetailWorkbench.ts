@@ -1,7 +1,7 @@
-import type { AuthContextSession } from '@/app/auth/AuthContextSession';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+﻿import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
-import type { ClubDetailWorkbenchState } from '../../../objects/ClubDetail.types';
+import type { ClubDetailWorkbenchState } from '@/pages/PublicClubDetailPage/objects/state/workbench/ClubDetailWorkbenchState';
 import type { ClubDetailData } from '../hooks/useClubDetailData';
 
 interface BuildClubDetailWorkbenchParams {

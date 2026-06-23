@@ -1,28 +1,11 @@
 import { getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
-import {
-  HandOutcome,
-  getPaifuTileCode,
-  type PaifuAction,
-  type PaifuRound as PaifuRoundSummary,
-} from '@/objects';
+import { HandOutcome, getPaifuTileCode, type PaifuAction, type PaifuRound as PaifuRoundSummary } from '@/objects';
 import { useEffect, useState } from 'react';
-import {
-  advanceResultSequenceStep,
-  getResultSequenceStep,
-  getWinYaku,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import {
-  getDoraIndicators,
-  getVisibleDoraIndicatorCount,
-  removeFirstTile,
-} from '../../../../functions/getReplayCore';
+import { advanceResultSequenceStep, getResultSequenceStep, getWinYaku } from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getDoraIndicators, getVisibleDoraIndicatorCount, removeFirstTile } from '../../../../functions/getReplayCore';
 import { getReplaySnapshot } from '../../../../functions/getReplaySnapshot';
 import { ResultTile } from '../TileViews';
-import {
-  formatWinPointText,
-  getPlayerName,
-  getWinLabel,
-} from '../../functions/getPaifuWinningResultText';
+import { formatWinPointText, getPlayerName, getWinLabel } from '../../functions/getPaifuWinningResultText';
 import { ScoreSettlementPanel } from './PaifuScoreSettlementPanel';
 import { PaifuWinningYakuList } from './PaifuWinningYakuList';
 import { WinningTile } from './WinningResultIndicators';

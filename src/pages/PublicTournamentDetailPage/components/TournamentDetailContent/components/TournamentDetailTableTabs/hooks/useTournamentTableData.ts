@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { TournamentRecordListAPI, TournamentStageTablesAPI } from '@/api/tournament';
@@ -7,23 +7,18 @@ import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
 import { getTournamentFormatLabel } from '../../../../../functions/getTournamentDetailRules';
-import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
-import type {
-  DetailState,
-  TournamentPublicProfile,
-} from '../../../../../objects/PublicTournamentDetailPage.types';
-import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
-import {
-  toMatchRecordSummary,
-  toTournamentTableSummary,
-} from '../../../../../functions/TournamentDetailTable.mappers';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
+import { toPlayerProfile } from '../../../../../functions/toTournamentDetailPlayerData';
+import { toMatchRecordSummary, toTournamentTableSummary } from '../../../../../functions/toTournamentDetailTableData';
 
 export function useTournamentTableData({
   localProfile,
   state,
 }: {
   localProfile: TournamentPublicProfile | null;
-  state: DetailState<TournamentPublicProfile>;
+  state: TournamentDetailState;
 }) {
   const [tables, setTables] = useState<TournamentDetailTableItem[]>([]);
   const [recordByTableId, setRecordByTableId] = useState<

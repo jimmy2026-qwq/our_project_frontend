@@ -1,23 +1,14 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import {
-  EmptyState,
-  FilterActionRow,
-  PortalSection,
-  SelectField,
-} from '@/components/ui';
+import { EmptyState, FilterActionRow, PortalSection, SelectField } from '@/components/ui';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
-import type {
-  LoadState,
-  PlayerLeaderboardEntry,
-  PublicHallState,
-} from '../../objects/PublicHallPage.types';
-import { PublicHallLeaderboardDisplayStatuses } from '../../objects/PublicHallLeaderboardDisplayStatus';
 
-import {
-  hallSectionClassNames,
-  publicHallSectionSlots,
-} from '../PublicHallSection.styles';
+import type { LoadState } from '../../objects/state/LoadState';
+import { PlayerLeaderboardEntry } from '../../objects/leaderboard/PlayerLeaderboardEntry';
+import { PublicHallState } from '../../objects/state/PublicHallState';
+import { PublicHallLeaderboardDisplayStatus } from '@/pages/PublicHallPage/objects/PublicHallLeaderboardDisplayStatus';
+
+import { hallSectionClassNames, publicHallSectionSlots } from '../PublicHallSection.styles';
 import { LeaderboardRow } from './LeaderboardRow';
 import { ManagePlayerDialog } from './ManagePlayerDialog';
 
@@ -54,7 +45,6 @@ export function PublicLeaderboardSection({
           </div>
         }
         description="查看当前公共大厅中的选手 Elo 排名、所属俱乐部和当前状态。"
-        source={payload.source}
         warning={payload.warning}
       >
         <FilterActionRow
@@ -89,13 +79,13 @@ export function PublicLeaderboardSection({
             }
           >
             <option value="">全部状态</option>
-            <option value={PublicHallLeaderboardDisplayStatuses.Active}>
+            <option value={PublicHallLeaderboardDisplayStatus.Active}>
               活跃
             </option>
-            <option value={PublicHallLeaderboardDisplayStatuses.Inactive}>
+            <option value={PublicHallLeaderboardDisplayStatus.Inactive}>
               停用
             </option>
-            <option value={PublicHallLeaderboardDisplayStatuses.Banned}>
+            <option value={PublicHallLeaderboardDisplayStatus.Banned}>
               封禁
             </option>
           </SelectField>

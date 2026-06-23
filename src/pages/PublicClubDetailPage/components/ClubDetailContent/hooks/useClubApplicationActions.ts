@@ -1,11 +1,11 @@
 ﻿import { ReviewClubApplicationAPI } from '@/api/club';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
-import { ClubApplicationStatuses } from '@/objects';
+import { ClubApplicationReviewDecisions, ClubApplicationStatuses, type ClubApplicationReviewDecision } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import { upsertTrackedClubApplication } from '../../../functions/getClubApplicationTracker';
-import { toClubApplicationView } from '../../../functions/ClubDetailApplication.mappers';
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import { toClubApplicationView } from '../../../functions/toClubDetailApplicationData';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 
 export function useClubApplicationActions({
   confirmDanger,
@@ -21,7 +21,7 @@ export function useClubApplicationActions({
 
   async function handleReview(
     applicationId: string,
-    decision: 'approve' | 'reject',
+    decision: ClubApplicationReviewDecision,
   ) {
     if (
       !workbench?.profile.id ||
@@ -31,13 +31,14 @@ export function useClubApplicationActions({
       return;
     }
 
+    const isApprove = decision === ClubApplicationReviewDecisions.Approve;
     const confirmed = await confirmDanger({
-      title: decision === 'approve' ? '确认通过申请？' : '确认拒绝申请？',
+      title: isApprove ? '确认通过申请？' : '确认拒绝申请？',
       message:
-        decision === 'approve'
+        isApprove
           ? '这会立刻通过当前待处理申请，并把它从申请列表里移除。'
           : '这会立刻拒绝当前待处理申请，并把它从申请列表里移除。',
-      confirmText: decision === 'approve' ? '通过' : '拒绝',
+      confirmText: isApprove ? '通过' : '拒绝',
     });
 
     if (!confirmed) {
@@ -63,17 +64,16 @@ export function useClubApplicationActions({
             message: reviewedApplication.message,
             status: reviewedApplication.status,
             submittedAt: reviewedApplication.submittedAt,
-            source: 'api',
           });
 
-          return { source: 'api' as const };
+          return {};
         });
 
       notifyMutationResult(result, {
-        successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
+        successTitle: isApprove ? '申请已通过' : '申请已拒绝',
         successMessage: '申请列表已经更新。',
         fallbackTitle:
-          decision === 'approve'
+          isApprove
             ? '通过申请需要人工确认'
             : '拒绝申请需要人工确认',
         fallbackMessage: '后端处理这次申请时没有完全成功。',
@@ -83,7 +83,7 @@ export function useClubApplicationActions({
         current.filter((item) => item.applicationId !== applicationId),
       );
 
-      if (decision === 'reject') {
+      if (decision === ClubApplicationReviewDecisions.Reject) {
         setCurrentApplicationStatus(ClubApplicationStatuses.Rejected);
       }
     } catch (error) {
@@ -93,10 +93,10 @@ export function useClubApplicationActions({
             error instanceof Error ? error.message : '审核申请时发生未知错误。',
         },
         {
-          successTitle: decision === 'approve' ? '申请已通过' : '申请已拒绝',
+          successTitle: isApprove ? '申请已通过' : '申请已拒绝',
           successMessage: '申请列表已经更新。',
           fallbackTitle:
-            decision === 'approve' ? '无法通过申请' : '无法拒绝申请',
+            isApprove ? '无法通过申请' : '无法拒绝申请',
           fallbackMessage: '请检查当前账号权限和申请状态后再试。',
         },
       );

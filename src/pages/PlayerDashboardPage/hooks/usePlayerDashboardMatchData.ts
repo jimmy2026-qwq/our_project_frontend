@@ -1,10 +1,6 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
-import {
-  GetPublicTournamentAPI,
-  TournamentRecordListAPI,
-  TournamentTableListAPI,
-} from '@/api/tournament';
+import { GetPublicTournamentAPI, TournamentRecordListAPI, TournamentTableListAPI } from '@/api/tournament';
 import type {
   ListEnvelope,
   MatchRecordListQuery,
@@ -13,18 +9,15 @@ import type {
   TournamentMatchRecordView,
   TournamentTableView,
 } from '@/objects';
-import { TableStatuses } from '@/objects';
+import { TableStatus } from '@/objects';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { sendAPI } from '@/system/api';
 
 import { getActiveTableRank } from '../functions/getActiveTableRank';
 import { getStageDisplayName } from '../functions/getStageDisplayName';
-import {
-  toMatchRecordSummary,
-  toTournamentTableSummary,
-} from '../functions/PlayerDashboard.mappers';
-import type { RecentTableItem } from '../objects/PlayerDashboard.types';
+import { toMatchRecordSummary, toTournamentTableSummary } from '../functions/toPlayerDashboardData';
+import type { RecentTableItem } from '../objects/RecentTableItem';
 
 function getTables(filters: TableListQuery) {
   return sendAPI<ListEnvelope<TournamentTableView>>(
@@ -113,7 +106,7 @@ export function usePlayerDashboardMatchData() {
       getRecords({ playerId: operatorId, limit: 8 }),
     ]);
     const rawRecentTables = tablesEnvelope.items
-      .filter((table) => table.status !== TableStatuses.Archived)
+      .filter((table) => table.status !== TableStatus.Archived)
       .sort(
         (left, right) =>
           getActiveTableRank(left.status) - getActiveTableRank(right.status),

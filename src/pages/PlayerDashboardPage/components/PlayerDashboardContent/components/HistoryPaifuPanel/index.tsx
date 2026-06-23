@@ -2,9 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { GetPlayerAPI } from '@/api/player';
-import {
-  EmptyState,
-} from '@/components/ui';
+import { EmptyState } from '@/components/ui';
 import { PaifuSummaryDialog } from '@/components/mahjong-result/PaifuSummaryDialog';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import { sendAPI } from '@/system/api';

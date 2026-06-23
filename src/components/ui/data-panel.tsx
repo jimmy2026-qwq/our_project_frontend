@@ -5,14 +5,11 @@ import { EmptyState, SourceBadge } from './feedback';
 import { PanelHead } from './layout';
 import { Table, TableBody, TableHead, TableHeader, TableRow } from './table';
 
-type DataSource = 'api' | 'mock';
-
-/** 带标题、说明和数据来源标记的通用数据面板。 */
+/** 带标题、说明和警告提示的通用数据面板。 */
 export function DataPanel({
   title,
   description,
   children,
-  source,
   warning,
   badgeLabel,
   className,
@@ -20,7 +17,6 @@ export function DataPanel({
   title: string;
   description?: ReactNode;
   children: ReactNode;
-  source?: DataSource;
   warning?: string;
   badgeLabel?: string;
   className?: string;
@@ -31,9 +27,7 @@ export function DataPanel({
         <PanelHead
           title={title}
           description={description}
-          aside={
-            <SourceBadge source={source} warning={warning} label={badgeLabel} />
-          }
+          aside={<SourceBadge warning={warning ?? badgeLabel} />}
         />
       </CardHeader>
       <CardContent className="pt-4">{children}</CardContent>
@@ -45,7 +39,6 @@ export function DataPanel({
 export function DataTablePanel({
   title,
   description,
-  source,
   warning,
   headers,
   rows,
@@ -54,7 +47,6 @@ export function DataTablePanel({
 }: {
   title: string;
   description?: ReactNode;
-  source?: DataSource;
   warning?: string;
   headers: ReactNode[];
   rows: ReactNode[];
@@ -65,7 +57,6 @@ export function DataTablePanel({
     <DataPanel
       title={title}
       description={description}
-      source={source}
       warning={warning}
       className={className}
     >

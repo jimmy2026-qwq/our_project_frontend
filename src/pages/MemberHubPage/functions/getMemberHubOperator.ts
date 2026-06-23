@@ -1,12 +1,9 @@
+﻿import { Role } from '@/objects';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
-import { Roles } from '@/objects';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
-import {
-  EMPTY_MEMBER_HUB_OPERATOR,
-  type MemberHubOperator,
-  type MemberHubOperatorDirectory,
-} from '../objects/MemberHub.types';
+import { EMPTY_MEMBER_HUB_OPERATOR, type MemberHubOperator } from '../objects/operator/MemberHubOperator';
+import type { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
 
 export function getActiveOperator(
   directory: MemberHubOperatorDirectory,
@@ -46,7 +43,7 @@ export function getFallbackDirectory(
       ? {
           id: sessionOperatorId,
           label: `${sessionDisplayName} / 注册选手`,
-          role: Roles.RegisteredPlayer,
+          role: Role.RegisteredPlayer,
           playerId: sessionOperatorId,
           managedClubIds: [],
         }
@@ -55,6 +52,5 @@ export function getFallbackDirectory(
   return {
     items: currentOperator ? [currentOperator] : [],
     clubsById: {},
-    source: 'api',
   };
 }

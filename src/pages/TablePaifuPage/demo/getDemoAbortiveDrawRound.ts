@@ -1,22 +1,12 @@
-import {
-  HandOutcome,
-  PaifuActionType,
-  RoundSettlementNote,
-  SeatWinds,
-  type PaifuRound as PaifuRoundSummary,
-} from '@/objects';
+﻿import { HandOutcome, PaifuActionType, RoundSettlementNote, SeatWind, type PaifuRound as PaifuRoundSummary } from '@/objects';
 import { createDemoPaifuRound } from './createDemoPaifuRound';
-import {
-  eastNineTerminals,
-  fullDoraRow,
-  fullUraDoraRow,
-} from './TablePaifuDemoHands';
+import { eastNineTerminals, fullDoraRow, fullUraDoraRow } from './TablePaifuDemoHands';
 import { roundOneInitialHands } from './TablePaifuDemoHandSets';
 
 export function getDemoAbortiveDrawRound(): PaifuRoundSummary {
   return createDemoPaifuRound({
     descriptor: {
-      roundWind: SeatWinds.East,
+      roundWind: SeatWind.East,
       handNumber: 1,
       honba: 0,
     },

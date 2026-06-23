@@ -1,12 +1,3 @@
-export { BootstrapSuperAdminAuthAPI } from './BootstrapSuperAdminAuthAPI';
-export { CreateGuestSessionAuthAPI } from './CreateGuestSessionAuthAPI';
-export { AuthCheckPermissionAPI } from './AuthCheckPermissionAPI';
-export { CurrentSessionAuthAPI } from './CurrentSessionAuthAPI';
-export { GetGuestSessionAuthAPI } from './GetGuestSessionAuthAPI';
-export { ListGuestSessionsAuthAPI } from './ListGuestSessionsAuthAPI';
-export { LoginAuthAPI } from './LoginAuthAPI';
-export { LogoutAuthAPI } from './LogoutAuthAPI';
-export { RegisterAuthAPI } from './RegisterAuthAPI';
-export { RestoreAuthSessionAPI } from './RestoreAuthSessionAPI';
-export { RevokeGuestSessionAuthAPI } from './RevokeGuestSessionAuthAPI';
-export { UpgradeGuestSessionAuthAPI } from './UpgradeGuestSessionAuthAPI';
+export * from './account';
+export * from './authorization';
+export * from './session';

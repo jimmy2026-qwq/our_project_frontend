@@ -1,12 +1,9 @@
-import { EmptyState, SectionIntro } from '@/components/ui';
-import { Roles } from '@/objects';
+﻿import { EmptyState, SectionIntro } from '@/components/ui';
+import { Role } from '@/objects';
 
 import { ApplicationInboxPanel } from './components/MemberHubApplicationInboxPanel';
 import { MemberHubContextPanel } from './components/MemberHubContextPanel';
-import {
-  DashboardPanel,
-  DashboardPlaceholder,
-} from './components/MemberHubDashboardPanels';
+import { DashboardPanel, DashboardPlaceholder } from './components/MemberHubDashboardPanels';
 import { MemberHubLoading } from './components/MemberHubLoading';
 import { MemberHubPageShell } from './components/MemberHubPageShell';
 import { useMemberHubPage } from './hooks/useMemberHubPage';
@@ -78,8 +75,7 @@ export function MemberHubPage() {
       </div>
 
       <div className="grid gap-[18px] md:grid-cols-2">
-        {playerDashboardState.source === 'api' &&
-        playerDashboardState.dashboard ? (
+        {playerDashboardState.dashboard ? (
           <DashboardPanel
             title="个人数据看板"
             path={`/dashboards/players/${state.playerId}?operatorId=${state.operatorId}`}
@@ -94,8 +90,7 @@ export function MemberHubPage() {
           />
         )}
 
-        {activeOperator.role === Roles.ClubAdmin &&
-        clubDashboardState.source === 'api' &&
+        {activeOperator.role === Role.ClubAdmin &&
         clubDashboardState.dashboard ? (
           <DashboardPanel
             title="俱乐部数据看板"
@@ -108,7 +103,7 @@ export function MemberHubPage() {
             path={`/dashboards/clubs/${state.clubId}?operatorId=${state.operatorId}`}
             loadState={clubDashboardState}
             roleNote={
-              activeOperator.role === Roles.ClubAdmin
+              activeOperator.role === Role.ClubAdmin
                 ? '接口暂时没有返回可用的俱乐部看板数据。'
                 : '只有俱乐部管理员可以查看俱乐部看板。'
             }

@@ -1,9 +1,8 @@
-export const TournamentFormats = {
-  Swiss: 'Swiss',
-  Knockout: 'Knockout',
-  RoundRobin: 'RoundRobin',
-  Finals: 'Finals',
-  Custom: 'Custom',
-} as const;
+﻿export enum TournamentFormat {
+  Swiss = 'Swiss',
+  Knockout = 'Knockout',
+  RoundRobin = 'RoundRobin',
+  Finals = 'Finals',
+  Custom = 'Custom',
 
-export type TournamentFormat = (typeof TournamentFormats)[keyof typeof TournamentFormats];
+}

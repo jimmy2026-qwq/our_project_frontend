@@ -1,4 +1,4 @@
-import type { Dispatch, SetStateAction } from 'react';
+﻿import type { Dispatch, SetStateAction } from 'react';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../objects/TablePaifuDetail';
@@ -14,7 +14,7 @@ import { PlayerMelds } from './components/PlayerAreas/PlayerMelds';
 import { PlayerRiver } from './components/PlayerAreas/PlayerRiver';
 import { ReplayControls } from './components/ReplayControls';
 import type { usePaifuHandTableReplay } from './hooks/usePaifuHandTableReplay';
-import type { HandVisibilityMode } from './objects/HandVisibilityMode';
+import { HandVisibilityMode } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/HandVisibilityMode';
 import { PaifuPlayerHand } from './PaifuPlayerHand';
 import { PaifuRoundPickerLayer } from './PaifuRoundPickerLayer';
 
@@ -106,7 +106,11 @@ export function PaifuHandTableView({
           setIsFinalSettlementOpen={setIsFinalSettlementOpen}
         />
         <ReplayControls
-          handVisibilityLabel={handVisibilityMode === 'self' ? '只亮自家' : '亮四家'}
+          handVisibilityLabel={
+            handVisibilityMode === HandVisibilityMode.Self
+              ? '只亮自家'
+              : '亮四家'
+          }
           maxReplayStep={replay.maxReplayStep}
           onBackward={() => replay.setReplayStep((value) => Math.max(0, value - 1))}
           onCyclePerspective={onCyclePerspective}

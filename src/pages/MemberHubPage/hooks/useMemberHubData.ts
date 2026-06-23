@@ -1,13 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { getActiveOperator } from '../functions/getMemberHubOperator';
 import { normalizeMemberHubClubId } from '../functions/normalizeMemberHubClubId';
-import type {
-  ApplicationInboxState,
-  DashboardLoadState,
-  MemberHubOperatorDirectory,
-  MemberHubState,
-} from '../objects/MemberHub.types';
+import type { ApplicationInboxState } from '../objects/state/ApplicationInboxState';
+import { DashboardLoadState } from '../objects/state/DashboardLoadState';
+import { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import { MemberHubState } from '../objects/state/MemberHubState';
 import { useMemberHubApplicationInboxLoader } from './useMemberHubApplicationInboxLoader';
 import { useMemberHubDashboardLoader } from './useMemberHubDashboardLoader';
 

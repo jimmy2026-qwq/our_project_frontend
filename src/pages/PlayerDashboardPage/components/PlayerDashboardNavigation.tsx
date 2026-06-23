@@ -1,7 +1,7 @@
-import { cx } from '@/components/ui/cx';
+﻿import { cx } from '@/components/ui/cx';
 
+import type { PlayerDetailTab } from '@/pages/PlayerDashboardPage/components/PlayerDashboardContent/objects/PlayerDetailTab';
 import { playerDashboardTabs } from './PlayerDashboardContent/functions/getPlayerDashboardLabels';
-import type { PlayerDetailTab } from './PlayerDashboardContent/objects/PlayerDashboardContent.types';
 import { detailShellClassNames } from './PlayerDashboardShell.styles';
 
 /** 玩家仪表盘内不同信息标签页之间的导航。 */

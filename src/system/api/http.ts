@@ -6,15 +6,17 @@ interface RequestOptions {
 
 export class ApiError extends Error {
   status: number;
+  code?: string;
 
-  constructor(status: number, message: string) {
+  constructor(status: number, message: string, code?: string) {
     super(message);
     this.name = 'ApiError';
     this.status = status;
+    this.code = code;
   }
 }
 
-async function readErrorMessage(response: Response) {
+async function readErrorPayload(response: Response) {
   const fallback = 'Request failed.';
   const contentType = response.headers.get('content-type') ?? '';
 
@@ -24,15 +26,29 @@ async function readErrorMessage(response: Response) {
         message?: string;
         error?: string;
         detail?: string;
+        code?: string;
       };
 
-      return payload.message?.trim() || payload.error?.trim() || payload.detail?.trim() || fallback;
+      return {
+        message:
+          payload.message?.trim() ||
+          payload.error?.trim() ||
+          payload.detail?.trim() ||
+          fallback,
+        code: payload.code?.trim() || undefined,
+      };
     }
 
     const text = (await response.text()).trim();
-    return text || fallback;
+    return {
+      message: text || fallback,
+      code: undefined,
+    };
   } catch {
-    return fallback;
+    return {
+      message: fallback,
+      code: undefined,
+    };
   }
 }
 
@@ -42,7 +58,12 @@ export async function request<T>(path: string, options: RequestOptions = {}) {
   });
 
   if (!response.ok) {
-    throw new ApiError(response.status, await readErrorMessage(response));
+    const errorPayload = await readErrorPayload(response);
+    throw new ApiError(
+      response.status,
+      errorPayload.message,
+      errorPayload.code,
+    );
   }
 
   return (await response.json()) as T;
@@ -64,7 +85,12 @@ export async function sendJson<T>(
   });
 
   if (!response.ok) {
-    throw new ApiError(response.status, await readErrorMessage(response));
+    const errorPayload = await readErrorPayload(response);
+    throw new ApiError(
+      response.status,
+      errorPayload.message,
+      errorPayload.code,
+    );
   }
 
   return (await response.json()) as T;

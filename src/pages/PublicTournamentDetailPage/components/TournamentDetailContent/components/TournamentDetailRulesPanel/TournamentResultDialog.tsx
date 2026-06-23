@@ -1,15 +1,4 @@
-import {
-  Button,
-  Dialog,
-  DialogBody,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  StatusPill,
-} from '@/components/ui';
+import { Button, Dialog, DialogBody, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, StatusPill } from '@/components/ui';
 
 import { useTournamentDetailRulesPanel } from './hooks/useTournamentDetailRulesPanel';
 

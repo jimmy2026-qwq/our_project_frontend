@@ -1,16 +1,10 @@
-import { useEffect, useMemo, useState, type CSSProperties } from 'react';
+﻿import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 
 import { getPaifuTileCode, type PaifuTileInput } from '@/objects';
 import type { SeatWind } from '@/objects/tournament';
 
-import {
-  tileFaceClasses,
-  tileSizeClasses,
-} from '../objects/paifuTableLayout';
-import {
-  getTileImageSrc,
-  maxTileImageRetryCount,
-} from '../functions/getMahjongTileImage';
+import { tileFaceClasses, tileSizeClasses } from '../objects/layout/tileClasses';
+import { getTileImageSrc, maxTileImageRetryCount } from '../functions/getMahjongTileImage';
 
 /** 使用麻将牌图片资源渲染一张牌。 */
 export function TileImage({

@@ -1,26 +1,15 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
-import {
-  SubmitClubApplicationAPI,
-  WithdrawClubApplicationAPI,
-} from '@/api/club';
+import { SubmitClubApplicationAPI, WithdrawClubApplicationAPI } from '@/api/club';
 import { ClubApplicationStatuses } from '@/objects';
-import {
-  createProvisionalClubApplicationId,
-  isProvisionalClubApplicationId,
-  updateTrackedClubApplicationStatus,
-  upsertTrackedClubApplication,
-} from '../functions/getClubApplicationTracker';
+import { createProvisionalClubApplicationId, isProvisionalClubApplicationId, updateTrackedClubApplicationStatus, upsertTrackedClubApplication } from '../functions/getClubApplicationTracker';
 import type { ClubApplication } from '@/pages/shared_objects/club/ClubApplication';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
-import type { HomeClubApplicationState } from '../objects/ClubApplication.types';
-import {
-  getFallbackPlayerName,
-  getSelectedClubName,
-} from '../functions/getClubApplicationDisplay';
-import { toClubApplicationMutationModel } from '../functions/ClubApplication.mappers';
+import type { HomeClubApplicationState } from '@/pages/PublicClubDetailPage/objects/application/HomeClubApplicationState';
+import { getFallbackPlayerName, getSelectedClubName } from '../functions/getClubApplicationDisplay';
+import { toClubApplicationMutationModel } from '../functions/toClubApplicationData';
 import { useClubApplicationLoaders } from './useClubApplicationLoaders';
 
 export function useClubApplicationMutations() {
@@ -55,9 +44,8 @@ export function useClubApplicationMutations() {
           message: application.message,
           status: application.status,
           submittedAt: application.createdAt,
-          source: 'api',
         });
-        return { application, source: 'api' as const, warning: undefined };
+        return { application, warning: undefined };
       } catch (error) {
         if (
           error instanceof ApiError &&
@@ -71,7 +59,6 @@ export function useClubApplicationMutations() {
           if (current?.application) {
             return {
               application: current.application,
-              source: current.source ?? 'api',
               warning:
                 'The backend reported that the pending application already exists, so the current live record was loaded instead.',
             };
@@ -98,12 +85,10 @@ export function useClubApplicationMutations() {
             message: provisionalApplication.message,
             status: provisionalApplication.status,
             submittedAt: provisionalApplication.createdAt,
-            source: 'api',
           });
 
           return {
             application: provisionalApplication,
-            source: 'api' as const,
             warning:
               'The backend reported that a pending application already exists, so the local view was synchronized to pending.',
           };
@@ -151,9 +136,8 @@ export function useClubApplicationMutations() {
         message: application.message,
         status: application.status,
         submittedAt: application.createdAt,
-        source: 'api',
       });
-      return { application, source: 'api' as const, warning: undefined };
+      return { application, warning: undefined };
     },
     [],
   );

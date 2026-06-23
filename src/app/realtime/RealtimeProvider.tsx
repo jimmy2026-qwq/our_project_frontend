@@ -2,11 +2,9 @@ import { useEffect, type ReactNode } from 'react';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
 
-import {
-  realtimeBrowserEventName,
-  type RealtimeEvent,
-} from './RealtimeEvent';
+import { realtimeBrowserEventName, type RealtimeEvent } from './RealtimeEvent';
 import { isRealtimeEventType } from './RealtimeEventType';
+import { isRealtimeSourceEventType } from './RealtimeSourceEventType';
 
 export function RealtimeProvider({ children }: { children: ReactNode }) {
   const { isReady, session } = useAuthContext();
@@ -68,6 +66,8 @@ function parseRealtimeEvent(value: string): RealtimeEvent | null {
       !event.id ||
       !event.eventType ||
       !isRealtimeEventType(event.eventType) ||
+      !event.sourceEventType ||
+      !isRealtimeSourceEventType(event.sourceEventType) ||
       !event.aggregateType ||
       !event.aggregateId
     ) {

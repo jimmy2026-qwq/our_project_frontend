@@ -1,9 +1,4 @@
-import {
-  MahjongCommandTypes,
-  MahjongRoundPhases,
-  type MahjongLegalAction,
-  type MahjongTableView,
-} from '@/objects';
+import { MahjongCommandTypes, MahjongRoundPhases, type MahjongLegalAction, type MahjongTableView } from '@/objects';
 
 export function getTurnActionDelayKey(
   mahjongTable: MahjongTableView,

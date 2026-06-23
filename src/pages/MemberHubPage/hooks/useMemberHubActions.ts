@@ -1,22 +1,18 @@
-import type { Dispatch, SetStateAction } from 'react';
+﻿import { type Dispatch, type SetStateAction } from 'react';
 
-import { ReviewClubApplicationAPI } from '@/api/club/ReviewClubApplicationAPI';
+import { ReviewClubApplicationAPI } from '@/api/club/membership/ReviewClubApplicationAPI';
 import { useConfirmationDialogActions } from '@/components/confirmation-dialog/useConfirmationDialogActions';
 import { useMutationNotice } from '@/app/feedback/useMutationNotice';
 import { useNotice } from '@/app/feedback/useNotice';
-import type {
-  ClubMembershipApplicationView,
-  ReviewClubApplicationRequest,
-} from '@/objects';
+import { ClubApplicationReviewDecisions, type ClubApplicationReviewDecision, type ClubMembershipApplicationView } from '@/objects';
+import type { ReviewClubApplicationRequest } from '@/objects/club/membership/apiTypes';
 import { sendAPI } from '@/system/api';
 
-import { getActiveOperator } from '../functions/getMemberHubOperator';
 import { upsertMemberHubApplicationInboxItem } from '../functions/getMemberHubApplicationInboxBridge';
-import { toClubApplicationView } from '../functions/MemberHub.mappers';
-import type {
-  MemberHubOperatorDirectory,
-  MemberHubState,
-} from '../objects/MemberHub.types';
+import { getActiveOperator } from '../functions/getMemberHubOperator';
+import { toClubApplicationView } from '../functions/toMemberHubData';
+import type { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import type { MemberHubState } from '../objects/state/MemberHubState';
 
 function reviewClubApplication(
   clubId: string,
@@ -32,7 +28,7 @@ async function reviewMemberHubApplication(
   clubId: string,
   applicationId: string,
   operatorId: string,
-  decision: 'approve' | 'reject',
+  decision: ClubApplicationReviewDecision,
 ) {
   const application = await reviewClubApplication(clubId, applicationId, {
     operatorId,
@@ -48,9 +44,8 @@ async function reviewMemberHubApplication(
     message: application.message,
     status: application.status,
     submittedAt: application.submittedAt,
-    source: 'api',
   });
-  return { source: 'api' as const };
+  return {};
 }
 
 export function useMemberHubActions(
@@ -83,18 +78,19 @@ export function useMemberHubActions(
 
   async function handleReview(
     applicationId: string,
-    decision: 'approve' | 'reject',
+    decision: ClubApplicationReviewDecision,
   ) {
+    const isApprove = decision === ClubApplicationReviewDecisions.Approve;
     const confirmed = await confirmDanger({
       title:
-        decision === 'approve'
+        isApprove
           ? 'Approve this application?'
           : 'Reject this application?',
       message:
-        decision === 'approve'
+        isApprove
           ? 'This will update the membership review result and refresh the inbox.'
           : 'This will reject the request and refresh the inbox.',
-      confirmText: decision === 'approve' ? 'Approve' : 'Reject',
+      confirmText: isApprove ? 'Approve' : 'Reject',
     });
 
     if (!confirmed) {
@@ -110,12 +106,12 @@ export function useMemberHubActions(
       );
       notifyMutationResult(result, {
         successTitle:
-          decision === 'approve'
+          isApprove
             ? 'Application approved'
             : 'Application rejected',
         successMessage: 'The member hub queue was updated and reloaded.',
         fallbackTitle:
-          decision === 'approve'
+          isApprove
             ? 'Application approval requires attention'
             : 'Application rejection requires attention',
         fallbackMessage: 'The review result could not be confirmed.',
@@ -123,7 +119,7 @@ export function useMemberHubActions(
       reload();
     } catch (error) {
       notifyWarning(
-        decision === 'approve'
+        isApprove
           ? 'Unable to approve application'
           : 'Unable to reject application',
         error instanceof Error

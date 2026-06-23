@@ -1,8 +1,10 @@
-import { GetPlayerAPI } from '@/api/player';
+﻿import { GetPlayerAPI } from '@/api/player';
 import { useAsyncResource } from '@/hooks/useAsyncResource';
 import { sendAPI } from '@/system/api';
-import type { PublicHallViewerContext } from '../../../objects/PublicHallPage.types';
-import { toPlayerProfile } from '../../../functions/PublicHall.mappers';
+
+import type { PublicHallViewerContext } from '../../../objects/state/PublicHallViewerContext';
+
+import { toPlayerProfile } from '../../../functions/toPublicHallData';
 
 export function usePublicHallCurrentPlayer(
   session: PublicHallViewerContext['session'],

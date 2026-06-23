@@ -1,9 +1,4 @@
-import {
-  StageStatuses,
-  TournamentStatuses,
-  type StageStatus,
-  type TournamentStatus,
-} from '@/objects';
+﻿import { StageStatus, TournamentStatuses, type TournamentStatus } from '@/objects';
 
 const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
   [TournamentStatuses.Draft]: '未发布',
@@ -16,11 +11,11 @@ const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
 };
 
 const STAGE_STATUS_LABELS: Record<StageStatus, string> = {
-  [StageStatuses.Pending]: '未开始',
-  [StageStatuses.Ready]: '已就绪',
-  [StageStatuses.Active]: '进行中',
-  [StageStatuses.Completed]: '已完成',
-  [StageStatuses.Archived]: '已归档',
+  [StageStatus.Pending]: '未开始',
+  [StageStatus.Ready]: '已就绪',
+  [StageStatus.Active]: '进行中',
+  [StageStatus.Completed]: '已完成',
+  [StageStatus.Archived]: '已归档',
 };
 
 export function formatDateTime(value: string) {

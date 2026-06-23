@@ -1,13 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import {
-  MahjongCoreGetShowcaseModeAPI,
-  MahjongCoreSetShowcaseModeAPI,
-} from '@/api/tournament/mahjongcore';
+import { MahjongCoreGetShowcaseModeAPI, MahjongCoreSetShowcaseModeAPI } from '@/api/tournament/mahjongcore';
 import { sendAPI } from '@/system/api';
 
 const showcaseModeStorageKey = 'riichi-nexus-showcase-mode';
 const showcaseModeChangeEvent = 'riichi-nexus-showcase-mode-change';
+const showcaseModeEnabledValue = 'enabled';
 const showcaseModeSyncIntervalMs = 5000;
 
 export function isShowcaseModeEnabled() {
@@ -15,7 +13,10 @@ export function isShowcaseModeEnabled() {
     return false;
   }
 
-  return window.localStorage.getItem(showcaseModeStorageKey) === 'enabled';
+  return (
+    window.localStorage.getItem(showcaseModeStorageKey) ===
+    showcaseModeEnabledValue
+  );
 }
 
 export function setShowcaseModeEnabled(enabled: boolean) {
@@ -48,7 +49,7 @@ function applyShowcaseModeEnabled(enabled: boolean) {
   const previous = isShowcaseModeEnabled();
 
   if (enabled) {
-    window.localStorage.setItem(showcaseModeStorageKey, 'enabled');
+    window.localStorage.setItem(showcaseModeStorageKey, showcaseModeEnabledValue);
   } else {
     window.localStorage.removeItem(showcaseModeStorageKey);
   }

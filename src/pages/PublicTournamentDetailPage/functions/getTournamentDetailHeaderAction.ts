@@ -1,10 +1,8 @@
-import { TableStatuses } from '@/objects';
+﻿import { TableStatus } from '@/objects';
 
-import type { TournamentPublicProfile } from '../objects/PublicTournamentDetailPage.types';
-import type {
-  TournamentDetailTableItem,
-  TournamentDetailWorkbenchState,
-} from '../objects/TournamentDetail.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 import { isTournamentStageCompleted } from './getTournamentDetailStageProgress';
 
 type TournamentStageView = NonNullable<
@@ -41,7 +39,7 @@ export function getTournamentDetailHeaderAction({
       );
       const archivedTableCount =
         stageTables.length > 0
-          ? stageTables.filter((table) => table.status === TableStatuses.Archived).length
+          ? stageTables.filter((table) => table.status === TableStatus.Archived).length
           : (stage.archivedTableCount ?? 0);
 
       return (

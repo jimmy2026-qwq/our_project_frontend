@@ -31,7 +31,7 @@ export function useTableActionRunner({
       setIsSubmittingAction(true);
       setActionError(null);
       await action();
-      notifyMutationResult({ source: 'api' }, options);
+      notifyMutationResult({}, options);
       onRefresh();
       return true;
     } catch (error) {

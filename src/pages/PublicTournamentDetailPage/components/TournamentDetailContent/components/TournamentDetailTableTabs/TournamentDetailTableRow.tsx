@@ -1,20 +1,15 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { StatusPill } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
-import { TableStatuses } from '@/objects';
+import { TableStatus } from '@/objects';
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
-import {
-  getTableStatusLabel,
-  getTableStatusTone,
-} from '../../../../functions/getTournamentTableStatus';
-import type {
-  TournamentDetailTableItem,
-  TournamentDetailWorkbenchState,
-} from '../../../../objects/TournamentDetail.types';
+import { getTableStatusLabel, getTableStatusTone } from '../../../../functions/getTournamentTableStatus';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 赛事详情牌桌列表中的单桌摘要行。 */
 export function TournamentDetailTableRow({
@@ -48,19 +43,19 @@ export function TournamentDetailTableRow({
     .map((playerId) => workbench.playerNames[playerId] ?? playerId)
     .join(' / ');
   const record = workbench.recordByTableId[table.id] ?? null;
-  const isFinished = table.status === TableStatuses.Archived;
-  const isInProgress = table.status === TableStatuses.InProgress;
-  const isScoring = table.status === TableStatuses.Scoring;
+  const isFinished = table.status === TableStatus.Archived;
+  const isInProgress = table.status === TableStatus.InProgress;
+  const isScoring = table.status === TableStatus.Scoring;
   const hasResult =
-    isFinished || isScoring || table.status === TableStatuses.AppealInProgress;
-  const isWaiting = table.status === TableStatuses.WaitingPreparation;
+    isFinished || isScoring || table.status === TableStatus.AppealInProgress;
+  const isWaiting = table.status === TableStatus.WaitingPreparation;
   const canFileAppeal = isScoring && table.playerIds.includes(operatorId);
   const participantTableDetail = participantWaitingTableDetails[table.id];
   const ownSeat =
     participantTableDetail?.seats.find((seat) => seat.playerId === operatorId) ??
     null;
   const canUpdateOwnReady =
-    table.status === TableStatuses.WaitingPreparation &&
+    table.status === TableStatus.WaitingPreparation &&
     !!ownSeat &&
     !ownSeat.disconnected;
 

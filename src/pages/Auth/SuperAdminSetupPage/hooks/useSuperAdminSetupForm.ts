@@ -5,45 +5,34 @@ import { BootstrapSuperAdminAuthAPI } from '@/api/auth';
 import { resolveAuthenticatedAuthSession } from '@/app/auth/functions/resolveAuthenticatedAuthSession';
 import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
-import { sendAPI } from '@/system/api';
+import { ApiError, sendAPI } from '@/system/api';
 
 import { normalizeAuthInput } from '../../functions/normalizeAuthInput';
+import { SuperAdminSetupErrorCode } from '../objects/SuperAdminSetupErrorCode';
 
 function mapSuperAdminSetupError(error: unknown) {
+  if (error instanceof ApiError) {
+    switch (error.code) {
+      case SuperAdminSetupErrorCode.InvalidBootstrapKey:
+        return '初始化卡密不正确。';
+      case SuperAdminSetupErrorCode.AlreadyInitialized:
+        return '系统已经初始化过超管账号，请用已有超管账号登录。';
+      case SuperAdminSetupErrorCode.PasswordTooShort:
+        return '密码至少需要 8 位。';
+      case SuperAdminSetupErrorCode.UsernameAlreadyRegistered:
+        return '这个账号已经被注册。';
+      case SuperAdminSetupErrorCode.DisplayNameRequired:
+        return '请填写昵称。';
+      case SuperAdminSetupErrorCode.UsernameRequired:
+        return '请填写账号。';
+      case SuperAdminSetupErrorCode.BootstrapKeyNotConfigured:
+        return '超管初始化卡密尚未配置，请先设置 RIICHI_SUPERADMIN_BOOTSTRAP_KEY。';
+      default:
+        break;
+    }
+  }
+
   const message = error instanceof Error ? error.message : '';
-  const normalized = message.toLowerCase();
-
-  if (
-    normalized.includes('invalid super admin bootstrap key') ||
-    normalized.includes('invalid_bootstrap_key')
-  ) {
-    return '初始化卡密不正确。';
-  }
-
-  if (normalized.includes('super admin has already been initialized')) {
-    return '系统已经初始化过超管账号，请用已有超管账号登录。';
-  }
-
-  if (normalized.includes('password must be at least 8 characters')) {
-    return '密码至少需要 8 位。';
-  }
-
-  if (normalized.includes('already registered')) {
-    return '这个账号已经被注册。';
-  }
-
-  if (normalized.includes('display name is required')) {
-    return '请填写昵称。';
-  }
-
-  if (normalized.includes('username is required')) {
-    return '请填写账号。';
-  }
-
-  if (normalized.includes('super admin bootstrap key is not configured')) {
-    return '超管初始化卡密尚未配置，请先设置 RIICHI_SUPERADMIN_BOOTSTRAP_KEY。';
-  }
-
   return message || '超管初始化失败，请稍后重试。';
 }
 

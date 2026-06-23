@@ -1,7 +1,7 @@
-import { Button } from '@/components/ui';
+﻿import { Button } from '@/components/ui';
 
 import { detailShellClassNames } from '../detailShell.styles';
-import type { TournamentDetailWorkbenchState } from '../../objects/TournamentDetail.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 公开赛事详情页顶部的标题、状态、摘要和主要操作区。 */
 export function TournamentDetailHeader({

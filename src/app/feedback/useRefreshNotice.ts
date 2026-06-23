@@ -1,7 +1,6 @@
 import { useNotice } from '@/app/feedback/useNotice';
 
 interface RefreshPayloadLike {
-  source?: 'api' | 'mock';
   warning?: string;
 }
 
@@ -27,9 +26,8 @@ export function useRefreshNotice() {
     }
 
     const warnings = payloads.map((payload) => payload?.warning).filter(Boolean);
-    const hasFallback = payloads.some((payload) => payload?.source === 'mock');
 
-    if (hasFallback) {
+    if (warnings.length > 0) {
       notifyWarning(options.fallbackTitle, warnings[0] ?? options.fallbackMessage);
       return;
     }

@@ -1,4 +1,4 @@
-import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
+﻿import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 export function useTournamentDetailHeader({
   workbench,

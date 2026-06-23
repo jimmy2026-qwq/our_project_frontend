@@ -1,7 +1,4 @@
-import {
-  GetUnreadNotificationCountAPI,
-  ListNotificationsAPI,
-} from '@/api/notification';
+import { GetUnreadNotificationCountAPI, ListNotificationsAPI } from '@/api/notification';
 import type { Notification } from '@/objects/notification';
 import { sendAPI } from '@/system/api';
 

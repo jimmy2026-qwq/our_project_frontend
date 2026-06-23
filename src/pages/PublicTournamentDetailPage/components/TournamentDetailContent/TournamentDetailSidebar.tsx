@@ -1,7 +1,7 @@
-import { cx } from '@/components/ui/cx';
+﻿import { cx } from '@/components/ui/cx';
 
+import type { TournamentDetailTab } from '@/pages/PublicTournamentDetailPage/objects/navigation/TournamentDetailTab';
 import { detailShellClassNames } from '../detailShell.styles';
-import type { TournamentDetailTab } from '../../objects/TournamentDetailView.types';
 
 export type TournamentDetailContentTabItem = {
   id: TournamentDetailTab;

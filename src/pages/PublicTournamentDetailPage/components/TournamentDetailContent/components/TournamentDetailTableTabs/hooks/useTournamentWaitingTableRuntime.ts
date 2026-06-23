@@ -1,15 +1,12 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import {
-  TournamentTableGetAPI,
-  TournamentTableUpdateOwnReadyAPI,
-} from '@/api/tournament';
-import { TableStatuses } from '@/objects';
+import { TournamentTableGetAPI, TournamentTableUpdateOwnReadyAPI } from '@/api/tournament';
+import { TableStatus } from '@/objects';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import { toTableDetail } from '../../../../../functions/TournamentDetailTable.mappers';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { toTableDetail } from '../../../../../functions/toTournamentDetailTableData';
 
 export function useTournamentWaitingTableRuntime({
   operatorId,
@@ -34,7 +31,7 @@ export function useTournamentWaitingTableRuntime({
 
     const participantWaitingTables = workbench.visibleTables.filter(
       (table) =>
-        table.status === TableStatuses.WaitingPreparation &&
+        table.status === TableStatus.WaitingPreparation &&
         table.playerIds.includes(operatorId),
     );
 

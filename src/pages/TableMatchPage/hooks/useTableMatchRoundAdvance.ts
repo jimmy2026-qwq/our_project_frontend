@@ -1,11 +1,7 @@
 import type { Dispatch, MutableRefObject, SetStateAction } from 'react';
 import { useCallback } from 'react';
 
-import {
-  MahjongCoreAdvanceRoundAPI,
-  MahjongCoreArchiveTableAPI,
-  MahjongCoreGetTableAPI,
-} from '@/api/tournament/mahjongcore';
+import { MahjongCoreAdvanceRoundAPI, MahjongCoreArchiveTableAPI, MahjongCoreGetTableAPI } from '@/api/tournament/mahjongcore';
 import type {
   AdvanceMahjongRoundRequest,
   MahjongActionResponse,
@@ -14,10 +10,7 @@ import type {
 import { MahjongTableStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import {
-  createMahjongTableQuery,
-  getMahjongErrorMessage,
-} from '../functions/getTableMatchMahjongState';
+import { createMahjongTableQuery, getMahjongErrorMessage } from '../functions/getTableMatchMahjongState';
 
 interface UseTableMatchRoundAdvanceParams {
   operatorId: string;

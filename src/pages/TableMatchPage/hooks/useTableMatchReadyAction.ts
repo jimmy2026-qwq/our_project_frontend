@@ -51,7 +51,7 @@ export function useTableMatchReadyAction({
       });
       setTable(nextTable);
       notifyMutationResult(
-        { source: 'api' },
+        {},
         {
           successTitle: ownSeat.ready ? 'Ready removed' : 'Ready confirmed',
           successMessage: ownSeat.ready

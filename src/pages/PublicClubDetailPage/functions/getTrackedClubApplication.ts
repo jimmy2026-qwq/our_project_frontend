@@ -1,8 +1,4 @@
-import {
-  isProvisionalClubApplicationId,
-  readTrackedClubApplication,
-  readTrackedClubApplicationsByPlayer,
-} from './getClubApplicationTracker';
+import { isProvisionalClubApplicationId, readTrackedClubApplication, readTrackedClubApplicationsByPlayer } from './getClubApplicationTracker';
 
 export function getTrackedApplication(
   playerId: string,

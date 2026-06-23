@@ -1,6 +1,7 @@
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
 export const AUTH_SESSION_STORAGE_KEY = 'riichi-nexus.auth.session';
+const GUEST_SESSION_TOKEN_PREFIX = 'guest:';
 
 export interface StoredAuthSessionRecord {
   token: string;
@@ -8,11 +9,13 @@ export interface StoredAuthSessionRecord {
 }
 
 export function createGuestToken(guestSessionId: string) {
-  return 'guest:' + guestSessionId;
+  return GUEST_SESSION_TOKEN_PREFIX + guestSessionId;
 }
 
 export function readGuestSessionId(token: string) {
-  return token.startsWith('guest:') ? token.slice('guest:'.length) : null;
+  return token.startsWith(GUEST_SESSION_TOKEN_PREFIX)
+    ? token.slice(GUEST_SESSION_TOKEN_PREFIX.length)
+    : null;
 }
 
 export function persistSession(session: AuthContextSession | null) {

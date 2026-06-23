@@ -2,11 +2,7 @@ import { ClubDetailContent } from './components/ClubDetailContent';
 import { ClubDetailDialogs } from './components/ClubDetailDialogs';
 import { ClubDetailHeader } from './components/ClubDetailHeader';
 import { clubDetailShellClassNames } from './components/ClubDetailShell.styles';
-import {
-  PublicClubDetailFrame,
-  PublicClubDetailLoading,
-  PublicClubDetailNotFound,
-} from './components/PublicClubDetailFrame';
+import { PublicClubDetailFrame, PublicClubDetailLoading, PublicClubDetailNotFound } from './components/PublicClubDetailFrame';
 import { usePublicClubDetailPage } from './hooks/usePublicClubDetailPage';
 
 /** 根据路由加载俱乐部详情并协调申请、成员和关系操作。 */

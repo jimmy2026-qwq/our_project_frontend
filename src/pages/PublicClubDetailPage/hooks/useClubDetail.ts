@@ -1,17 +1,17 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { ListClubTournamentsAPI } from '@/api/club';
-import { GetPublicClubAPI } from '@/api/club';
+import { ListClubTournamentsAPI, GetPublicClubAPI } from '@/api/club';
+
 import { GetPlayerAPI } from '@/api/player/GetPlayerAPI';
-import type {
-  ClubDetailState,
-  ClubPublicProfile,
-  PublicHallViewerContext,
-  TournamentPublicProfile,
-} from '../objects/PublicClubDetailPage.types';
+import { ClubTournamentParticipationStatuses, ClubTournamentScope } from '@/objects/club';
+import { ClubTournamentSources } from '@/pages/shared_objects/club/ClubTournamentSource';
+import type { ClubDetailState } from '@/pages/PublicClubDetailPage/objects/state/ClubDetailState';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
+import type { PublicHallViewerContext } from '@/pages/PublicClubDetailPage/objects/context/PublicHallViewerContext';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
 import { sendAPI } from '@/system/api';
 
-import { toPublicClubDetail } from '../functions/ClubDetailClub.mappers';
+import { toPublicClubDetail } from '../functions/toClubDetailClubData';
 
 async function resolveClubViewerId(
   fallbackViewerId?: string,
@@ -36,7 +36,7 @@ async function loadClubTournaments(
   try {
     const envelope = await sendAPI(
       new ListClubTournamentsAPI(clubId, {
-        scope: 'all',
+        scope: ClubTournamentScope.All,
         viewer: viewerId,
         limit: 100,
         offset: 0,
@@ -50,9 +50,10 @@ async function loadClubTournaments(
         name: item.name,
         status: item.status as TournamentPublicProfile['status'],
         source:
-          item.clubParticipationStatus === 'Participating'
-            ? ('recent' as const)
-            : ('invited' as const),
+          item.clubParticipationStatus ===
+          ClubTournamentParticipationStatuses.Participating
+            ? ClubTournamentSources.Recent
+            : ClubTournamentSources.Invited,
         participationStatus: item.clubParticipationStatus,
         canSubmitLineup: item.canSubmitLineup,
         canDecline: item.canDecline,
@@ -76,12 +77,10 @@ async function loadClubDetail(
         ...item,
         activeTournaments,
       },
-      source: 'api',
     };
   } catch (error) {
     return {
       item: null,
-      source: 'api',
       warning:
         error instanceof Error ? error.message : 'Unable to load club detail.',
     };
@@ -102,7 +101,7 @@ export function useClubDetail(
 
   useEffect(() => {
     if (!clubId) {
-      setState({ item: null, source: 'api', warning: 'Club id is missing.' });
+      setState({ item: null, warning: 'Club id is missing.' });
       setIsLoading(false);
       return;
     }

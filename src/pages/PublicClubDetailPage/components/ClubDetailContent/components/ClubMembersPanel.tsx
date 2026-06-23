@@ -1,8 +1,8 @@
-import { EmptyState } from '@/components/ui';
+﻿import { EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
 import { clubPanelClassNames } from '../styles';
 import { ClubMemberRow } from './ClubMemberRow';
 

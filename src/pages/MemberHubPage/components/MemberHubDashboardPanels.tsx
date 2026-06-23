@@ -1,12 +1,7 @@
-import {
-  DashboardFallbackNotice,
-  DashboardPanelShell,
-  EmptyState,
-  MetricCard,
-  MetricGrid,
-} from '@/components/ui';
+﻿import { DashboardFallbackNotice, DashboardPanelShell, EmptyState, MetricCard, MetricGrid } from '@/components/ui';
 
-import type { DashboardLoadState } from '../objects/MemberHub.types';
+import { DashboardLoadState } from '../objects/state/DashboardLoadState';
+
 
 interface DashboardPanelProps {
   title: string;
@@ -53,7 +48,6 @@ export function DashboardPlaceholder({
   return (
     <DashboardPanelShell
       title={title}
-      source={loadState.source}
       warning={loadState.warning}
       path={path}
       className="border-dashed"
@@ -79,7 +73,6 @@ export function DashboardPanel({
     <DashboardPanelShell
       title={title}
       path={path}
-      source={loadState.source}
       warning={loadState.warning}
     >
       <DashboardMetrics loadState={loadState} />

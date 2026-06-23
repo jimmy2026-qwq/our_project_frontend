@@ -1,10 +1,10 @@
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+﻿import { SeatWind } from '@/objects/tournament';
 
 import type { TablePaifuDetail } from '../../../../objects/TablePaifuDetail';
 import { formatPoints } from '../../../../functions/getReplayCore';
 import { getRoundPlayerId } from '../../../../functions/getReplayPlayers';
-import { centerPointPositionClasses } from '../../objects/paifuTableLayout';
-import type { CenterScoreDisplay } from '../../objects/CenterTableDisplay';
+import { centerPointPositionClasses } from '../../objects/layout/centerPointPositionClasses';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterScoreDisplay';
 
 interface CenterPointProps {
   isRelativeScoreMode?: boolean;
@@ -26,7 +26,7 @@ export function CenterPoint({
 }: CenterPointProps) {
   const playerId = getRoundPlayerId(paifu, seat);
   const canToggleScoreMode =
-    seat === SeatWinds.East && Boolean(onToggleRelativeScoreMode);
+    seat === SeatWind.East && Boolean(onToggleRelativeScoreMode);
   const displayScore =
     isRelativeScoreMode && typeof referencePoints === 'number'
       ? (scoreDisplay?.points ?? 0) - referencePoints

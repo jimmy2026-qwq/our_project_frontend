@@ -1,13 +1,13 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { ListPlayersAPI } from '@/api/player';
-import { PlayerStatuses } from '@/objects';
+import { PlayerStatus } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
+import { toPlayerProfile } from '../../../../../functions/toTournamentDetailPlayerData';
 
 export function useTournamentPlayerOptions(session: AuthContextSession | null) {
   const [availablePlayers, setAvailablePlayers] = useState<PlayerProfile[]>([]);
@@ -27,7 +27,7 @@ export function useTournamentPlayerOptions(session: AuthContextSession | null) {
 
     void sendAPI(
       new ListPlayersAPI({
-        status: PlayerStatuses.Active,
+        status: PlayerStatus.Active,
         limit: 100,
         offset: 0,
       }),

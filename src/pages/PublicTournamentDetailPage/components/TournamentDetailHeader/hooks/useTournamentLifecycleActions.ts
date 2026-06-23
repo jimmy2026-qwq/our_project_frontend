@@ -1,19 +1,14 @@
-import type { NavigateFunction } from 'react-router-dom';
+﻿import type { NavigateFunction } from 'react-router-dom';
 
-import {
-  TournamentPublishAPI,
-  TournamentSettleAPI,
-  TournamentStageCompleteAPI,
-  TournamentStageScheduleTablesAPI,
-} from '@/api/tournament';
+import { TournamentPublishAPI, TournamentSettleAPI, TournamentStageCompleteAPI, TournamentStageScheduleTablesAPI } from '@/api/tournament';
 import { TournamentStatuses } from '@/objects';
 import { sendAPI } from '@/system/api';
 
 import { getNextStageMissingLineupClubNames } from '../../../functions/getNextStageLineup';
 import type {
   RefreshTournamentProfile,
-  UseTournamentDetailActionsParams,
-} from '../../TournamentDetailContent/hooks/useTournamentDetailActions.types';
+} from '../../TournamentDetailContent/objects/RefreshTournamentProfile';
+import type { UseTournamentDetailActionsParams } from '../../TournamentDetailContent/objects/actions/UseTournamentDetailActionsParams';
 
 export function useTournamentLifecycleActions({
   availableClubs,

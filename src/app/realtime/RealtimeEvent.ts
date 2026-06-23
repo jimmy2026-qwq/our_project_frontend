@@ -1,12 +1,14 @@
+import type { RealtimeAggregateType } from './RealtimeAggregateType';
 import type { RealtimeEventType } from './RealtimeEventType';
+import type { RealtimeSourceEventType } from './RealtimeSourceEventType';
 
 export interface RealtimeEvent {
   id: string;
   eventType: RealtimeEventType;
-  aggregateType: string;
+  aggregateType: RealtimeAggregateType | string;
   aggregateId: string;
   occurredAt: string;
-  sourceEventType: string;
+  sourceEventType: RealtimeSourceEventType;
   actorId?: string | null;
   recipientPlayerId?: string | null;
   title?: string | null;

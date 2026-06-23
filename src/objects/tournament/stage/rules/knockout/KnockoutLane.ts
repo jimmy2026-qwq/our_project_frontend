@@ -1,7 +1,6 @@
-export const KnockoutLanes = {
-  Championship: 'Championship',
-  Bronze: 'Bronze',
-  Repechage: 'Repechage',
-} as const;
+﻿export enum KnockoutLane {
+  Championship = 'Championship',
+  Bronze = 'Bronze',
+  Repechage = 'Repechage',
 
-export type KnockoutLane = (typeof KnockoutLanes)[keyof typeof KnockoutLanes];
+}

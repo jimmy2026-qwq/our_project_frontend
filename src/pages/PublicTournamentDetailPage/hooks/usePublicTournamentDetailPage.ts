@@ -1,14 +1,15 @@
-import { useCallback, useMemo } from 'react';
+﻿import { useCallback, useMemo } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { useAuthContext } from '@/app/auth/useAuthContext';
+import { RealtimeEventTypes } from '@/app/realtime/RealtimeEventType';
 import { useRealtimeRefresh } from '@/app/realtime/useRealtimeRefresh';
 
 import { useTournamentDetailHeader } from '../components/TournamentDetailHeader/hooks/useTournamentDetailHeader';
 import { useTournamentDetail } from './useTournamentDetail';
 import { useTournamentDetailContent } from '../components/TournamentDetailContent/hooks/useTournamentDetailContent';
 import { useTournamentDetailWorkbench } from '../components/TournamentDetailContent/hooks/useTournamentDetailWorkbench';
-import type { TournamentDetailState } from '../objects/PublicTournamentDetailPage.types';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
 
 export function usePublicTournamentDetailPage() {
   const { tournamentId } = useParams();
@@ -20,10 +21,9 @@ export function usePublicTournamentDetailPage() {
   }, [detail]);
   useRealtimeRefresh(
     [
-      'TournamentChanged',
-      'TournamentParticipantChanged',
-      'TournamentTableChanged',
-      'AppealChanged',
+      RealtimeEventTypes.TournamentChanged,
+      RealtimeEventTypes.TournamentTableChanged,
+      RealtimeEventTypes.AppealChanged,
     ],
     handleRealtimeRefresh,
   );
@@ -31,7 +31,6 @@ export function usePublicTournamentDetailPage() {
     () =>
       detail.state ?? {
         item: null,
-        source: 'api',
       },
     [detail.state],
   );

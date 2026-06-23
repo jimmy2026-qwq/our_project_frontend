@@ -1,10 +1,4 @@
-import {
-  HandOutcome,
-  isSamePaifuTile,
-  type AgariResult,
-  type MahjongSeatView,
-  type PaifuTile,
-} from '@/objects';
+import { HandOutcome, isSamePaifuTile, type AgariResult, type MahjongSeatView, type PaifuTile } from '@/objects';
 
 export function getResultDisplayHand({
   result,

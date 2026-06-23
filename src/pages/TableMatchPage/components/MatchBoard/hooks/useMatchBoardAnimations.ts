@@ -6,11 +6,7 @@ import type {
 } from '@/objects';
 import { useMemo } from 'react';
 
-import {
-  createMatchActiveOperation,
-  createMatchRiichiCallFlash,
-  createMatchWinningCallFlash,
-} from '../functions/getMatchBoardCallFlashes';
+import { createMatchActiveOperation, createMatchRiichiCallFlash, createMatchWinningCallFlash } from '../functions/getMatchBoardCallFlashes';
 import { createMatchYakumanTileBurst } from '../functions/getMatchBoardYakumanBurst';
 
 interface UseMatchBoardAnimationsParams {

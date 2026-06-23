@@ -1,8 +1,4 @@
-import {
-  getPaifuTileCode,
-  isSamePaifuTile,
-  type PaifuTile,
-} from '@/objects';
+import { getPaifuTileCode, isSamePaifuTile, type PaifuTile } from '@/objects';
 
 export function getAddedTileIndex({
   afterTiles,

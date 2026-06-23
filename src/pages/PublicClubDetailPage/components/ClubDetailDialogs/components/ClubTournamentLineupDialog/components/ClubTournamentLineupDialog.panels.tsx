@@ -1,10 +1,5 @@
-import { ActionButton } from '@/components/ui';
-import {
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui';
+import { ActionButton, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui';
+
 
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
 export { ClubTournamentLineupBody } from './ClubTournamentLineupBody';

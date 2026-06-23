@@ -1,8 +1,6 @@
-import {
-  EMPTY_MEMBER_HUB_OPERATOR,
-  type MemberHubOperatorDirectory,
-  type MemberHubState,
-} from '../objects/MemberHub.types';
+﻿import { EMPTY_MEMBER_HUB_OPERATOR } from '../objects/operator/MemberHubOperator';
+import type { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import type { MemberHubState } from '../objects/state/MemberHubState';
 
 export function createMemberHubState(
   directory: MemberHubOperatorDirectory,

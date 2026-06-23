@@ -1,0 +1,1 @@
+export { TournamentStageStandingsAPI } from './TournamentStageStandingsAPI';

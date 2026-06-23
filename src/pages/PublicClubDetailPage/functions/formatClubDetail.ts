@@ -1,5 +1,5 @@
-import { TournamentStatuses, type TournamentStatus } from '@/objects';
-import { ClubRelationKinds } from '@/objects/club';
+﻿import { TournamentStatuses, type TournamentStatus } from '@/objects';
+import { ClubRelationKind } from '@/objects/club';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 
 const TOURNAMENT_STATUS_LABELS: Record<TournamentStatus, string> = {
@@ -26,7 +26,7 @@ export function formatNumber(value: number) {
 export function getRelationLabel(relation: ClubSummary['relations'][number]) {
   const relationKind =
     typeof relation === 'string' ? relation : relation.relation;
-  return relationKind === ClubRelationKinds.Alliance ? '联盟' : '对抗';
+  return relationKind === ClubRelationKind.Alliance ? '联盟' : '对抗';
 }
 
 export function formatRelationList(relations: ClubSummary['relations']) {

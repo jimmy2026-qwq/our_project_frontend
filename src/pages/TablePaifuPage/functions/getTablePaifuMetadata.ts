@@ -1,9 +1,9 @@
-import { getPaifuRoundActions, getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
+﻿import { getPaifuRoundActions, getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import type {
   PublicTournamentDetailView,
   PublicTournamentStageView,
 } from '@/objects';
-import { TournamentFormats } from '@/objects';
+import { TournamentFormat } from '@/objects';
 
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 
@@ -48,9 +48,9 @@ export function getStageDisplayName(
 
 function getStageFormatLabel(format?: string) {
   switch (format) {
-    case TournamentFormats.Knockout:
+    case TournamentFormat.Knockout:
       return '淘汰赛';
-    case TournamentFormats.Swiss:
+    case TournamentFormat.Swiss:
       return '瑞士轮';
     default:
       return undefined;

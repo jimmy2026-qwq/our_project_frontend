@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { GetPublicClubAPI, ListPublicClubsAPI, ListClubsAPI } from '@/api/club';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
@@ -6,19 +6,10 @@ import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import {
-  toClubSummary,
-  toPublicClubDetail,
-  toPublicClubSummary,
-} from '../../../../../functions/TournamentDetailClub.mappers';
-import type {
-  DetailState,
-  TournamentPublicProfile,
-} from '../../../../../objects/PublicTournamentDetailPage.types';
-import {
-  createFallbackClubSummary,
-  toClubPublicProfileSummary,
-} from '../../../../../functions/getTournamentClubSummary';
+import { toClubSummary, toPublicClubDetail, toPublicClubSummary } from '../../../../../functions/toTournamentDetailClubData';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
+import { createFallbackClubSummary, toClubPublicProfileSummary } from '../../../../../functions/getTournamentClubSummary';
 
 export function useTournamentClubOptions({
   localProfile,
@@ -27,7 +18,7 @@ export function useTournamentClubOptions({
 }: {
   localProfile: TournamentPublicProfile | null;
   session: AuthContextSession | null;
-  state: DetailState<TournamentPublicProfile>;
+  state: TournamentDetailState;
 }) {
   const [availableClubs, setAvailableClubs] = useState<ClubSummary[]>([]);
   const [invitedClubs, setInvitedClubs] = useState<ClubSummary[]>([]);

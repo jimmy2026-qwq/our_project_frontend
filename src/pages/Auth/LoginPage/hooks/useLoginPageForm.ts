@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import {
-  CreateGuestSessionAuthAPI,
-  CurrentSessionAuthAPI,
-  LoginAuthAPI,
-} from '@/api/auth';
+import { CreateGuestSessionAuthAPI, CurrentSessionAuthAPI, LoginAuthAPI } from '@/api/auth';
 import { mapGuestSession } from '@/app/auth/functions/mapAuthSession';
 import { resolveAuthenticatedAuthSession } from '@/app/auth/functions/resolveAuthenticatedAuthSession';
 import { useAuthContext } from '@/app/auth/useAuthContext';

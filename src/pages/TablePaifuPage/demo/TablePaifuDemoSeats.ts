@@ -1,8 +1,8 @@
-import { SeatWinds, type SeatWind } from '@/objects/tournament';
+﻿import { SeatWind } from '@/objects/tournament';
 
 export const demoSeats = [
   {
-    seat: SeatWinds.East,
+    seat: SeatWind.East,
     playerId: 'player-east',
     initialPoints: 25000,
     disconnected: false,
@@ -10,7 +10,7 @@ export const demoSeats = [
     clubId: null,
   },
   {
-    seat: SeatWinds.South,
+    seat: SeatWind.South,
     playerId: 'player-south',
     initialPoints: 25000,
     disconnected: false,
@@ -18,7 +18,7 @@ export const demoSeats = [
     clubId: null,
   },
   {
-    seat: SeatWinds.West,
+    seat: SeatWind.West,
     playerId: 'player-west',
     initialPoints: 25000,
     disconnected: false,
@@ -26,7 +26,7 @@ export const demoSeats = [
     clubId: null,
   },
   {
-    seat: SeatWinds.North,
+    seat: SeatWind.North,
     playerId: 'player-north',
     initialPoints: 25000,
     disconnected: false,
@@ -36,8 +36,8 @@ export const demoSeats = [
 ] as const;
 
 export const demoPlayerIdBySeat: Record<SeatWind, string> = {
-  [SeatWinds.East]: 'player-east',
-  [SeatWinds.South]: 'player-south',
-  [SeatWinds.West]: 'player-west',
-  [SeatWinds.North]: 'player-north',
+  [SeatWind.East]: 'player-east',
+  [SeatWind.South]: 'player-south',
+  [SeatWind.West]: 'player-west',
+  [SeatWind.North]: 'player-north',
 };

@@ -1,10 +1,11 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
+import { ClubTournamentSources } from '@/pages/shared_objects/club/ClubTournamentSource';
 
 import { getTournamentStatusLabel } from '../../../functions/formatClubDetail';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 import { clubPanelClassNames } from '../styles';
 
 /** 俱乐部详情页展示近期参赛记录和阵容入口的面板。 */
@@ -40,7 +41,9 @@ export function ClubRecentTournamentsPanel({
                 <div className={clubPanelClassNames.rowMain}>
                   <strong>{item.name}</strong>
                   <span>
-                    {item.source === 'invited' ? '受邀赛事' : '相关赛事'}
+                    {item.source === ClubTournamentSources.Invited
+                      ? '受邀赛事'
+                      : '相关赛事'}
                   </span>
                   <span>
                     {item.status ? getTournamentStatusLabel(item.status) : '--'}

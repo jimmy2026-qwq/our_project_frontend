@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
 import { getPublicHallLeaderboardRequestState } from '../functions/getPublicHallRequestState';
-import type {
-  HomeDataState,
-  LeaderboardDataState,
-  PublicHallState,
-} from '../objects/PublicHallPage.types';
+import type { HomeDataState } from '../objects/state/HomeDataState';
+import { LeaderboardDataState } from '../objects/state/LeaderboardDataState';
+import { PublicHallState } from '../objects/state/PublicHallState';
 import { peekPublicHallLeaderboardData } from '../functions/getPublicHallLeaderboardDataCache';
 import { usePublicHallLeaderboardDataLoader } from './usePublicHallLeaderboardDataLoader';
 

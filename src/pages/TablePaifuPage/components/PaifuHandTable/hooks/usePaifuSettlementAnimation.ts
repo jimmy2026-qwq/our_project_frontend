@@ -2,11 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { HandOutcome } from '@/objects';
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
-import {
-  isScoreSettlementRound,
-  settlementAnimationDelayMs,
-  settlementAnimationDurationMs,
-} from '../functions/getPaifuHandTableReplay';
+import { isScoreSettlementRound, settlementAnimationDelayMs, settlementAnimationDurationMs } from '../functions/getPaifuHandTableReplay';
 
 export function usePaifuSettlementAnimation({
   hasRoundScoreDelta,

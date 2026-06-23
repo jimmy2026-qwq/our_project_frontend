@@ -1,17 +1,11 @@
-import type {
+﻿import type {
   TournamentDetailView,
-  TournamentFormat,
   TournamentOperationsStageView,
   TournamentStageDirectoryEntry,
 } from '@/objects/tournament';
-import {
-  AdvancementRuleTypes,
-  DEFAULT_MAHJONG_RULESET,
-  TournamentFormats,
-  TournamentStatuses,
-} from '@/objects/tournament';
+import { AdvancementRuleTypes, DEFAULT_MAHJONG_RULESET, TournamentFormat, TournamentStatuses } from '@/objects/tournament';
 
-import type { TournamentPublicProfile } from '../../../../../objects/PublicClubDetailPage.types';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
 import type { ClubTournamentItem } from '../objects/ClubTournamentItem';
 
 type PublicTournamentStage = NonNullable<
@@ -116,14 +110,14 @@ export function toDetailStageFromPublicStage(
 
 function normalizeTournamentFormat(format?: string): TournamentFormat {
   switch (format) {
-    case TournamentFormats.Swiss:
-    case TournamentFormats.Knockout:
-    case TournamentFormats.RoundRobin:
-    case TournamentFormats.Finals:
-    case TournamentFormats.Custom:
+    case TournamentFormat.Swiss:
+    case TournamentFormat.Knockout:
+    case TournamentFormat.RoundRobin:
+    case TournamentFormat.Finals:
+    case TournamentFormat.Custom:
       return format;
     default:
-      return TournamentFormats.Custom;
+      return TournamentFormat.Custom;
   }
 }
 

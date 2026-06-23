@@ -22,7 +22,6 @@ export function PortalSection({
   eyebrow,
   title,
   description,
-  source,
   warning,
   children,
   className,
@@ -31,7 +30,6 @@ export function PortalSection({
   eyebrow: string;
   title: ReactNode;
   description: ReactNode;
-  source?: 'api' | 'mock';
   warning?: string;
   children: ReactNode;
   className?: string;
@@ -78,7 +76,6 @@ export function PortalSection({
         </div>
         <SourceBadge
           className={slotClassNames?.sourceBadge}
-          source={source}
           warning={warning}
         />
       </div>

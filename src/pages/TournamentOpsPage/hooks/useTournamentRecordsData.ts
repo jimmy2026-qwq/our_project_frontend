@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { TournamentRecordListAPI } from '@/api/tournament/TournamentRecordListAPI';
+import { TournamentRecordListAPI } from '@/api/tournament/matchrecord/TournamentRecordListAPI';
 import type {
   ListEnvelope,
   MatchRecordListQuery,
@@ -9,8 +9,9 @@ import type {
 import type { MatchRecordSummary } from '@/pages/shared_objects/tournament/MatchRecordSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState, TournamentOpsState } from '../objects/TournamentOps.types';
-import { toMatchRecordSummary } from '../functions/TournamentOps.mappers';
+import type { LoadState } from '../objects/LoadState';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
+import { toMatchRecordSummary } from '../functions/toTournamentOpsData';
 
 export function useTournamentRecordsData(
   state: TournamentOpsState,
@@ -63,7 +64,7 @@ async function loadRecords(
       offset: 0,
     });
 
-    return { envelope, source: 'api' };
+    return { envelope };
   } catch (error) {
     return {
       ...createEmptyLoadState<MatchRecordSummary>(),
@@ -94,6 +95,5 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api',
   };
 }

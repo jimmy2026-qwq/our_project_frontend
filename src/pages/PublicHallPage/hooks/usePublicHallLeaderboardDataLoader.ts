@@ -1,28 +1,16 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { PublicPlayerLeaderboardAPI } from '@/api/player';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
 import { sendAPI } from '@/system/api';
 
+import { buildLeaderboardKey, deleteLeaderboardDataRequest, getCachedPublicHallLeaderboardData, getLeaderboardDataRequest, setCachedPublicHallLeaderboardData, setLeaderboardDataRequest } from '../functions/getPublicHallLeaderboardDataCache';
 import { formatRankLabel } from '../functions/formatRankLabel';
-import {
-  buildLeaderboardKey,
-  deleteLeaderboardDataRequest,
-  getCachedPublicHallLeaderboardData,
-  getLeaderboardDataRequest,
-  setCachedPublicHallLeaderboardData,
-  setLeaderboardDataRequest,
-} from '../functions/getPublicHallLeaderboardDataCache';
-import {
-  toLeaderboardStatus,
-  toLeaderboardStatusFilter,
-} from '../functions/PublicHall.mappers';
-import type {
-  LeaderboardDataState,
-  LoadState,
-  PlayerLeaderboardEntry,
-  PublicHallState,
-} from '../objects/PublicHallPage.types';
+import { toLeaderboardStatus, toLeaderboardStatusFilter } from '../functions/toPublicHallData';
+import type { LeaderboardDataState } from '../objects/state/LeaderboardDataState';
+import { LoadState } from '../objects/state/LoadState';
+import { PlayerLeaderboardEntry } from '../objects/leaderboard/PlayerLeaderboardEntry';
+import { PublicHallState } from '../objects/state/PublicHallState';
 
 function createEmptyLoadState<T>(): LoadState<T> {
   return {
@@ -34,7 +22,6 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api',
   };
 }
 
@@ -72,7 +59,6 @@ async function loadLeaderboard(
           status: toLeaderboardStatus(item.status),
         })),
       },
-      source: 'api',
     };
   } catch (error) {
     return {

@@ -1,1 +1,4 @@
-export type EloSort = 'desc' | 'asc';
+export enum EloSort {
+  Desc = 'desc',
+  Asc = 'asc',
+}

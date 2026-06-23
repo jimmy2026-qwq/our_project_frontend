@@ -1,16 +1,7 @@
-import {
-  HandOutcome,
-  PaifuActionType,
-  type AgariResult,
-  type MahjongPublicEventView,
-  type MahjongSeatView,
-  type SeatWind,
-} from '@/objects';
+﻿import { HandOutcome, PaifuActionType, type AgariResult, type MahjongPublicEventView, type SeatWind, type MahjongSeatView } from '@/objects';
 import { getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import type {
-  ActiveOperation,
-  WinningCallFlashView,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/PaifuOverlayViews';
+import type { ActiveOperation } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/ActiveOperation';
+import type { WinningCallFlashView } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/WinningCallFlashView';
 
 import { winningCallAnimationMs } from './matchBoardTiming';
 

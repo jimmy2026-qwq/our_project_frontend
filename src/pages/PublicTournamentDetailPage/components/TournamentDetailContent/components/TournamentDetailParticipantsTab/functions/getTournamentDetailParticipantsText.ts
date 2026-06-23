@@ -1,4 +1,4 @@
-import { PlayerStatuses, RankPlatforms } from '@/objects';
+﻿import { PlayerStatus, RankPlatform } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
 export const participantText = {
@@ -49,11 +49,11 @@ export const participantText = {
 
 export function getPlayerStatusLabel(status?: string) {
   switch (status) {
-    case PlayerStatuses.Active:
+    case PlayerStatus.Active:
       return participantText.active;
-    case PlayerStatuses.Suspended:
+    case PlayerStatus.Suspended:
       return participantText.inactive;
-    case PlayerStatuses.Banned:
+    case PlayerStatus.Banned:
       return participantText.banned;
     default:
       return status || participantText.active;
@@ -67,7 +67,7 @@ export function getRankLabel(player: PlayerProfile) {
     return participantText.unknownRank;
   }
 
-  if (rank.platform === RankPlatforms.Custom && rank.tier === 'Unranked') {
+  if (rank.platform === RankPlatform.Custom && rank.tier === 'Unranked') {
     return participantText.unknownRank;
   }
 

@@ -1,17 +1,9 @@
 import type { AgariResult } from '@/objects';
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import {
-  getResultWins,
-  getWinYaku,
-  isWinOutcome,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getResultWins, getWinYaku, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { formatPoints } from '@/pages/TablePaifuPage/functions/getReplayCore';
 
-import {
-  formatDelta,
-  formatWinPointText,
-  getPlayerName,
-} from '../../functions/getMatchResultText';
+import { formatDelta, formatWinPointText, getPlayerName } from '../../functions/getMatchResultText';
 import { ResultStepButton } from './MatchResultStepButton';
 
 /** 结果覆盖层底部的提示和行动区域。 */

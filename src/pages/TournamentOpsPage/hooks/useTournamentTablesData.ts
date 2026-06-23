@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { TournamentStageTablesAPI } from '@/api/tournament/TournamentStageTablesAPI';
+import { TournamentStageTablesAPI } from '@/api/tournament/stage/table/TournamentStageTablesAPI';
 import type {
   ListEnvelope,
   TableListQuery,
@@ -9,8 +9,9 @@ import type {
 import type { TournamentTableSummary } from '@/pages/shared_objects/tournament/TournamentTableSummary';
 import { sendAPI } from '@/system/api';
 
-import type { LoadState, TournamentOpsState } from '../objects/TournamentOps.types';
-import { toTournamentTableSummary } from '../functions/TournamentOps.mappers';
+import type { LoadState } from '../objects/LoadState';
+import type { TournamentOpsState } from '../objects/TournamentOpsState';
+import { toTournamentTableSummary } from '../functions/toTournamentOpsData';
 
 export function useTournamentTablesData(
   state: TournamentOpsState,
@@ -65,7 +66,7 @@ async function loadTables(
       },
     );
 
-    return { envelope, source: 'api' };
+    return { envelope };
   } catch (error) {
     return {
       ...createEmptyLoadState<TournamentTableSummary>(),
@@ -100,6 +101,5 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api',
   };
 }

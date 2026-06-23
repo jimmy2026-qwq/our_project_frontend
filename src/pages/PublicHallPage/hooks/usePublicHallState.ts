@@ -1,9 +1,7 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
 
-import {
-  DEFAULT_PUBLIC_HALL_STATE,
-  type PublicHallState,
-} from '../objects/PublicHallPage.types';
+import { DEFAULT_PUBLIC_HALL_STATE } from '../objects/state/PublicHallState';
+import type { PublicHallState } from '../objects/state/PublicHallState';
 
 export function usePublicHallState() {
   const [state, setState] = useState<PublicHallState>(

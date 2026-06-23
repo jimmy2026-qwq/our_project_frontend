@@ -1,17 +1,16 @@
-import { getPaifuRoundActions, getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
+﻿import { getPaifuRoundActions, getPaifuInitialHands } from '@/pages/TablePaifuPage/functions/getPaifuRoundData';
 import type { SeatWind } from '@/objects/tournament';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import { getReplaySequenceLimit } from './getReplayCore';
 import { applySnapshotAction } from './applyReplaySnapshot';
-import type { MeldGroup, RiverDiscard } from '../objects/ReplaySnapshot.types';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
+import type { RiverDiscard } from '@/pages/TablePaifuPage/objects/RiverDiscard';
 
-export type {
-  MeldGroup,
-  MeldTile,
-  RiverDiscard,
-} from '../objects/ReplaySnapshot.types';
+export type { MeldGroup } from '../objects/MeldGroup';
+export type { MeldTile } from '../objects/MeldTile';
+export type { RiverDiscard } from '../objects/RiverDiscard';
 
 export function getReplaySnapshot(
   paifu: TablePaifuDetail,

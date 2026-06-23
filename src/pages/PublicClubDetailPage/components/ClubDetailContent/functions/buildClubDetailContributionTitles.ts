@@ -1,9 +1,7 @@
-import type { ClubRankNode } from '@/objects';
+﻿import type { ClubRankNode } from '@/objects';
 
-import type {
-  ClubAdminMemberEntry,
-  ClubDetailWorkbenchState,
-} from '../../../objects/ClubDetail.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import type { ClubDetailWorkbenchState } from '@/pages/PublicClubDetailPage/objects/state/workbench/ClubDetailWorkbenchState';
 
 const DEFAULT_CONTRIBUTION_TITLE_FIELDS = [
   { rankCode: 'rookie', defaultLabel: '见习雀士', minimumContribution: 0 },

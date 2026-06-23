@@ -1,20 +1,18 @@
-import { type ChangeEvent, useEffect, useState } from 'react';
+﻿import { useEffect, useState, type ChangeEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { TournamentCreateAPI } from '@/api/tournament';
 import { useAuthContext } from '@/app/auth/useAuthContext';
 import { useNotice } from '@/app/feedback/useNotice';
 import { DEFAULT_MAHJONG_RULESET } from '@/objects';
-import { TournamentFormats, type TournamentFormat } from '@/objects/tournament';
+import { TournamentFormat } from '@/objects/tournament';
 import { sendAPI } from '@/system/api';
 
-const FORMAT_SWISS = '\u745e\u58eb\u8f6e';
-const FORMAT_KNOCKOUT = '\u6dd8\u6c70\u8d5b';
+import { getTournamentFormatLabel } from '../functions/getTournamentFormatLabel';
 
 function getDefaultStageName(name: string, format: TournamentFormat) {
   const trimmedName = name.trim();
-  const suffix =
-    format === TournamentFormats.Swiss ? FORMAT_SWISS : FORMAT_KNOCKOUT;
+  const suffix = getTournamentFormatLabel(format);
 
   if (!trimmedName) {
     return `${suffix}\u9636\u6bb5`;
@@ -24,7 +22,7 @@ function getDefaultStageName(name: string, format: TournamentFormat) {
 }
 
 function getDefaultRoundCount(format: TournamentFormat) {
-  return format === TournamentFormats.Swiss ? 4 : 3;
+  return format === TournamentFormat.Swiss ? 4 : 3;
 }
 
 export function useCreateTournamentDialogForm({
@@ -39,7 +37,7 @@ export function useCreateTournamentDialogForm({
   const { notifySuccess, notifyWarning } = useNotice();
   const [name, setName] = useState('');
   const [format, setFormat] = useState<TournamentFormat>(
-    TournamentFormats.Swiss,
+    TournamentFormat.Swiss,
   );
   const [isSubmitting, setIsSubmitting] = useState(false);
   const operatorId = session?.user.operatorId ?? session?.user.userId;
@@ -51,7 +49,7 @@ export function useCreateTournamentDialogForm({
 
   function reset() {
     setName('');
-    setFormat(TournamentFormats.Swiss);
+    setFormat(TournamentFormat.Swiss);
     setIsSubmitting(false);
   }
 

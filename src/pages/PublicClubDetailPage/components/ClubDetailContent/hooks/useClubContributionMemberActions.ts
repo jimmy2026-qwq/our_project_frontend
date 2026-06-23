@@ -1,8 +1,8 @@
-import { AdjustClubMemberContributionAPI } from '@/api/club';
+﻿import { AdjustClubMemberContributionAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 
 export function useClubContributionMemberActions({
   data,
@@ -42,7 +42,7 @@ export function useClubContributionMemberActions({
       );
 
       notifyMutationResult(
-        { source: 'api' as const },
+        {},
         {
           successTitle: '贡献值已更新',
           successMessage: `${member.displayName} 的贡献值变化已提交。`,

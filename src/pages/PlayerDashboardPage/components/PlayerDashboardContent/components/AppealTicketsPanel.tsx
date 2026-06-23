@@ -2,10 +2,7 @@ import { EmptyState, StatusPill } from '@/components/ui';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
 import { formatDateTime } from '../functions/formatDateTime';
-import {
-  getAppealStatusLabel,
-  getAppealStatusTone,
-} from '../functions/getPlayerDashboardLabels';
+import { getAppealStatusLabel, getAppealStatusTone } from '../functions/getPlayerDashboardLabels';
 import { detailShellClassNames } from '../../PlayerDashboardShell.styles';
 
 /** 玩家仪表盘中展示本人申诉工单摘要的面板。 */

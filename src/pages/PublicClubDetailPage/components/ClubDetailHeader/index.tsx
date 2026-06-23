@@ -1,4 +1,4 @@
-import type { ClubDetailWorkbenchState } from '../../objects/ClubDetail.types';
+﻿import type { ClubDetailWorkbenchState } from '@/pages/PublicClubDetailPage/objects/state/workbench/ClubDetailWorkbenchState';
 import { clubDetailShellClassNames } from '../ClubDetailShell.styles';
 import { ClubHeroActions } from './ClubHeroActions';
 

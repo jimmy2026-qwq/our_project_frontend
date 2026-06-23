@@ -1,4 +1,4 @@
-import type { SeatWind } from '@/objects/tournament';
+﻿import type { SeatWind } from '@/objects/tournament';
 
 import type {
   PaifuAction,
@@ -10,13 +10,10 @@ import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
 import { removeFirstTile } from './getReplayCore';
 import { getPlayerSeat } from './getReplayPlayers';
 import { applyHandSnapshot } from './applyReplayHandSnapshot';
-import {
-  getClosedKanTiles,
-  getOpenMeldTiles,
-  isCallAction,
-} from './getReplaySnapshotMelds';
+import { getClosedKanTiles, getOpenMeldTiles, isCallAction } from './getReplaySnapshotMelds';
 import { claimDiscard } from './getReplaySnapshotClaims';
-import type { MeldGroup, RiverDiscard } from '../objects/ReplaySnapshot.types';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
+import type { RiverDiscard } from '@/pages/TablePaifuPage/objects/RiverDiscard';
 
 export function applySnapshotAction({
   action,

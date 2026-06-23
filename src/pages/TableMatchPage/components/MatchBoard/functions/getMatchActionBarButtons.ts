@@ -1,9 +1,5 @@
 import { cx } from '@/components/ui/cx';
-import {
-  MahjongCommandTypes,
-  type MahjongCommandType,
-  type MahjongLegalAction,
-} from '@/objects';
+import { MahjongCommandTypes, type MahjongCommandType, type MahjongLegalAction } from '@/objects';
 
 export interface DisplayActionButton {
   action?: MahjongLegalAction;

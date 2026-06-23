@@ -1,4 +1,4 @@
-import type { PublicHallRankSnapshot } from '../objects/PublicHallPage.types';
+﻿import type { PublicHallRankSnapshot } from '../objects/leaderboard/PublicHallRankSnapshot';
 
 export function formatRankLabel(rank?: PublicHallRankSnapshot | null) {
   if (!rank) {

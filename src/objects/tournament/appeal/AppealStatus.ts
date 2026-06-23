@@ -1,9 +1,8 @@
-export const AppealStatuses = {
-  Open: 'Open',
-  UnderReview: 'UnderReview',
-  Resolved: 'Resolved',
-  Rejected: 'Rejected',
-  Escalated: 'Escalated',
-} as const;
+﻿export enum AppealStatus {
+  Open = 'Open',
+  UnderReview = 'UnderReview',
+  Resolved = 'Resolved',
+  Rejected = 'Rejected',
+  Escalated = 'Escalated',
 
-export type AppealStatus = (typeof AppealStatuses)[keyof typeof AppealStatuses];
+}

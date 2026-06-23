@@ -1,11 +1,11 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { ListClubsAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 import { mapEnvelope } from '@/system/api/http';
 
-import type { ClubDirectoryState } from '../objects/ClubApplication.types';
-import { toClubSummary } from '../functions/ClubDetailClub.mappers';
+import type { ClubDirectoryState } from '@/pages/PublicClubDetailPage/objects/application/ClubDirectoryState';
+import { toClubSummary } from '../functions/toClubDetailClubData';
 
 export function useClubApplicationDirectoryLoader() {
   const loadJoinableClubs =
@@ -22,12 +22,10 @@ export function useClubApplicationDirectoryLoader() {
 
         return {
           items: envelope.items,
-          source: 'api',
         };
       } catch (error) {
         return {
           items: [],
-          source: 'api',
           warning:
             error instanceof Error
               ? error.message

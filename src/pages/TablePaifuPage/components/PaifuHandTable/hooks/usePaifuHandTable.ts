@@ -1,22 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
-import {
-  getPlayerDisplayName,
-  getRoundPlayerId,
-} from '../../../functions/getReplayPlayers';
-import {
-  HandOutcome,
-  SeatWinds,
-  type PaifuRound as PaifuRoundSummary,
-} from '@/objects';
+import { getPlayerDisplayName, getRoundPlayerId } from '../../../functions/getReplayPlayers';
+import { HandOutcome, SeatWind, type PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
-import {
-  createPerspectivePaifu,
-  getInitialPerspectiveSeat,
-  getNextPerspectiveSeat,
-  getPaifuRoundKey,
-} from '../functions/getPaifuHandTablePerspective';
-import type { HandVisibilityMode } from '../objects/HandVisibilityMode';
+import { createPerspectivePaifu, getInitialPerspectiveSeat, getNextPerspectiveSeat, getPaifuRoundKey } from '../functions/getPaifuHandTablePerspective';
+import { HandVisibilityMode } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/HandVisibilityMode';
 import type { PaifuHandTableProps } from '../objects/PaifuHandTableProps';
 import { useMahjongTileImagePreload } from './useMahjongTileImagePreload';
 import { usePaifuHandTableReplay } from './usePaifuHandTableReplay';
@@ -34,7 +22,7 @@ export function usePaifuHandTable({
   const activeRound = round ?? emptyPaifuRound;
 
   const [handVisibilityMode, setHandVisibilityMode] =
-    useState<HandVisibilityMode>('self');
+    useState<HandVisibilityMode>(HandVisibilityMode.Self);
   const [perspectiveSeat, setPerspectiveSeat] = useState(() =>
     getInitialPerspectiveSeat(activePaifu, viewerPlayerId),
   );
@@ -67,7 +55,7 @@ export function usePaifuHandTable({
     }
   }, [replay.isSettlementAnimating]);
 
-  const selfPlayerId = getRoundPlayerId(displayPaifu, SeatWinds.East);
+  const selfPlayerId = getRoundPlayerId(displayPaifu, SeatWind.East);
   const perspectiveLabel = selfPlayerId
     ? `视角：${getPlayerDisplayName(displayPaifu, selfPlayerId)}`
     : '视角：东家';
@@ -80,7 +68,11 @@ export function usePaifuHandTable({
     onCyclePerspective: () =>
       setPerspectiveSeat((seat) => getNextPerspectiveSeat(activePaifu, seat)),
     onToggleHandVisibility: () =>
-      setHandVisibilityMode((mode) => (mode === 'self' ? 'all' : 'self')),
+      setHandVisibilityMode((mode) =>
+        mode === HandVisibilityMode.Self
+          ? HandVisibilityMode.All
+          : HandVisibilityMode.Self,
+      ),
     onToggleRelativeScoreMode: () => setIsRelativeScoreMode((value) => !value),
     perspectiveLabel,
     replay,
@@ -95,7 +87,7 @@ const emptyPaifuRound: PaifuRoundSummary = {
   descriptor: {
     handNumber: 1,
     honba: 0,
-    roundWind: SeatWinds.East,
+    roundWind: SeatWind.East,
   },
   players: [],
   result: {

@@ -1,9 +1,6 @@
 import type { ReactNode } from 'react';
 
-import {
-  ClubApplicationStatuses,
-  type ClubApplicationStatus,
-} from '@/objects';
+import { ClubApplicationStatuses, type ClubApplicationStatus } from '@/objects';
 
 import { EmptyState } from './feedback';
 import { InlineActions } from './layout';

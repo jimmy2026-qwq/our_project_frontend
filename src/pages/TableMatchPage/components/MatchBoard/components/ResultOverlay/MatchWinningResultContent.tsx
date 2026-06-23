@@ -1,26 +1,11 @@
-import {
-  getPaifuTileCode,
-  type AgariResult,
-  type MahjongSeatView,
-} from '@/objects';
+import { getPaifuTileCode, type AgariResult, type MahjongSeatView } from '@/objects';
 import type { MahjongResultWinLike } from '@/components/mahjong-result/functions/getMahjongResultSequence';
-import {
-  getResultSequenceStep,
-  getWinYaku,
-  isNagashiManganWin,
-} from '@/components/mahjong-result/functions/getMahjongResultSequence';
+import { getResultSequenceStep, getWinYaku, isNagashiManganWin } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 import { WinningTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/WinningResultIndicators';
 import { ResultTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 
-import {
-  findWinningTileFromTarget,
-  getResultDisplayHand,
-} from '../../functions/getMatchResultHand';
-import {
-  formatWinPointText,
-  getWinHeadline,
-  getWinLabel,
-} from '../../functions/getMatchResultText';
+import { findWinningTileFromTarget, getResultDisplayHand } from '../../functions/getMatchResultHand';
+import { formatWinPointText, getWinHeadline, getWinLabel } from '../../functions/getMatchResultText';
 import { ScoreSettlementPanel } from './MatchResultSettlementPanels';
 import { ResultStepButton } from './MatchResultStepButton';
 import { YakuList } from './MatchResultYakuList';

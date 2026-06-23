@@ -1,6 +1,6 @@
-import type { AuthContextSession } from '@/app/auth/AuthContextSession';
+﻿import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 import { useClubApplicationInbox } from './useClubApplicationInbox';
 import { useClubContributionChanges } from './useClubContributionChanges';
 import { useClubDetailDialogs } from './useClubDetailDialogs';

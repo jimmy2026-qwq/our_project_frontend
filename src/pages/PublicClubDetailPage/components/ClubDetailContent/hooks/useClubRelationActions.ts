@@ -1,12 +1,9 @@
-import {
-  SubmitClubRelationRequestAPI,
-} from '@/api/club/SubmitClubRelationRequestAPI';
-import { UpdateClubRelationAPI } from '@/api/club/UpdateClubRelationAPI';
-import type { ClubRelationKind } from '@/objects/club';
-import { ClubRelationKinds } from '@/objects/club';
+﻿import { SubmitClubRelationRequestAPI } from '@/api/club/relation/SubmitClubRelationRequestAPI';
+import { UpdateClubRelationAPI } from '@/api/club/relation/UpdateClubRelationAPI';
+import { ClubRelationKind } from '@/objects/club';
 import { sendAPI } from '@/system/api';
 
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 
 export interface ClubRelationDraft {
   targetClubId: string;
@@ -62,15 +59,15 @@ export function useClubRelationActions({
       }
 
       notifyMutationResult(
-        { source: 'api' as const },
+        {},
         workbench.canManageRelations
           ? {
               successTitle:
-                draft.relation === ClubRelationKinds.Neutral
+                draft.relation === ClubRelationKind.Neutral
                   ? '关系已清除'
                   : '关系已更新',
               successMessage:
-                draft.relation === ClubRelationKinds.Neutral
+                draft.relation === ClubRelationKind.Neutral
                   ? '两家俱乐部之间的关系已经恢复中立。'
                   : '两家俱乐部之间的关系已经同步更新。',
               fallbackTitle: '关系更新需要关注',
@@ -89,7 +86,6 @@ export function useClubRelationActions({
     } catch (error) {
       notifyMutationResult(
         {
-          source: 'mock' as const,
           warning:
             error instanceof Error
               ? error.message

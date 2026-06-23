@@ -1,13 +1,10 @@
 import { useEffect } from 'react';
 
-import {
-  realtimeBrowserEventName,
-  type RealtimeBrowserEvent,
-  type RealtimeEvent,
-} from './RealtimeEvent';
+import { realtimeBrowserEventName, type RealtimeBrowserEvent, type RealtimeEvent } from './RealtimeEvent';
+import type { RealtimeEventType } from './RealtimeEventType';
 
 export function useRealtimeRefresh(
-  eventTypes: string[],
+  eventTypes: RealtimeEventType[],
   onRefresh: (event: RealtimeEvent) => void,
 ) {
   const eventTypeKey = eventTypes.join('|');

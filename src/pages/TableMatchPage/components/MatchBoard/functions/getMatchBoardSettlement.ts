@@ -1,14 +1,5 @@
-import {
-  HandOutcome,
-  MahjongGameLengths,
-  MahjongTableStatuses,
-  SeatWinds,
-  type AgariResult,
-  type MahjongSeatView,
-  type MahjongTableView,
-  type SeatWind,
-} from '@/objects';
-import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterTableDisplay';
+﻿import { HandOutcome, MahjongGameLengths, MahjongTableStatuses, SeatWind, type AgariResult, type MahjongSeatView, type MahjongTableView } from '@/objects';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterScoreDisplay';
 import { getResultWins, isWinOutcome } from '@/components/mahjong-result/functions/getMahjongResultSequence';
 
 import { matchBoardSeatOrder } from '../objects/matchBoardSeatOrder';
@@ -140,7 +131,7 @@ export function shouldHideWinningHand({
 function doesDealerContinueAfterCurrentResult(mahjongTable: MahjongTableView) {
   const result = mahjongTable.currentRound?.result;
   const eastPlayerId = mahjongTable.seats.find(
-    (seat) => seat.seat === SeatWinds.East,
+    (seat) => seat.seat === SeatWind.East,
   )?.playerId;
 
   if (!result || !eastPlayerId) {
@@ -160,7 +151,7 @@ function doesDealerContinueAfterCurrentResult(mahjongTable: MahjongTableView) {
 
 function isCurrentDealerTop(mahjongTable: MahjongTableView) {
   const eastSeat = mahjongTable.seats.find(
-    (seat) => seat.seat === SeatWinds.East,
+    (seat) => seat.seat === SeatWind.East,
   );
 
   return Boolean(
@@ -183,7 +174,7 @@ function isAtOrBeyondLastScheduledHand(
 function getLastScheduledRoundWind(
   gameLength: MahjongTableView['ruleset']['gameLength'],
 ): SeatWind {
-  return gameLength === MahjongGameLengths.Hanchan ? SeatWinds.South : SeatWinds.East;
+  return gameLength === MahjongGameLengths.Hanchan ? SeatWind.South : SeatWind.East;
 }
 
 function getRoundWindOrder(seat: SeatWind) {

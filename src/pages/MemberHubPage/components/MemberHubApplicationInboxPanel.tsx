@@ -1,24 +1,21 @@
-import {
-  ActionButton,
-  ClubApplicationList,
-  DataPanel,
-  EmptyState,
-} from '@/components/ui';
-import { ClubApplicationStatuses, Roles } from '@/objects';
+﻿import { Role, ClubApplicationReviewDecisions, ClubApplicationStatuses, type ClubApplicationReviewDecision } from '@/objects';
+import { ActionButton, DataPanel, EmptyState } from '@/components/ui';
+import { ClubApplicationList } from '@/components/ui';
 
 import { formatMemberHubDateTime } from '../functions/formatMemberHubDateTime';
 import { getActiveOperator } from '../functions/getMemberHubOperator';
-import type {
-  ApplicationInboxState,
-  MemberHubOperatorDirectory,
-  MemberHubState,
-} from '../objects/MemberHub.types';
+import { ApplicationInboxState } from '../objects/state/ApplicationInboxState';
+import { MemberHubOperatorDirectory } from '../objects/operator/MemberHubOperatorDirectory';
+import { MemberHubState } from '../objects/state/MemberHubState';
 
 interface ApplicationInboxPanelProps {
   directory: MemberHubOperatorDirectory;
   state: MemberHubState;
   inboxState: ApplicationInboxState;
-  onReview: (applicationId: string, decision: 'approve' | 'reject') => void;
+  onReview: (
+    applicationId: string,
+    decision: ClubApplicationReviewDecision,
+  ) => void;
 }
 
 /** 成员中心中展示俱乐部入会申请收件箱的面板。 */
@@ -30,7 +27,7 @@ export function ApplicationInboxPanel({
 }: ApplicationInboxPanelProps) {
   const activeOperator = getActiveOperator(directory, state.operatorId);
 
-  if (activeOperator.role !== Roles.ClubAdmin) {
+  if (activeOperator.role !== Role.ClubAdmin) {
     return (
       <DataPanel
         title="俱乐部申请收件箱"
@@ -51,7 +48,6 @@ export function ApplicationInboxPanel({
     <DataPanel
       title="俱乐部申请收件箱"
       description="优先读取后端申请队列；接口不可用时保留本地占位。"
-      source={inboxState.source}
       warning={inboxState.warning}
       badgeLabel={`待处理 ${pendingCount}`}
     >
@@ -68,12 +64,22 @@ export function ApplicationInboxPanel({
             item.status === ClubApplicationStatuses.Pending ? (
               <>
                 <ActionButton
-                  onClick={() => onReview(item.applicationId, 'approve')}
+                  onClick={() =>
+                    onReview(
+                      item.applicationId,
+                      ClubApplicationReviewDecisions.Approve,
+                    )
+                  }
                 >
                   通过
                 </ActionButton>
                 <ActionButton
-                  onClick={() => onReview(item.applicationId, 'reject')}
+                  onClick={() =>
+                    onReview(
+                      item.applicationId,
+                      ClubApplicationReviewDecisions.Reject,
+                    )
+                  }
                 >
                   拒绝
                 </ActionButton>

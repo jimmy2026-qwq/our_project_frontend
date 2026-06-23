@@ -1,7 +1,7 @@
-import { FieldGroup, SelectField } from '@/components/ui';
+﻿import { FieldGroup, SelectField } from '@/components/ui';
 
-import type { EloSort } from '../objects/EloSort';
-import type { MemberStatusFilter } from '../objects/MemberStatusFilter';
+import { EloSort } from '@/pages/PublicClubDetailPage/components/ClubDetailDialogs/components/ClubTournamentLineupDialog/objects/EloSort';
+import { MemberStatusFilter } from '@/pages/PublicClubDetailPage/components/ClubDetailDialogs/components/ClubTournamentLineupDialog/objects/MemberStatusFilter';
 
 /** 阵容弹窗中筛选成员姓名和状态的控件组。 */
 export function ClubTournamentLineupFilters({
@@ -60,9 +60,9 @@ export function ClubTournamentLineupFilters({
           onStatusFilterChange(event.currentTarget.value as MemberStatusFilter)
         }
       >
-        <option value="all">全部成员</option>
-        <option value="active">仅活跃</option>
-        <option value="inactive">仅非活跃</option>
+        <option value={MemberStatusFilter.All}>全部成员</option>
+        <option value={MemberStatusFilter.Active}>仅活跃</option>
+        <option value={MemberStatusFilter.Inactive}>仅非活跃</option>
       </SelectField>
       <SelectField
         label="ELO 排序"
@@ -71,8 +71,8 @@ export function ClubTournamentLineupFilters({
           onEloSortChange(event.currentTarget.value as EloSort)
         }
       >
-        <option value="desc">从高到低</option>
-        <option value="asc">从低到高</option>
+        <option value={EloSort.Desc}>从高到低</option>
+        <option value={EloSort.Asc}>从低到高</option>
       </SelectField>
     </FieldGroup>
   );

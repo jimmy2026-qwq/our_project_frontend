@@ -1,13 +1,7 @@
-import type { SeatWind } from '@/objects/tournament';
+﻿import type { SeatWind } from '@/objects/tournament';
 
-import {
-  isSamePaifuTile,
-  PaifuActionType,
-  PaifuTileSuit,
-  type PaifuAction,
-  type PaifuTile,
-} from '@/objects';
-import type { MeldTile } from '../objects/ReplaySnapshot.types';
+import { isSamePaifuTile, PaifuActionType, PaifuTileSuit, type PaifuAction, type PaifuTile } from '@/objects';
+import type { MeldTile } from '../objects/MeldTile';
 import { removeFirstMatchingTile } from './getReplaySnapshotHands';
 import { getOpenMeldSidewaysIndex } from './getReplaySnapshotRelations';
 

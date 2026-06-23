@@ -3,8 +3,8 @@ import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile'
 import { sendAPI } from '@/system/api';
 
 import { upsertClubAdminOverride } from '../../../functions/getClubAdminOverrides';
-import type { ClubAdminMemberEntry } from '../../../objects/ClubDetail.types';
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 
 export function useClubMemberAdminActions({
   confirmDanger,
@@ -39,7 +39,7 @@ export function useClubMemberAdminActions({
     );
 
     notifyMutationResult(
-      { source: 'api' as const },
+      {},
       {
         successTitle: '管理员设置成功',
         successMessage: `${member.displayName} 现在可以管理该俱乐部。`,
@@ -72,23 +72,21 @@ export function useClubMemberAdminActions({
       return;
     }
 
-    const result = await sendAPI(
+    await sendAPI(
       new RemoveClubMemberAPI(profile.id, member.playerId, {
         operatorId: workbench.operatorId,
       }),
-    ).then(() => ({ source: 'api' as const }));
+    );
 
-    notifyMutationResult(result, {
+    notifyMutationResult({}, {
       successTitle: '成员已移除',
       successMessage: `${member.displayName} 已从该俱乐部移除。`,
       fallbackTitle: '移除成员需要关注',
       fallbackMessage: '后端更新没有成功完成，请稍后刷新确认。',
     });
 
-    if (result.source === 'api') {
-      await refreshClubMembers();
-      onRefreshDetail?.();
-    }
+    await refreshClubMembers();
+    onRefreshDetail?.();
   }
 
   return {

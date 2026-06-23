@@ -2,16 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../../../objects/TablePaifuDetail';
-import {
-  getReplayActions,
-  getReplayStepCount,
-  isExhaustiveDrawResultStep,
-} from '../../../functions/getReplayCore';
+import { getReplayActions, getReplayStepCount, isExhaustiveDrawResultStep } from '../../../functions/getReplayCore';
 import { getReplaySnapshot } from '../../../functions/getReplaySnapshot';
-import {
-  createScoreDisplays,
-  createTableSticks,
-} from '../functions/getPaifuHandTableReplay';
+import { createScoreDisplays, createTableSticks } from '../functions/getPaifuHandTableReplay';
 import { usePaifuOperationFlash } from './usePaifuOperationFlash';
 import { usePaifuSettlementAnimation } from './usePaifuSettlementAnimation';
 

@@ -1,0 +1,9 @@
+export { TournamentStageTablesAPI } from './TournamentStageTablesAPI';
+export { TournamentTableFinalizeArchiveAPI } from './TournamentTableFinalizeArchiveAPI';
+export { TournamentTableGetAPI } from './TournamentTableGetAPI';
+export { TournamentTableListAPI } from './TournamentTableListAPI';
+export { TournamentTableResetAPI } from './TournamentTableResetAPI';
+export { TournamentTableStartAPI } from './TournamentTableStartAPI';
+export { TournamentTableUpdateOwnReadyAPI } from './TournamentTableUpdateOwnReadyAPI';
+export { TournamentTableUpdateSeatStateAPI } from './TournamentTableUpdateSeatStateAPI';
+export { TournamentTableUploadPaifuAPI } from './TournamentTableUploadPaifuAPI';

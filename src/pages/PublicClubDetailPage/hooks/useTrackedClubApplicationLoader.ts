@@ -1,22 +1,15 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
-import {
-  GetClubApplicationAPI,
-  GetCurrentClubApplicationAPI,
-} from '@/api/club';
+import { GetClubApplicationAPI, GetCurrentClubApplicationAPI } from '@/api/club';
 import { ClubApplicationStatuses } from '@/objects';
-import {
-  isProvisionalClubApplicationId,
-  updateTrackedClubApplicationStatus,
-  upsertTrackedClubApplication,
-} from '../functions/getClubApplicationTracker';
+import { isProvisionalClubApplicationId, updateTrackedClubApplicationStatus, upsertTrackedClubApplication } from '../functions/getClubApplicationTracker';
 import { sendAPI } from '@/system/api';
 import { ApiError } from '@/system/api/http';
 
-import type { ApplicationState } from '../objects/ClubApplication.types';
+import type { ApplicationState } from '@/pages/PublicClubDetailPage/objects/application/ApplicationState';
 import { getTrackedApplication } from '../functions/getTrackedClubApplication';
-import { toClubApplicationViewModel } from '../functions/ClubApplication.mappers';
-import { toClubApplicationView } from '../functions/ClubDetailApplication.mappers';
+import { toClubApplicationViewModel } from '../functions/toClubApplicationData';
+import { toClubApplicationView } from '../functions/toClubDetailApplicationData';
 
 export function useTrackedClubApplicationLoader() {
   const loadCurrentPendingApplication = useCallback(
@@ -39,12 +32,10 @@ export function useTrackedClubApplicationLoader() {
           message: application.message,
           status: application.status,
           submittedAt: application.createdAt,
-          source: 'api',
         });
 
         return {
           application,
-          source: 'api',
         };
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) {
@@ -113,7 +104,6 @@ export function useTrackedClubApplicationLoader() {
             message: tracked.message,
             createdAt: tracked.submittedAt,
           },
-          source: tracked.source,
           warning:
             'The backend no longer reports a pending application, so the provisional local record was preserved as rejected.',
         };
@@ -134,12 +124,10 @@ export function useTrackedClubApplicationLoader() {
           message: application.message,
           status: application.status,
           submittedAt: application.createdAt,
-          source: 'api',
         });
 
         return {
           application,
-          source: 'api',
         };
       } catch (error) {
         if (error instanceof ApiError && error.status === 404) {
@@ -157,7 +145,6 @@ export function useTrackedClubApplicationLoader() {
               message: tracked.message,
               createdAt: tracked.submittedAt,
             },
-            source: tracked.source,
             warning:
               'The backend no longer returned this application, so the local record was preserved as rejected.',
           };
@@ -172,7 +159,6 @@ export function useTrackedClubApplicationLoader() {
             message: tracked.message,
             createdAt: tracked.submittedAt,
           },
-          source: tracked.source,
           warning:
             error instanceof Error
               ? error.message

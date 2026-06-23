@@ -1,18 +1,4 @@
-import {
-  Alert,
-  AlertDescription,
-  Button,
-  Dialog,
-  DialogBody,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogOverlay,
-  DialogPortal,
-  DialogSurface,
-  DialogTitle,
-  Textarea,
-} from '@/components/ui';
+import { Alert, AlertDescription, Button, Dialog, DialogBody, DialogDescription, DialogFooter, DialogHeader, DialogOverlay, DialogPortal, DialogSurface, DialogTitle, Textarea } from '@/components/ui';
 
 interface AppealDialogProps {
   open: boolean;

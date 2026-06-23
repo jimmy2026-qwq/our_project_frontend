@@ -1,15 +1,9 @@
-import {
-  AssignClubTitleAPI,
-  ClearClubTitleAPI,
-  UpdateClubRankTreeAPI,
-} from '@/api/club';
+﻿import { AssignClubTitleAPI, ClearClubTitleAPI, UpdateClubRankTreeAPI } from '@/api/club';
 import { sendAPI } from '@/system/api';
 
-import type {
-  ClubAdminMemberEntry,
-  ClubContributionTitleDraft,
-} from '../../../objects/ClubDetail.types';
-import type { ClubDetailActionContext } from './useClubDetailActions.types';
+import type { ClubAdminMemberEntry } from '@/pages/PublicClubDetailPage/objects/contribution/ClubAdminMemberEntry';
+import type { ClubContributionTitleDraft } from '@/pages/PublicClubDetailPage/objects/contribution/ClubContributionTitleDraft';
+import type { ClubDetailActionContext } from '../objects/ClubDetailActionContext';
 
 export function useClubTitleActions({
   data,
@@ -58,7 +52,7 @@ export function useClubTitleActions({
       }
 
       notifyMutationResult(
-        { source: 'api' as const },
+        {},
         {
           successTitle: normalizedTitle ? '头衔已更新' : '头衔已清除',
           successMessage: `${member.displayName} 的专属头衔已经更新。`,
@@ -115,7 +109,7 @@ export function useClubTitleActions({
       );
 
       notifyMutationResult(
-        { source: 'api' as const },
+        {},
         {
           successTitle: '通用头衔已更新',
           successMessage: '成员列表会按新的贡献头衔显示。',
@@ -131,7 +125,6 @@ export function useClubTitleActions({
     } catch (error) {
       notifyMutationResult(
         {
-          source: 'mock' as const,
           warning:
             error instanceof Error
               ? error.message

@@ -3,13 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { MahjongCommandTypes, type MahjongLegalAction } from '@/objects';
 
 import { ChiChoicePanel } from './MatchActionChiChoicePanel';
-import {
-  getActionButtonClassName,
-  getActionButtonLabel,
-  getChiActionKey,
-  getTsumoActionKey,
-  getVisibleButtonActions,
-} from '../../functions/getMatchActionBarButtons';
+import { getActionButtonClassName, getActionButtonLabel, getChiActionKey, getTsumoActionKey, getVisibleButtonActions } from '../../functions/getMatchActionBarButtons';
 
 interface MatchActionBarProps {
   actionError: string | null;

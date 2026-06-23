@@ -1,40 +1,28 @@
 import type { ReactNode } from 'react';
 
-import { Badge } from './badge';
 import { Card, CardContent } from './card';
 import { EmptyStateBlock } from './empty-state';
 import { Skeleton } from './skeleton';
 import { SectionIntro } from './layout';
 import { cx } from './cx';
 
-/** 在面板或详情页中标记数据来自 API 还是 mock。 */
+/** 在面板或详情页中展示数据加载警告。 */
 export function SourceBadge({
-  source,
   warning,
-  label,
   className,
 }: {
-  source?: 'api' | 'mock';
   warning?: string;
-  label?: string;
   className?: string;
 }) {
-  if (!source) {
+  if (!warning) {
     return null;
   }
 
   return (
     <div className={cx('flex flex-col gap-[14px] md:items-end', className)}>
-      <Badge
-        variant={source === 'api' ? 'success' : 'warning'}
-      >
-        {label ?? (source === 'api' ? 'API' : 'Mock')}
-      </Badge>
-      {warning ? (
-        <p className="m-0 max-w-[30ch] text-left text-[0.82rem] leading-6 text-[#c7d6e2] md:text-right">
-          {warning}
-        </p>
-      ) : null}
+      <p className="m-0 max-w-[30ch] text-left text-[0.82rem] leading-6 text-[#c7d6e2] md:text-right">
+        {warning}
+      </p>
     </div>
   );
 }

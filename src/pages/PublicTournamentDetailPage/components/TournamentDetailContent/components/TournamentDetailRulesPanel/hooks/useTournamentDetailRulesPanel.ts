@@ -1,22 +1,12 @@
-import { useEffect, useMemo, useState } from 'react';
+﻿import { useEffect, useMemo, useState } from 'react';
 
 import { GetPlayerAPI } from '@/api/player';
 import { sendAPI } from '@/system/api';
 
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
-import { toPlayerProfile } from '../../../../../functions/TournamentDetailPlayer.mappers';
-import {
-  describeRuleDetails,
-  getCurrentRuleStage,
-} from '../../../../../functions/getTournamentDetailRules';
-import {
-  getKnockoutResultRows,
-  getQualifiedPlayerIds,
-  getStandingResultRows,
-  isCompletedStage,
-  isFinalStage,
-  type PlayerListRow,
-} from '../functions/getTournamentRulesPanelResults';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
+import { toPlayerProfile } from '../../../../../functions/toTournamentDetailPlayerData';
+import { describeRuleDetails, getCurrentRuleStage } from '../../../../../functions/getTournamentDetailRules';
+import { getKnockoutResultRows, getQualifiedPlayerIds, getStandingResultRows, isCompletedStage, isFinalStage, type PlayerListRow } from '../functions/getTournamentRulesPanelResults';
 
 export function useTournamentDetailRulesPanel(
   workbench: TournamentDetailWorkbenchState,

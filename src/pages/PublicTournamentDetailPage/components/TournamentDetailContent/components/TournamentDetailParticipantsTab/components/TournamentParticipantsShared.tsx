@@ -1,14 +1,10 @@
-import type { ReactNode } from 'react';
+﻿import type { ReactNode } from 'react';
 
 import { Button, StatusPill } from '@/components/ui';
-import { PlayerStatuses } from '@/objects';
+import { PlayerStatus } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
-import {
-  getPlayerStatusLabel,
-  getRankLabel,
-  participantText,
-} from '../functions/getTournamentDetailParticipantsText';
+import { getPlayerStatusLabel, getRankLabel, participantText } from '../functions/getTournamentDetailParticipantsText';
 
 /** 参与者分组标题旁的展开收起箭头。 */
 export function ToggleArrow({
@@ -106,7 +102,7 @@ export function PlayerRow({ player }: { player: PlayerProfile }) {
       </div>
       <StatusPill
         tone={
-          player.playerStatus === PlayerStatuses.Active ? 'success' : 'warning'
+          player.playerStatus === PlayerStatus.Active ? 'success' : 'warning'
         }
       >
         {getPlayerStatusLabel(player.playerStatus)}

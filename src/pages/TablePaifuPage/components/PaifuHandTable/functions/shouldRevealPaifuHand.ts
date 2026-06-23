@@ -1,6 +1,6 @@
-import type { PaifuRound as PaifuRoundSummary } from '@/objects';
+﻿import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import { isPlayerTenpai } from '../../../functions/getReplayPlayers';
-import type { HandVisibilityMode } from '../objects/HandVisibilityMode';
+import { HandVisibilityMode } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/HandVisibilityMode';
 
 export function shouldRevealPaifuHand({
   handVisibilityMode,
@@ -21,7 +21,7 @@ export function shouldRevealPaifuHand({
     return false;
   }
 
-  if (handVisibilityMode === 'all') {
+  if (handVisibilityMode === HandVisibilityMode.All) {
     return true;
   }
 

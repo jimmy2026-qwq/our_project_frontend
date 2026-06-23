@@ -1,18 +1,13 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { GetPublicTournamentAPI } from '@/api/tournament';
-import { TournamentGetAPI } from '@/api/tournament';
+import { GetPublicTournamentAPI, TournamentGetAPI } from '@/api/tournament';
+
 import type { AuthContextSession } from '@/app/auth/AuthContextSession';
 import { sendAPI } from '@/system/api';
 
-import type {
-  DetailState,
-  TournamentPublicProfile,
-} from '../../../objects/PublicTournamentDetailPage.types';
-import {
-  toPublicTournamentDetail,
-  toTournamentDetailFromAdminView,
-} from '../../../functions/TournamentDetailTournament.mappers';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
+import type { TournamentPublicProfile } from '@/pages/shared_objects/tournament/TournamentPublicProfile';
+import { toPublicTournamentDetail, toTournamentDetailFromAdminView } from '../../../functions/toTournamentDetailTournamentData';
 
 export async function loadTournamentProfileForWorkbench(tournamentId: string) {
   try {
@@ -61,7 +56,7 @@ export function useTournamentProfileData({
   state,
   session,
 }: {
-  state: DetailState<TournamentPublicProfile>;
+  state: TournamentDetailState;
   session: AuthContextSession | null;
 }) {
   const [localProfile, setLocalProfile] =

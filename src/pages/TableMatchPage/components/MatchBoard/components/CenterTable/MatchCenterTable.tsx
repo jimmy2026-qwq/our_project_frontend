@@ -1,15 +1,6 @@
-import {
-  SeatWinds,
-  getPaifuTileCode,
-  type MahjongSeatView,
-  type MahjongTableView,
-  type SeatWind,
-} from '@/objects';
-import {
-  BangziCounter,
-  RemainingTileCount,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/components/CenterTable/CenterTableCounters';
-import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterTableDisplay';
+﻿import { SeatWind, getPaifuTileCode, type MahjongSeatView, type MahjongTableView } from '@/objects';
+import { BangziCounter, RemainingTileCount } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/CenterTable/CenterTableCounters';
+import type { CenterScoreDisplay } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/CenterScoreDisplay';
 import { DoraIndicatorTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
 
 import { MatchCenterPoint, getCenterPointPoints } from './MatchCenterPoint';
@@ -36,8 +27,8 @@ export function MatchCenterTable({
   const doraIndicators =
     round?.doraIndicators.slice(0, round.doraIndicatorVisibleCount) ?? [];
   const referencePoints = getCenterPointPoints(
-    scoreDisplays?.[SeatWinds.East],
-    seatsByDisplaySeat[SeatWinds.East],
+    scoreDisplays?.[SeatWind.East],
+    seatsByDisplaySeat[SeatWind.East],
   );
 
   return (
@@ -47,7 +38,7 @@ export function MatchCenterTable({
           key={`${seat}-center-point`}
           isRelativeScoreMode={isRelativeScoreMode}
           onToggleRelativeScoreMode={
-            seat === SeatWinds.East ? onToggleRelativeScoreMode : undefined
+            seat === SeatWind.East ? onToggleRelativeScoreMode : undefined
           }
           referencePoints={referencePoints}
           scoreDisplay={scoreDisplays?.[seat]}

@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
@@ -8,7 +8,7 @@ import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile'
 import { participantText } from '../functions/getTournamentDetailParticipantsText';
 import { LineupRoster, ToggleArrow } from './TournamentParticipantsShared';
 import type { LineupSubmission } from '../hooks/useTournamentDetailParticipantsLineup';
-import type { TournamentDetailWorkbenchState } from '../../../../../objects/TournamentDetail.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 参赛俱乐部列表中的单个俱乐部行。 */
 function ClubParticipantRow({

@@ -1,7 +1,9 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
-import type { PlayerLeaderboardEntry } from '../../objects/PublicHallPage.types';
+
+import type { PlayerLeaderboardEntry } from '../../objects/leaderboard/PlayerLeaderboardEntry';
+
 import { getLeaderboardStatusLabel } from '../../functions/getPublicHallLabels';
 
 import { hallSectionClassNames } from '../PublicHallSection.styles';

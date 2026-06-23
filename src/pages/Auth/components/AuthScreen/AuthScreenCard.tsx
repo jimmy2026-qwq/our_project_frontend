@@ -3,11 +3,8 @@ import { Link } from 'react-router-dom';
 import { cx } from '@/components/ui/cx';
 
 import { AuthFieldInput } from './AuthFieldInput';
-import {
-  outlineButtonClassName,
-  primaryButtonClassName,
-} from './AuthScreen.styles';
-import type { AuthScreenProps } from './AuthScreen.types';
+import { outlineButtonClassName, primaryButtonClassName } from './AuthScreen.styles';
+import type { AuthScreenProps } from './objects/AuthScreenProps';
 
 /** 登录、注册和初始化页面共用的认证卡片。 */
 export function AuthScreenCard({

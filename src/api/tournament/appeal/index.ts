@@ -1,6 +1,6 @@
-export * from "./AppealAdjudicateAPI";
-export * from "./AppealFileAPI";
-export * from "./AppealGetAPI";
-export * from "./AppealListAPI";
-export * from "./AppealReopenAPI";
-export * from "./AppealUpdateWorkflowAPI";
+export { AppealAdjudicateAPI } from './AppealAdjudicateAPI';
+export { AppealFileAPI } from './AppealFileAPI';
+export { AppealGetAPI } from './AppealGetAPI';
+export { AppealListAPI } from './AppealListAPI';
+export { AppealReopenAPI } from './AppealReopenAPI';
+export { AppealUpdateWorkflowAPI } from './AppealUpdateWorkflowAPI';

@@ -8,6 +8,7 @@ export const RealtimeEventTypes = {
   TournamentChanged: 'TournamentChanged',
   PlayerChanged: 'PlayerChanged',
   DomainChanged: 'DomainChanged',
+  MahjongTableChanged: 'MahjongTableChanged',
   MahjongActionAccepted: 'MahjongActionAccepted',
 } as const;
 

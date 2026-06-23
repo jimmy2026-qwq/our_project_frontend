@@ -1,11 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
 import { TournamentTableGetAPI } from '@/api/tournament';
 import type { TableDetail } from '@/pages/shared_objects/tournament/TableDetail';
 import { sendAPI } from '@/system/api';
 
-import type { TournamentDetailTableItem } from '../../../../../objects/TournamentDetail.types';
-import { toTableDetail } from '../../../../../functions/TournamentDetailTable.mappers';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
+import { toTableDetail } from '../../../../../functions/toTournamentDetailTableData';
 
 export function useTournamentManagedTableDetail() {
   const [selectedManageTable, setSelectedManageTable] =

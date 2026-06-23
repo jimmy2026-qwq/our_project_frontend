@@ -1,4 +1,4 @@
-import { SeatWinds } from '@/objects';
+﻿import { SeatWind } from '@/objects';
 import { PlayerRiver } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PlayerAreas/PlayerRiver';
 import { OperationFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/OperationFlash';
 import { WinningCallFlash } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/PaifuOverlays/WinningCallFlash';
@@ -92,7 +92,7 @@ export function MatchBoard(props: MatchBoardProps) {
                   : model.discardActions
               }
               hideLabel={
-                seat === SeatWinds.East && model.hasVisibleButtonActions
+                seat === SeatWind.East && model.hasVisibleButtonActions
               }
               isSubmitting={model.isSubmittingAction}
               isTurnPlayer={model.displayedTurnPlayerId === seatView?.playerId}

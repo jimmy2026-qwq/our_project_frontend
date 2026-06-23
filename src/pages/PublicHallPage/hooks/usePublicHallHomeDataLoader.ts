@@ -1,30 +1,17 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { ListPublicClubsAPI } from '@/api/club';
 import { ListPublicSchedulesAPI } from '@/api/tournament';
 import type { ClubSummary } from '@/pages/shared_objects/club/ClubSummary';
-import { sendAPI } from '@/system/api';
-import { mapEnvelope } from '@/system/api/http';
+import { sendAPI, mapEnvelope } from '@/system/api';
 
-import {
-  buildHomeDataKey,
-  deleteHomeDataRequest,
-  getCachedPublicHallHomeData,
-  getHomeDataRequest,
-  setCachedPublicHallHomeData,
-  setHomeDataRequest,
-} from '../functions/getPublicHallHomeDataCache';
-import {
-  toPublicClubSummary,
-  toPublicSchedule,
-} from '../functions/PublicHall.mappers';
-import type {
-  HomeDataState,
-  LoadState,
-  PublicHallState,
-  PublicHallViewerContext,
-  PublicSchedule,
-} from '../objects/PublicHallPage.types';
+import { buildHomeDataKey, deleteHomeDataRequest, getCachedPublicHallHomeData, getHomeDataRequest, setCachedPublicHallHomeData, setHomeDataRequest } from '../functions/getPublicHallHomeDataCache';
+import { toPublicClubSummary, toPublicSchedule } from '../functions/toPublicHallData';
+import type { HomeDataState } from '../objects/state/HomeDataState';
+import { LoadState } from '../objects/state/LoadState';
+import { PublicHallState } from '../objects/state/PublicHallState';
+import { PublicHallViewerContext } from '../objects/state/PublicHallViewerContext';
+import { PublicSchedule } from '../objects/schedule/PublicSchedule';
 import { useManagedDraftSchedulesLoader } from './useManagedDraftSchedulesLoader';
 
 function createEmptyLoadState<T>(): LoadState<T> {
@@ -37,7 +24,6 @@ function createEmptyLoadState<T>(): LoadState<T> {
       hasMore: false,
       appliedFilters: {},
     },
-    source: 'api',
   };
 }
 
@@ -51,7 +37,7 @@ async function loadSchedules(
         stageStatus: state.scheduleStageStatus,
       }),
     ).then((payload) => mapEnvelope(payload, toPublicSchedule));
-    return { envelope, source: 'api' };
+    return { envelope };
   } catch (error) {
     return {
       ...createEmptyLoadState<PublicSchedule>(),
@@ -68,7 +54,7 @@ async function loadClubs(): Promise<LoadState<ClubSummary>> {
     const envelope = await sendAPI(new ListPublicClubsAPI()).then((payload) =>
       mapEnvelope(payload, toPublicClubSummary),
     );
-    return { envelope, source: 'api' };
+    return { envelope };
   } catch (error) {
     return {
       ...createEmptyLoadState<ClubSummary>(),

@@ -1,11 +1,10 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 
 import { StatusPill } from '@/components/ui';
-import type { PublicSchedule } from '../../objects/PublicHallPage.types';
-import {
-  formatDateTime,
-  getTournamentStatusLabel,
-} from '../../functions/getPublicHallLabels';
+
+import type { PublicSchedule } from '../../objects/schedule/PublicSchedule';
+
+import { formatDateTime, getTournamentStatusLabel } from '../../functions/getPublicHallLabels';
 
 import { getStatusTone } from '../../functions/getPublicHallStatus';
 import { hallSectionClassNames } from '../PublicHallSection.styles';

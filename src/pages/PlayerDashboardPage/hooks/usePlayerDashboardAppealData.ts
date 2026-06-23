@@ -1,10 +1,10 @@
-import { useCallback } from 'react';
+﻿import { useCallback } from 'react';
 
 import { AppealListAPI } from '@/api/tournament';
 import type { AppealListQuery } from '@/objects';
 import { sendAPI } from '@/system/api';
 
-import { toAppealSummary } from '../functions/PlayerDashboard.mappers';
+import { toAppealSummary } from '../functions/toPlayerDashboardData';
 
 function getAppeals(filters: AppealListQuery) {
   return sendAPI(new AppealListAPI(filters)).then((envelope) => ({

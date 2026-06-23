@@ -1,21 +1,21 @@
-import { DataTablePanel } from '@/components/ui';
-import { TableCell, TableRow } from '@/components/ui';
-import { AppealStatuses } from '@/objects';
+﻿import { DataTablePanel, TableCell, TableRow } from '@/components/ui';
+
+import { AppealStatus } from '@/objects';
 import type { AppealSummary } from '@/pages/shared_objects/tournament/AppealSummary';
 
-import type { LoadState } from '../objects/TournamentOps.types';
+import type { LoadState } from '../objects/LoadState';
 
 function getAppealStatusLabel(status: AppealSummary['status']) {
   switch (status) {
-    case AppealStatuses.Open:
+    case AppealStatus.Open:
       return '待处理';
-    case AppealStatuses.UnderReview:
+    case AppealStatus.UnderReview:
       return '审核中';
-    case AppealStatuses.Resolved:
+    case AppealStatus.Resolved:
       return '已解决';
-    case AppealStatuses.Rejected:
+    case AppealStatus.Rejected:
       return '已驳回';
-    case AppealStatuses.Escalated:
+    case AppealStatus.Escalated:
       return '已升级';
     default:
       return status;
@@ -32,7 +32,6 @@ export function AppealsPanel({
     <DataTablePanel
       title="赛事申诉"
       description="查看当前赛事相关的申诉工单，以及它们的处理状态和处理结果。"
-      source={payload.source}
       warning={payload.warning}
       headers={['工单 ID', '牌桌', '状态', '处理结果']}
       rows={payload.envelope.items.map((appeal) => (

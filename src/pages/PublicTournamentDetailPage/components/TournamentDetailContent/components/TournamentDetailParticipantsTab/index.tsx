@@ -1,16 +1,13 @@
-import { EmptyState } from '@/components/ui';
+﻿import { EmptyState } from '@/components/ui';
 import { cx } from '@/components/ui/cx';
 
 import { detailShellClassNames } from '../../../detailShell.styles';
 import { InviteParticipantDialog } from './components/TournamentParticipantsDialogs';
 import { ClubParticipantList } from './components/TournamentParticipantsPanel';
 import { participantText } from './functions/getTournamentDetailParticipantsText';
-import {
-  ParticipantSection,
-  PlayerRow,
-} from './components/TournamentParticipantsShared';
+import { ParticipantSection, PlayerRow } from './components/TournamentParticipantsShared';
 import { useTournamentDetailParticipantsTab } from './hooks/useTournamentDetailParticipantsTab';
-import type { TournamentDetailWorkbenchState } from '../../../../objects/TournamentDetail.types';
+import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 /** 赛事详情页中的参赛玩家、俱乐部和白名单标签页。 */
 export function TournamentDetailParticipantsTab({

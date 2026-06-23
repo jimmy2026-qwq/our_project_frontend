@@ -1,14 +1,11 @@
-import { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 
-import { GetPublicTournamentAPI } from '@/api/tournament';
-import { TournamentGetAPI } from '@/api/tournament';
+import { GetPublicTournamentAPI, TournamentGetAPI } from '@/api/tournament';
+
 import { sendAPI } from '@/system/api';
 
-import type { TournamentDetailState } from '../objects/PublicTournamentDetailPage.types';
-import {
-  toPublicTournamentDetail,
-  toTournamentDetailFromAdminView,
-} from '../functions/TournamentDetailTournament.mappers';
+import type { TournamentDetailState } from '@/pages/PublicTournamentDetailPage/objects/state/TournamentDetailState';
+import { toPublicTournamentDetail, toTournamentDetailFromAdminView } from '../functions/toTournamentDetailTournamentData';
 
 async function loadTournamentDetail(
   tournamentId: string,
@@ -17,13 +14,12 @@ async function loadTournamentDetail(
     const item = await sendAPI(new GetPublicTournamentAPI(tournamentId)).then(
       toPublicTournamentDetail,
     );
-    return { item, source: 'api' };
+    return { item };
   } catch (error) {
     try {
       const draftItem = await sendAPI(new TournamentGetAPI(tournamentId));
       return {
         item: toTournamentDetailFromAdminView(draftItem),
-        source: 'api',
         warning:
           'This tournament is still in draft mode and is shown through the admin endpoint.',
       };
@@ -33,7 +29,6 @@ async function loadTournamentDetail(
 
     return {
       item: null,
-      source: 'api',
       warning:
         error instanceof Error
           ? error.message
@@ -51,7 +46,6 @@ export function useTournamentDetail(tournamentId: string | undefined) {
     if (!tournamentId) {
       setState({
         item: null,
-        source: 'api',
         warning: 'Tournament id is missing.',
       });
       setIsLoading(false);

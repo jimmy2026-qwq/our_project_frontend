@@ -1,26 +1,10 @@
-import {
-  getPaifuTileCode,
-  isSamePaifuTile,
-  type MahjongLegalAction,
-  type MahjongSeatView,
-  type PaifuTile,
-  type SeatWind,
-} from '@/objects';
-import {
-  HandBackTile,
-  HandTile,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
-import {
-  handPositionClasses,
-  labelPositionClasses,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
+﻿import { getPaifuTileCode, isSamePaifuTile, type MahjongLegalAction, type SeatWind, type MahjongSeatView, type PaifuTile } from '@/objects';
+import { HandBackTile, HandTile } from '@/pages/TablePaifuPage/components/PaifuHandTable/components/TileViews';
+import { handPositionClasses } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/layout/handPositionClasses';
+import { labelPositionClasses } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/layout/labelPositionClasses';
 
 import { getMatchDisplayHandTiles } from '../../functions/getMatchPlayerHandTiles';
-import {
-  getSeatLabel,
-  getSeatStateBadges,
-  getShortPlayerLabel,
-} from '../../functions/getMatchBoardLabels';
+import { getSeatLabel, getSeatStateBadges, getShortPlayerLabel } from '../../functions/getMatchBoardLabels';
 
 interface MatchPlayerHandProps {
   discardActions: MahjongLegalAction[];

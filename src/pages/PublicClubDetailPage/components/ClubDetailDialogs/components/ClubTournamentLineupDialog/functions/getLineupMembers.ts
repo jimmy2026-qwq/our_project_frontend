@@ -1,8 +1,11 @@
+﻿import { PlayerStatus } from '@/objects';
 import type { PlayerProfile } from '@/pages/shared_objects/player/PlayerProfile';
 
-import type { EloSort } from '../objects/EloSort';
+import { EloSort } from '@/pages/PublicClubDetailPage/components/ClubDetailDialogs/components/ClubTournamentLineupDialog/objects/EloSort';
 import type { MemberListItem } from '../objects/MemberListItem';
-import type { MemberStatusFilter } from '../objects/MemberStatusFilter';
+import { MemberStatusFilter } from '@/pages/PublicClubDetailPage/components/ClubDetailDialogs/components/ClubTournamentLineupDialog/objects/MemberStatusFilter';
+
+const activePlayerStatusValue = PlayerStatus.Active.toLowerCase();
 
 export function getVisibleLineupMembers({
   members,
@@ -18,14 +21,15 @@ export function getVisibleLineupMembers({
   eloSort: EloSort;
 }) {
   const filtered = members.filter((member) => {
-    const normalizedStatus = member.playerStatus?.toLowerCase() ?? 'active';
+    const normalizedStatus =
+      member.playerStatus?.toLowerCase() ?? activePlayerStatusValue;
 
-    if (statusFilter === 'active') {
-      return normalizedStatus === 'active';
+    if (statusFilter === MemberStatusFilter.Active) {
+      return normalizedStatus === activePlayerStatusValue;
     }
 
-    if (statusFilter === 'inactive') {
-      return normalizedStatus !== 'active';
+    if (statusFilter === MemberStatusFilter.Inactive) {
+      return normalizedStatus !== activePlayerStatusValue;
     }
 
     return true;
@@ -49,7 +53,7 @@ export function getVisibleLineupMembers({
     const eloDelta = (right.elo ?? 0) - (left.elo ?? 0);
 
     if (eloDelta !== 0) {
-      return eloSort === 'desc' ? eloDelta : -eloDelta;
+      return eloSort === EloSort.Desc ? eloDelta : -eloDelta;
     }
 
     return left.displayName.localeCompare(right.displayName, 'zh-CN');

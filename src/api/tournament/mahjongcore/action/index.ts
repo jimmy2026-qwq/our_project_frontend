@@ -1,0 +1,1 @@
+export { MahjongCoreSubmitActionAPI } from './MahjongCoreSubmitActionAPI';

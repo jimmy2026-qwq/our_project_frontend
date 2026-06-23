@@ -1,16 +1,16 @@
-import { TableStatuses, type TableStatus } from '@/objects';
+﻿import { TableStatus } from '@/objects';
 
 export function getTableStatusLabel(status: TableStatus) {
   switch (status) {
-    case TableStatuses.WaitingPreparation:
+    case TableStatus.WaitingPreparation:
       return '等待准备';
-    case TableStatuses.InProgress:
+    case TableStatus.InProgress:
       return '进行中';
-    case TableStatuses.Scoring:
+    case TableStatus.Scoring:
       return '等待申诉';
-    case TableStatuses.AppealInProgress:
+    case TableStatus.AppealInProgress:
       return '申诉处理中';
-    case TableStatuses.Archived:
+    case TableStatus.Archived:
       return '已归档';
     default:
       return status;
@@ -19,13 +19,13 @@ export function getTableStatusLabel(status: TableStatus) {
 
 export function getTableSortWeight(status: TableStatus) {
   switch (status) {
-    case TableStatuses.InProgress:
-    case TableStatuses.Scoring:
-    case TableStatuses.AppealInProgress:
+    case TableStatus.InProgress:
+    case TableStatus.Scoring:
+    case TableStatus.AppealInProgress:
       return 0;
-    case TableStatuses.Archived:
+    case TableStatus.Archived:
       return 1;
-    case TableStatuses.WaitingPreparation:
+    case TableStatus.WaitingPreparation:
       return 2;
     default:
       return 3;
@@ -34,15 +34,15 @@ export function getTableSortWeight(status: TableStatus) {
 
 export function getTableStatusTone(status: TableStatus) {
   switch (status) {
-    case TableStatuses.InProgress:
+    case TableStatus.InProgress:
       return 'success' as const;
-    case TableStatuses.Scoring:
+    case TableStatus.Scoring:
       return 'warning' as const;
-    case TableStatuses.AppealInProgress:
+    case TableStatus.AppealInProgress:
       return 'danger' as const;
-    case TableStatuses.Archived:
+    case TableStatus.Archived:
       return 'neutral' as const;
-    case TableStatuses.WaitingPreparation:
+    case TableStatus.WaitingPreparation:
       return 'warning' as const;
     default:
       return 'neutral' as const;

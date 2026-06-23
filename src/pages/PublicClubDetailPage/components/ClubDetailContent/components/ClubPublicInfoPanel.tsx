@@ -1,10 +1,7 @@
-import { ActionButton, DetailCard, MetricCard, MetricGrid } from '@/components/ui';
+﻿import { ActionButton, DetailCard, MetricCard, MetricGrid } from '@/components/ui';
 
-import {
-  formatNumber,
-  formatRelationList,
-} from '../../../functions/formatClubDetail';
-import type { ClubPublicProfile } from '../../../objects/PublicClubDetailPage.types';
+import { formatNumber, formatRelationList } from '../../../functions/formatClubDetail';
+import type { ClubPublicProfile } from '@/pages/shared_objects/club/ClubPublicProfile';
 
 /** 俱乐部详情页展示公开招募、荣誉和基础信息的面板。 */
 export function ClubPublicInfoPanel({

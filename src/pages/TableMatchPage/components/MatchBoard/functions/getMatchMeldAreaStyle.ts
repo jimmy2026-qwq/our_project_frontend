@@ -1,14 +1,8 @@
-import type { CSSProperties } from 'react';
+﻿import type { CSSProperties } from 'react';
 
-import {
-  riverRowSize,
-  riverTileImageWidth,
-  riverTileVisibleHeight,
-} from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/paifuTableLayout';
-import type {
-  MeldGroup,
-  MeldTile,
-} from '@/pages/TablePaifuPage/objects/ReplaySnapshot.types';
+import { riverRowSize, riverTileImageWidth, riverTileVisibleHeight } from '@/pages/TablePaifuPage/components/PaifuHandTable/objects/layout/riverTileLayout';
+import type { MeldGroup } from '@/pages/TablePaifuPage/objects/MeldGroup';
+import type { MeldTile } from '@/pages/TablePaifuPage/objects/MeldTile';
 
 const meldBoxMinWidth = 176;
 const meldBoxMaxWidth = 286;

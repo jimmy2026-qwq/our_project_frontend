@@ -1,10 +1,7 @@
 import { ShowcaseModeToggle } from '@/app/ShowcaseModeToggle';
 
 import { PublicHallActiveView } from './components/PublicHallActiveView';
-import {
-  PublicHallError,
-  PublicHallLoading,
-} from './components/PublicHallLoadingState';
+import { PublicHallError, PublicHallLoading } from './components/PublicHallLoadingState';
 import { PublicHallLobbyMenu } from './components/PublicHallLobby/PublicHallLobbyMenu';
 import { PublicHallPlayerCard } from './components/PublicHallLobby/PublicHallPlayerCard';
 import { lobbyClassNames } from './components/PublicHallLobby/styles';

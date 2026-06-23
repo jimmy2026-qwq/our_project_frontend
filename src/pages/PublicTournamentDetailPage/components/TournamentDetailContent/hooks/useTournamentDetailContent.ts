@@ -1,4 +1,4 @@
-import type { TournamentDetailWorkbenchState } from '../../../objects/TournamentDetail.types';
+﻿import type { TournamentDetailWorkbenchState } from '@/pages/PublicTournamentDetailPage/objects/state/workbench/TournamentDetailWorkbenchState';
 
 import { useTournamentAppealRuntime } from '../components/TournamentDetailAppealsTab/hooks/useTournamentAppealRuntime';
 import { useTournamentRuntimeTabs } from './useTournamentRuntimeTabs';

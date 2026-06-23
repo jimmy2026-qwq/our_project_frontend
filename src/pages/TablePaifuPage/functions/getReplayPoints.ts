@@ -1,11 +1,6 @@
 import type { PaifuRound as PaifuRoundSummary } from '@/objects';
 import type { TablePaifuDetail } from '../objects/TablePaifuDetail';
-import {
-  getAcceptedRiichiActions,
-  getReplaySequenceLimit,
-  getReplayStepCount,
-  isWinningRound,
-} from './getReplayCore';
+import { getAcceptedRiichiActions, getReplaySequenceLimit, getReplayStepCount, isWinningRound } from './getReplayCore';
 
 function getRoundRiichiPaymentForPlayer(
   round: PaifuRoundSummary,

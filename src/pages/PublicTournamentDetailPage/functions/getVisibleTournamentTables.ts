@@ -1,6 +1,6 @@
-import { TableStatuses } from '@/objects';
+﻿import { TableStatus } from '@/objects';
 
-import type { TournamentDetailTableItem } from '../objects/TournamentDetail.types';
+import type { TournamentDetailTableItem } from '@/pages/PublicTournamentDetailPage/objects/table/TournamentDetailTableItem';
 import { getTableSortWeight } from './getTournamentTableStatus';
 
 export function getVisibleTournamentTables({
@@ -17,24 +17,24 @@ export function getVisibleTournamentTables({
       ? tables
       : tables.filter(
           (table) =>
-            (table.status === TableStatuses.WaitingPreparation &&
+            (table.status === TableStatus.WaitingPreparation &&
               !!operatorId &&
               table.playerIds.includes(operatorId)) ||
-            table.status === TableStatuses.InProgress ||
-            table.status === TableStatuses.Scoring ||
-            table.status === TableStatuses.AppealInProgress ||
-            table.status === TableStatuses.Archived,
+            table.status === TableStatus.InProgress ||
+            table.status === TableStatus.Scoring ||
+            table.status === TableStatus.AppealInProgress ||
+            table.status === TableStatus.Archived,
         )),
   ].sort((left, right) => {
     const leftIsOwnWaitingTable =
       !canManageTournament &&
       !!operatorId &&
-      left.status === TableStatuses.WaitingPreparation &&
+      left.status === TableStatus.WaitingPreparation &&
       left.playerIds.includes(operatorId);
     const rightIsOwnWaitingTable =
       !canManageTournament &&
       !!operatorId &&
-      right.status === TableStatuses.WaitingPreparation &&
+      right.status === TableStatus.WaitingPreparation &&
       right.playerIds.includes(operatorId);
 
     if (leftIsOwnWaitingTable !== rightIsOwnWaitingTable) {

@@ -1,8 +1,6 @@
-import type {
-  LeaderboardDataState,
-  PublicHallState,
-} from '../objects/PublicHallPage.types';
-import { PUBLIC_HALL_CACHE_TTL_MS } from '../objects/PublicHallPage.types';
+﻿import type { LeaderboardDataState } from '../objects/state/LeaderboardDataState';
+import type { PublicHallState } from '../objects/state/PublicHallState';
+import { PUBLIC_HALL_CACHE_TTL_MS } from '../objects/state/PublicHallCache';
 
 const leaderboardCache = new Map<
   string,
